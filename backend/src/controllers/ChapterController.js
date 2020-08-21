@@ -1,25 +1,24 @@
 const mongoose = require('mongoose');
+const path = require('path');
 
+const fs = require('fs');
 const Chapter = require('../models/Chapter');
 const multer = require('multer');
+
    
 module.exports = {
     async store(req, res){
-       
-        const reqFiles = [];
-        const url = req.protocol + '://' + req.get('host')
-        for (var i = 0; i < req.files.length; i++) {
-            reqFiles.push(url + '/uploads/' + req.files[i].filename)
-        } //foreach
+        const { manga_id, chapter_id } = req.body;
         
-        console.log(req.file)
+        
+       
         const chapter = new Chapter({
-            manga_id: req.manga_id,
-            chapter_id: req.chapter_id,
+            manga_id: manga_id,
+            chapter_id: chapter_id,
             imgCollection: [{
-                name: req.file.originalname,
-                size: req.file.size,
-                key: req.file.filename,
+                name: 'originalname',
+                size: 20,
+                key: 'filename',
                 url: ''        
             }],
         });
@@ -40,7 +39,7 @@ module.exports = {
                     error: err
                 });
         })
-        console.log('step-3')
+        
         
     },
 

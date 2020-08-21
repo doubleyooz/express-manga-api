@@ -15,16 +15,11 @@ routes.get('/', (req, res) => {
 
 });
 
-routes.post('/post', multer(multerConfig).array('imgCollection'), async (req, res, next) => {
-    //console.log(req.files);
-    ChapterController.store;
+routes.post('/post', multer(multerConfig).array('imgCollection'), ChapterController.store);
 
-    return res.json({ message: "Post page"});
-    
-});
-
-routes.get('/get', (req, res, next) => {
-    ChapterController.index
+routes.get('/get', (req, res) => {
+    ChapterController.index();
+    return res.json({message: "Works"});
 })
 
 /*

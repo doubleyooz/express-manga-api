@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 
 
 const PageSchema = new mongoose.Schema({
-    imgCollection: {
+    
         name: String,
         size: Number,
         key: String,
         url: String
-    },
+    
    
 },{
 
@@ -16,18 +16,20 @@ const PageSchema = new mongoose.Schema({
     }
 })
 
-const Group = mongoose.model('Group', PageSchema)
 
-const ChapterSchema = new Group({
+const ChapterSchema = new mongoose.Schema({
     manga_id: Number,
     chapter_id: Number, //must match the manga id
     //pages: Number,
-    imgCollection: [{
-        name: String,
-        size: Number,
-        key: String,
-        url: String        
-    }],
+    imgCollection: {
+        type: [PageSchema],
+        default: [{
+            name: "none",
+            size: 0,
+            key: "none",
+            url: "none", 
+        }]
+    } ,
     createdAt: {
         type: Date,
         default: Date.now,
@@ -40,7 +42,7 @@ const ChapterSchema = new Group({
 
 PageSchema.virtual('page_url').get(function(){   
     
-    return `http://localhost:3333/files/332/}`;;
+    return `http://localhost:3333/files/`;;
       
 
     
