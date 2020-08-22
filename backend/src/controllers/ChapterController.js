@@ -9,9 +9,9 @@ const multer = require('multer');
 module.exports = {
     async store(req, res){
         const { manga_id, chapter_id } = req.body;
-        
-        
+        console.log(req.files)
        
+
         const chapter = new Chapter({
             manga_id: manga_id,
             chapter_id: chapter_id,
@@ -24,6 +24,7 @@ module.exports = {
         });
        
         chapter.save().then(result => {
+            
             res.status(201).json({
                 message: "Done upload!",
                 chapterAdded: {
@@ -32,6 +33,7 @@ module.exports = {
                     imgCollection: result.imgCollection
                 }
             })
+           
            
         }).catch(err => {
             console.log(err),
