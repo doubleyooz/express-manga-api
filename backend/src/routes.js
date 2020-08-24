@@ -4,7 +4,7 @@ const multerConfig = require('./config/upload')
 
 const UploadController = require("./controllers/UploadController");
 const ChapterController = require('./controllers/ChapterController');
-
+const MangaController = require('./controllers/MangaController');
 
 
 const routes = express.Router()
@@ -15,7 +15,11 @@ routes.get('/', (req, res) => {
 
 });
 
-routes.post('/post', multer(multerConfig).array('imgCollection'), ChapterController.store);
+
+routes.post('/manga/post', MangaController.store);
+
+routes.post('/chapter/post', multer(multerConfig).array('imgCollection'), ChapterController.store);
+
 
 routes.get('/get', (req, res) => {
     ChapterController.index();

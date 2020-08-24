@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 
 const MangaSchema = new mongoose.Schema({
-    root_id: Number, //the manga id
+    _id: Number, //the manga id
     genre: String,
     synopsis: String,
-    chapters: Number,     
+    chapters:{
+        type: Number,
+        default: 0,
+    },
+    scan: String,
+    status: Number,     
     data: [{ //a array fill with the data links
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chapter'
@@ -15,4 +20,4 @@ const MangaSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('Chapter', ChapterSchema);
+module.exports = mongoose.model('Manga', MangaSchema);
