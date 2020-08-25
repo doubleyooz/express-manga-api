@@ -18,15 +18,14 @@ const PageSchema = new mongoose.Schema({
 
 
 const ChapterSchema = new mongoose.Schema({
-    manga_id: Number,
-    chapter_id: Number, //must match the manga id
+    manga_id: String,
+    number: Number, 
     //pages: Number,
     imgCollection: {
         type: [PageSchema],
         default: [{
             name: "none",
-            size: 0,
-            key: "none",
+            size: 0,           
             url: "none", 
         }]
     } ,

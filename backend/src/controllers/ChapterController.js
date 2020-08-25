@@ -5,36 +5,43 @@ const fs = require('fs');
 
 
 const Chapter = require('../models/Chapter');
-const Manga = require('../models/Manga');
+const Manga = require('../models/Manga')
+const valid_user = true;
 
-   
 module.exports = {
     async store(req, res){
         
-        const { manga_id, chapter_id } = req.body;
+        const { manga_id, number} = req.body;
 
-        Manga.findOne({id: manga_id}, function (err, obj){ 
-            if(obj){                
+        if(!valid_user){            
+            return res.status(401).json({               
+                id: manga_id,
+                message: "Manga cannot be found."               
+            });
+        }
+
+        Manga.findOne({_id: manga_id}, function (err, manga){ 
+            if(manga){                
                 let jsonString = [];         
                 
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
 
-                    let obj = { originalname: file.originalname,
+                    let temp = { originalname: file.originalname,
                                 size: file.size,
                                 filename: file.filename,
                                 url: "url",
                     }                            
                 
-                    jsonString.push(JSON.parse(JSON.stringify(obj)));
+                    jsonString.push(JSON.parse(JSON.stringify(temp)));
                     
                 });
 
                 console.log(jsonString);
 
-                const chapter = new Chapter({
+                const chapter = new Chapter({                    
                     manga_id: manga_id,
-                    chapter_id: chapter_id,
+                    number: number,
                     imgCollection: [
                             
                     ],
@@ -43,16 +50,26 @@ module.exports = {
                 chapter.imgCollection = jsonString;
             
                 chapter.save().then(result => {
-                    
+                    manga.data.push(result._id) 
+                    manga.save().then(answer => {
+
+                    }).catch(err =>{
+                        Chapter.deleteOne({_id: result._id});
+                        console.log(err),
+                        res.status(500).json({
+                            error: err,
+                            message: "Chapter wasn't saved"
+                        });
+                    });
                     res.status(201).json({
                         message: "Done upload!",
                         chapterAdded: {
                             manga_id: result.manga_id,
-                            chapter_id: result.chapter_id,
+                            chapter_id: result._id,
+                            number: number,
                             imgCollection: result.imgCollection
                         }
-                    })
-                
+                    })              
                 
                 }).catch(err => {
                     console.log(err),

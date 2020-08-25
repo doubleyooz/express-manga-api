@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const MangaSchema = new mongoose.Schema({
-    _id: Number, //the manga id
+    title: String,
     genre: String,
     synopsis: String,
     chapters:{
@@ -9,12 +9,17 @@ const MangaSchema = new mongoose.Schema({
         default: 0,
     },
     scan: String,
-    status: Number,     
+    status: Number, 
+    language: String,    
     data: [{ //a array fill with the data links
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chapter'
     
-     }]
+     }],
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
     //comments?
 
 });
