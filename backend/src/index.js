@@ -19,6 +19,8 @@ useUnifiedTopology: true
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/files', express.static('uploads'));
+
 app.use((req, res, next)=>{
     res.header("Acess-Control-Allow-Origin", "*");
     app.use(cors());
@@ -27,7 +29,6 @@ app.use((req, res, next)=>{
 });
 
 
-app.use('/files', express.static(path.resolve(__dirname, '..', 'Uploads', 'resized')));
 
 app.use(require('./routes'));
 server.listen(3333);
