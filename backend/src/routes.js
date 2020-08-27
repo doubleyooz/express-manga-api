@@ -20,6 +20,7 @@ routes.post('/manga/post', MangaController.store);
 
 routes.post('/chapter/post', multer(multerConfig).array('imgCollection'), ChapterController.store);
 
+routes.get('/manga/index', MangaController.index);
 
 routes.get('/get', (req, res) => {
     ChapterController.index();

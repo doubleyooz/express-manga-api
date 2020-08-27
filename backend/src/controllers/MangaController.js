@@ -6,6 +6,7 @@ const fs = require('fs');
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
+const { delete } = require('../routes');
 
    
 module.exports = {
@@ -64,12 +65,39 @@ module.exports = {
     },
 
     async index(req, res){
-        Manga.find().then(data => {
-            res.status(200).json({
-                message: "Page list retrieved successfully!",
-                manga: data
-            });
-        });
+        
+
+        const cursor = Manga.find().cursor();
+
+        let docs = [];
+
+        for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
+           docs.push(doc);
+           
+        }
+
+        res.status(200).json({
+            message: "Page list retrieved successfully!",
+            manga: docs
+            
+        });   
+    },
+
+    async delete(req, res){
+
+        const { manga_id } = req.query();
+
+        const mangas = await Manga.deleteMany( { _id: manga_id });
+
+        
+
+        if (mangas.n === 0 ){
+            return res.json({ removed: false, mangas: mangas });
+        } else{
+            return res.json({ removed: true, mangas: mangas });
+        }
+
+        
     }
 }
 
