@@ -9,10 +9,12 @@ const app = express();
 const server = require('http').Server(app);
 //const io = require('socket.io')(server);
 
-mongoose.connect(process.env.DB_PASS, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+mongoose.connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-c09yq.mongodb.net/MangaReader?retryWrites=true&w=majority`, {
+useNewUrlParser: true,
+useUnifiedTopology: true
 });
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
