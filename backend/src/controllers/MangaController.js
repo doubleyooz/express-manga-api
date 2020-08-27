@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
 
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
-const { delete } = require('../routes');
+
 
    
 module.exports = {
