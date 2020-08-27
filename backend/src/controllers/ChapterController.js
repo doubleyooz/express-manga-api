@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const path = require('path');
-const multer = require('multer');
+
 const fs = require('fs');
 
 
@@ -30,7 +30,7 @@ module.exports = {
                     let temp = { originalname: file.originalname,
                                 size: file.size,
                                 filename: file.filename,
-                                url: "url",
+                                url: "http://localhost:3333/files/" + file.filename,
                     }                            
                 
                     jsonString.push(JSON.parse(JSON.stringify(temp)));
