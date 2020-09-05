@@ -88,12 +88,32 @@ module.exports = {
     },
 
     async index(req, res){
-        Chapter.find().then(data => {
+        
+        const { manga_id } = req.body;
+
+        Manga.findById(manga_id, function(err, manga){
             res.status(200).json({
-                message: "Page list retrieved successfully!",
-                pages: data
-            });
-        });
+                message:"Chapters retrieved successfully!",
+                chapters: manga.data
+            })
+        });       
+    },
+
+    async delete(req, res){
+
+        const { manga_id, chapter_id } = req.query;
+
+        const chapters = await Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id });
+
+        
+
+        if (chapters.n === 0 ){
+            return res.json({ removed: false, chapters: chapters });
+        } else{
+            return res.json({ removed: true, chapters: chapters });
+        }
+
+        
     }
 }
 

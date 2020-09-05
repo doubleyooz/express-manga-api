@@ -20,12 +20,18 @@ routes.post('/manga/post', MangaController.store);
 
 routes.post('/chapter/post', multer(multerConfig).array('imgCollection'), ChapterController.store);
 
-routes.get('/manga/index', MangaController.index);
+routes.get('/manga/index', MangaController.list);
 
-routes.get('/get', (req, res) => {
+
+
+routes.delete('/manga/delete', MangaController.delete);
+
+routes.get('/manga', (req, res) => {
     ChapterController.index();
-    return res.json({message: "Works"});
+   
 })
+
+routes.delete('/chapter/delete', ChapterController.delete);
 
 /*
 routes.post('/sessions', function(req, res){
