@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
 
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
+const { update } = require('../models/Chapter');
+
 
    
 module.exports = {
@@ -64,12 +65,101 @@ module.exports = {
     },
 
     async index(req, res){
-        Manga.find().then(data => {
-            res.status(200).json({
-                message: "Page list retrieved successfully!",
-                manga: data
+
+        const { title, genre, scan } = req.query;
+       
+        let docs = [];
+
+        if (title){
+            (await Manga.find( {title: {$regex: title, $options: "i"} } )).forEach(function (doc){
+                docs.push(doc)
             });
-        });
+        }
+
+        else if (genre){
+            (await Manga.find({genre: genre})).forEach(function (doc){
+                docs.push(doc)
+            });
+        }
+
+        else if(scan){
+            (await Manga.find({scan: /scan/})).forEach(function (doc){
+                docs.push(doc)
+            });
+        }
+
+        else{
+            (await Manga.find()).forEach(function (doc){
+                docs.push(doc)
+            });     
+        }
+          
+        
+        
+
+        console.log(docs)
+        res.status(200).json({
+            message: "Page list retrieved successfully!",
+            manga: docs
+            
+        });   
+        
+
+        //const cursor = Manga.find().cursor();
+
+        /*let docs = [];
+
+        for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
+        
+            docs.push(doc);
+           
+        }
+
+        res.status(200).json({
+            message: "Page list retrieved successfully!",
+            manga: docs
+            
+        });   */
+    },
+
+    /*async update(req, res){
+        const {title, genre, synopsis, chapters, scan, status, language } = req.body;
+
+        let query = {title: title};
+
+        
+        if(doesMangaExist){
+            Manga.findOneAndUpdate({title: title}, req.newData, {upsert: true}, function(err, doc) {
+                if (err) return res.send(500, {error: err});
+                return res.send('Succesfully saved.');
+            });
+
+
+        } else{
+            res.status(500).json({
+                message: "Fail to find the manga refered",
+               
+                
+            });   
+         
+        }        
+    },*/
+
+    async delete(req, res){
+
+        const { manga_id } = req.query;
+
+        const mangas = await Manga.deleteMany( { _id: manga_id });
+
+        
+
+        if (mangas.n === 0 ){
+            return res.json({ removed: false, mangas: mangas });
+        } else{
+            return res.json({ removed: true, mangas: mangas });
+        }
+
+        
     }
 }
 
