@@ -11,7 +11,7 @@ const valid_user = true;
 module.exports = {
     async store(req, res){
         
-        const { manga_id, number} = req.body;
+        const { manga_id, number } = req.body;
 
         if(!valid_user){            
             return res.status(401).json({               

@@ -64,31 +64,38 @@ module.exports = {
         }        
     },
 
-    async list(req, res){
-        
-        let docs = [];       
-        
-       /* var cursor = Manga.find().
-                cursor().
-                map(function (doc) {   
-                                    
-                    return doc;
-                });
-    
-       
+    async index(req, res){
 
-        cursor.next(function(err, doc){
-            console.log(doc)
-            docs.push(doc);
-        })*/
+        const { title, genre, scan } = req.query;
        
-        Manga.find().cursor().eachAsync(async function (doc){  
-            console.log(doc)
-              
-            docs.push(JSON.parse(JSON.stringify(doc)))
-           
-        })
+        let docs = [];
+
+        if (title){
+            (await Manga.find( {title: {$regex: title, $options: "i"} } )).forEach(function (doc){
+                docs.push(doc)
+            });
+        }
+
+        else if (genre){
+            (await Manga.find({genre: genre})).forEach(function (doc){
+                docs.push(doc)
+            });
+        }
+
+        else if(scan){
+            (await Manga.find({scan: /scan/})).forEach(function (doc){
+                docs.push(doc)
+            });
+        }
+
+        else{
+            (await Manga.find()).forEach(function (doc){
+                docs.push(doc)
+            });     
+        }
           
+        
+        
 
         console.log(docs)
         res.status(200).json({
@@ -97,26 +104,10 @@ module.exports = {
             
         });   
         
-       
-     
-       /* let docs = [];
 
+        //const cursor = Manga.find().cursor();
 
-        for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
-           docs.push(doc);
-           
-        }*/
-
-       
-    },
-
-    async findOne(req, res){
-        
-        
-
-        const cursor = Manga.find().cursor();
-
-        let docs = [];
+        /*let docs = [];
 
         for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
         
@@ -128,7 +119,7 @@ module.exports = {
             message: "Page list retrieved successfully!",
             manga: docs
             
-        });   
+        });   */
     },
 
     /*async update(req, res){

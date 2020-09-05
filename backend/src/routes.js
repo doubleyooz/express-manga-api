@@ -18,11 +18,7 @@ routes.get('/', (req, res) => {
 
 routes.post('/manga/post', MangaController.store);
 
-routes.post('/chapter/post', multer(multerConfig).array('imgCollection'), ChapterController.store);
-
-routes.get('/manga/index', MangaController.list);
-
-
+routes.get('/manga/index', MangaController.index);
 
 routes.delete('/manga/delete', MangaController.delete);
 
@@ -30,6 +26,8 @@ routes.get('/manga', (req, res) => {
     ChapterController.index();
    
 })
+
+routes.post('/chapter/post', multer(multerConfig).array('imgCollection'), ChapterController.store);
 
 routes.delete('/chapter/delete', ChapterController.delete);
 
@@ -47,8 +45,5 @@ routes.get('/tools/get', (req, res) => {
 routes.post('/tools/add', upload.single('icon'), ToolController.store);
 
 */
-
-
-
 
 module.exports = routes;
