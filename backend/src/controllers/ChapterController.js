@@ -1,23 +1,36 @@
 const mongoose = require('mongoose');
-const path = require('path');
-
+const upload = require("../config/upload");
 const fs = require('fs');
 
 
 const Chapter = require('../models/Chapter');
-const Manga = require('../models/Manga')
+const Manga = require('../models/Manga');
+const { dirname } = require('path');
 const valid_user = true;
 
 module.exports = {
-    async store(req, res){
+    async store(req, res){        
         
+               
         const { manga_id, number } = req.body;
 
-        if(!valid_user){            
-            return res.status(401).json({               
-                id: manga_id,
-                message: "Manga cannot be found."               
+        if(!valid_user){    
+
+            Object.keys(req.files).forEach((i) => {
+                let file = req.files[i];
+                                     
+               
+                fs.unlinkSync('uploads/' + file.filename)
+
+              
+                
             });
+
+            return res.status(404).json({               
+                id: manga_id,
+                message: "User cannot be found."               
+            });
+          
         }
 
         Manga.findOne({_id: manga_id}, function (err, manga){ 
@@ -27,9 +40,9 @@ module.exports = {
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
 
-                    let temp = { originalname: file.originalname,
+                    let temp = { originalname: "" + file.originalname,
                                 size: file.size,
-                                filename: file.filename,
+                                filename:"" + file.filename,
                                 url: "http://localhost:3333/files/" + file.filename,
                     }                            
                 
@@ -49,12 +62,19 @@ module.exports = {
 
                 chapter.imgCollection = jsonString;
             
+                
+
                 chapter.save().then(result => {
                     manga.data.push(result._id) 
                     manga.save().then(answer => {
 
                     }).catch(err =>{
                         Chapter.deleteOne({_id: result._id});
+                        Object.keys(req.files).forEach((i) => {
+                            let file = req.files[i];   
+                            fs.unlinkSync('uploads/' + file.filename)    
+                            
+                        });
                         console.log(err),
                         res.status(500).json({
                             error: err,
@@ -72,6 +92,11 @@ module.exports = {
                     })              
                 
                 }).catch(err => {
+                    Object.keys(req.files).forEach((i) => {
+                        let file = req.files[i];   
+                        fs.unlinkSync('uploads/' + file.filename)    
+                        
+                    });
                     console.log(err),
                         res.status(500).json({
                             error: err
@@ -79,9 +104,15 @@ module.exports = {
                 });
 
             } else{
-                res.status(404).json({
+
+                Object.keys(req.files).forEach((i) => {
+                    let file = req.files[i];
+                    fs.unlinkSync('uploads/' + file.filename)
+                    
+                });
+                return res.status(404).json({               
                     id: manga_id,
-                    message: "Manga cannot be found."
+                    message: "Manga cannot be found."               
                 });
             }
         });         

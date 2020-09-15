@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 const path = require('path');
 const multer = require('multer');
+const fs = require('fs');
+
 
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 const { update } = require('../models/Chapter');
+const ChapterController = require('./ChapterController');
 
 
    
@@ -149,14 +152,34 @@ module.exports = {
 
         const { manga_id } = req.query;
 
-        const mangas = await Manga.deleteMany( { _id: manga_id });
+       
 
-        
+        const mangas = await Manga.deleteMany({ _id: manga_id });      
+              
+       
 
         if (mangas.n === 0 ){
-            return res.json({ removed: false, mangas: mangas });
+            return res.json({ removed: false, status: mangas });
         } else{
-            return res.json({ removed: true, mangas: mangas });
+            
+
+            (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
+                doc.imgCollection.forEach(function (page, index){
+                    
+                    fs.unlinkSync('uploads/' + page.filename)  
+                })
+               
+                
+            });
+
+            const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err, result){
+
+             
+
+
+            }))   
+
+            return res.json({ removed: true, mangas: mangas, chapters: chapters});
         }
 
         

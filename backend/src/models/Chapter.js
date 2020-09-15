@@ -6,7 +6,9 @@ const PageSchema = new mongoose.Schema({
         name: String,
         size: Number,
         key: String,
-        url: String    
+        url: String,
+        filename: String, 
+        originalname: String,  
    
 },{
 
@@ -22,8 +24,9 @@ const ChapterSchema = new mongoose.Schema({
     imgCollection: {
         type: [PageSchema],
         default: [{
-            name: "none",
-            size: 0,           
+            originalname: "none",           
+            size: 0,   
+            filename: "none",        
             url: "none", 
         }]
     } ,
@@ -35,11 +38,5 @@ const ChapterSchema = new mongoose.Schema({
 
 });
 
-PageSchema.virtual('page_url').get(function(){   
-    
-    return `http://localhost:3333/files/`;     
-
-    
-});
 
 module.exports = mongoose.model('Chapter', ChapterSchema);
