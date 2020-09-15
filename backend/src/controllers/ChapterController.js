@@ -40,9 +40,9 @@ module.exports = {
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
 
-                    let temp = { originalname: file.originalname,
+                    let temp = { originalname: "" + file.originalname,
                                 size: file.size,
-                                filename: file.filename,
+                                filename:"" + file.filename,
                                 url: "http://localhost:3333/files/" + file.filename,
                     }                            
                 
