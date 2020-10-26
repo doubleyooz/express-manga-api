@@ -20,7 +20,8 @@ module.exports = {
         
         
         if(doesMangaExist){
-            return res.send("This manga already exists or the title is unavaliable;")
+            return res.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", null);
+            
 
         } else{
             
@@ -38,31 +39,16 @@ module.exports = {
                 //comments?
 
             });
-
             
-            console.log(req.body)
-            manga.save().then(result => {                    
-                res.status(201).json({
-                    message: "Manga added!",
-                    mangaAdded: {
-                        id: result._id, //the manga id
-                        title: result.title,
-                        genre: result.genre,
-                        synopsis: result.synopsis,
-                        chapters: result.chapters,
-                        status: result.status,
-                        scan: result.scan,  
-                        language: result.language,   
-                        data: result.data,
-                    }
-                })
+            manga.save().then(result => {      
+                res.jsonOK(result, "Manga added!", null);             
+                
             
             
             }).catch(err => {
                 console.log(err),
-                    res.status(500).json({
-                        error: err
-                    });
+                res.jsonServerError(null, null, err)
+                    
             });
         }        
     },
@@ -97,74 +83,79 @@ module.exports = {
             });     
         }
           
-        
-        
 
-        console.log(docs)
-        res.status(200).json({
-            message: "Page list retrieved successfully!",
-            manga: docs
-            
-        });   
+        res.jsonOK(docs, "Page list retrieved successfully!", null);    
+       
         
 
-        //const cursor = Manga.find().cursor();
-
-        /*let docs = [];
-
-        for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
-        
-            docs.push(doc);
-           
-        }
-
-        res.status(200).json({
-            message: "Page list retrieved successfully!",
-            manga: docs
-            
-        });   */
     },
 
-    /*async update(req, res){
-        const {title, genre, synopsis, chapters, scan, status, language } = req.body;
-
-        let query = {title: title};
-
+    async update(req, res){
         
-        if(doesMangaExist){
-            Manga.findOneAndUpdate({title: title}, req.newData, {upsert: true}, function(err, doc) {
-                if (err) return res.send(500, {error: err});
-                return res.send('Succesfully saved.');
-            });
 
+        const { title, genre, synopsis, chapters, scan, status, language, manga_id } = req.body;
 
+        if(!manga_id){           
+            res.jsonServerError(null, "manga_id undefined", null)
+           
         } else{
-            res.status(500).json({
-                message: "Fail to find the manga refered",
+            const doesMangaExist = await Manga.exists({ _id: manga_id }); 
+        
+            if(doesMangaExist){
+                let update = {};
+    
+                if(title){
+                    update.title = title;
+                }
+                if(genre){
+                    update.genre = genre;
+                }
+                if(synopsis){
+                    update.synopsis = synopsis;
+                }
+                if(chapters){
+                    update.chapters = chapters;
+                }
+                if(scan){
+                    update.scan = scan;
+                }
+                if(status){
+                    update.status = status;
+                }
+                if(language){
+                    update.language = language;
+                }
+        
+        
                
-                
-            });   
-         
-        }        
-    },*/
+                    Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
+                        if (err) 
+                            return res.jsonServerError(null, null, err);
+                            
+                        return res.jsonOK(update, "Saved Sucessfully", null);
+                    });
+        
+        
+            } else{
+                res.jsonServerError(null, "manga required doesnt exists", null)
+               
+            }                  
+        }     
+    },
 
     async delete(req, res){
 
-        const { manga_id } = req.query;
-
+        const { manga_id } = req.query;     
+        const mangas = await Manga.deleteMany({ _id: manga_id });            
        
-
-        const mangas = await Manga.deleteMany({ _id: manga_id });      
-              
-       
-
         if (mangas.n === 0 ){
-            return res.json({ removed: false, status: mangas });
+            return res.jsonNotFound(mangas, "Manga not found", {removed: false});
+           
         } else{
             
 
             (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
-                doc.imgCollection.forEach(function (page, index){
+                doc.imgCollection.forEach(function (page){
                     
                     fs.unlinkSync('uploads/' + page.filename)  
                 })
@@ -174,15 +165,10 @@ module.exports = {
 
             const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err, result){
 
-             
-
-
             }))   
 
-            return res.json({ removed: true, mangas: mangas, chapters: chapters});
-        }
-
-        
+            return res.jsonOK( ({mangas, chapters}), null, null);
+        }        
     }
 }
 
