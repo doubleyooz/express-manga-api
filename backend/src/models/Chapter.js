@@ -19,7 +19,11 @@ const PageSchema = new mongoose.Schema({
 
 const ChapterSchema = new mongoose.Schema({
     manga_id: String,
-    number: Number, 
+    number: Number,
+    title:{
+        type: String,
+        default: 'none'
+    },
     //pages: Number,
     imgCollection: {
         type: [PageSchema],
