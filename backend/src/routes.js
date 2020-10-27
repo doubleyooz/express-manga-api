@@ -6,17 +6,19 @@ const UploadController = require("./controllers/UploadController");
 const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
 
+const MangaMiddleware = require('./middlewares/manga');
+
 
 const routes = express.Router()
 
 
 routes.get('/', (req, res) => {
-    return res.json({ message: "Hello World"});
+    return res.jsonOK( null, "Hello World", null);
 
 });
 
 
-routes.post('/manga/post', MangaController.store);
+routes.post('/manga/post', MangaMiddleware.valid_manga_store, MangaController.store);
 
 routes.get('/manga/index', MangaController.index);
 
