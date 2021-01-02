@@ -24,7 +24,7 @@ routes.get('/manga/index', MangaController.index);
 
 routes.put('/manga/update', MangaController.update);
 
-routes.delete('/manga/delete', MangaController.delete);
+routes.delete('/manga/delete', MangaMiddleware.valid_manga_delete, MangaController.delete);
 
 
 

@@ -1,72 +1,74 @@
-
-
+const yup = require('yup')
+const mongoose = require('mongoose');
 module.exports = {
-    valid_manga_store(req, res, next){         
+    async valid_manga_store(req, res, next){         
                        
         const { title, genre, synopsis, chapters, status, scan, language } = req.body;  
         
-        valid_scan = true;
+        
+        console.log(title)
 
-        valid_language = true;
+        let schema = yup.object().shape({
+            title: yup.string("title must be a string.").strict().min(2, 'title must be between 2-60 characters.').max(60, 'title must be between 2-60 characters.').required(),
+            genre: yup.string("genre must be a string.").strict().required(),
+            synopsis: yup.string("synopsis must be a string.").strict().min(10, 'synopsis must be between 10-400 characters.').max(400, 'synopsis must be between 10-400 characters.').required(),
+            chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.').required(),
+            status: yup.number("status must be a number.").min(1, 'Invalid code.').max(6, 'Invalid code.').required(),
+            scan: yup.string("scan must be a string.").strict().required(),
+            language: yup.string("language must be a string.").strict().default({ language: 'pt' }).required()
+            
 
-        valid_genre = true;
+        })
 
-        if(!language){
-            req.language = "pt";
+        try{
+            await schema.validate({title, genre, synopsis, chapters, status, scan, language})
+            .catch(function(e) {
+                return res.jsonBadRequest(null, "you did not give us want we want", e.errors);
+            });
+
+            valid_scan = true;
+
+            valid_language = true;
+    
+            valid_genre = true;
+    
+            if (valid_scan && valid_language && valid_genre){
+                next();
+            
+            } else{
+                return res.jsonBadRequest(null, "unregistered scan", null);
+            }
+
+        } catch(err){
+           
         }
+              
+                        
+    },
 
-        if(title && genre && synopsis && chapters && status && scan){  
+    async valid_manga_delete(req, res, next){         
+                       
+        const { manga_id } = req.query;       
+    
+        if (mongoose.Types.ObjectId.isValid(manga_id)) {   
+            if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
+                next();     
+            } else { 
+                return res.jsonBadRequest(
+                    null,
+                    "You need to provide a valid IdObject to continue this operation.",
+                    null
+                );   
+            } 
+        } else {
+            return res.jsonBadRequest(
+                null,
+                "You need to provide a valid IdObject to continue this operation.",
+                null
+            );
+        } 
             
-            console.log(typeof(title))
-            console.log(typeof(title) !== 'string')
-            
-            if(typeof(title) !== 'string')
-                return res.jsonBadRequest(null, "title must be a string.", null);
-            
-            else if(typeof(genre) !== 'string')
-                return res.jsonBadRequest(null, "genre must be a string.", null); 
-
-            else if(typeof(synopsis) !== 'string')
-                return res.jsonBadRequest(null, "synopsis must be a string.", null);  
-                
-            else if(typeof(chapters) !== 'number')
-                return res.jsonBadRequest(null, "chapters must be a number.", null); 
-                
-            else if(typeof(scan) !== 'string')
-                return res.jsonBadRequest(null, "scan must be a string.", null); 
-
-            else if(typeof(status) !== 'number')
-                return res.jsonBadRequest(null, "status must be a number.", null);
-                
-            else if(typeof(language) !== 'string')
-                return res.jsonBadRequest(null, "language must be a string.", null);
-                
-            else {
-                if (status < 1 || status > 6){
-                    return res.jsonBadRequest(null, "invalid status code.", null);
-                }
-
-                else if(title.length < 10 || title.length >= 60) 
-                    return res.jsonBadRequest(null, "title must be between 10-60 characters.", null);
-                
-                else if(synopsis.length < 10 || synopsis.length >= 400) 
-                    return res.jsonBadRequest(null, "synopsis must be between 10-400 characters.", null);
-
-                else if(!valid_scan) 
-                    return res.jsonBadRequest(null, "unregistered scan", null);
-
-                else if(!valid_language) 
-                    return res.jsonBadRequest(null, "invalid language", null);
-                
-                else if(!valid_genre) 
-                    return res.jsonBadRequest(null, "invalid genre", null);
-
-                next(); 
-
-            }                
-        }  
-        else
-             return res.jsonBadRequest(null, "some required fields are missing.", null)          
+        
                         
     }  
 }
