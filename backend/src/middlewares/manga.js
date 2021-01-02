@@ -1,37 +1,75 @@
-
-import { Request, Response, NextFunction } from 'express';
-
-import { IUser } from '../models/user';
-import response from '../common/response';
-
-
+const yup = require('yup')
+const mongoose = require('mongoose');
 module.exports = {
-    valid_user(req, res, next){         
+    async valid_manga_store(req, res, next){         
                        
-        const { title, genre, synopsis, chapters, status, scan, language } = req.body;      
-
-        if(title && genre && synopsis && chapters && status && scan && language){     
-            
-            let emailTest = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-            let passwordTest = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
-            
-            
-            if (email.match(emailTest) && password.match(passwordTest))                                                     
-                next();                                                     
-            
-            else{
-
-                return res.json(        
-                    response.jsonBadRequest(null, "Password or email invalid.", null)              
-                );    
-            }             
-        }  
-        else
-            return res.json(        
-                response.jsonBadRequest(null, "Password or email is missing.", null)              
-            );             
-
+        const { title, genre, synopsis, chapters, status, scan, language } = req.body;  
         
+        
+        console.log(title)
+
+        let schema = yup.object().shape({
+            title: yup.string("title must be a string.").strict().min(2, 'title must be between 2-60 characters.').max(60, 'title must be between 2-60 characters.').required(),
+            genre: yup.string("genre must be a string.").strict().required(),
+            synopsis: yup.string("synopsis must be a string.").strict().min(10, 'synopsis must be between 10-400 characters.').max(400, 'synopsis must be between 10-400 characters.').required(),
+            chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.').required(),
+            status: yup.number("status must be a number.").min(1, 'Invalid code.').max(6, 'Invalid code.').required(),
+            scan: yup.string("scan must be a string.").strict().required(),
+            language: yup.string("language must be a string.").strict().default({ language: 'pt' }).required()
+            
+
+        })
+
+        try{
+            await schema.validate({title, genre, synopsis, chapters, status, scan, language})
+            .catch(function(e) {
+                return res.jsonBadRequest(null, "you did not give us want we want", e.errors);
+            });
+
+            valid_scan = true;
+
+            valid_language = true;
+    
+            valid_genre = true;
+    
+            if (valid_scan && valid_language && valid_genre){
+                next();
+            
+            } else{
+                return res.jsonBadRequest(null, "unregistered scan", null);
+            }
+
+        } catch(err){
+           
+        }
+              
+                        
+    },
+
+    async valid_manga_delete(req, res, next){         
+                       
+        const { manga_id } = req.query;       
+    
+        if (mongoose.Types.ObjectId.isValid(manga_id)) {   
+            if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
+                next();     
+            } else { 
+                return res.jsonBadRequest(
+                    null,
+                    "You need to provide a valid IdObject to continue this operation.",
+                    null
+                );   
+            } 
+        } else {
+            return res.jsonBadRequest(
+                null,
+                "You need to provide a valid IdObject to continue this operation.",
+                null
+            );
+        } 
+            
+        
+              
+                        
     }  
 }

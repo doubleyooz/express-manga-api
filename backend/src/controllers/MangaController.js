@@ -84,14 +84,13 @@ module.exports = {
         }
           
 
-        res.jsonOK(docs, "Page list retrieved successfully!", null);    
+        res.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, null);    
        
         
 
     },
 
     async update(req, res){
-        
 
         const { title, genre, synopsis, chapters, scan, status, language, manga_id } = req.body;
 
@@ -125,15 +124,13 @@ module.exports = {
                 if(language){
                     update.language = language;
                 }
-        
-        
                
-                    Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
-                        if (err) 
-                            return res.jsonServerError(null, null, err);
-                            
-                        return res.jsonOK(update, "Saved Sucessfully", null);
-                    });
+                Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
+                    if (err) 
+                        return res.jsonServerError(null, null, err);
+                        
+                    return res.jsonOK(update, "Saved Sucessfully", null);
+                });
         
         
             } else{
