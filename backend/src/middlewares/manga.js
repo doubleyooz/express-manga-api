@@ -46,6 +46,42 @@ module.exports = {
                         
     },
 
+    async valid_manga_index(req, res, next){
+        const { title, genre, scan } = req.query;
+        let schema = yup.object().shape({
+            title: yup.string("title must be a string.").strict(),
+            genre: yup.string("genre must be a string.").strict(),
+            scan: yup.string("scan must be a string.").strict(),
+
+        })
+
+        try{
+            await schema.validate({title, genre, scan})
+            .catch(function(e) {
+                return res.jsonBadRequest(null, "you did not give us want we want", e.errors);
+            });
+
+            if(genre)
+                valid_genre = true; //validate genre
+
+            if (scan)
+                valid_scan = true;  //validate scan        
+    
+            
+    
+            if (valid_scan && valid_genre){
+                next();
+            
+            } else{
+                return res.jsonBadRequest(null, "unregistered scan", null);
+            }
+
+        } catch(err){
+           
+        }
+       
+    },
+
     async valid_manga_delete(req, res, next){         
                        
         const { manga_id } = req.query;       
