@@ -190,7 +190,7 @@ module.exports = {
                     manga.data.forEach(function (pos, i){
                         if(pos === chapter_id){
                             index = i;
-                            break;
+                            return;
                         }
                           
                     })
