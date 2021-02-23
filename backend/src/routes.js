@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const multerConfig = require('./config/upload')
 
-const UploadController = require("./controllers/UploadController");
+const UserController = require("./controllers/UserController");
 const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
 
@@ -16,6 +16,11 @@ routes.get('/', (req, res) => {
     return res.jsonOK( null, "Hello World", null);
 
 });
+
+routes.post('/sign-up', UserController.store);
+routes.post('/sign-in', UserController.auth);
+routes.get('/user/index', UserController.index);
+routes.delete('/user/delete', UserController.delete);
 
 
 routes.post('/manga/post', MangaMiddleware.valid_manga_store, MangaController.store);

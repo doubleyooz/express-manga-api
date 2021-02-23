@@ -1,15 +1,13 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const express = require('express');
 
-import { Request, Response, NextFunction } from 'express';
+const User = require("../models/user");
 
-import User from '../models/user';
+const response = require("../common/response");
 
-import response from '../common/response';
-
-import jwt from '../common/jwt';
-
+const jwt = require("../common/jwt");
 
 
 module.exports = {
@@ -92,7 +90,7 @@ module.exports = {
 
     async delete(req, res){
     
-        const { user_id } = req;
+        const { user_id } = req.query;
         console.log(user_id)
 
         User.findOne({ _id: user_id }).then(result =>  {

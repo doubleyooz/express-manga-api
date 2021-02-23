@@ -13,11 +13,11 @@ const UserSchema = new mongoose.Schema({
         default: Date.now,
     },
 
-    stocks: [{ //a array fill with the stocks ids
+    mangas: [{ //a array fill with the mangas ids
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Stock'
+        ref: 'Manga'
     
     }],
 });
 
-export default mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema);
