@@ -1,6 +1,6 @@
-import * as mongoose from 'mongoose';
-import * as dotenv from "dotenv";
-import * as bcrypt from 'bcrypt';
+require('dotenv').config();
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 import { Request, Response, NextFunction } from 'express';
 
@@ -9,9 +9,6 @@ import User from '../models/user';
 import response from '../common/response';
 
 import jwt from '../common/jwt';
-
-dotenv.config();
-
 
 
 
