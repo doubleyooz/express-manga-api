@@ -12,15 +12,8 @@ const jwt = require("../common/jwt");
 
 module.exports = {
     async store(req, res){                              
-        const [hashType, hash] = req.headers.authorization.split(' ');
-       
-        if(hashType !== "Basic"){
-            return res.json(        
-                response.jsonUnauthorized(null, null, null)              
-            );  
-        }
-
-        const [email, password] = Buffer.from(hash, "base64").toString().split(":");
+        const {email, password } = req.body;
+             
       
         if(email && password){                       
             const salt = bcrypt.genSaltSync(10);

@@ -16,13 +16,12 @@ const rules = {
                 .required()
 }
 
-const get_body = {
-
+const credentials = {
+   
 }
 
 module.exports = {
-    async valid_sign_up(req, res, next){       
-                       
+    async valid_sign_up(req, res, next){                                   
                
         const yupObject = yup.object().shape({
             email: rules.email,
@@ -35,18 +34,27 @@ module.exports = {
                         response.jsonBadRequest(null, response.getMessage("badRequest"), err.errors)              
                     )  
                 })
-
        
     },
     
-    async valid_sign_in(req, res, next){    
+    async valid_sign_in(req, res, next){
+        
+        const [hashType, hash] = req.headers.authorization.split(' ');
+       
+        if(hashType !== "Basic"){
+            return res.json(        
+                response.jsonUnauthorized(null, null, null)              
+            );  
+        }
+    
+        const [email, password] = Buffer.from(hash, "base64").toString().split(":");
                        
         const yupObject = yup.object().shape({
             email: rules.email,
             password: rules.sign_in_password,
         });
 
-        yupObject.validate(req.body).then(() => next())
+        yupObject.validate({email: email, password: password}).then(() => next())
                  .catch((err) => {
                     return res.json(        
                         response.jsonBadRequest(null, response.getMessage("badRequest"), err.errors)              
