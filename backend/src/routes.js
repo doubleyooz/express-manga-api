@@ -25,8 +25,8 @@ routes.get('/me', AuthMiddleware.auth, (req, res) => {
 })
 */
 
-routes.post('/sign-up', UserController.store);
-routes.get('/sign-in', UserController.auth);
+routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
+routes.get('/sign-in', UserMiddleware.valid_sign_in, UserController.auth);
 routes.get('/user/index', AuthMiddleware.auth, UserController.index);
 routes.delete('/user/delete', UserController.delete);
 
