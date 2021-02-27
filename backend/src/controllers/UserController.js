@@ -108,7 +108,7 @@ module.exports = {
                 });  
         }).catch(err => {
             return res.json(        
-                response.jsonNotFound(null, "The specified user could not be found", err.message)              
+                response.jsonNotFound(null, response.getMessage("user.error.notfound"), err.message)              
             )             
         })
 

@@ -18,12 +18,12 @@ routes.get('/', (req, res) => {
 
 });
 
-/*
+
 routes.get('/me', AuthMiddleware.auth, (req, res) => {
-    res.send()
+    res.send(req.auth)
    
 })
-*/
+
 
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, UserController.auth);
