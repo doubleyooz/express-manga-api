@@ -7,7 +7,8 @@ const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
 
 const MangaMiddleware = require('./middlewares/manga');
-
+const UserMiddleware = require('./middlewares/user');
+const AuthMiddleware = require('./middlewares/auth');
 
 const routes = express.Router()
 
@@ -17,9 +18,9 @@ routes.get('/', (req, res) => {
 
 });
 
-routes.post('/sign-up', UserController.store);
+routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserController.auth);
-routes.get('/user/index', UserController.index);
+routes.get('/user/index', AuthMiddleware.auth, UserController.index);
 routes.delete('/user/delete', UserController.delete);
 
 
