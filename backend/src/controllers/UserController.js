@@ -29,7 +29,8 @@ module.exports = {
 
                 const token = jwt.generateJwt({id: p1._id});
                 const refreshToken = jwt.generateRefreshJwt({id: p1._id});
-
+                
+                result.password = undefined
                 res.json(        
                     response.jsonOK(result, response.getMessage("user.valid.sign_up.sucess"), {token, refreshToken})              
                 );                              
