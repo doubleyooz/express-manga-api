@@ -13,6 +13,7 @@ module.exports = {
                 console.log(payload)
                 const user = await User.findById(payload.id)
                 if(await User.exists({_id: payload.id} )){
+                    //req.auth = user
                     next();
                 }
                 else{ 
