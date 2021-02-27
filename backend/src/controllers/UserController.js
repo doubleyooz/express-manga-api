@@ -11,16 +11,25 @@ const jwt = require("../common/jwt");
 
 
 module.exports = {
-    async store(req, res){   
-                       
-        const { email, password } = req.body;
-    
-        if(email && password){                       
+    async store(req, res){          
+                    
+        const auth = req.headers.authorization.split(' ');
+        console.log(auth)
+        console.log(auth[0])
+        if(auth[0] !== "Basic"){
+            return res.json(        
+                response.jsonUnauthorized(null, null, null)              
+            );  
+        }
+
+        const credentials = Buffer.from(auth[1], "base64").toString().split(":");
+      
+        if(credentials[0] && credentials[1]){                       
             const salt = bcrypt.genSaltSync(10);
-            const hash = bcrypt.hashSync(password, salt);
+            const hash = bcrypt.hashSync(credentials[1], salt);
             
             const p1 = new User ({
-                email: email,
+                email: credentials[0],
                 password: hash
                 
             });
