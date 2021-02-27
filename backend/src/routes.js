@@ -18,7 +18,7 @@ routes.get('/', (req, res) => {
 });
 
 routes.post('/sign-up', UserController.store);
-routes.post('/sign-in', UserController.auth);
+routes.get('/sign-in', UserController.auth);
 routes.get('/user/index', UserController.index);
 routes.delete('/user/delete', UserController.delete);
 

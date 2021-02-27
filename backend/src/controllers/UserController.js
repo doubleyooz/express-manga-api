@@ -11,11 +11,9 @@ const jwt = require("../common/jwt");
 
 
 module.exports = {
-    async store(req, res){          
-                    
+    async store(req, res){                              
         const auth = req.headers.authorization.split(' ');
-        console.log(auth)
-        console.log(auth[0])
+       
         if(auth[0] !== "Basic"){
             return res.json(        
                 response.jsonUnauthorized(null, null, null)              
@@ -50,7 +48,7 @@ module.exports = {
                 if (err.name === 'MongoError' && err.code === 11000) {
                     //next(new Error('There was a duplicate key error'));
                     return res.json(        
-                        response.jsonBadRequest(null, "There was a duplicate key error", {err})              
+                        response.jsonBadRequest(null, response.getMessage("user.error.sign_up.duplicatekey"), {err})              
                     );  
                 
                 } else {
@@ -89,8 +87,6 @@ module.exports = {
             });     
         }
           
-        
-        
 
         console.log(docs)
         res.json(        
@@ -127,15 +123,24 @@ module.exports = {
     },
 
     async auth(req, res){
-        const { email, password } = req.body;      
 
-        const user = await User.findOne({ email: email }).select('password')
+        const auth = req.headers.authorization.split(' ');
+       
+        if(auth[0] !== "Basic"){
+            return res.json(        
+                response.jsonUnauthorized(null, null, null)              
+            );  
+        }
 
-        const match = user ? await bcrypt.compare(password, user.password) : null;
+        const credentials = Buffer.from(auth[1], "base64").toString().split(":");
+
+        const user = await User.findOne({ email: credentials[0] }).select('password')
+
+        const match = user ? await bcrypt.compare(credentials[1], user.password) : null;
         
         if(!match){
             return res.json(
-                response.jsonBadRequest(null, "Bad Request", null)
+                response.jsonBadRequest(null, response.getMessage("badRequest"), null)
             )
         } else{
             const token = jwt.generateJwt({id: user._id});
