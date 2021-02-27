@@ -16,6 +16,10 @@ const rules = {
                 .required()
 }
 
+const get_body = {
+
+}
+
 module.exports = {
     async valid_sign_up(req, res, next){       
                        
@@ -37,7 +41,6 @@ module.exports = {
     
     async valid_sign_in(req, res, next){    
                        
-               
         const yupObject = yup.object().shape({
             email: rules.email,
             password: rules.sign_in_password,

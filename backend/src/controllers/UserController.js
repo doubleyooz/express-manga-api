@@ -12,23 +12,23 @@ const jwt = require("../common/jwt");
 
 module.exports = {
     async store(req, res){                              
-        const auth = req.headers.authorization.split(' ');
+        const [hashType, hash] = req.headers.authorization.split(' ');
        
-        if(auth[0] !== "Basic"){
+        if(hashType !== "Basic"){
             return res.json(        
                 response.jsonUnauthorized(null, null, null)              
             );  
         }
 
-        const credentials = Buffer.from(auth[1], "base64").toString().split(":");
+        const [email, password] = Buffer.from(hash, "base64").toString().split(":");
       
-        if(credentials[0] && credentials[1]){                       
+        if(email && password){                       
             const salt = bcrypt.genSaltSync(10);
-            const hash = bcrypt.hashSync(credentials[1], salt);
+            const _hash = bcrypt.hashSync(password, salt);
             
             const p1 = new User ({
-                email: credentials[0],
-                password: hash
+                email: email,
+                password: _hash
                 
             });
 
@@ -124,19 +124,19 @@ module.exports = {
 
     async auth(req, res){
 
-        const auth = req.headers.authorization.split(' ');
+        const [hashType, hash] = req.headers.authorization.split(' ');
        
-        if(auth[0] !== "Basic"){
+        if(hashType !== "Basic"){
             return res.json(        
                 response.jsonUnauthorized(null, null, null)              
             );  
         }
 
-        const credentials = Buffer.from(auth[1], "base64").toString().split(":");
+        const [email, password] = Buffer.from(hash, "base64").toString().split(":");
 
-        const user = await User.findOne({ email: credentials[0] }).select('password')
+        const user = await User.findOne({ email: email }).select('password')
 
-        const match = user ? await bcrypt.compare(credentials[1], user.password) : null;
+        const match = user ? await bcrypt.compare(password, user.password) : null;
         
         if(!match){
             return res.json(

@@ -18,32 +18,32 @@ routes.get('/', (req, res) => {
 
 });
 
-routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
+routes.post('/sign-up', UserController.store);
 routes.get('/sign-in', UserController.auth);
 routes.get('/user/index', AuthMiddleware.auth, UserController.index);
 routes.delete('/user/delete', UserController.delete);
 
 
-routes.post('/manga/post', MangaMiddleware.valid_manga_store, MangaController.store);
+routes.post('/manga/post', AuthMiddleware.auth, MangaMiddleware.valid_manga_store, MangaController.store);
 
-routes.get('/manga/index', MangaController.index);
+routes.get('/manga/index', AuthMiddleware.auth, MangaController.index);
 
-routes.put('/manga/update', MangaController.update);
+routes.put('/manga/update', AuthMiddleware.auth, MangaController.update);
 
-routes.delete('/manga/delete', MangaMiddleware.valid_manga_delete, MangaController.delete);
+routes.delete('/manga/delete', AuthMiddleware.auth, MangaMiddleware.valid_manga_delete, MangaController.delete);
 
 
 
-routes.post('/chapter/post', multer(multerConfig).array('imgCollection'), ChapterController.store);
+routes.post('/chapter/post', AuthMiddleware.auth, multer(multerConfig).array('imgCollection'), ChapterController.store);
 
-routes.get('/chapter/index', (req, res) => {
+routes.get('/chapter/index', AuthMiddleware.auth, (req, res) => {
     ChapterController.index();
    
 })
 
-routes.put('/chapter/update',  ChapterController.update);
+routes.put('/chapter/update', AuthMiddleware.auth, ChapterController.update);
 
-routes.delete('/chapter/delete', ChapterController.delete);
+routes.delete('/chapter/delete', AuthMiddleware.auth, ChapterController.delete);
 
 /*
 routes.post('/sessions', function(req, res){
