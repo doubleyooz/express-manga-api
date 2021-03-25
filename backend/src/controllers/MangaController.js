@@ -61,24 +61,28 @@ module.exports = {
 
         if (title){
             (await Manga.find( {title: {$regex: title, $options: "i"} } )).forEach(function (doc){
+                doc.user = undefined
                 docs.push(doc)
             });
         }
 
         else if (genre){
             (await Manga.find({genre: genre})).forEach(function (doc){
+                doc.user = undefined
                 docs.push(doc)
             });
         }
 
         else if(scan){
             (await Manga.find({scan: /scan/})).forEach(function (doc){
+                doc.user = undefined
                 docs.push(doc)
             });
         }
 
         else{
             (await Manga.find()).forEach(function (doc){
+                doc.user = undefined
                 docs.push(doc)
             });     
         }
@@ -164,7 +168,7 @@ module.exports = {
 
             }))   
 
-            return res.jsonOK( ({mangas, chapters}), null, null);
+            return res.jsonOK(([{"mangas": mangas.deletedCount}, chapters]), null, null);
         }        
     }
 }
