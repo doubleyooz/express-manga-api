@@ -33,7 +33,7 @@ const ChapterSchema = new mongoose.Schema({
             filename: "none",        
             url: "none", 
         }]
-    } ,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

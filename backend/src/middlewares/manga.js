@@ -23,7 +23,7 @@ module.exports = {
         try{
             await schema.validate({title, genre, synopsis, chapters, status, scan, language})
             .catch(function(e) {
-                return res.jsonBadRequest(null, "you did not give us want we want", e.errors);
+                return res.jsonBadRequest(null, "you did not give us want we want", e);
             });
 
             valid_scan = true;

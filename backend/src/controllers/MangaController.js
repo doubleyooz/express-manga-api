@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
-
+const CryptoJs = require("crypto-js");
 
 
 const Chapter = require('../models/Chapter');
@@ -13,12 +13,11 @@ const ChapterController = require('./ChapterController');
 
    
 module.exports = {
-    async store(req, res){       
+    async store(req, res){ 
         const {title, genre, synopsis, chapters, scan, status, language } = req.body;
         
-        const doesMangaExist = await Manga.exists({ title: title, genre: genre }); 
-        
-        
+        const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
+       
         if(doesMangaExist){
             return res.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", null);
             
@@ -35,7 +34,8 @@ module.exports = {
                 language: language, 
                 data: [ //a array fill with the data links
                             
-                ]
+                ],
+                user: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
                 //comments?
 
             });

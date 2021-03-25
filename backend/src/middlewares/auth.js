@@ -1,3 +1,4 @@
+require('dotenv').config();
 const jwt = require('../common/jwt');
 const response = require('../common/response');
 const User = require("../models/user");
@@ -10,11 +11,19 @@ module.exports = {
             
             try{
                 const payload = await jwt.verifyJwt(token);
-                console.log(payload)
-                const user = await User.findById(payload.id)
-                if(await User.exists({_id: payload.id} )){
-                    req.auth = user
-                    next();
+                                
+                if(await User.exists({_id: payload.id})){    
+                    try{                                
+                        req.auth = require("crypto-js").AES.encrypt(payload.id, `${process.env.SHUFFLE_SECRET}`);
+                        next();
+
+                    }   catch(err){
+                        console.log(err)
+                        return res.json(
+                            response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
+                        )
+                    }           
+                 
                 }
                 else{ 
                     return res.json( 
