@@ -61,32 +61,33 @@ module.exports = {
 
         if (title){
             (await Manga.find( {title: {$regex: title, $options: "i"} } )).forEach(function (doc){
-                doc.user = undefined
                 docs.push(doc)
             });
         }
 
         else if (genre){
             (await Manga.find({genre: genre})).forEach(function (doc){
-                doc.user = undefined
                 docs.push(doc)
             });
         }
 
         else if(scan){
             (await Manga.find({scan: /scan/})).forEach(function (doc){
-                doc.user = undefined
                 docs.push(doc)
             });
         }
 
         else{
             (await Manga.find()).forEach(function (doc){
-                doc.user = undefined
                 docs.push(doc)
             });     
         }
           
+        
+        docs.forEach(function(doc){
+            doc.user = undefined
+
+        });
 
         res.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, null);    
        
@@ -145,31 +146,35 @@ module.exports = {
     },
 
     async delete(req, res){
+        const { manga_id } = req.query;             
+        const manga = await Manga.findById(manga_id);
 
-        const { manga_id } = req.query;     
-        const mangas = await Manga.deleteMany({ _id: manga_id });            
-       
-        if (mangas.n === 0 ){
-            return res.jsonNotFound(mangas, "Manga not found", {removed: false});
-           
-        } else{
+        if(manga){
             
+            if(manga.user.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
 
-            (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
-                doc.imgCollection.forEach(function (page){
-                    
-                    fs.unlinkSync('uploads/' + page.filename)  
-                })
-               
-                
-            });
+                const mangas = await Manga.deleteMany({ _id: manga_id });        
 
-            const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err, result){
-
-            }))   
-
-            return res.jsonOK(([{"mangas": mangas.deletedCount}, chapters]), null, null);
-        }        
+                if (mangas.n === 0 ){
+                    return res.jsonNotFound(mangas, "Manga not found", {removed: false});
+                   
+                } else{                   
+                    (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
+                        doc.imgCollection.forEach(function (page){                            
+                            fs.unlinkSync('uploads/' + page.filename)  
+                        })                      
+                    });
+        
+                    const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err, result){
+        
+                    }))   
+        
+                    return res.jsonOK(([{"mangas": mangas.deletedCount}, chapters]), null, {removed: true});
+                }        
+            } else{
+                return res.jsonUnauthorized(null, null, null)
+            }
+        }    
     }
 }
 
