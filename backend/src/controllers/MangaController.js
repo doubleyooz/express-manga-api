@@ -103,45 +103,53 @@ module.exports = {
             res.jsonServerError(null, "manga_id undefined", null)
            
         } else{
-            const doesMangaExist = await Manga.exists({ _id: manga_id }); 
-        
-            if(doesMangaExist){
-                let update = {};
+            const manga = await Manga.findById(manga_id);
+
+            if(manga){
+                if(manga.user.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
+                    let update = {};
     
-                if(title){
-                    update.title = title;
+                    if(title){
+                        update.title = title;
+                    }
+                    if(genre){
+                        update.genre = genre;
+                    }
+                    if(synopsis){
+                        update.synopsis = synopsis;
+                    }
+                    if(chapters){
+                        update.chapters = chapters;
+                    }
+                    if(scan){
+                        update.scan = scan;
+                    }
+                    if(status){
+                        update.status = status;
+                    }
+                    if(language){
+                        update.language = language;
+                    }
+                   
+                    Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
+                        if (err) 
+                            return res.jsonServerError(null, null, err);
+                            
+                        return res.jsonOK(update, "Saved Sucessfully", null);
+                    });
+            
+            
+            
+                } else{
+                    return res.jsonUnauthorized(null, null, null);
                 }
-                if(genre){
-                    update.genre = genre;
-                }
-                if(synopsis){
-                    update.synopsis = synopsis;
-                }
-                if(chapters){
-                    update.chapters = chapters;
-                }
-                if(scan){
-                    update.scan = scan;
-                }
-                if(status){
-                    update.status = status;
-                }
-                if(language){
-                    update.language = language;
-                }
-               
-                Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
-                    if (err) 
-                        return res.jsonServerError(null, null, err);
-                        
-                    return res.jsonOK(update, "Saved Sucessfully", null);
-                });
-        
-        
+    
             } else{
                 res.jsonServerError(null, "manga required doesnt exists", null)
                
-            }                  
+            }    
+            
+                      
         }     
     },
 
