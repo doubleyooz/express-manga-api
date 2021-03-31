@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-
+const nodemailer = require("nodemailer");
 
 const User = require("../models/user");
 
@@ -15,7 +15,7 @@ module.exports = {
         const {email, password } = req.body;
              
       
-        if(email && password){                       
+        if(email && password){                    
             const salt = bcrypt.genSaltSync(10);
             const _hash = bcrypt.hashSync(password, salt);
             
@@ -25,15 +25,54 @@ module.exports = {
                 
             });
 
-            p1.save().then(result => {
-
-                const token = jwt.generateJwt({id: p1._id});
-                const refreshToken = jwt.generateRefreshJwt({id: p1._id});
+            p1.save().then(result => {    
+                result.password = undefined              
+                const activationToken = jwt.generateAccActivationJwt({id: require("crypto-js").AES.encrypt(p1._id, `${process.env.SHUFFLE_SECRET}`)});
+                       
+                // async..await is not allowed in global scope, must use a wrapper
+                // Generate test SMTP service account from ethereal.email
+                           
+            
+                // create reusable transporter object using the default SMTP transport
+                let transporter = nodemailer.createTransport({
+                    service: "protonmail",
+                    host: "smtp.ethereal.email",
+                    port: 587,
+                    secure: false, // true for 465, false for other ports
+                    auth: {
+                        user: `${process.env.EMAIL_USER}`, // generated ethereal user
+                        pass: `${process.env.EMAIL_PASSWORD}`, // generated ethereal password
+                    },
+                });           
+            
+                // send mail with defined transport object
+                transporter.sendMail({
+                    from: response.getMessage("user.activation.account"), // sender address
+                    to: email, // list of receivers
+                    subject: response.getMessage("user.activation.account.subject"), // Subject line
+                    html: `
+                    <h2>${response.getMessage("user.activation.account.text")}</h2>
+                    <p>${process.env.CLIENT_URL}/authentication/activate/${activationToken}</p>
+                    
+                    `
+                }).then(info => {
+                    console.log("Message sent: %s", info.messageId);
+                    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
                 
-                result.password = undefined
-                res.json(        
-                    response.jsonOK(result, response.getMessage("user.valid.sign_up.sucess"), {token, refreshToken})              
-                );                              
+                    // Preview only available when sending through an Ethereal account
+                    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+                    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+
+                    main().catch(console.error);
+                    return res.json(        
+                        response.jsonOK(result, response.getMessage("user.activation.account.activate"), null)              
+                    );                       
+                }).catch(err => {
+                    return res.json(        
+                        response.jsonBadRequest(null, response.getMessage("user.error.sign_up.duplicatekey"), {err})              
+                    );  
+                })           
+                            
 
             }).catch(err => {
                 
@@ -47,12 +86,9 @@ module.exports = {
                 } else {
                     return res.json(        
                         response.jsonBadRequest(null, null, {err})              
-                    );  
-                
-                }       
-                    
-            });     
-        
+                    );                  
+                }                           
+            });                       
         } 
         else{
             return res.json(        
@@ -115,37 +151,4 @@ module.exports = {
              
     },
 
-    async auth(req, res){
-
-        const [hashType, hash] = req.headers.authorization.split(' ');
-       
-        if(hashType !== "Basic"){
-            return res.json(        
-                response.jsonUnauthorized(null, null, null)              
-            );  
-        }
-
-        const [email, password] = Buffer.from(hash, "base64").toString().split(":");
-
-        const user = await User.findOne({ email: email }).select('password')
-
-        const match = user ? await bcrypt.compare(password, user.password) : null;
-        
-        if(!match){
-            return res.json(
-                response.jsonBadRequest(null, response.getMessage("badRequest"), null)
-            )
-        } else{
-            const token = jwt.generateJwt({id: user._id});
-            const refreshToken = jwt.generateRefreshJwt({id: user._id});
-           
-            user.password = undefined;
-            return res.json(
-                response.jsonOK(user, response.getMessage("user.valid.sign_in.sucess"), {token, refreshToken})
-            )
-        }
-
-           
-        
-    }
 }

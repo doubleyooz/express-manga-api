@@ -8,7 +8,6 @@ const cors = require('cors');
 const app = express();
 const server = require('http').Server(app);
 
-const response = require("./middlewares/response");
 //const io = require('socket.io')(server);
 
 mongoose.connect(
@@ -18,7 +17,7 @@ useUnifiedTopology: true,
 useFindAndModify: false
 });
 
-app.use(response);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/files', express.static('uploads'));
