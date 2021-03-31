@@ -19,7 +19,9 @@ module.exports = {
         const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
        
         if(doesMangaExist){
-            return res.json(response.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", null));
+            return res.json(
+                response.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", null)
+            );
 
         } else{
             

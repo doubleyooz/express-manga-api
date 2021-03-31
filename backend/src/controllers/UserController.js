@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const nodemailer = require("nodemailer");
+const ProtonMail = require('protonmail-api');
 
 const User = require("../models/user");
 
@@ -27,50 +27,39 @@ module.exports = {
 
             p1.save().then(result => {    
                 result.password = undefined   
-                console.log("aqui - 1")           
-                const activationToken = jwt.generateAccActivationJwt({id: require("crypto-js").AES.encrypt(p1._id, `${process.env.SHUFFLE_SECRET}`)});
+                 
+                const activationToken = jwt.generateAccActivationJwt({id: require("crypto-js").AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString()});
                        
                 // async..await is not allowed in global scope, must use a wrapper
                 // Generate test SMTP service account from ethereal.email
-                console.log("aqui - 2")
-            
-                // create reusable transporter object using the default SMTP transport
-                let transporter = nodemailer.createTransport({
-                    service: "protonmail",
-                    host: "smtp.ethereal.email",
-                    port: 587,
-                    secure: false, // true for 465, false for other ports
-                    auth: {
-                        user: `${process.env.EMAIL_USER}`, // generated ethereal user
-                        pass: `${process.env.EMAIL_PASSWORD}`, // generated ethereal password
-                    },
-                });           
-            
-                // send mail with defined transport object
-                transporter.sendMail({
-                    from: response.getMessage("user.activation.account"), // sender address
-                    to: email, // list of receivers
-                    subject: response.getMessage("user.activation.account.subject"), // Subject line
-                    html: `
-                    <h2>${response.getMessage("user.activation.account.text")}</h2>
-                    <p>${process.env.CLIENT_URL}/authentication/activate/${activationToken}</p>
-                    
-                    `
-                }).then(info => {
-                    console.log("Message sent: %s", info.messageId);
-                    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-                
-                    // Preview only available when sending through an Ethereal account
-                    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-                    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+             
 
-                    main().catch(console.error);
+                (async () => {
+                  console.log("aqui - 0")
+                  const pm = await ProtonMail.connect({
+                    username: `${process.env.EMAIL_USER}`,
+                    password: `${process.env.EMAIL_PASSWORD}`
+                  })
+                  console.log("aqui - 1")
+                  await pm.sendEmail({
+                    to: email,
+                    subject: response.getMessage("user.activation.account.subject"),
+                    body: `
+                        <h2>${response.getMessage("user.activation.account.text")}</h2>
+                        <p>${process.env.CLIENT_URL}/authentication/activate/${activationToken}</p>
+                        
+                    `
+                  })
+                  console.log("aqui - 2")
+                  pm.close()
+                })().then(info => {
+                   
                     return res.json(        
                         response.jsonOK(result, response.getMessage("user.activation.account.activate"), null)              
                     );                       
                 }).catch(err => {
                     return res.json(        
-                        response.jsonBadRequest(null, response.getMessage("user.error.sign_up.duplicatekey"), {err})              
+                        response.jsonBadRequest(null, response.getMessage("badRequest"), {err})              
                     );  
                 })           
                             
