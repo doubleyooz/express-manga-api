@@ -50,7 +50,9 @@ module.exports = {
         if(token){
             jwt.verifyAccActivationJwt(token, `${process.env.JWT_ACC_ACTIVATE_TOKEN_PRIVATE_KEY}`, function(err, decodedToken){
                 if(err){
-
+                    return res.json(
+                        response.jsonBadRequest(err, response.getMessage("badRequest"), null)
+                    )
                 } else{
                     console.log("DecodedToken: " + decodedToken)
                     const supposed_id = CryptoJs.AES.decrypt(decodedToken, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
@@ -63,10 +65,8 @@ module.exports = {
                         return res.json(
                             response.jsonBadRequest(err, response.getMessage("badRequest"), null)
                         )
-                    });       
-                   
+                    });                          
                 }
-
             });
           
 

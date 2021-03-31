@@ -26,12 +26,13 @@ module.exports = {
             });
 
             p1.save().then(result => {    
-                result.password = undefined              
+                result.password = undefined   
+                console.log("aqui - 1")           
                 const activationToken = jwt.generateAccActivationJwt({id: require("crypto-js").AES.encrypt(p1._id, `${process.env.SHUFFLE_SECRET}`)});
                        
                 // async..await is not allowed in global scope, must use a wrapper
                 // Generate test SMTP service account from ethereal.email
-                           
+                console.log("aqui - 2")
             
                 // create reusable transporter object using the default SMTP transport
                 let transporter = nodemailer.createTransport({

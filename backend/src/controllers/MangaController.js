@@ -4,14 +4,14 @@ const multer = require('multer');
 const fs = require('fs');
 const CryptoJs = require("crypto-js");
 
-
+const response = require("../common/response");
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 const { update } = require('../models/Chapter');
 const ChapterController = require('./ChapterController');
 
 
-   
+  
 module.exports = {
     async store(req, res){ 
         const {title, genre, synopsis, chapters, scan, status, language } = req.body;
@@ -19,8 +19,7 @@ module.exports = {
         const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
        
         if(doesMangaExist){
-            return res.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", null);
-            
+            return res.json(response.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", null));
 
         } else{
             
@@ -40,15 +39,19 @@ module.exports = {
 
             });
             
-            manga.save().then(result => {      
-                res.jsonOK(result, "Manga added!", null);             
+            manga.save().then(result => {   
+                return res.json(
+                    response.jsonOK(result, "Manga added!", null)
+                )   
+                     
                 
             
             
             }).catch(err => {
-                console.log(err),
-                res.jsonServerError(null, null, err)
-                    
+                console.log(err)
+                return res.json(
+                    response.jsonServerError(null, null, err)
+                )
             });
         }        
     },
@@ -88,10 +91,9 @@ module.exports = {
             doc.user = undefined
 
         });
-
-        res.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, null);    
-       
-        
+        return res.json(
+            response.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, null)
+        )           
 
     },
 
@@ -100,8 +102,9 @@ module.exports = {
         const { title, genre, synopsis, chapters, scan, status, language, manga_id } = req.body;
 
         if(!manga_id){           
-            res.jsonServerError(null, "manga_id undefined", null)
-           
+            return res.json(
+                response.jsonServerError(null, "manga_id undefined", null)
+            )
         } else{
             const manga = await Manga.findById(manga_id);
 
@@ -133,19 +136,19 @@ module.exports = {
                    
                     Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
                         if (err) 
-                            return res.jsonServerError(null, null, err);
+                            return res.json(response.jsonServerError(null, null, err))
                             
-                        return res.jsonOK(update, "Saved Sucessfully", null);
+                        return res.json(response.jsonOK(update, "Saved Sucessfully", null))
                     });
             
             
             
                 } else{
-                    return res.jsonUnauthorized(null, null, null);
+                    return res.json(response.jsonUnauthorized(null, null, null));
                 }
     
             } else{
-                res.jsonServerError(null, "manga required doesnt exists", null)
+                return res.json(response.jsonServerError(null, "manga required doesnt exists", null))
                
             }    
             
@@ -177,10 +180,10 @@ module.exports = {
         
                     }))   
         
-                    return res.jsonOK(([{"mangas": mangas.deletedCount}, chapters]), null, {removed: true});
+                    return res.json(response.jsonOK(([{"mangas": mangas.deletedCount}, chapters]), null, {removed: true}));
                 }        
             } else{
-                return res.jsonUnauthorized(null, null, null)
+                return res.json(response.jsonUnauthorized(null, null, null))
             }
         }    
     }

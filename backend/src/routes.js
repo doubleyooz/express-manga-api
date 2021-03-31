@@ -10,12 +10,12 @@ const AuthController = require('./controllers/AuthController');
 const MangaMiddleware = require('./middlewares/manga');
 const UserMiddleware = require('./middlewares/user');
 const AuthMiddleware = require('./middlewares/auth');
-
+const response = require("./common/response");
 const routes = express.Router()
 
 
 routes.get('/', (req, res) => {
-    return res.jsonOK( null, "Hello World", null);
+    return res.json(response.jsonOK( null, "Hello World", null));
 
 });
 
