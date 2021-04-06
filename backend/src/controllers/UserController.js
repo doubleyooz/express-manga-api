@@ -1,14 +1,17 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const ProtonMail = require('protonmail-api');
-
 const User = require("../models/user");
 
-const response = require("../common/response");
+const nodemailer = require('nodemailer')
+const ProtonMail = require('protonmail-api');
+//const smtpTransport = require('nodemailer-smtp-transport');
 
+const response = require("../common/response");
 const jwt = require("../common/jwt");
 
+
+const Protonmail = false;
 
 module.exports = {
     async store(req, res){                              
@@ -35,26 +38,72 @@ module.exports = {
              
 
                 (async () => {
-                  console.log("aqui - 0")
-                  const pm = await ProtonMail.connect({
-                    username: `${process.env.EMAIL_USER}`,
-                    password: `${process.env.EMAIL_PASSWORD}`
-                  })
-                  console.log("aqui - 1")
-                  await pm.sendEmail({
-                    to: email,
-                    subject: response.getMessage("user.activation.account.subject"),
-                    body: `
-                        <h2>${response.getMessage("user.activation.account.text")}</h2>
-                        <p>${process.env.CLIENT_URL}/authentication/activate/${activationToken}</p>
-                        
-                    `
-                  })
-                  console.log("aqui - 2")
-                  pm.close()
-                })().then(info => {
+
+                  if(Protonmail){
+                    console.log("aqui - 0")
+                    const pm = await ProtonMail.connect({
+                      username: `${process.env.EMAIL_USER}`,
+                      password: `${process.env.EMAIL_PASSWORD}`
+                    })
+                    console.log("aqui - 1")
+                    await pm.sendEmail({
+                      to: email,
+                      subject: response.getMessage("user.activation.account.subject"),
+                      body: `
+                          <h2>${response.getMessage("user.activation.account.text")}</h2>
+                          <p>${process.env.CLIENT_URL}/authentication/activate/${activationToken}</p>
+                          
+                      `
+                    })
+                    console.log("aqui - 2")
+                    pm.close()
+                  } else{
+                    
+                    // create reusable transporter object using the default SMTP transport
+                    let transporter = nodemailer.createTransport({
+                      service: "gmail",                     
+                      auth: {
+                        user:  `${process.env.GMAIL_USER}`, // generated ethereal user
+                        pass: `${process.env.GMAIL_PASSWORD}` // generated ethereal password
+                      },
+                                           
                    
-                    return res.json(        
+                      tls: {
+                        rejectUnauthorized: false
+                    }
+                
+                    });
+                  
+                    const mailOptions = {
+                        from: `${process.env.GMAIL_USER}`, // sender address
+                        to: email, // receiver (use array of string for a list)
+                        subject: response.getMessage("user.activation.account.subject"), // Subject line
+                        html: `
+                            <h2>${response.getMessage("user.activation.account.text")}</h2>
+                            <a href="${process.env.CLIENT_URL}/authentication/activate/${activationToken}">
+                            Activate your account                               
+                            <a/>
+                           
+                        `// plain text body
+                      };
+                    
+                    transporter.sendMail(mailOptions, (err, info) => {
+                    if(err)
+                        console.log(err)
+                    else
+                        console.log(info);
+                    });
+                
+                  
+                  
+                  }
+                  
+                  
+                  
+                  
+                })().then(info => {
+                    console.log(response.getMessage("user.activation.account.activate"))
+                    return res.json(                                
                         response.jsonOK(result, response.getMessage("user.activation.account.activate"), null)              
                     );                       
                 }).catch(err => {

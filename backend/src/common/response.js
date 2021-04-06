@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const messages = fs.readFileSync(__dirname + '/message.json');
+const messages = JSON.parse(fs.readFileSync(__dirname + '/message.json'));
 
 const STATUS_CODE_OK = 200;
 const STATUS_CODE_BAD_REQUEST = 400;

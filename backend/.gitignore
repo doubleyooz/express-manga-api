@@ -5,11 +5,12 @@
 /node_modules
 /.pnp
 .pnp.js
-.vscode/*
+.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+yarn.lock
 
 # testing
 /coverage

@@ -1,13 +1,41 @@
-import React from 'react';
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-export default function Horizontal(){
+import { NavBtn, Logo, HorizontalNavBar, Options } from './styles.js';
 
 
-    return <>
-      <Link to="/reader">
-        <p>Leitor</p>
-        </Link>
+
+export default function Menu(){
+    const [currentNav, setCurrentNav] = useState("");  
+   
+   
+
+    return (
+        
+        <HorizontalNavBar className="horizontal_navbar">           
+            <Options>
+                <Link to='/'>
+                    <Logo/>            
+                </Link> 
+
+                <Link to='/' >
+                    <NavBtn isActive={currentNav === "a"} onClick={() => setCurrentNav('a')}>
+                        HOME
+                    </NavBtn>
+                </Link> 
+
+                <Link to='/reader'>
+                    <NavBtn isActive={currentNav === "b"} onClick={() => setCurrentNav('b')}>
+                      READER
+                    </NavBtn>                       
+                </Link> 
+
+                
+               
+            </Options>           
+           
+        </HorizontalNavBar>       
        
-    </>
-}
+        
+    )
+};

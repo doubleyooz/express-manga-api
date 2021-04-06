@@ -1,6 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const CryptoJs = require("crypto-js")
 
 const User = require("../models/user");
 
@@ -45,29 +46,44 @@ module.exports = {
     },
 
     async activateAccount(req, res){
-        const {token} = req.body;
-
+        const token = req.params.tky;
+        console.log("got here")
         if(token){
-            jwt.verifyAccActivationJwt(token, `${process.env.JWT_ACC_ACTIVATE_TOKEN_PRIVATE_KEY}`, function(err, decodedToken){
-                if(err){
-                    return res.json(
-                        response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                    )
-                } else{
-                    console.log("DecodedToken: " + decodedToken)
-                    const supposed_id = CryptoJs.AES.decrypt(decodedToken, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
+            console.log("token exists")
+            const decodedToken = await jwt.verifyAccActivationJwt(token, `${process.env.JWT_ACC_ACTIVATE_TOKEN_PRIVATE_KEY}`)
+            
+                if(decodedToken){
+                    console.log("DecodedToken: " + decodedToken.id)
+                    const supposed_id = CryptoJs.AES.decrypt(decodedToken.id, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
                     User.findById(supposed_id).then(user => {
                         user.active = true;
-                            return res.json(
-                                response.jsonOK(user, response.getMessage("user.valid.sign_up.sucess"), null)
-                            );
+                        user.save().then(savedDoc => {
+                            if(savedDoc === user){
+                                return res.json(
+                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.sucess"), null)
+                                );   
+                            } else{
+                                return res.json(
+                                    response.jsonServerError(user, null, null)
+                                );  
+                            }
+                                                 
+                          
+                          });
+                       
+                           
                     }).catch(err => {
                         return res.json(
                             response.jsonBadRequest(err, response.getMessage("badRequest"), null)
                         )
                     });                          
+                } else{
+                    console.log("aqui - 0")
+                    return res.json(
+                        response.jsonBadRequest(err, response.getMessage("badRequest"), null)
+                    )
                 }
-            });
+            ;
           
 
         } else{
