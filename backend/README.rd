@@ -1,0 +1,1 @@
+The routes forget password and activate account must be change to a post and put request respectively

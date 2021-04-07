@@ -26,6 +26,8 @@ routes.get('/me', AuthMiddleware.auth, (req, res) => {
 })
 
 routes.get("/authentication/activate/:tky", AuthController.activateAccount);
+routes.get("/authentication/recover/:tky", AuthController.recoverPassword);
+
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
 routes.get('/user/index', AuthMiddleware.auth, UserController.index);
