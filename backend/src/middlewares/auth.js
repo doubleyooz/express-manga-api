@@ -10,13 +10,13 @@ module.exports = {
             const [, token] = req.headers.authorization.split(" ")
             
             try{
-                const payload = await jwt.verifyJwt(token);
+                const payload = await jwt.verifyJwt(token, 1);
                                 
-                if(await User.exists({_id: payload.id})){    
+                if(await User.exists({_id: payload.id, active: true})){    
                     try{                                
                         req.auth = require("crypto-js").AES.encrypt(payload.id, `${process.env.SHUFFLE_SECRET}`);
                         next();
-
+                        
                     }   catch(err){
                         console.log(err)
                         return res.json(

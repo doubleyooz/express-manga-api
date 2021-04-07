@@ -20,26 +20,29 @@ module.exports = {
                 response.jsonUnauthorized(null, null, null)              
             );  
         }
-
+      
         const [email, password] = Buffer.from(hash, "base64").toString().split(":");
 
-        const user = await User.findOne({ email: email }).select('password')
-
+        const user = await User.findOne({ email: email, active: true }).select('password')
+    
+    
         const match = user ? await bcrypt.compare(password, user.password) : null;
-        
+        console.log("2")
         if(!match){
             return res.json(
                 response.jsonBadRequest(null, response.getMessage("badRequest"), null)
             )
         } else{
-            const token = jwt.generateJwt({id: user._id});
-            const refreshToken = jwt.generateRefreshJwt({id: user._id});
-           
+            const token = jwt.generateJwt({id: user._id}, 1);
+            const refreshToken = jwt.generateJwt({id: user._id}, 2);
+            
             user.password = undefined;
             return res.json(
                 response.jsonOK(user, response.getMessage("user.valid.sign_in.sucess"), {token, refreshToken})
             )
         }
+    
+        
 
       
         
@@ -50,7 +53,7 @@ module.exports = {
         console.log("got here")
         if(token){
             console.log("token exists")
-            const decodedToken = await jwt.verifyAccActivationJwt(token, `${process.env.JWT_ACC_ACTIVATE_TOKEN_PRIVATE_KEY}`)
+            const decodedToken = await jwt.verifyJwt(token, 3)
             
                 if(decodedToken){
                     console.log("DecodedToken: " + decodedToken.id)

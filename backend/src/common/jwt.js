@@ -10,27 +10,35 @@ const refreshOptions = { expiresIn: '12 hours' };
 
 
 module.exports = {
-    generateJwt(payload) {
-        return jwt.sign(payload, tokenPrivateKey, options);
-    },
-    
-    verifyJwt (token)  {
-        return jwt.verify(token, tokenPrivateKey )
-    },
+    generateJwt(payload, num) {
+        switch (num){
+            case 1:
+                return jwt.sign(payload, tokenPrivateKey, options);
+            case 2:
+                return jwt.sign(payload, refreshTokenPrivateKey, refreshOptions);
+            case 3:
+                return jwt.sign(payload, accActivatePrivateKey, options);
+           
+            default:
+                return null;
+        }
         
-    generateRefreshJwt (payload) {
-        return jwt.sign(payload, refreshTokenPrivateKey, options);
+     
     },
     
-    verifyRefreshJwt (token) {
-        return jwt.verify(token, refreshTokenPrivateKey)
-    },
-
-    generateAccActivationJwt(payload) {
-        return jwt.sign(payload, accActivatePrivateKey, options);
+    verifyJwt (token, num)  {
+        switch (num){
+            case 1:
+                return jwt.verify(token, tokenPrivateKey);
+            case 2:
+                return jwt.verify(token, refreshTokenPrivateKey);
+            case 3:
+                return jwt.verify(token, accActivatePrivateKey);
+           
+            default:
+                return null;
+        }
+       
     },
     
-    verifyAccActivationJwt (token)  {
-        return jwt.verify(token, accActivatePrivateKey)
-    },
 }

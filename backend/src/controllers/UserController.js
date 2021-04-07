@@ -31,7 +31,7 @@ module.exports = {
             p1.save().then(result => {    
                 result.password = undefined   
                  
-                const activationToken = jwt.generateAccActivationJwt({id: require("crypto-js").AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString()});
+                const activationToken = jwt.generateJwt({id: require("crypto-js").AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString()}, 3);
                        
                 // async..await is not allowed in global scope, must use a wrapper
                 // Generate test SMTP service account from ethereal.email
