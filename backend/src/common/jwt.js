@@ -1,10 +1,10 @@
 require('dotenv').config();
 const jwt = require("jsonwebtoken");
 
-const tokenPrivateKey = `${process.env.JWT_TOKEN_PRIVATE_KEY}`;
-const refreshTokenPrivateKey =  `${process.env.JWT_REFRESH_TOKEN_PRIVATE_KEY}`;
-const accActivatePrivateKey = `${process.env.JWT_ACC_ACTIVATE_TOKEN_PRIVATE_KEY}`;
-const recoverPassPrivateKey = `${process.env.JWT_RECOVER_PASS_TOKEN_PRIVATE_KEY}`;
+const tokenPrivateKey = `${process.env.JWT_ID}`;
+const refreshTokenPrivateKey =  `${process.env.JWT_REFRESH_ID}`;
+const accActivatePrivateKey = `${process.env.JWT_ACTIVATE_ACCESS}`;
+const recoverPassPrivateKey = `${process.env.JWT_RECOVER_ACCESS}`;
 
 const options = { expiresIn: '120 minutes' };
 const refreshOptions = { expiresIn: '12 hours' };

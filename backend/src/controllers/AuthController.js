@@ -96,6 +96,15 @@ module.exports = {
         }
     },
     //working on
+    async changeEmail(req, res){
+        const token = req.params.tky;
+
+        if(token){
+
+        }
+    },
+
+    //working on
     async recoverPassword(req, res){
         const token = req.params.tky;
         

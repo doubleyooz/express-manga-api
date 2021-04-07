@@ -31,6 +31,7 @@ routes.get("/authentication/recover/:tky", AuthController.recoverPassword);// PU
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
 routes.get('/user/index', AuthMiddleware.auth, UserController.index);
+routes.put('/user/update', UserController.update)
 routes.delete('/user/delete', UserController.delete);
 
 
