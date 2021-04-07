@@ -72,7 +72,7 @@ module.exports = {
                             }
                                                  
                           
-                          });
+                        });
                        
                            
                     }).catch(err => {
@@ -81,7 +81,7 @@ module.exports = {
                         )
                     });                          
                 } else{
-                    console.log("aqui - 0")
+                  
                     return res.json(
                         response.jsonBadRequest(err, response.getMessage("badRequest"), null)
                     )
@@ -95,19 +95,19 @@ module.exports = {
             )
         }
     },
-
+    //working on
     async recoverPassword(req, res){
         const token = req.params.tky;
-        console.log("got here")
+        
         if(token){
             console.log("token exists")
-            const decodedToken = await jwt.verifyJwt(token, 3)
+            const decodedToken = await jwt.verifyJwt(token, 4)
             
                 if(decodedToken){
                     console.log("DecodedToken: " + decodedToken.id)
                     const supposed_id = CryptoJs.AES.decrypt(decodedToken.id, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
                     User.findById(supposed_id).then(user => {
-                        user.active = true;
+                       
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
                                 return res.json(

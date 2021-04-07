@@ -70,7 +70,7 @@ module.exports = {
                    
                       tls: {
                         rejectUnauthorized: false
-                    }
+                      }
                 
                     });
                   
@@ -160,6 +160,90 @@ module.exports = {
         res.json(        
             response.jsonOK(docs, `Page list retrieved successfully! Users found: ${docs.length}`, null)              
         );
+    },
+
+    async update(req, res){
+
+        const { email } = req.body;
+
+        if(req.auth){           
+            return res.json(
+                response.jsonServerError(null, null, null)
+            )
+        } else{
+           
+
+            User.findOne({
+               _id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8)),
+               active: true
+            }).then(user => {
+
+                if(email)
+                    user.email = email;
+               
+                user.save().then(savedDoc => {
+                    if(savedDoc === user){
+                        return res.json(
+                            response.jsonOK(user, null, null)
+                        );   
+                    } else{
+                        return res.json(
+                            response.jsonServerError(user, null, null)
+                        );  
+                    }
+                                            
+                    
+                });
+            })
+
+            if(user){
+            
+                let update = {};
+
+                if(title){
+                    update.title = title;
+                }
+                 User.findById(supposed_id).then(user => {
+                        user.active = true;
+                        user.save().then(savedDoc => {
+                            if(savedDoc === user){
+                                return res.json(
+                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.sucess"), null)
+                                );   
+                            } else{
+                                return res.json(
+                                    response.jsonServerError(user, null, null)
+                                );  
+                            }
+                                                 
+                          
+                          });
+                       
+                           
+                    }).catch(err => {
+                        return res.json(
+                            response.jsonBadRequest(err, response.getMessage("badRequest"), null)
+                        )
+                    });                          
+                
+                Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
+                    if (err) 
+                        return res.json(response.jsonServerError(null, null, err))
+                        
+                    return res.json(response.jsonOK(update, "Saved Sucessfully", null))
+                });
+        
+            
+            
+              
+    
+            } else{
+                return res.json(response.jsonServerError(null, "manga required doesnt exists", null))
+               
+            }    
+            
+                      
+        }     
     },
 
     async delete(req, res){
