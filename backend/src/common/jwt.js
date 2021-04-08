@@ -3,8 +3,10 @@ const jwt = require("jsonwebtoken");
 
 const tokenPrivateKey = `${process.env.JWT_ID}`;
 const refreshTokenPrivateKey =  `${process.env.JWT_REFRESH_ID}`;
+
 const accActivatePrivateKey = `${process.env.JWT_ACTIVATE_ACCESS}`;
 const recoverPassPrivateKey = `${process.env.JWT_RECOVER_ACCESS}`;
+const updateEmailPrivateKey = `${process.env.JWT_UPDATE_ACCESS}`;
 
 const options = { expiresIn: '120 minutes' };
 const refreshOptions = { expiresIn: '12 hours' };
@@ -19,10 +21,11 @@ module.exports = {
                 return jwt.sign(payload, refreshTokenPrivateKey, refreshOptions);
             case 3:
                 return jwt.sign(payload, accActivatePrivateKey, options);
-
             case 4:
                 return jwt.sign(payload, recoverPassPrivateKey, options);
-           
+            case 5:
+                return jwt.sign(payload, updateEmailPrivateKey, options);
+
             default:
                 return null;
         }
@@ -40,6 +43,8 @@ module.exports = {
                 return jwt.verify(token, accActivatePrivateKey);
             case 4:
                 return jwt.verify(token, recoverPassPrivateKey);
+            case 5:
+                return jwt.verify(token, updatePasswordPrivateKey);
 
             default:
                 return null;

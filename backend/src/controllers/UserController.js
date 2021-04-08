@@ -177,21 +177,27 @@ module.exports = {
                _id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8)),
                active: true
             }).then(user => {
+
+                const activationToken = jwt.generateJwt({
+                    id: require("crypto-js").AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString(),
+                    email: require("crypto-js").AES.encrypt(email, `${process.env.SHUFFLE_SECRET}`).toString()
+                    }, 5);
+                       
+
                 (async () => {
 
-                    if(Protonmail){
-                      console.log("aqui - 0")
+                    if(Protonmail){                      
                       const pm = await ProtonMail.connect({
                         username: `${process.env.EMAIL_USER}`,
                         password: `${process.env.EMAIL_PASSWORD}`
                       })
-                      console.log("aqui - 1")
+                     
                       await pm.sendEmail({
                         to: email,
-                        subject: response.getMessage("user.activation.account.subject"),
+                        subject: response.getMessage("user.update.email.subject"),
                         body: `
-                            <h2>${response.getMessage("user.activation.account.text")}</h2>
-                            <p>${process.env.CLIENT_URL}/authentication/activate/${activationToken}</p>
+                            <h2>${response.getMessage("user.update.email.text")}</h2>
+                            <p>${process.env.CLIENT_URL}/authentication/recover/${activationToken}</p>
                             
                         `
                       })
@@ -220,7 +226,7 @@ module.exports = {
                           subject: response.getMessage("user.update.email.subject"), // Subject line
                           html: `
                               <h2>${response.getMessage("user.update.email.text")}</h2>
-                              <a href="${process.env.CLIENT_URL}/authentication/activate/${activationToken}">
+                              <a href="${process.env.CLIENT_URL}/authentication/recover/${activationToken}">
                               Activate your account                               
                               <a/>
                              
@@ -248,22 +254,6 @@ module.exports = {
                               
 
 
-                if(email)
-                    user.email = email;
-               
-                user.save().then(savedDoc => {
-                    if(savedDoc === user){
-                        return res.json(
-                            response.jsonOK(user, null, null)
-                        );   
-                    } else{
-                        return res.json(
-                            response.jsonServerError(user, null, null)
-                        );  
-                    }
-                                            
-                    
-                });
             })
 
             if(user){

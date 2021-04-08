@@ -38,7 +38,7 @@ module.exports = {
             
             user.password = undefined;
             return res.json(
-                response.jsonOK(user, response.getMessage("user.valid.sign_in.sucess"), {token, refreshToken})
+                response.jsonOK(user, response.getMessage("user.valid.sign_in.success"), {token, refreshToken})
             )
         }
     
@@ -63,7 +63,7 @@ module.exports = {
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
                                 return res.json(
-                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.sucess"), null)
+                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
                                 );   
                             } else{
                                 return res.json(
@@ -98,9 +98,46 @@ module.exports = {
     //working on
     async changeEmail(req, res){
         const token = req.params.tky;
-
+      
         if(token){
-
+            const decodedToken = await jwt.verifyJwt(token, 5)
+        
+            if(decodedToken){
+               
+                const supposed_id = CryptoJs.AES.decrypt(decodedToken.id, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
+              
+                User.findById(supposed_id).then(user => {
+                    const email = CryptoJs.AES.decrypt(decodedToken.email, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
+                    if(email){
+                        user.email = email;
+                        user.save().then(savedDoc => {
+                            if(savedDoc === user){
+                                return res.json(
+                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
+                                );   
+                            } else{
+                                return res.json(
+                                    response.jsonServerError(user, null, null)
+                                );  
+                            }                                              
+                        });
+                    }
+                               
+                    else{
+                        return res.json(
+                            response.jsonBadRequest(err, response.getMessage("badRequest"), null)
+                        )
+                    }                                           
+                }).catch(err => {
+                    return res.json(
+                        response.jsonBadRequest(err, response.getMessage("badRequest"), null)
+                    )
+                });                          
+            } else{                
+                return res.json(
+                    response.jsonBadRequest(err, response.getMessage("badRequest"), null)
+                )
+            }           
         }
     },
 
@@ -120,18 +157,14 @@ module.exports = {
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
                                 return res.json(
-                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.sucess"), null)
+                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
                                 );   
                             } else{
                                 return res.json(
                                     response.jsonServerError(user, null, null)
                                 );  
-                            }
-                                                 
-                          
-                          });
-                       
-                           
+                            }                                                
+                          });                      
                     }).catch(err => {
                         return res.json(
                             response.jsonBadRequest(err, response.getMessage("badRequest"), null)
@@ -142,9 +175,7 @@ module.exports = {
                     return res.json(
                         response.jsonBadRequest(err, response.getMessage("badRequest"), null)
                     )
-                }
-            ;
-          
+                }           
 
         } else{
             return res.json(

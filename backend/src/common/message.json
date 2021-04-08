@@ -4,14 +4,16 @@
     "user.invalid.password": "Invalid Password",
     "user.invalid.password.short": "Password is too short - should be 8 chars minimum.",
     "user.invalid.password.weak": "the password must contain at least 1 number, at least 1 lower case letter, at least 1 upper case and at least 1 special character.",
-    "user.valid.sign_in.sucess": "Successful login.",
-    "user.valid.sign_up.sucess": "Successful resgistration. Please log in to your account to proceed.",
+    "user.valid.sign_in.success": "Successful login.",
+    "user.valid.sign_up.success": "Successful resgistration. Please log in to your account to proceed.",
     "user.error.sign_up.duplicatekey": "There was a duplicate key error.",
     "user.error.notfound": "The specified user could not be found.",
     "user.activation.account.activate": "Please check your email to activate your account.",
     "user.activation.account.subject": "No reply - Activate your account.",
     "user.activation.account.text": "Please click on given link to activate your account, if wasn't you just ignore this email.\n",
     "user.update.email.subject": "No reply - Change your email.",
-    "user.update.email.text": "Please click on given link to change your email, if wasn't you just ignore this email.\n"
+    "user.update.email.text": "Please click on given link to change your email, if wasn't you just ignore this email.\n",
+    "user.update.email.activate": "Please check your email to finish this operation.",
+    "user.update.email.success": "Your email has been changed."
 
 }
