@@ -5,6 +5,8 @@ const fs = require('fs');
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
+const response = require("../common/response");
+
 const { dirname } = require('path');
 const valid_user = true;
 
@@ -19,10 +21,9 @@ module.exports = {
                 
             });
 
-            return res.status(404).json({               
-                id: manga_id,
-                message: "User cannot be found."               
-            });
+            return res.json(        
+                response.jsonNotFound(null, response.getMessage("user.error.notfound"), err.message)              
+            ) 
           
         }
 
@@ -69,21 +70,17 @@ module.exports = {
                             fs.unlinkSync('uploads/' + file.filename)    
                             
                         });
-                        console.log(err),
-                        res.status(500).json({
-                            error: err,
-                            message: "Chapter wasn't saved"
-                        });
+                        console.log(err)
+
+                        return res.json(
+                            response.jsonServerError(null, null, err)
+                        )
                     });
-                    res.status(201).json({
-                        message: "Done upload!",
-                        chapterAdded: {
-                            manga_id: result.manga_id,
-                            chapter_id: result._id,
-                            number: number,
-                            imgCollection: result.imgCollection
-                        }
-                    })              
+                    return res.json(
+                        response.jsonOK(result, "Upload Done!", null)
+                    )   
+
+                 
                 
                 }).catch(err => {
                     Object.keys(req.files).forEach((i) => {
@@ -91,10 +88,10 @@ module.exports = {
                         fs.unlinkSync('uploads/' + file.filename)    
                         
                     });
-                    console.log(err),
-                        res.status(500).json({
-                            error: err
-                        });
+                    console.log(err)
+                    return res.json(
+                        response.jsonServerError(null, null, err)
+                    );
                 });
 
             } else{
@@ -104,10 +101,9 @@ module.exports = {
                     fs.unlinkSync('uploads/' + file.filename)
                     
                 });
-                return res.status(404).json({               
-                    id: manga_id,
-                    message: "Manga cannot be found."               
-                });
+                return res.json(
+                    response.jsonNotFound(null, "Manga could not be found", err)
+                )
             }
         });         
     },
@@ -130,16 +126,24 @@ module.exports = {
 
         if(!(chapter_id === undefined)){
             Chapter.findOneAndUpdate({_id: chapter_id}, update, {upsert: true}, function(err, doc) {
-                if (err) return res.send(500, {error: err});
-                return res.send({message: 'Succesfully saved.', changes: update});
+                if (err){
+                    return res.json(
+                        response.jsonNotFound(null, null, err)
+                    )
+                } 
+
+                return res.json(
+                    response.jsonOK(update, "Succesfully saved.", null)
+                ) 
+               
             });
 
 
         } else{
-            res.status(500).json({
-                message: "manga_id undefined",
-                               
-            });   
+            return res.json(
+                response.jsonBadRequest(null, response.getMessage("badRequest"), null) 
+            )
+            
          
         }        
     },
@@ -163,11 +167,10 @@ module.exports = {
             });     
         }
           
-        res.status(200).json({
-            message: "Page list retrieved successfully!",
-            chapter: docs
-            
-        });      
+        return res.json(
+            response.jsonOK(docs, "Page list retrieved successfully!", null)
+        );
+       
     },
 
     async delete(req, res){
@@ -180,7 +183,10 @@ module.exports = {
        
 
         if (chapters.n === 0 ){
-            return res.json({ removed: false, chapters: chapters });
+            return res.json(
+                response.jsonBadRequest({removed: false}, null, null) 
+            )
+            
         } else{
 
             Manga.findOne({ _id: manga_id }, function (err, manga){ 
@@ -196,16 +202,18 @@ module.exports = {
                     })
                     cloneData.slice(index, 1);
                 } else{
-                    return res.json({ error: err });
+                    response.jsonBadRequest({removed: false}, null, null) 
                 }
                
                
             });
 
             await Manga.updateOne({ _id: manga_id }, { data: cloneData });
+   
+            return res.json(
+                response.jsonOK({ removed: true, chapters: chapters }, "Chapters deleted.", null)
+            );
 
-
-            return res.json({ removed: true, chapters: chapters });
         }
 
         

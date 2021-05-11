@@ -95,7 +95,7 @@ module.exports = {
             )
         }
     },
-    //working on
+    //missing test
     async changeEmail(req, res){
         const token = req.params.tky;
       
