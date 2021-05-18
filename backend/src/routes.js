@@ -31,8 +31,8 @@ routes.put("/authentication/recover/:tky", AuthController.recoverPassword);// PU
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
 routes.get('/user/index', AuthMiddleware.auth, UserController.index);
-routes.put('/user/update', UserController.update)
-routes.delete('/user/delete', UserController.delete);
+routes.put('/user/update', AuthMiddleware.auth, UserController.update)
+routes.delete('/user/delete', AuthMiddleware.auth, UserController.delete);
 
 
 routes.post('/manga/post', AuthMiddleware.auth, MangaMiddleware.valid_manga_store, MangaController.store);
