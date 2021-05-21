@@ -94,14 +94,9 @@ module.exports = {
                         console.log(err)
                     else
                         console.log(info);
-                    });
-                
+                    });               
                   
-                  
-                  }
-                  
-                  
-                  
+                  }                
                   
                 })().then(info => {
                     console.log(response.getMessage("user.activation.account.activate"))
