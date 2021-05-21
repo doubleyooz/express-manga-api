@@ -30,19 +30,19 @@ routes.put("/authentication/recover/:tky", AuthController.recoverPassword);// PU
 
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
-routes.get('/user/index', AuthMiddleware.auth, UserController.index);
-routes.put('/user/update', AuthMiddleware.auth, UserController.update)
-routes.delete('/user/delete', AuthMiddleware.auth, UserController.delete);
+routes.get('/user/index', AuthMiddleware.auth(req, res, next, "User"), UserController.index);
+routes.put('/user/update', AuthMiddleware.auth(req, res, next, "User"), UserController.update)
+routes.delete('/user/delete', AuthMiddleware.auth(req, res, next, "User"), UserController.delete);
 
 
-routes.post('/manga/post', AuthMiddleware.auth, MangaMiddleware.valid_manga_store, MangaController.store);
-routes.get('/manga/index', AuthMiddleware.auth, MangaController.index);
-routes.put('/manga/update', AuthMiddleware.auth, MangaController.update);
-routes.delete('/manga/delete', AuthMiddleware.auth, MangaMiddleware.valid_manga_delete, MangaController.delete);
+routes.post('/manga/post', AuthMiddleware.auth(req, res, next, "Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
+routes.get('/manga/index', AuthMiddleware.auth(req, res, next, "Scan"), MangaController.index);
+routes.put('/manga/update', AuthMiddleware.auth(req, res, next, "Scan"), MangaController.update);
+routes.delete('/manga/delete', AuthMiddleware.auth(req, res, next, "Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
 
 
-routes.post('/chapter/post', AuthMiddleware.auth, multer(multerConfig).array('imgCollection'), ChapterController.store);
-routes.get('/chapter/index', AuthMiddleware.auth, (req, res) => {
+routes.post('/chapter/post', AuthMiddleware.auth(req, res, next, "Scan"), multer(multerConfig).array('imgCollection'), ChapterController.store);
+routes.get('/chapter/index', AuthMiddleware.auth(req, res, next, "Scan"), (req, res) => {
     ChapterController.index();
    
 })
