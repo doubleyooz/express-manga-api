@@ -161,7 +161,7 @@ module.exports = {
 
     async update(req, res){
 
-        const { email } = req.body;
+        const { email, name, password } = req.body;
 
         if(req.auth){           
             return res.json(
@@ -175,130 +175,96 @@ module.exports = {
                active: true
             }).then(user => {
 
-                const activationToken = jwt.generateJwt({
-                    id: require("crypto-js").AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString(),
-                    email: require("crypto-js").AES.encrypt(email, `${process.env.SHUFFLE_SECRET}`).toString()
-                    }, 5);
-                       
-
-                (async () => {
-
-                    if(Protonmail){                      
-                      const pm = await ProtonMail.connect({
-                        username: `${process.env.EMAIL_USER}`,
-                        password: `${process.env.EMAIL_PASSWORD}`
-                      })
-                     
-                      await pm.sendEmail({
-                        to: email,
-                        subject: response.getMessage("user.update.email.subject"),
-                        body: `
-                            <h2>${response.getMessage("user.update.email.text")}</h2>
-                            <p>${process.env.CLIENT_URL}/authentication/recover/${activationToken}</p>
-                            
-                        `
-                      })
-                      console.log("aqui - 2")
-                      pm.close()
-                    } else{
+                let update = {};
+    
+                if(name){
+                    update.name = name;
+                }
+                
+                else if(email){
+                    const activationToken = jwt.generateJwt({
+                        id: require("crypto-js").AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString(),
+                        email: require("crypto-js").AES.encrypt(email, `${process.env.SHUFFLE_SECRET}`).toString()
+                        }, 5);
+                           
+    
+                    (async () => {
+    
+                        if(Protonmail){                      
+                          const pm = await ProtonMail.connect({
+                            username: `${process.env.EMAIL_USER}`,
+                            password: `${process.env.EMAIL_PASSWORD}`
+                          })
+                         
+                          await pm.sendEmail({
+                            to: email,
+                            subject: response.getMessage("user.update.email.subject"),
+                            body: `
+                                <h2>${response.getMessage("user.update.email.text")}</h2>
+                                <p>${process.env.CLIENT_URL}/authentication/recover/${activationToken}</p>
+                                
+                            `
+                          })
+                          console.log("aqui - 2")
+                          pm.close()
+                        } else{
+                          
+                          // create reusable transporter object using the default SMTP transport
+                          let transporter = nodemailer.createTransport({
+                            service: "gmail",                     
+                            auth: {
+                              user:  `${process.env.GMAIL_USER}`, // generated ethereal user
+                              pass: `${process.env.GMAIL_PASSWORD}` // generated ethereal password
+                            },
+                                                 
+                         
+                            tls: {
+                              rejectUnauthorized: false
+                            }
                       
-                      // create reusable transporter object using the default SMTP transport
-                      let transporter = nodemailer.createTransport({
-                        service: "gmail",                     
-                        auth: {
-                          user:  `${process.env.GMAIL_USER}`, // generated ethereal user
-                          pass: `${process.env.GMAIL_PASSWORD}` // generated ethereal password
-                        },
-                                             
-                     
-                        tls: {
-                          rejectUnauthorized: false
+                          });
+                        
+                          const mailOptions = {
+                              from: `${process.env.GMAIL_USER}`, // sender address
+                              to: email, // receiver (use array of string for a list)
+                              subject: response.getMessage("user.update.email.subject"), // Subject line
+                              html: `
+                                  <h2>${response.getMessage("user.update.email.text")}</h2>
+                                  <a href="${process.env.CLIENT_URL}/authentication/recover/${activationToken}">
+                                  Activate your account                               
+                                  <a/>
+                                 
+                              `// plain text body
+                            };
+                          
+                          transporter.sendMail(mailOptions, (err, info) => {
+                          if(err)
+                              console.log(err)
+                          else
+                              console.log(info);
+                          });                  
                         }
-                  
-                      });
-                    
-                      const mailOptions = {
-                          from: `${process.env.GMAIL_USER}`, // sender address
-                          to: email, // receiver (use array of string for a list)
-                          subject: response.getMessage("user.update.email.subject"), // Subject line
-                          html: `
-                              <h2>${response.getMessage("user.update.email.text")}</h2>
-                              <a href="${process.env.CLIENT_URL}/authentication/recover/${activationToken}">
-                              Activate your account                               
-                              <a/>
-                             
-                          `// plain text body
-                        };
-                      
-                      transporter.sendMail(mailOptions, (err, info) => {
-                      if(err)
-                          console.log(err)
-                      else
-                          console.log(info);
-                      });                  
-                    }
+    
+                      })().then(info => {
+                          console.log(response.getMessage("user.activation.account.activate"))
+                          return res.json(                                
+                              response.jsonOK(result, response.getMessage("user.activation.account.activate"), null)              
+                          );                       
+                      }).catch(err => {
+                          return res.json(        
+                              response.jsonBadRequest(null, response.getMessage("badRequest"), {err})              
+                          );  
+                      })           
+                }
+               
 
-                  })().then(info => {
-                      console.log(response.getMessage("user.activation.account.activate"))
-                      return res.json(                                
-                          response.jsonOK(result, response.getMessage("user.activation.account.activate"), null)              
-                      );                       
-                  }).catch(err => {
-                      return res.json(        
-                          response.jsonBadRequest(null, response.getMessage("badRequest"), {err})              
-                      );  
-                  })           
+              
                               
 
 
             })
 
-            if(user){
-            
-                let update = {};
-
-                if(title){
-                    update.title = title;
-                }
-                 User.findById(supposed_id).then(user => {
-                        user.active = true;
-                        user.save().then(savedDoc => {
-                            if(savedDoc === user){
-                                return res.json(
-                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.sucess"), null)
-                                );   
-                            } else{
-                                return res.json(
-                                    response.jsonServerError(user, null, null)
-                                );  
-                            }
-                                                 
-                          
-                          });
-                       
-                           
-                    }).catch(err => {
-                        return res.json(
-                            response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                        )
-                    });                          
-                
-                Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
-                    if (err) 
-                        return res.json(response.jsonServerError(null, null, err))
-                        
-                    return res.json(response.jsonOK(update, "Saved Sucessfully", null))
-                });
-        
-            
-            
-              
-    
-            } else{
-                return res.json(response.jsonServerError(null, "manga required doesnt exists", null))
-               
-            }    
-            
+           
                       
         }     
     },
