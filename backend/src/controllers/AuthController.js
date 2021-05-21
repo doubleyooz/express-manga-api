@@ -113,7 +113,7 @@ module.exports = {
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
                                 return res.json(
-                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
+                                    response.jsonOK(user, response.getMessage("user.update.email.success"), null)
                                 );   
                             } else{
                                 return res.json(

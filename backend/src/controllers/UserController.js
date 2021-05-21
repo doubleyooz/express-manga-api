@@ -175,10 +175,22 @@ module.exports = {
                active: true
             }).then(user => {
 
-                let update = {};
+                
     
                 if(name){
-                    update.name = name;
+                    user.update(name, function(err, doc) {
+                        if (err) 
+                            return res.json(response.jsonServerError(null, null, err))
+                        else {
+                            p1.save().then(result => {    
+                                return res.json(response.jsonOK(null, "User Name changed", null))
+                            }).catch(err =>{
+                                return res.json(response.jsonServerError(null, null, null))
+                            })
+                            
+                        }  
+                        
+                    });
                 }
                 
                 else if(email){
