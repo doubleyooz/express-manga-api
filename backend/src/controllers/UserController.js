@@ -15,16 +15,17 @@ const Protonmail = false;
 
 module.exports = {
     async store(req, res){                              
-        const {email, password } = req.body;
+        const {email, password, name} = req.body;
              
       
-        if(email && password){                    
+        if(email && password && name){                    
             const salt = bcrypt.genSaltSync(10);
             const _hash = bcrypt.hashSync(password, salt);
             
             const p1 = new User ({
                 email: email,
-                password: _hash
+                password: _hash,
+                name: name,
                 
             });
 
