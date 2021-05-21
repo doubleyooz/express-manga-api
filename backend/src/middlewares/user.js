@@ -12,8 +12,10 @@ const rules = {
                         response.getMessage("user.invalid.password.weak"))
                 .required(),
     name: yup.string()
-                .min(3, response.getMessage("user.invalid.password.short"))               
+                .min(3, response.getMessage("user.invalid.name.short"))               
                 .required(),
+    role: yup.string()
+                .matches("Scan" || "User", response.getMessage("badRequest")),
     sign_in_password: yup.string()
                 .min(8, response.getMessage("user.invalid.password.short"))
                 .required()
@@ -29,7 +31,8 @@ module.exports = {
         const yupObject = yup.object().shape({
             email: rules.email,
             password: rules.password,
-            name: rules.name
+            name: rules.name,
+            role: rules.role
         });
 
         yupObject.validate(req.body).then(() => next())
