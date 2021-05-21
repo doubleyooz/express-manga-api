@@ -268,6 +268,10 @@ module.exports = {
                           );  
                       })           
                 }
+
+                else if (password){
+                    
+                }
                
 
               
