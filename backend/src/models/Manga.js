@@ -7,8 +7,7 @@ const MangaSchema = new mongoose.Schema({
     chapters:{
         type: Number,
         default: 0,
-    },
-    scan: String,
+    },    
     status: Number, 
     language: String,    
     data: [{ //a array fill with the data links
@@ -16,7 +15,7 @@ const MangaSchema = new mongoose.Schema({
         ref: 'Chapter'
     
      }],
-    user: {
+    scan_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },

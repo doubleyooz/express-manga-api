@@ -36,7 +36,7 @@ routes.delete('/user/delete', AuthMiddleware.auth(req, res, next, "User"), UserC
 
 
 routes.post('/manga/post', AuthMiddleware.auth(req, res, next, "Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
-routes.get('/manga/index', AuthMiddleware.auth(req, res, next, "Scan"), MangaController.index);
+routes.get('/manga/index', AuthMiddleware.auth, MangaController.index);
 routes.put('/manga/update', AuthMiddleware.auth(req, res, next, "Scan"), MangaController.update);
 routes.delete('/manga/delete', AuthMiddleware.auth(req, res, next, "Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
 

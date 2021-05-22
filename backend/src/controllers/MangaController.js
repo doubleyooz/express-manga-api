@@ -7,14 +7,17 @@ const CryptoJs = require("crypto-js");
 const response = require("../common/response");
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
+const User = require('../models/user');
+
 const { update } = require('../models/Chapter');
 const ChapterController = require('./ChapterController');
+
 
 
   
 module.exports = {
     async store(req, res){ 
-        const {title, genre, synopsis, chapters, scan, status, language } = req.body;
+        const {title, genre, synopsis, chapters, status, language } = req.body;
         
         const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
        
@@ -30,13 +33,12 @@ module.exports = {
                 genre: genre,
                 synopsis: synopsis,
                 chapters: chapters,
-                status: status,
-                scan: scan,    
+                status: status,                  
                 language: language, 
                 data: [ //a array fill with the data links
                             
                 ],
-                user: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+                scan_id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
                 //comments?
 
             });
@@ -77,12 +79,15 @@ module.exports = {
         }
 
         else if(scan){
-            (await Manga.find({scan: /scan/})).forEach(function (doc){
-                docs.push(doc)
-            });
+            (await User.find({name: scan, role: "Scan"})).forEach(function (result){
+                (await Manga.find({scan_id: result._id})).forEach(function (doc){
+                    docs.push(doc)
+                });
+            })
+            
         }
 
-        else{
+        else{            
             (await Manga.find()).forEach(function (doc){
                 docs.push(doc)
             });     
