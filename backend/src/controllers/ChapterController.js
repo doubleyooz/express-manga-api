@@ -188,8 +188,7 @@ module.exports = {
 
         const chapters = await Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id });
         
-        console.log(chapters)
-       
+        console.log(chapters)       
 
         if (chapters.n === 0 ){
             return res.json(
