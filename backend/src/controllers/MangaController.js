@@ -80,7 +80,7 @@ module.exports = {
 
         else if(scan){
             (await User.find({name: scan, role: "Scan"})).forEach(function (result){
-                (await Manga.find({scan_id: result._id})).forEach(function (doc){
+                Manga.find({scan_id: result._id}).then(doc => {   
                     docs.push(doc)
                 });
             })

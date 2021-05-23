@@ -23,18 +23,19 @@ module.exports = {
       
         const [email, password] = Buffer.from(hash, "base64").toString().split(":");
 
-        const user = await User.findOne({ email: email, active: true }).select('password')
-    
+        const user = await User.findOne({ email: email, active: true }).select(['password', 'role'])
+        
     
         const match = user ? await bcrypt.compare(password, user.password) : null;
-        console.log("2")
+        
         if(!match){
             return res.json(
                 response.jsonBadRequest(null, response.getMessage("badRequest"), null)
             )
         } else{
-            const token = jwt.generateJwt({id: user._id}, 1);
-            const refreshToken = jwt.generateJwt({id: user._id}, 2);
+            
+            const token = jwt.generateJwt({id: user._id, role: user.role}, 1);
+            const refreshToken = jwt.generateJwt({id: user._id, role: user.role}, 2);
             
             user.password = undefined;
             return res.json(
