@@ -7,6 +7,7 @@ const Manga = require('../models/Manga');
 const response = require("../common/response");
 
 const { dirname } = require('path');
+const { listenerCount } = require('../models/Chapter');
 
 
 module.exports = {
@@ -186,49 +187,80 @@ module.exports = {
 
         const { manga_id, chapter_id } = req.query;
 
-        const chapters = await Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id });
-        
-        console.log(chapters)       
+        Chapter.findById(chapter_id).then( chapter => {
 
-        if (chapters.n === 0 ){
-            return res.json(
-                response.jsonBadRequest({removed: false}, null, null) 
-            )
-            
-        } else{
-
-            cloneData = []
-
-            Manga.findOne({ _id: manga_id }, function (err, manga){ 
-                if(manga){
-                    cloneData = [...manga.data];
-                    let index = 0;
-                    manga.data.forEach(function (pos, i){
-                        if(pos === chapter_id){
-                            console.log("here")
-                            index = i;
-                            return;
-                        }
-                          
-                    })
-                    cloneData.slice(index, 1);
-
-                   
-                } else{
-                    console.log("error")
-                    response.jsonBadRequest({removed: false}, null, null) 
-                }
-               
-               
+            chapter.imgCollection.forEach(function (file){
+                fs.unlinkSync('uploads/' + file.filename)   
             });
 
-            await Manga.updateOne({ _id: manga_id }, { data: cloneData });
-   
-            return res.json(
-                response.jsonOK({ removed: true, chapters: chapters }, "Chapters deleted.", null)
-            );
 
-        }
+            Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id }).then(chapters =>{
+                if (chapters.n === 0 ){//chapter could not be found
+                    return res.json(
+                        response.jsonBadRequest({removed: false}, null, null) 
+                    )
+                    
+                } else{
+        
+                    cloneData = []
+        
+                    Manga.findOne({ _id: manga_id }, function (err, manga){ 
+                        if(manga){
+                            cloneData = [...manga.data];
+                            let index = 0;
+                            manga.data.forEach(function (pos, i){
+                                if(pos === chapter_id){
+                                    console.log("here")
+                                    index = i;
+                                    return;
+                                }
+                                  
+                            })
+                            cloneData.slice(index, 1);
+        
+                           
+                        } else{
+                            console.log("error")
+                            response.jsonBadRequest({removed: false}, null, null) 
+                        }
+                       
+                       
+                    });
+                           
+        
+                    Manga.updateOne({ _id: manga_id }, { data: cloneData }).then(result => {
+
+                        if (result.n === 0){
+                            return res.json(
+                                response.jsonServerError({Mangas_matched: result.n}, null, null)
+                            )
+                        } else{
+                            return res.json(
+                                response.jsonOK({ removed: true, chapters: chapters }, "Chapters deleted.", null)
+                            );
+                        }
+
+                       
+                    }).catch(err =>{
+                        return res.json(
+                            response.jsonServerError(err, null, null)
+                        )
+                    });                    
+        
+                }
+            }).catch(err=>{
+                return res.json(
+                    response.jsonBadRequest(err, null, null)
+                )
+            });                    
+
+        }).catch(err=>{
+            return res.json(
+                response.jsonBadRequest(err, null, null)
+            )
+        });
+        
+        
 
         
     }
