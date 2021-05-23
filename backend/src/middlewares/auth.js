@@ -15,7 +15,12 @@ function auth(roles = []){
     
         let payload = jwt.verifyJwt(token, 1)        
         
-        if (roles.includes(payload.role)){
+        if (roles.length && !roles.includes(payload.role)){          
+            return res.json( 
+                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
+            )
+            
+        } else{
             User.exists({_id: payload.id, active: true}).then(result => {
                 if (result){
                     try{                                
@@ -39,13 +44,8 @@ function auth(roles = []){
                     response.jsonUnauthorized(null, response.getMessage("Unauthorized"), err)
                 )
             })
-            
-            
-        } else{
-            return res.json( 
-                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-            )
-        }                  
+        
+        }                 
 
     
         
