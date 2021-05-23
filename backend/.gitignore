@@ -4,10 +4,11 @@
 .env
 /node_modules
 /.pnp
+
 .pnp.js
 .vscode/
-uploads/
 /uploads
+
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
