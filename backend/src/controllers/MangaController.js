@@ -158,8 +158,7 @@ module.exports = {
             } else{
                 return res.json(response.jsonServerError(null, "manga required doesnt exists", null))
                
-            }    
-            
+            }                
                       
         }     
     },
