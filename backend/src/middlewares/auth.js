@@ -34,6 +34,10 @@ function auth(roles = []){
                         response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
                     )
                 }
+            }).catch(err =>{
+                return res.json( 
+                    response.jsonUnauthorized(null, response.getMessage("Unauthorized"), err)
+                )
             })
             
             

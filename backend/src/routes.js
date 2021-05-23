@@ -9,7 +9,7 @@ const AuthController = require('./controllers/AuthController');
 
 const MangaMiddleware = require('./middlewares/manga');
 const UserMiddleware = require('./middlewares/user');
-const AuthMiddleware = require('./middlewares/auth');
+const Authorize = require('./middlewares/auth');
 const response = require("./common/response");
 const routes = express.Router()
 
@@ -20,7 +20,7 @@ routes.get('/', (req, res) => {
 });
 
 
-routes.get('/me', AuthMiddleware(), (req, res) => {
+routes.get('/me', Authorize(), (req, res) => {
     res.send(req.auth)
    
 })
@@ -30,24 +30,20 @@ routes.put("/authentication/recover/:tky", AuthController.recoverPassword);// PU
 
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
-routes.get('/user/index', AuthMiddleware("User"), UserController.index);
-routes.put('/user/update', AuthMiddleware("User"), UserController.update)
-routes.delete('/user/delete', AuthMiddleware("User"), UserController.delete);
+routes.get('/user/index', Authorize("User"), UserController.index);
+routes.put('/user/update', Authorize("User"), UserController.update)
+routes.delete('/user/delete', Authorize("User"), UserController.delete);
+
+routes.post('/manga/post', Authorize("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
+routes.get('/manga/index', Authorize(), MangaController.index);
+routes.put('/manga/update', Authorize("Scan"), MangaController.update);
+routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
 
 
-routes.post('/manga/post', AuthMiddleware("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
-routes.get('/manga/index', AuthMiddleware(), MangaController.index);
-routes.put('/manga/update', AuthMiddleware("Scan"), MangaController.update);
-routes.delete('/manga/delete', AuthMiddleware("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
-
-
-routes.post('/chapter/post', AuthMiddleware("Scan"), multer(multerConfig).array('imgCollection'), ChapterController.store);
-routes.get('/chapter/index', AuthMiddleware("Scan"), (req, res) => {
-    ChapterController.index();
-   
-})
-routes.put('/chapter/update', AuthMiddleware(), ChapterController.update);
-routes.delete('/chapter/delete', AuthMiddleware(), ChapterController.delete);
+routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig).array('imgCollection'), ChapterController.store);
+routes.get('/chapter/index', Authorize(), ChapterController.index);
+routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
+routes.delete('/chapter/delete', Authorize("Scan"), ChapterController.delete);
 
 /*
 routes.post('/sessions', function(req, res){
