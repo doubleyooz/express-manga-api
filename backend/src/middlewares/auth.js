@@ -12,8 +12,15 @@ function auth(roles = []){
             roles = [roles];
         }
                
-    
-        let payload = jwt.verifyJwt(token, 1)        
+        let payload = null
+        try{
+            payload = jwt.verifyJwt(token, 1)    
+        }catch(err){
+            return res.json( 
+                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
+            )
+        }
+            
         
         if (roles.length && !roles.includes(payload.role)){          
             return res.json( 
