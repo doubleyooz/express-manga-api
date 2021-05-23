@@ -9,6 +9,10 @@ const MangaSchema = new mongoose.Schema({
         default: 0,
     },    
     status: Number, 
+    nsfw:{
+        type:Boolean,
+        default: false
+    },
     language: String,    
     data: [{ //a array fill with the data links
         type: mongoose.Schema.Types.ObjectId,
