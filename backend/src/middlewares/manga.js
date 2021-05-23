@@ -1,9 +1,12 @@
 const yup = require('yup')
 const mongoose = require('mongoose');
+
+const response = require("../common/response");
+
 module.exports = {
     async valid_manga_store(req, res, next){         
                        
-        const { title, genre, synopsis, chapters, status, scan, language } = req.body;  
+        const { title, genre, synopsis, chapters, status, nsfw, language } = req.body;  
         
         
         console.log(title)
@@ -14,16 +17,18 @@ module.exports = {
             synopsis: yup.string("synopsis must be a string.").strict().min(10, 'synopsis must be between 10-400 characters.').max(400, 'synopsis must be between 10-400 characters.').required(),
             chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.').required(),
             status: yup.number("status must be a number.").min(1, 'Invalid code.').max(6, 'Invalid code.').required(),
-            scan: yup.string("scan must be a string.").strict().required(),
+            nsfw: yup.bool("nsfw must be a boolean.").strict().required(),
             language: yup.string("language must be a string.").strict().default({ language: 'pt' }).required()
             
 
         })
 
         try{
-            await schema.validate({title, genre, synopsis, chapters, status, scan, language})
+            await schema.validate({title, genre, synopsis, chapters, status, nsfw, language})
             .catch(function(e) {
-                return res.jsonBadRequest(null, "you did not give us want we want", e);
+                return res.json(
+                    response.jsonBadRequest(null, "you did not give us want we want", null)
+                )
             });
 
             valid_scan = true;
@@ -36,11 +41,15 @@ module.exports = {
                 next();
             
             } else{
-                return res.jsonBadRequest(null, "unregistered scan", null);
+                return res.json(
+                    response.jsonBadRequest(null, "unregistered scan", null)
+                )
             }
 
         } catch(err){
-           
+            return res.json(
+                response.jsonBadRequest(null, null, err)
+            )
         }
               
                         
@@ -58,7 +67,9 @@ module.exports = {
         try{
             await schema.validate({title, genre, scan})
             .catch(function(e) {
-                return res.jsonBadRequest(null, "you did not give us want we want", e.errors);
+                return res.json(
+                    response.jsonBadRequest(null, "you did not give us want we want", e.errors)
+                )
             });
 
             if(genre)
@@ -73,7 +84,9 @@ module.exports = {
                 next();
             
             } else{
-                return res.jsonBadRequest(null, "unregistered scan", null);
+                return res.json(
+                    response.jsonBadRequest(null, "unregistered scan", null)
+                )
             }
 
         } catch(err){
@@ -90,18 +103,22 @@ module.exports = {
             if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
                 next();     
             } else { 
-                return res.jsonBadRequest(
-                    null,
-                    "You need to provide a valid IdObject to continue this operation.",
-                    null
-                );   
+
+                return res.json(
+                    response.jsonBadRequest(
+                        null,
+                        "You need to provide a valid IdObject to continue this operation.",
+                        null)
+                );
+               
             } 
         } else {
-            return res.jsonBadRequest(
-                null,
-                "You need to provide a valid IdObject to continue this operation.",
-                null
-            );
+            return res.json(
+                response.jsonBadRequest(
+                    null,
+                    "You need to provide a valid IdObject to continue this operation.",
+                    null)
+            );         
         } 
             
         

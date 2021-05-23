@@ -17,7 +17,7 @@ const ChapterController = require('./ChapterController');
   
 module.exports = {
     async store(req, res){ 
-        const {title, genre, synopsis, chapters, status, language } = req.body;
+        const {title, genre, synopsis, chapters, status, language, nsfw } = req.body;
         
         const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
        
@@ -34,7 +34,8 @@ module.exports = {
                 synopsis: synopsis,
                 chapters: chapters,
                 status: status,                  
-                language: language, 
+                language: language,
+                nsfw: nsfw, 
                 data: [ //a array fill with the data links
                             
                 ],
@@ -169,7 +170,7 @@ module.exports = {
 
         if(manga){
             
-            if(manga.user.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
+            if(manga.scan_id.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
 
                 const mangas = await Manga.deleteMany({ _id: manga_id });        
 
