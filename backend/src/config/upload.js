@@ -2,12 +2,19 @@
 const path = require("path");
 const multer = require("multer");
 const crypto = require('crypto');
+const fs = require('fs');
+
+const folder = "uploads"
 
 module.exports = {
-  dest: path.resolve(__dirname, '..', '..', 'uploads'),
+  dest: path.resolve(__dirname, '..', '..', folder),
   storage: multer.diskStorage({
     destination: (req, files, cb) => {
-      cb(null, path.resolve(__dirname, '..', '..', 'uploads'));
+      cb(null, path.resolve(__dirname, '..', '..', folder));
+      if (!fs.existsSync("./" + folder)){        
+        fs.mkdirSync("./" + folder);
+      }
+
     },
     filename: (req, file, cb) => {
       crypto.randomBytes(16, (err, hash) => {

@@ -6,6 +6,7 @@
 /.pnp
 .pnp.js
 .vscode/
+uploads/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json

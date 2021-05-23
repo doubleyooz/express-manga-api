@@ -2,19 +2,21 @@ const mongoose = require('mongoose');
 const upload = require("../config/upload");
 const fs = require('fs');
 
-
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 const response = require("../common/response");
 
 const { dirname } = require('path');
-const valid_user = true;
+
 
 module.exports = {
     async store(req, res){            
         const { manga_id, number, title } = req.body;
 
-        if(!valid_user){    
+        console.log("here - 0")
+           /*
+
+            
             Object.keys(req.files).forEach((i) => {
                 let file = req.files[i];                                                    
                 fs.unlinkSync('uploads/' + file.filename)              
@@ -24,11 +26,13 @@ module.exports = {
             return res.json(        
                 response.jsonNotFound(null, response.getMessage("user.error.notfound"), err.message)              
             ) 
-          
-        }
+          */
+        
 
         Manga.findOne({_id: manga_id}, function (err, manga){ 
-            if(manga){                
+            if(manga){          
+                console.log("here")
+               
                 let jsonString = [];         
                 
                 Object.keys(req.files).forEach((i) => {
@@ -153,7 +157,7 @@ module.exports = {
 
         const { manga_id, number, chapter_id } = req.query;
        
-        let docs;
+        let docs = [];
 
         if (number){
             (await Chapter.find({ manga_id: manga_id, number: number })).forEach(function (doc){
@@ -167,6 +171,11 @@ module.exports = {
             });     
         }
           
+        else{
+            return res.json(
+                response.jsonBadRequest(null, response.getMessage("badRequest"), null) 
+            )
+        }
         return res.json(
             response.jsonOK(docs, "Page list retrieved successfully!", null)
         );
@@ -179,7 +188,7 @@ module.exports = {
 
         const chapters = await Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id });
         
-      
+        console.log(chapters)
        
 
         if (chapters.n === 0 ){
@@ -189,19 +198,25 @@ module.exports = {
             
         } else{
 
+            cloneData = []
+
             Manga.findOne({ _id: manga_id }, function (err, manga){ 
                 if(manga){
                     cloneData = [...manga.data];
                     let index = 0;
                     manga.data.forEach(function (pos, i){
                         if(pos === chapter_id){
+                            console.log("here")
                             index = i;
                             return;
                         }
                           
                     })
                     cloneData.slice(index, 1);
+
+                   
                 } else{
+                    console.log("error")
                     response.jsonBadRequest({removed: false}, null, null) 
                 }
                

@@ -166,8 +166,7 @@ module.exports = {
 
     async delete(req, res){
         const { manga_id } = req.query;             
-        const manga = await Manga.findById(manga_id);
-
+        const manga = await Manga.findById(manga_id);        
         if(manga){
             
             if(manga.scan_id.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
@@ -193,7 +192,11 @@ module.exports = {
             } else{
                 return res.json(response.jsonUnauthorized(null, null, null))
             }
-        }    
+        } else{
+            return res.json(
+                response.jsonBadRequest(null, "manga could not be found", null)
+            )
+        }
     }
 }
 
