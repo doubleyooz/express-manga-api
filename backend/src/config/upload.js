@@ -11,9 +11,10 @@ module.exports = {
   storage: multer.diskStorage({
     destination: (req, files, cb) => {
       cb(null, path.resolve(__dirname, '..', '..', folder));
-      if (!fs.existsSync("./" + folder)){        
+
+      if (!fs.existsSync("./" + folder))       
         fs.mkdirSync("./" + folder);
-      }
+      
 
     },
     filename: (req, file, cb) => {
