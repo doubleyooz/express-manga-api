@@ -161,15 +161,28 @@ module.exports = {
         let docs = [];
 
         if (number){
-            (await Chapter.find({ manga_id: manga_id, number: number })).forEach(function (doc){
-                docs.push(doc)
-            });
+            Chapter.find({ manga_id: manga_id, number: number }).then(result=>{
+                result.forEach(doc =>{
+                    docs.push(doc)
+                })
+              
+                            
+            }).catch(err =>{
+                return res.json(
+                    response.jsonBadRequest(err, response.getMessage("badRequest"), null) 
+                )
+            })
         }
 
         else if (chapter_id){
-            (await Chapter.find({ _id: chapter_id })).forEach(function (doc){
-                docs.push(doc)
-            });     
+            Chapter.findById(chapter_id).then(doc=>{
+                docs.push(doc)             
+            }).catch(err =>{
+                return res.json(
+                    response.jsonBadRequest(err, response.getMessage("badRequest"), null) 
+                )
+            })
+  
         }
           
         else{
