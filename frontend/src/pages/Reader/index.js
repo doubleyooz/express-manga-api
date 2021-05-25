@@ -28,16 +28,33 @@ export default function Reader(){
             }
             
         }
-        api.get('sign-in', config).then(response =>{
+
+       
+
+        /*api.get('sign-in', config).then(response =>{
             console.log(response.data)
+            console.log("login well succeed")
         }).catch(err=>{
             console.log(err)
-        })
-        api.get('chapter/index?manga_id=60ac4bc918a0761d4c2babda&number=1').then(response => {
+            console.log("login failed")
+        })*/
+        let token =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwYWM0MWRjMTE2NjVkMjg1NDk4N2M3MSIsInJvbGUiOiJTY2FuIiwiaWF0IjoxNjIxOTY0ODc3LCJleHAiOjE2MjE5NzIwNzd9.al2w6IMBeVcKkevHn94hQ0CffDkhh5sDl4t6Ou4fzYQ"
+        
+        config = {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }
+      
+      
+       
+        api.get('chapter/index?manga_id=60ac4bc918a0761d4c2babda&number=1', config).then(response => {
             //setState({ feed: response.data });  
             console.log(response.data);
+            console.log("list chapters well succeed")
         }).catch(err =>{
             console.log(err)
+            console.log("list chapters failed")
         })
       
     }
@@ -126,7 +143,7 @@ export default function Reader(){
                    
                     </div>
                     <div className="controllers">
-                        <button className='button' onClick= {() => prevPage()}>prev</button>
+                        <button className='button' onClick= {() => componentDidMount()}>prev</button>
                         <div className="pages-list"> </div>
                         <div className="version"></div>
                         <div className="viewToggle"></div>
