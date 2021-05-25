@@ -1,16 +1,48 @@
 import React, {useState} from 'react';
 
 import './styles.css';
+
+import api from "../../services/api"
 import banner from "../../assets/banner_scan.png"
+
+
 
 export default function Reader(){
 
     const dir = ""
 
+
+
     const [currentPage, setCurrentPage] = useState({
         id: 0,
         path:  dir + 'banner_scan.png',
-    },);  
+    });  
+    
+    async function componentDidMount() {
+        //registerToSocket();
+        let config = {
+            
+            auth: {
+                username: "itachiut1r4@gmail.com",
+                password: "Lucarneiro@0009"
+            }
+            
+        }
+        api.get('sign-in', config).then(response =>{
+            console.log(response.data)
+        }).catch(err=>{
+            console.log(err)
+        })
+        api.get('chapter/index?manga_id=60ac4bc918a0761d4c2babda&number=1').then(response => {
+            //setState({ feed: response.data });  
+            console.log(response.data);
+        }).catch(err =>{
+            console.log(err)
+        })
+      
+    }
+    componentDidMount()
+    
     
     var imagePath = [];
     
