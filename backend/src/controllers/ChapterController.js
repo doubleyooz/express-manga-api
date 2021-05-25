@@ -158,30 +158,35 @@ module.exports = {
 
         const { manga_id, number, chapter_id } = req.query;
        
-        let docs = [];
-
+        let docs = [], promises = []
+       
         if (number){
-            Chapter.find({ manga_id: manga_id, number: number }).then(result=>{
-                result.forEach(doc =>{
-                    docs.push(doc)
+            promises.push(
+                Chapter.find({ manga_id: manga_id, number: number }).then(result=>{
+                    result.forEach(doc =>{
+                        docs.push(doc)
+                        
                 })
-              
-                            
-            }).catch(err =>{
-                return res.json(
-                    response.jsonBadRequest(err, response.getMessage("badRequest"), null) 
-                )
-            })
-        }
+                                
+                                
+                }).catch(err =>{
+                    return res.json(
+                        response.jsonBadRequest(err, response.getMessage("badRequest"), null) 
+                    )
+                }))
+            
+        }     
 
         else if (chapter_id){
-            Chapter.findById(chapter_id).then(doc=>{
-                docs.push(doc)             
-            }).catch(err =>{
-                return res.json(
-                    response.jsonBadRequest(err, response.getMessage("badRequest"), null) 
-                )
-            })
+            promises.push(
+                Chapter.findById(chapter_id).then(doc=>{
+                    docs.push(doc)             
+                }).catch(err =>{
+                    return res.json(
+                        response.jsonBadRequest(err, response.getMessage("badRequest"), null) 
+                    )
+                })
+            )
   
         }
           
@@ -190,9 +195,13 @@ module.exports = {
                 response.jsonBadRequest(null, response.getMessage("badRequest"), null) 
             )
         }
-        return res.json(
-            response.jsonOK(docs, "Page list retrieved successfully!", null)
-        );
+
+        Promise.all(promises).then(() => {            
+            return res.json(
+                response.jsonOK(docs, "Page list retrieved successfully!", null)
+            );
+        });
+        
        
     },
 
