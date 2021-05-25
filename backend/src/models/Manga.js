@@ -9,6 +9,10 @@ const MangaSchema = new mongoose.Schema({
         default: 0,
     },    
     status: Number, 
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }],
     nsfw:{
         type:Boolean,
         default: false
@@ -18,7 +22,7 @@ const MangaSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chapter'
     
-     }],
+    }],
     scan_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
