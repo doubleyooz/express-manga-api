@@ -35,8 +35,7 @@ module.exports = {
                 chapters: chapters,
                 status: status,                  
                 language: language,
-                nsfw: nsfw, 
-               
+                nsfw: nsfw,               
                 scan_id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
                 //comments?
 
@@ -45,11 +44,8 @@ module.exports = {
             manga.save().then(result => {   
                 return res.json(
                     response.jsonOK(result, "Manga added!", null)
-                )   
-                     
-                
-            
-            
+                )                      
+                            
             }).catch(err => {
                 console.log(err)
                 return res.json(
@@ -60,7 +56,6 @@ module.exports = {
     },
 
     async index(req, res){
-
         const { title, genre, scan } = req.query;
        
         let docs = [];
@@ -91,8 +86,7 @@ module.exports = {
                 docs.push(doc)
             });     
         }
-          
-        
+                  
         docs.forEach(function(doc){
             doc.user = undefined
 
@@ -104,7 +98,6 @@ module.exports = {
     },
 
     async update(req, res){
-
         const { title, genre, synopsis, chapters, scan, status, language, manga_id } = req.body;
 
         if(!manga_id){           
@@ -147,8 +140,6 @@ module.exports = {
                         return res.json(response.jsonOK(update, "Saved Sucessfully", null))
                     });
             
-            
-            
                 } else{
                     return res.json(response.jsonUnauthorized(null, null, null));
                 }
@@ -156,8 +147,7 @@ module.exports = {
             } else{
                 return res.json(response.jsonServerError(null, "manga required doesnt exists", null))
                
-            }                
-                      
+            }                       
         }     
     },
 
