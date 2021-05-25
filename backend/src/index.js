@@ -23,7 +23,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/files', express.static('uploads'));
 
 app.use((req, res, next)=>{
-    res.header("Acess-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "*")
     app.use(cors());
     //req.io = io;
     next();
