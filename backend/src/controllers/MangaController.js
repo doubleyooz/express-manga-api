@@ -36,9 +36,7 @@ module.exports = {
                 status: status,                  
                 language: language,
                 nsfw: nsfw, 
-                data: [ //a array fill with the data links
-                            
-                ],
+               
                 scan_id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
                 //comments?
 
