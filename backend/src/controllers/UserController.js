@@ -53,7 +53,7 @@ module.exports = {
                       subject: response.getMessage("user.activation.account.subject"),
                       body: `
                           <h2>${response.getMessage("user.activation.account.text")}</h2>
-                          <p>${process.env.CLIENT_URL}/authentication/activate/${activationToken}</p>
+                          <p>${process.env.CLIENT_URL}/activateaccount/${activationToken}</p>
                           
                       `
                     })
