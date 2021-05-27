@@ -17,7 +17,7 @@ export default function Routes(){
             <Switch>
                 <Route path="/reader" exact component ={Reader}/>
                 <Route path="/" exact component ={Home}/>
-                <Route path="/activateaccount" exact component ={ActivateAccount}/>
+                <Route path="/activateaccount/:token" exact component ={ActivateAccount}/>
             </Switch>
           
         <HorizontalMenu/>
