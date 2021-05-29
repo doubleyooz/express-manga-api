@@ -12,6 +12,7 @@
     "user.activation.account.activate": "Please check your email to activate your account.",
     "user.activation.account.subject": "No reply - Activate your account.",
     "user.activation.account.text": "Please click on given link to activate your account, if wasn't you just ignore this email.\n",
+    "user.activation.error.already.activated": "The user account is already activated.\n",
     "user.update.email.subject": "No reply - Change your email.",
     "user.update.email.text": "Please click on given link to change your email, if wasn't you just ignore this email.\n",
     "user.update.email.activate": "Please check your email to finish this operation.",
