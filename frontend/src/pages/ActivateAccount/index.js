@@ -1,22 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import api from "../../services/api"
 
 import './styles.css';
 
-async function redirect() {
-   
-    const response = await api.get("/authentication/activate/");
-    
-    console.log(response.data);
-}
+import { useParams } from "react-router-dom";
 
-redirect()
-export default function ActivateAccount(){
+
+
+export default function ActivateAccount(){   
+
+    const [response, setResponse] = useState("");  
+    let { token } = useParams();   
+
+    async function activate(){
+        api.post(`/authentication/activate/${token}`).then(res =>{            
+            setResponse(res.data.message)          
+        }).catch(err=>{
+            setResponse(err.message)            
+            
+        })
+    }
+    activate()
+    
     return(
         <>  
             <div className="redirecting-container">
                 <h1>Redirecting</h1>
+                <div>{response}</div>;
+               
             </div>
             
         </>
