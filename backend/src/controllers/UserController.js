@@ -82,7 +82,7 @@ module.exports = {
                         subject: response.getMessage("user.activation.account.subject"), // Subject line
                         html: `
                             <h2>${response.getMessage("user.activation.account.text")}</h2>
-                            <a href="${process.env.CLIENT_URL}/authentication/activate/${activationToken}">
+                            <a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
                             Activate your account                               
                             <a/>
                            
