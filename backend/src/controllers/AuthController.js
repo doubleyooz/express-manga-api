@@ -2,15 +2,18 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const CryptoJs = require("crypto-js")
+const jwt = require("../common/jwt");
+
 
 const User = require("../models/user");
 
 const response = require("../common/response");
 
-const jwt = require("../common/jwt");
-
 
 module.exports = {
+
+    
+
     async sign_in(req, res){
 
         const [hashType, hash] = req.headers.authorization.split(' ');
@@ -50,12 +53,17 @@ module.exports = {
     },
 
     async activateAccount(req, res){
-        const token = req.params.tky;
-        console.log("got here")
-        if(token){
-            console.log("token exists")
-            const decodedToken = await jwt.verifyJwt(token, 3)
+        const token = req.params.tky;       
+        if(token){            
+            if(jwt.checkBlacklist(token)){ 
+                console.log("Banned")               
+                return res.json(
+                    response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
+                )
+            }
+            console.log("Allowed")
             
+            jwt.verifyJwt(token, 3).then(decodedToken =>{
                 if(decodedToken){
                     console.log("DecodedToken: " + decodedToken.id)
                     const supposed_id = CryptoJs.AES.decrypt(decodedToken.id, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
@@ -63,6 +71,7 @@ module.exports = {
                         user.active = true;
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
+                                jwt.banToken(token)
                                 return res.json(
                                     response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
                                 );   
@@ -87,7 +96,11 @@ module.exports = {
                         response.jsonBadRequest(err, response.getMessage("badRequest"), null)
                     )
                 }
-            ;
+            }).catch(err =>{
+                return res.json(
+                    response.jsonUnauthorized(err, response.getMessage("Unauthorized"), null)
+                )
+            });
           
 
         } else{
