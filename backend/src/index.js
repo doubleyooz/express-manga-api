@@ -1,9 +1,9 @@
 require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
 
 const cors = require('cors');
+const cookie_parser = require("cookie-parser")
 
 const app = express();
 const server = require('http').Server(app);
@@ -22,6 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/files', express.static('uploads'));
 
+app.use(cookie_parser())
 app.use((req, res, next)=>{
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "*")
