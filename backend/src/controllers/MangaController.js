@@ -5,12 +5,16 @@ const fs = require('fs');
 const CryptoJs = require("crypto-js");
 
 const response = require("../common/response");
+const jwt = require('../common/jwt');
+
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 const User = require('../models/user');
 
+
 const { update } = require('../models/Chapter');
 const ChapterController = require('./ChapterController');
+
 
 
 
@@ -28,6 +32,19 @@ module.exports = {
 
         } else{
             
+            let payload = null
+            try{
+                payload = jwt.verifyJwt(token, 1)  
+                
+            
+            }catch(err){ 
+                //Invalid Token            
+                return res.json( 
+                    response.jsonUnauthorized(err, response.getMessage("Unauthorized"), null)
+                )
+            }
+
+
             const manga = new Manga({
                 title: title,
                 genre: genre,
@@ -36,10 +53,12 @@ module.exports = {
                 status: status,                  
                 language: language,
                 nsfw: nsfw,               
-                scan_id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+                scan_id: payload.id
                 //comments?
 
             });
+
+            payload = null
             
             manga.save().then(result => {   
                 return res.json(
