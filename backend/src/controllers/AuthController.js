@@ -54,53 +54,55 @@ module.exports = {
 
     async activateAccount(req, res){
         const token = req.params.tky;       
-        if(token){            
-            if(jwt.checkBlacklist(token)){ 
-                console.log("Banned")               
-                return res.json(
-                    response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-                )
-            }
-            console.log("Allowed")
-            
-            jwt.verifyJwt(token, 3).then(decodedToken =>{
+        if(token){                      
+            try{
+                const decodedToken = jwt.verifyJwt(token, 3)
                 if(decodedToken){
                     console.log("DecodedToken: " + decodedToken.id)
                     const supposed_id = CryptoJs.AES.decrypt(decodedToken.id, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
                     User.findById(supposed_id).then(user => {
+                        if(user.active){
+                            console.log("user.active")
+                            return res.json(
+                                response.jsonBadRequest(
+                                    null,
+                                    response.getMessage("user.activation.error.already.activated"),
+                                    null
+                                )
+                            )
+                            
+                        }
                         user.active = true;
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
-                                jwt.banToken(token)
+                                console.log("sucess")                                
                                 return res.json(
                                     response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
                                 );   
                             } else{
+                                console.log("failed") 
                                 return res.json(
                                     response.jsonServerError(user, null, null)
                                 );  
-                            }
-                                                 
-                          
-                        });
-                       
+                            }                                                 
+                        });                       
                            
-                    }).catch(err => {
+                    }).catch(err => {                        
                         return res.json(
                             response.jsonBadRequest(err, response.getMessage("badRequest"), null)
                         )
                     });                          
                 } else{
-                  
                     return res.json(
                         response.jsonBadRequest(err, response.getMessage("badRequest"), null)
                     )
                 }
-            }).catch(err =>{
+            
+            }catch(err){
                 return res.json(
                     response.jsonUnauthorized(err, response.getMessage("Unauthorized"), null)
                 )
-            });
+            };
           
 
         } else{
@@ -185,7 +187,7 @@ module.exports = {
                         )
                     });                          
                 } else{
-                    console.log("aqui - 0")
+                    
                     return res.json(
                         response.jsonBadRequest(err, response.getMessage("badRequest"), null)
                     )
