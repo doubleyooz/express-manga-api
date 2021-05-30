@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import api from "../../services/api"
 
@@ -9,20 +9,20 @@ import { useParams } from "react-router-dom";
 
 
 export default function ActivateAccount(){   
-
-    const [response, setResponse] = useState("");  
-    let { token } = useParams();   
-
-    async function activate(){
+    const [response, setResponse] = useState(""); 
+    useEffect(() => {
+        // Update the document title using the browser API
         api.post(`/authentication/activate/${token}`).then(res =>{            
             setResponse(res.data.message)          
         }).catch(err=>{
             setResponse(err.message)            
             
         })
-    }
-    activate()
-    
+      }, []);
+   
+
+    let { token } = useParams();   
+
     return(
         <>  
             <div className="redirecting-container">
