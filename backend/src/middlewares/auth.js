@@ -38,7 +38,19 @@ function auth(roles = []){
                 User.exists({_id: payload.id, active: true}).then(result => {
                     if (result){
                         try{                                
-                            
+                            var current_time = Date.now().valueOf() / 1000;
+                            console.log(payload)
+                            console.log(payload.exp - payload.iat)
+                            console.log(payload.exp - current_time)
+                            console.log(current_time)
+                            if ((payload.exp - payload.iat)/2 > payload.exp - current_time) {
+                                let new_token = jwt.generateJwt({id: payload.id, role: payload.role}, 1)
+                                req.headers.authorization = `Bearer ${new_token}`
+                                console.log(`New Token: ${new_token}`)
+                            } else{
+                                console.log("Token not expired")
+                            }
+                            payload = null
                             next();
                             
                         }   catch(err){
