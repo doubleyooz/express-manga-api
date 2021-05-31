@@ -168,50 +168,47 @@ module.exports = {
     },
 
     async delete(req, res){
-        const { manga_id } = req.query;             
+        const { manga_id, scan_id } = req.query;             
         const manga = await Manga.findById(manga_id);        
         if(manga){
-
-            let payload = null
-            try{
-                payload = jwt.verifyJwt(token, 1)  
+           
+            if(manga.scan_id.toString() === scan.id){
                 
-            
-            }catch(err){ 
-                //Invalid Token            
-                return res.json( 
-                    response.jsonUnauthorized(err, response.getMessage("Unauthorized"), null)
-                )
-            }
-            
-            if(manga.scan_id.toString() === payload.id){
-                payload = null
                 const mangas = await Manga.deleteMany({ _id: manga_id });        
 
-                if (mangas.n === 0 ){
+                if (mangas.n === 0)
                     return res.jsonNotFound(mangas, "Manga not found", {removed: false});
-                   
-                } else{                   
-                    (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
-                        doc.imgCollection.forEach(function (page){                            
-                            fs.unlinkSync('uploads/' + page.filename)  
-                        })                      
-                    });
+                                  
+                
+                (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
+                    doc.imgCollection.forEach(function (page){                            
+                        fs.unlinkSync('uploads/' + page.filename)  
+                    })                      
+                });
+    
+                const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err, result){
+    
+                }))   
+    
+                return res.json(
+                    response.jsonOK(
+                        ({"mangas affected": mangas.deletedCount, "chapters affected": chapters},
+                            null,
+                            req.headers.authorization
+                        )
+                    )
+                );
+                
+            } 
+
+            return res.json(response.jsonUnauthorized(null, null, null))
+            
+        } 
+
+        return res.json(
+            response.jsonBadRequest(null, "manga could not be found", req.headers.authorization)
+        )
         
-                    const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err, result){
-        
-                    }))   
-        
-                    return res.json(response.jsonOK(([{"mangas": mangas.deletedCount}, chapters]), null, {removed: true}));
-                }        
-            } else{
-                return res.json(response.jsonUnauthorized(null, null, null))
-            }
-        } else{
-            return res.json(
-                response.jsonBadRequest(null, "manga could not be found", null)
-            )
-        }
     }
 }
 
