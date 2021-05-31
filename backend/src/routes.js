@@ -30,7 +30,7 @@ routes.put("/authentication/recover/:tky", AuthController.recoverPassword);// PU
 
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
-routes.get('/refreshToken', Authorize(["User", "Scan"], AuthController.refreshAccessToken))
+routes.get('/refreshToken', AuthController.refreshAccessToken)
 
 routes.get('/user/index', Authorize("User"), UserController.index);
 routes.put('/user/update', Authorize("User"), UserController.update)
