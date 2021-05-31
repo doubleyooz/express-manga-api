@@ -21,57 +21,48 @@ const ChapterController = require('./ChapterController');
   
 module.exports = {
     async store(req, res){ 
-        const {title, genre, synopsis, chapters, status, language, nsfw } = req.body;
+        const {title, genre, synopsis, chapters, status, language, nsfw, scan_id } = req.body;
         
         const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
        
         if(doesMangaExist){
             return res.json(
-                response.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", null)
+                response.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", req.headers.authorization)
             );
 
-        } else{
-            
-            let payload = null
-            try{
-                payload = jwt.verifyJwt(token, 1)  
-                
-            
-            }catch(err){ 
-                //Invalid Token            
-                return res.json( 
-                    response.jsonUnauthorized(err, response.getMessage("Unauthorized"), null)
-                )
-            }
+        } 
+        if(!mongoose.isValidObjectId(scan_id)){
+            return res.json(
+                response.jsonBadRequest(null, "Scan_id must be a valid id", req.headers.authorization)
+            );
+        }
+        const manga = new Manga({
+            title: title,
+            genre: genre,
+            synopsis: synopsis,
+            chapters: chapters,
+            status: status,                  
+            language: language,
+            nsfw: nsfw,               
+            scan_id: scan_id
+            //comments?
 
+        });
 
-            const manga = new Manga({
-                title: title,
-                genre: genre,
-                synopsis: synopsis,
-                chapters: chapters,
-                status: status,                  
-                language: language,
-                nsfw: nsfw,               
-                scan_id: payload.id
-                //comments?
-
-            });
-
-            payload = null
-            
-            manga.save().then(result => {   
-                return res.json(
-                    response.jsonOK(result, "Manga added!", null)
-                )                      
-                            
-            }).catch(err => {
-                console.log(err)
-                return res.json(
-                    response.jsonServerError(null, null, err)
-                )
-            });
-        }        
+        
+        
+        manga.save().then(result => {   
+            return res.json(
+                response.jsonOK(result, "Manga added!", req.headers.authorization)
+            )                      
+                        
+        }).catch(err => {
+            console.log(err)
+            return res.json(
+                response.jsonServerError(null, null, err)
+            )
+        });
+               
     },
 
     async index(req, res){
@@ -111,7 +102,7 @@ module.exports = {
 
         });
         return res.json(
-            response.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, null)
+            response.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, req.headers.authorization)
         )           
 
     },
