@@ -174,9 +174,21 @@ module.exports = {
         const { manga_id } = req.query;             
         const manga = await Manga.findById(manga_id);        
         if(manga){
-            
-            if(manga.scan_id.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
 
+            let payload = null
+            try{
+                payload = jwt.verifyJwt(token, 1)  
+                
+            
+            }catch(err){ 
+                //Invalid Token            
+                return res.json( 
+                    response.jsonUnauthorized(err, response.getMessage("Unauthorized"), null)
+                )
+            }
+            
+            if(manga.scan_id.toString() === payload.id){
+                payload = null
                 const mangas = await Manga.deleteMany({ _id: manga_id });        
 
                 if (mangas.n === 0 ){
