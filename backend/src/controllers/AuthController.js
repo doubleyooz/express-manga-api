@@ -13,50 +13,54 @@ const response = require("../common/response");
 
 module.exports = {
 
-    refreshAccessToken(){
-        return async (req, res) =>{
-            const refreshToken = req.cookies
-            if(!refreshToken){
+    async refreshAccessToken(req, res){
+      
+        const refreshToken = req.cookies.jid
+        if(!refreshToken){
+            return res.json( 
+                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
+            )
+        }
+        console.log(refreshToken)
+        let payload = null;
+        try{
+            payload = jwt.verifyJwt(refreshToken, 2)
+
+        }catch(err){
+            console.log(err)
+            return res.json( 
+                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
+            )
+        }
+        User.findOne({_id: payload.id, active: true}).then(result => {
+            if (result){
+                try{
+                    const accessToken = jwt.generateJwt({id: result._id, role: result.role}, 1) 
+                                              
+                    return res.json(
+                        response.jsonOK(null,{accessToken: accessToken}, null)
+                    )
+
+                    
+                }   catch(err){
+                    console.log(err)
+                    return res.json(
+                        response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
+                    )
+                }           
+                
+            } else{ 
                 return res.json( 
                     response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
                 )
             }
-            let payload = null;
-            try{
-                payload = jwt.verifyJwt(token, 2)
-    
-            }catch(err){
-                console.log(err)
-                return null
-            }
-            User.findOne({_id: payload.id, active: true}).then(result => {
-                if (result){
-                    try{
-                        const accessToken = jwt.generateJwt({id: result._id, role: result.role}, 1)                               
-                        return res.json(
-                            response.jsonOk({accessToken: accessToken}, null, null)
-                        )
+        }).catch(err =>{
+            return res.json( 
+                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), err)
+            )
+        })
 
-                        
-                    }   catch(err){
-                        console.log(err)
-                        return res.json(
-                            response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-                        )
-                    }           
-                    
-                } else{ 
-                    return res.json( 
-                        response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-                    )
-                }
-            }).catch(err =>{
-                return res.json( 
-                    response.jsonUnauthorized(null, response.getMessage("Unauthorized"), err)
-                )
-            })
     
-        }
     
     },
     
