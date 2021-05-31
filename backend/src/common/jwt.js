@@ -8,7 +8,7 @@ const accActivatePrivateKey = `${process.env.JWT_ACTIVATE_ACCESS}`;
 const recoverPassPrivateKey = `${process.env.JWT_RECOVER_ACCESS}`;
 const updateEmailPrivateKey = `${process.env.JWT_UPDATE_ACCESS}`;
 
-const options = { expiresIn: '120 minutes' };
+const options = { expiresIn: '1 minutes' };
 const refreshOptions = { expiresIn: '12 hours' };
 
 
