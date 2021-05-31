@@ -108,7 +108,7 @@ module.exports = {
     },
 
     async update(req, res){
-        const { title, genre, synopsis, chapters, scan, status, language, manga_id } = req.body;
+        const { title, genre, synopsis, chapters, scan_id, status, language, manga_id } = req.body;
 
         if(!manga_id){           
             return res.json(
@@ -118,7 +118,7 @@ module.exports = {
             const manga = await Manga.findById(manga_id);
 
             if(manga){
-                if(manga.user.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
+                if(manga.scan_id.toString() === scan_id){
                     let update = {};
     
                     if(title){
@@ -133,8 +133,14 @@ module.exports = {
                     if(chapters){
                         update.chapters = chapters;
                     }
-                    if(scan){
-                        update.scan = scan;
+                    if(scan_id){
+                        manga = null
+                        if(!mongoose.isValidObjectId(scan_id)){
+                            return res.json(
+                                response.jsonBadRequest(null, "Scan_id must be a valid id", req.headers.authorization)
+                            );
+                        }
+                        update.scan_id = scan_id;
                     }
                     if(status){
                         update.status = status;
@@ -147,7 +153,7 @@ module.exports = {
                         if (err) 
                             return res.json(response.jsonServerError(null, null, err))
                             
-                        return res.json(response.jsonOK(update, "Saved Sucessfully", null))
+                        return res.json(response.jsonOK(update, "Saved Sucessfully", req.headers.authorization))
                     });
             
                 } else{
