@@ -15,7 +15,7 @@ module.exports = {
 
     async refreshAccessToken(req, res){
       
-        const refreshToken = req.cookies.jid
+        const refreshToken = req.cookie.jid
         if(!refreshToken){
             return res.json( 
                 response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
@@ -94,6 +94,11 @@ module.exports = {
             
             const token = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 1);
             const refreshToken = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 2);
+            
+            
+            res.cookie('kid', token, { httpOnly: true })
+            res.cookie('jid', refreshToken, { httpOnly: true })
+
             
             user.password = undefined;
             return res.json(
