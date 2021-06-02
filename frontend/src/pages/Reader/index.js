@@ -20,27 +20,10 @@ export default function Reader(){
     
     async function componentDidMount() {
         //registerToSocket();
-        let config = {
-            
-            auth: {
-                username: "itachiut1r4@gmail.com",
-                password: "Lucarneiro@0009"
-            }
-            
-        }
-
-       
-
-        /*api.get('sign-in', config).then(response =>{
-            console.log(response.data)
-            console.log("login well succeed")
-        }).catch(err=>{
-            console.log(err)
-            console.log("login failed")
-        })*/
+      
         let token =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwYWM0MWRjMTE2NjVkMjg1NDk4N2M3MSIsInJvbGUiOiJTY2FuIiwiaWF0IjoxNjIxOTY0ODc3LCJleHAiOjE2MjE5NzIwNzd9.al2w6IMBeVcKkevHn94hQ0CffDkhh5sDl4t6Ou4fzYQ"
         
-        config = {
+        let config = {
             headers: {
                 Authorization: "Bearer " + token
             }
