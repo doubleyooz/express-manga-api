@@ -81,7 +81,7 @@ module.exports = {
       
         const [email, password] = Buffer.from(hash, "base64").toString().split(":");
 
-        const user = await User.findOne({ email: email, active: true }).select(['password', 'role'])
+        const user = await User.findOne({ email: email, active: true }).select(['password', 'role', 'token_version'])
         
     
         const match = user ? await bcrypt.compare(password, user.password) : null;
