@@ -31,6 +31,10 @@ const MangaSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    },
     //comments?
 
 });
