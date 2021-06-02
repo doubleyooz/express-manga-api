@@ -34,7 +34,7 @@ function auth(roles = []){
                     response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
                 )
                 
-            } else{
+            } else{                
                 User.exists({_id: payload.id, active: true, token_version: payload.token_version}).then(result => {
                     if (result){
                         try{                                
