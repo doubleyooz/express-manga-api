@@ -40,6 +40,11 @@ const UserSchema = new mongoose.Schema({
         ref: 'Manga'
     }],
 
+    token_version:{
+        type: Number,
+        default: 0
+    },
+
     active:{
         type: Boolean,
         default: false

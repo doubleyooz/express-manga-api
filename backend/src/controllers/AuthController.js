@@ -35,7 +35,11 @@ module.exports = {
         User.findOne({_id: payload.id, active: true}).then(result => {
             if (result){
                 try{
-                    const accessToken = jwt.generateJwt({id: result._id, role: result.role}, 1) 
+                    const accessToken = jwt.generateJwt({
+                        id: result._id,
+                        role: result.role,
+                        token_version: result.token_version}
+                    , 1) 
                                               
                     return res.json(
                         response.jsonOK(null,{accessToken: accessToken}, null)
@@ -88,8 +92,8 @@ module.exports = {
             )
         } else{
             
-            const token = jwt.generateJwt({id: user._id, role: user.role}, 1);
-            const refreshToken = jwt.generateJwt({id: user._id, role: user.role}, 2);
+            const token = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 1);
+            const refreshToken = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 2);
             
             user.password = undefined;
             return res.json(

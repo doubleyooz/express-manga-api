@@ -35,7 +35,7 @@ function auth(roles = []){
                 )
                 
             } else{
-                User.exists({_id: payload.id, active: true}).then(result => {
+                User.exists({_id: payload.id, active: true, token_version: payload.token_version}).then(result => {
                     if (result){
                         try{                                
                             var current_time = Date.now().valueOf() / 1000;
@@ -44,7 +44,7 @@ function auth(roles = []){
                             console.log(payload.exp - current_time)
                             console.log(current_time)
                             if ((payload.exp - payload.iat)/2 > payload.exp - current_time) {
-                                let new_token = jwt.generateJwt({id: payload.id, role: payload.role}, 1)
+                                let new_token = jwt.generateJwt({id: payload.id, role: payload.role, token_version: payload.token_version}, 1)
                                 req.headers.authorization = `Bearer ${new_token}`
                                 console.log(`New Token: ${new_token}`)
                             } else{
