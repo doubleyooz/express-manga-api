@@ -142,6 +142,8 @@ module.exports = {
                     if(language){
                         update.language = language;
                     }
+
+                    update.updated_At = Date.now()
                    
                     Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
                         if (err) 
