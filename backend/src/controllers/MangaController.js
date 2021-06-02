@@ -18,13 +18,15 @@ const ChapterController = require('./ChapterController');
 
 
 
-  
+
 module.exports = {
     async store(req, res){ 
-        const {title, genre, synopsis, chapters, status, language, nsfw, scan_id } = req.body;
+        const {title, genre, synopsis, chapters, status, language, nsfw} = req.body;
         
         const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
        
+        const scan_id = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+        req.auth = null
         if(doesMangaExist){
             return res.json(
                 response.jsonBadRequest(null, "This manga already exists or the title is unavaliable;", req.headers.authorization)
@@ -108,7 +110,7 @@ module.exports = {
     },
 
     async update(req, res){
-        const { title, genre, synopsis, chapters, scan_id, status, language, manga_id } = req.body;
+        const { title, genre, synopsis, chapters, status, language, manga_id } = req.body;
 
         if(!manga_id){           
             return res.json(
@@ -118,7 +120,7 @@ module.exports = {
             const manga = await Manga.findById(manga_id);
 
             if(manga){
-                if(manga.scan_id.toString() === scan_id){
+                if(manga.scan_id.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
                     let update = {};
     
                     if(title){
@@ -132,16 +134,8 @@ module.exports = {
                     }
                     if(chapters){
                         update.chapters = chapters;
-                    }
-                    if(scan_id){
-                        manga = null
-                        if(!mongoose.isValidObjectId(scan_id)){
-                            return res.json(
-                                response.jsonBadRequest(null, "Scan_id must be a valid id", req.headers.authorization)
-                            );
-                        }
-                        update.scan_id = scan_id;
-                    }
+                    }                   
+                    
                     if(status){
                         update.status = status;
                     }
@@ -168,12 +162,13 @@ module.exports = {
     },
 
     async delete(req, res){
-        const { manga_id, scan_id } = req.query;             
-        const manga = await Manga.findById(manga_id);        
-        if(manga){
-           
-            if(manga.scan_id.toString() === scan.id){
-                
+        const { manga_id } = req.query;             
+        const manga = await Manga.findById(manga_id);
+        const scan_id =  CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+        req.auth = null
+
+        if(manga){           
+            if(manga.scan_id.toString() === scan_id){              
                 const mangas = await Manga.deleteMany({ _id: manga_id });        
 
                 if (mangas.n === 0)
@@ -189,7 +184,8 @@ module.exports = {
                 const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err, result){
     
                 }))   
-    
+                
+              
                 return res.json(
                     response.jsonOK(
                         ({"mangas affected": mangas.deletedCount, "chapters affected": chapters},

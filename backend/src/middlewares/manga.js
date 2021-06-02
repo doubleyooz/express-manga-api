@@ -6,7 +6,7 @@ const response = require("../common/response");
 module.exports = {
     async valid_manga_store(req, res, next){         
                        
-        const { title, genre, synopsis, chapters, status, scan_id, nsfw, language } = req.body;  
+        const { title, genre, synopsis, chapters, status, nsfw, language } = req.body;  
         
         
         console.log(title)
@@ -19,12 +19,11 @@ module.exports = {
             status: yup.number("status must be a number.").min(1, 'Invalid code.').max(6, 'Invalid code.').required(),
             nsfw: yup.bool("nsfw must be a boolean.").strict().required(),
             language: yup.string("language must be a string.").strict().default({ language: 'pt' }).required(),
-            scan_id: yup.string("scan_id must be a string.").strict().required(),
-
+           
         })
 
         try{
-            await schema.validate({title, scan_id, genre, synopsis, chapters, status, nsfw, language})
+            await schema.validate({title, genre, synopsis, chapters, status, nsfw, language})
             .catch(function(e) {
                 return res.json(
                     response.jsonBadRequest(null, "you did not give us want we want", null)
