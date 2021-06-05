@@ -42,7 +42,7 @@ module.exports = {
                     , 1) 
                                               
                     return res.json(
-                        response.jsonOK(null,{accessToken: accessToken}, null)
+                        response.jsonOK(null, {accessToken: accessToken}, null)
                     )
 
                     
@@ -95,14 +95,13 @@ module.exports = {
             const token = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 1);
             const refreshToken = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 2);
             
-            
-            res.cookie('kid', token, { httpOnly: true })
+            req.headers.authorization = `Bearer ${token}`
             res.cookie('jid', refreshToken, { httpOnly: true })
 
             
             user.password = undefined;
             return res.json(
-                response.jsonOK(user, response.getMessage("user.valid.sign_in.success"), {token, refreshToken})
+                response.jsonOK(user, response.getMessage("user.valid.sign_in.success"), {token})
             )
         }
     
