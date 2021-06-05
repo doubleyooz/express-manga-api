@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-import api from "../../services/api"
-
 import './styles.css';
 
 import { useParams } from "react-router-dom";
-
+const api = require("../../services/api")
 
 
 export default function ActivateAccount(){   
     const [response, setResponse] = useState(""); 
     useEffect(() => {
         // Update the document title using the browser API
-        api.post(`/authentication/activate/${token}`).then(res =>{            
+        api.get_instance().post(`/authentication/activate/${token}`).then(res =>{            
             setResponse(res.data.message)          
         }).catch(err=>{
             setResponse(err.message)            

@@ -1,40 +1,43 @@
 import React, {useState} from 'react';
 
 import './styles.css';
-
-import api from "../../services/api"
 import banner from "../../assets/banner_scan.png"
 
+const api = require("../../services/api")
 
 
 export default function Reader(){
 
     const dir = ""
 
+    let pages = []
 
-
-    const [currentPage, setCurrentPage] = useState({
-        id: 0,
-        path:  dir + 'banner_scan.png',
-    });  
+    const [currentPage, setCurrentPage] = useState({id: 0, path: ""});  
     
     async function componentDidMount() {
         //registerToSocket();
       
-        let token =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwYWM0MWRjMTE2NjVkMjg1NDk4N2M3MSIsInJvbGUiOiJTY2FuIiwiaWF0IjoxNjIxOTY0ODc3LCJleHAiOjE2MjE5NzIwNzd9.al2w6IMBeVcKkevHn94hQ0CffDkhh5sDl4t6Ou4fzYQ"
-        
-        let config = {
-            headers: {
-                Authorization: "Bearer " + token
-            }
-        }
-      
-      
+             
        
-        api.get('chapter/index?manga_id=60ac4bc918a0761d4c2babda&number=1', config).then(response => {
+        api.get_instance().get('chapter/index?manga_id=60ac4bc918a0761d4c2babda&number=1').then(response => {
             //setState({ feed: response.data });  
-            console.log(response.data);
-            console.log("list chapters well succeed")
+           
+
+            if(response.data !== null){
+                console.log(response.data);
+                response.data.forEach(page =>{
+                    pages.push(page.url)
+                })
+    
+                setCurrentPage({id: 0, path: pages[0]})
+                console.log("list chapters well succeed")
+            } else {
+                console.log("list chapters failed")
+
+            }
+
+           
+           
         }).catch(err =>{
             console.log(err)
             console.log("list chapters failed")
@@ -45,7 +48,7 @@ export default function Reader(){
     
     
     var imagePath = [];
-    
+    /*
     function generatePath(someImageName) {
         return require(`../../assets/${someImageName}`);
     }
@@ -73,41 +76,26 @@ export default function Reader(){
         imagePath = temp
         }
     }
-                   
+              */     
     
     function nextPage(){    
-        getPaths()
-        imagePath.forEach((obj, index) => {
-            if(obj.id === currentPage.id){
-                console.log(imagePath.length)
-                console.log(index)
-                if(imagePath.length === index+1){
+        if (currentPage.id === pages.length){
+            console.log("last page reached")
+        } else{
+            setCurrentPage({id: currentPage.id+1, path: pages[currentPage.id+1]})
+        }
+        
 
-                } else{
-                    setCurrentPage(imagePath[index+1])
-                }
-                
-            }
-        })
-        console.log(currentPage.path)
-     
+        
     }
 
     function prevPage(){    
-        getPaths();
-        imagePath.forEach((obj, index) => {
-            if(obj.id === currentPage.id){
-                console.log(imagePath.length)
-                console.log(index)
-                if(index === 0){
-
-                } else{
-                    setCurrentPage(imagePath[index-1])
-                }
-                
-            }
-        })
-        console.log(currentPage.path)
+        if(currentPage.id === 0){
+            console.log("first page reached")
+        } else{
+            setCurrentPage({id: currentPage.id-1, path: pages[currentPage.id-1]})
+        }
+        
      
     }
 
@@ -126,8 +114,8 @@ export default function Reader(){
                    
                     </div>
                     <div className="controllers">
-                        <button className='button' onClick= {() => componentDidMount()}>prev</button>
-                        <div className="pages-list"> </div>
+                        <button className='button' onClick= {() => prevPage()}>prev</button>
+                        <div className="pages-list"></div>
                         <div className="version"></div>
                         <div className="viewToggle"></div>
                         <button className='button' onClick={() => nextPage()}>next</button>

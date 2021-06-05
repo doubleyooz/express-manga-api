@@ -1,11 +1,13 @@
-import React from 'react';
-import api from "../../services/api"
-
+import React, { useState, useEffect } from 'react';
 import './styles.css';
 
-export default function Home(){
+const api = require("../../services/api")
 
-    async function componentDidMount(){
+export default function Home(){
+    
+    const [text, setText] = useState("");  
+
+    useEffect(()=>{
         let config = {
             
             auth: {
@@ -17,21 +19,24 @@ export default function Home(){
 
        
 
-        api.get('sign-in', config).then(response =>{
+        api.get_instance().get('sign-in', config).then(response =>{
             console.log(response.data)
-            console.log("login well succeed")
+            setText("login well succeed")
+            console.log(text)
         }).catch(err=>{
-            console.log(err)
-            console.log("login failed")
+            console.log(err)            
+            setText("login failed")
+            console.log(text)
         })
-    }
-    componentDidMount()
+    }, []) // <-- empty dependency array
+
+
 
 
     return(
         <>  
             <div className="home-container">
-                <h1>HOME</h1>
+                <h1>{text}</h1>
             </div>
             
         </>
