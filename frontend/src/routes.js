@@ -20,7 +20,7 @@ export default function Routes(){
                 <Route path="/activateaccount/:token" exact component ={ActivateAccount}/>
             </Switch>
           
-        <HorizontalMenu/>
+            <HorizontalMenu/>
         </BrowserRouter>
        </div>
        
