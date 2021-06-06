@@ -1,23 +1,18 @@
 import axios from 'axios';
 
+const api = axios.create({
+    baseURL: 'http://localhost:3333',
+});
+
 var token = null
 
-module.exports = {
-    get_instance(){
-        return axios.create({
-            baseURL: 'http://localhost:3333',
-        });
-    },
-
-    get_token(new_token){
-        if(new_token){
-            token = new_token
-            return new_token
-        }
-        return token    
-        
+export function getToken(new_token){
+    if(new_token){
+        token = new_token
+        return new_token
     }
-
+    return token    
 }
 
 
+export default api;
