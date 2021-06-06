@@ -1,36 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './styles.css';
 
-import api, {getToken} from "../../services/api"
+import api from "../../services/api"
 
+import { Context } from '../../Contexts/AuthProvider'
 
 export default function Home(){
-    
+    const { auth, handleLogin } = useContext(Context)
+
     const [text, setText] = useState("");  
 
     useEffect(()=>{
-        let config = {
-            
-            auth: {
-                username: "itachiut1r4@gmail.com",
-                password: "Lucarneiro@0009"
+        async function fetchData(){
+            if(await handleLogin()){
+                console.log(auth)
+                setText(`login well succeed: ${auth}`)
             }
-            
+            else{
+                setText("login failed")
+            }  
         }
-
-        console.log(api)
-
-        api.get('sign-in', config).then(response =>{
-            console.log(response.data)
-            console.log(getToken(response.data.metadata.token))
-
-            setText("login well succeed")
-            console.log(text)
-        }).catch(err=>{
-            console.log(err)            
-            setText("login failed")
-            console.log(text)
-        })
+        fetchData()
+            
     }, []) // <-- empty dependency array
 
 
