@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import './styles.css';
 import banner from "../../assets/banner_scan.png"
 
-const api = require("../../services/api")
+import api from "../../services/api"
 
 
 export default function Reader(){
@@ -19,7 +19,7 @@ export default function Reader(){
       
              
        
-        api.get_instance().get('chapter/index?manga_id=60ac4bc918a0761d4c2babda&number=1').then(response => {
+        api.get('chapter/index?manga_id=60ac4bc918a0761d4c2babda&number=1').then(response => {
             //setState({ feed: response.data });  
            
 

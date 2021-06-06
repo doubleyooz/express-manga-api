@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
 
-const api = require("../../services/api")
+import api, {getToken} from "../../services/api"
+
 
 export default function Home(){
     
@@ -17,10 +18,12 @@ export default function Home(){
             
         }
 
-       
+        console.log(api)
 
-        api.get_instance().get('sign-in', config).then(response =>{
+        api.get('sign-in', config).then(response =>{
             console.log(response.data)
+            console.log(getToken(response.data.metadata.token))
+
             setText("login well succeed")
             console.log(text)
         }).catch(err=>{
