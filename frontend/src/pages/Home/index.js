@@ -6,21 +6,23 @@ import api from "../../services/api"
 import { Context } from '../../Contexts/AuthProvider'
 
 export default function Home(){
-    const { auth, handleLogin } = useContext(Context)
+    const { token, loading, handleLogin } = useContext(Context)
 
     const [text, setText] = useState("");  
 
     useEffect(()=>{
         async function fetchData(){
-            if(await handleLogin()){
-                console.log(auth)
-                setText(`login well succeed: ${auth}`)
-            }
-            else{
-                setText("login failed")
-            }  
-        }
-        fetchData()
+            handleLogin()
+            if(!loading){
+                console.log(token)
+                if(token !== ""){
+                    setText(`login well succeed: ${token}`)
+                } else{
+                    setText("login failed")
+                }                
+            }                            
+        }        
+        fetchData()     
             
     }, []) // <-- empty dependency array
 

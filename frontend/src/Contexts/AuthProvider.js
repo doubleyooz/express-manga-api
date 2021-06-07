@@ -8,7 +8,8 @@ const Context = createContext();
 
 
 function AuthProvider({ children }) {
-    const [auth, setAuth] = useState(null); 
+    const [token, setToken] = useState("");
+    const [loading, setLoading] = useState(true) 
 
     async function handleLogin(){
         let config = {
@@ -22,15 +23,16 @@ function AuthProvider({ children }) {
 
         api.get('sign-in', config).then(response =>{
             
-            setAuth(response.data.metadata.token.toString())
-            
+            setToken(response.data.metadata.token.toString())
+            console.log("sign-in well succeed")
            
-            return true
+            setLoading(false)
             
         }).catch(err=>{
-            console.log(err)            
-            setAuth(null)
-            return false
+            console.log(err)
+            console.log("sign-error")         
+            setToken("")
+            setLoading(false)
         })
     }
 
@@ -39,7 +41,7 @@ function AuthProvider({ children }) {
     } = useAuth();*/
 
     return (
-    <Context.Provider value={{ auth, handleLogin }}>
+    <Context.Provider value={{ token, loading, handleLogin }}>
         {children}
     </Context.Provider>
     );
