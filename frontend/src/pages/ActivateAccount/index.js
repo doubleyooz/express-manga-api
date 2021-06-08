@@ -9,6 +9,8 @@ import api from "../../services/api"
 
 export default function ActivateAccount(){   
     const [response, setResponse] = useState(""); 
+    let { token } = useParams();   
+    
     useEffect(() => {
         // Update the document title using the browser API
         api.post(`/authentication/activate/${token}`).then(res =>{            
@@ -20,7 +22,7 @@ export default function ActivateAccount(){
       }, []);
    
 
-    let { token } = useParams();   
+    
 
     return(
         <>  

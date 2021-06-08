@@ -14,7 +14,7 @@ export default function Home(){
         async function fetchData(){
             handleLogin()
             if(!loading){
-                console.log(token)
+                //console.log(token)
                 if(token !== ""){
                     setText(`login well succeed: ${token}`)
                 } else{

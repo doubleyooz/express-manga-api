@@ -1,25 +1,30 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 
 import './styles.css';
-import banner from "../../assets/banner_scan.png"
 
+
+import { Context } from '../../Contexts/AuthProvider'
 import api from "../../services/api"
 
 
 export default function Reader(){
 
-    const dir = ""
-
     let pages = []
-
+    const { token, loading, handleLogin } = useContext(Context)
     const [currentPage, setCurrentPage] = useState({id: 0, path: ""});  
     
+    let config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+          }
+    }
+
     async function componentDidMount() {
         //registerToSocket();
       
-             
-       
-        api.get('chapter/index?manga_id=60ac4bc918a0761d4c2babda&number=1').then(response => {
+        console.log(token)     
+        
+        api.get('chapter/index?manga_id=60b809c8f2e54b2be09ec686&number=1', config).then(response => {
             //setState({ feed: response.data });  
            
 
