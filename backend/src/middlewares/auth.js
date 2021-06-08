@@ -11,7 +11,8 @@ module.exports = auth
 function auth(roles = []){
     return async (req, res, next) => {
         try{
-            if(!req.cookie.jid){
+            console.log(req.cookies)
+            if(!req.cookies.jid){
                 return res.json( 
                     response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
                 )
