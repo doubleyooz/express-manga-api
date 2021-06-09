@@ -12,6 +12,7 @@ function auth(roles = []){
     return async (req, res, next) => {
         try{            
             if(!req.cookies.jid){
+                console.log("req.cookies.jid missing")
                 return res.json( 
                     response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
                 )

@@ -95,7 +95,7 @@ module.exports = {
             const refreshToken = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 2);
             
             req.headers.authorization = `Bearer ${token}`
-            res.cookie('jid', refreshToken, { httpOnly: true, path: "/refresh-token"})
+            res.cookie('jid', refreshToken, { httpOnly: true})
             
             
             user.password = undefined;
@@ -133,12 +133,12 @@ module.exports = {
                         user.active = true;
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
-                                console.log("sucess")                                
+                                                               
                                 return res.json(
                                     response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
                                 );   
                             } else{
-                                console.log("failed") 
+                               
                                 return res.json(
                                     response.jsonServerError(user, null, null)
                                 );  
