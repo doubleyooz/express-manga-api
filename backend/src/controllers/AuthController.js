@@ -69,8 +69,7 @@ module.exports = {
     },
     
 
-    async sign_in(req, res){
-
+    async sign_in(req, res){        
         const [hashType, hash] = req.headers.authorization.split(' ');
        
         if(hashType !== "Basic"){
