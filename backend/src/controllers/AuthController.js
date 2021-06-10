@@ -94,9 +94,8 @@ module.exports = {
             const token = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 1);
             const refreshToken = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 2);
             
-            req.headers.authorization = `Bearer ${token}`
-            res.cookie('jid', refreshToken, { httpOnly: true})
-            
+            req.headers.authorization = `Bearer ${token}`           
+            res.cookie('jid', refreshToken, { httpOnly: true, path: "/refresh-token"})
             
             user.password = undefined;
             return res.json(

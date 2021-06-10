@@ -10,14 +10,7 @@ module.exports = auth
 
 function auth(roles = []){
     return async (req, res, next) => {
-        try{            
-            if(!req.cookies.jid){
-                console.log("req.cookies.jid missing")
-                return res.json( 
-                    response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-                )
-            }
-
+        try{          
             const [, token] = req.headers.authorization.split(" ")
             if (typeof roles === 'string') {
                 roles = [roles];
