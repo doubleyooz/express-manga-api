@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 
 import './styles.css';
 
@@ -7,87 +7,69 @@ import { Context } from '../../Contexts/AuthProvider'
 import api from "../../services/api"
 
 
+
 export default function Reader(){
 
-    let pages = []
+   
     const { token, loading, handleLogin } = useContext(Context)
-    const [currentPage, setCurrentPage] = useState({id: 0, path: ""});  
     
+    const [state, setState] = useState({pages: []})
+    const [info, setInfo] = useState("")
+    const [currentPage, setCurrentPage] = useState(0)
+    
+    
+    var index = 0
+
     let config = {
         headers: {
             'Authorization': `Bearer ${token}`
           }
     }
 
-    async function componentDidMount() {
-        //registerToSocket();
-      
-        console.log(token)     
-        
-        api.get('chapter/index?manga_id=60b809c8f2e54b2be09ec686&number=1', config).then(response => {
-            //setState({ feed: response.data });  
-           
 
-            if(response.data !== null){
-                console.log(response.data);
-                response.data.forEach(page =>{
-                    pages.push(page.url)
-                })
+    useEffect(()=>{
+        async function fetchData(){
+            console.log(token)             
+            api.get('chapter/index?manga_id=60b809c8f2e54b2be09ec686&number=1', config)
+                .then(response => {
+                    //setState({ feed: response.data });  
+                    if(response.data !== null){
+                        console.log(response.data);
+                       
+                        setState({ pages: response.data.data[0].imgCollection })
+                        setInfo({
+                            title: response.data.data[0].title,
+                            number: response.data.data[0].number
+                        })
+                        console.log("list chapters well succeed")
+                       
+                       
+                        
+                    } else {
+                        console.log("list chapters failed")
+                        return null
+                    }           
+            
+                }).catch(err =>{
+                    console.log(err)
+                    console.log("list chapters failed")
+                    return null
+                })        
+        }        
+        fetchData()     
+            
+    }, []) // <-- empty dependency array
+
+  
     
-                setCurrentPage({id: 0, path: pages[0]})
-                console.log("list chapters well succeed")
-            } else {
-                console.log("list chapters failed")
-
-            }
-
-           
-           
-        }).catch(err =>{
-            console.log(err)
-            console.log("list chapters failed")
-        })
-      
-    }
-    componentDidMount()
-    
-    
-    var imagePath = [];
-    /*
-    function generatePath(someImageName) {
-        return require(`../../assets/${someImageName}`);
-    }
-
-    function getPaths(){
-        let temp = [ {
-            id: 0,
-            path: generatePath("banner_scan.png")
-        }];
-
-        for(var i = 1; i < 49; i++){
-            if (i < 10){
-                temp.push({
-                    id: i, 
-                    path: generatePath(`cap/0${i}.jpg`)
-                   
-                });                
-            }               
-            else {
-                temp.push({
-                    id: i, 
-                    path:  generatePath(`cap/${i}.jpg`)
-                })
-            }
-        imagePath = temp
-        }
-    }
-              */     
     
     function nextPage(){    
-        if (currentPage.id === pages.length){
+      
+        if (currentPage === state.pages.length){
             console.log("last page reached")
         } else{
-            setCurrentPage({id: currentPage.id+1, path: pages[currentPage.id+1]})
+            //setCurrentPage({id: currentPage.id+1, path: pages[currentPage.id+1]})
+            setCurrentPage(currentPage+1)            
         }
         
 
@@ -95,10 +77,11 @@ export default function Reader(){
     }
 
     function prevPage(){    
-        if(currentPage.id === 0){
+        if(currentPage === 0){
             console.log("first page reached")
         } else{
-            setCurrentPage({id: currentPage.id-1, path: pages[currentPage.id-1]})
+            //setCurrentPage({id: currentPage.id-1, path: pages[currentPage.id-1]})
+            setCurrentPage(currentPage-1)
         }
         
      
@@ -113,7 +96,7 @@ export default function Reader(){
                     </div>
                     <div className="controllers">
                         <button className='button'>◄◄</button>
-                        <div className="chapters"> Chapter #06 </div>
+                        <div className="chapters"> Chapter #0{info.number} </div>
                         <button className='button'>►►</button>
                    
                    
@@ -130,11 +113,13 @@ export default function Reader(){
             </div>
 
 
-
             <div className='board'>       
+                {state.pages.map((page, index) => (                   
+                    //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
+                    <img src= {page.url} alt= {page.originalname} style={index === currentPage ? {}  : {display: "none"}}/>
+                ))}
 
-
-                <img className='page' src={currentPage.path} alt={currentPage.id} onClick={() => nextPage()}/>
+                <img className='page' src={state.pages[index]} alt={index} onClick={() => nextPage()}/>
             </div>
 
 
