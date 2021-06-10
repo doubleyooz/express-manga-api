@@ -1,4 +1,5 @@
-.home-container{
-    width: 400px;
-    
+.home-container h1{
+    width: 60vw;
+    height: 500px;   
+    word-wrap: break-word; 
 }
