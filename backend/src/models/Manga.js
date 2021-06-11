@@ -4,7 +4,7 @@ const MangaSchema = new mongoose.Schema({
     title: String,
     genre: String,
     synopsis: String,
-    chapters:{
+    n_chapters:{
         type: Number,
         default: 0,
     },    
@@ -18,7 +18,7 @@ const MangaSchema = new mongoose.Schema({
         default: false
     },
     language: String,    
-    data: [{ //a array fill with the data links
+    chapters: [{ //a array fill with the data links
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chapter'
     

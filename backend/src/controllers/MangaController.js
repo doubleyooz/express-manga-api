@@ -21,7 +21,7 @@ const ChapterController = require('./ChapterController');
 
 module.exports = {
     async store(req, res){ 
-        const {title, genre, synopsis, chapters, status, language, nsfw} = req.body;
+        const {title, genre, synopsis, n_chapters, status, language, nsfw} = req.body;
         
         const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
        
@@ -42,7 +42,7 @@ module.exports = {
             title: title,
             genre: genre,
             synopsis: synopsis,
-            chapters: chapters,
+            n_chapters: n_chapters,
             status: status,                  
             language: language,
             nsfw: nsfw,               

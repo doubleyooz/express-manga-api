@@ -39,10 +39,11 @@ module.exports = {
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
 
-                    let temp = { originalname:  file.originalname,
-                                size: file.size,
-                                filename: file.filename,
-                                url: "http://localhost:3333/files/" + file.filename,
+                    let temp = { 
+                        originalname:  file.originalname,
+                        size: file.size,
+                        filename: file.filename,
+                                
                     }                            
                 
                     jsonString.push(JSON.parse(JSON.stringify(temp)));
@@ -65,7 +66,7 @@ module.exports = {
                 
 
                 chapter.save().then(result => {
-                    manga.data.push(result._id) 
+                    manga.chapters.push(result._id) 
                     manga.save().then(answer => {
 
                     }).catch(err =>{
