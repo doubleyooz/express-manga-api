@@ -6,7 +6,7 @@ import './styles.css';
 import { Context } from '../../Contexts/AuthProvider'
 import api from "../../services/api"
 
-
+require('dotenv').config()
 
 export default function Reader(){
 
@@ -30,16 +30,18 @@ export default function Reader(){
     useEffect(()=>{
         async function fetchData(){
             console.log(token)             
-            api.get('chapter/index?manga_id=60b809c8f2e54b2be09ec686&number=1', config)
+            api.get('chapter/index?manga_id=60c3ff94f527df2248dcbff4&number=1', config)
                 .then(response => {
                     //setState({ feed: response.data });  
                     if(response.data !== null){
+                        console.log(response)
                         console.log(response.data);
+                        console.log(response.data.data)
                        
-                        setState({ pages: response.data.chapters[0].imgCollection })
+                        setState({ pages: response.data.data[0].imgCollection })
                         setInfo({
-                            title: response.data.chapters[0].title,
-                            number: response.data.chapters[0].number
+                            title: response.data.data[0].imgCollection.title,
+                            number: response.data.data[0].imgCollection.number
                         })
                         console.log("list chapters well succeed")
                        
@@ -94,6 +96,7 @@ export default function Reader(){
                     <div className="title">
                         Rental Onii-chan!
                     </div>
+
                     <div className="controllers">
                         <button className='button'>◄◄</button>
                         <div className="chapters"> Chapter #0{info.number} </div>
@@ -116,7 +119,7 @@ export default function Reader(){
             <div className='board'>       
                 {state.pages.map((page, index) => (                   
                     //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
-                    <img src={process.env.REACT_APP_NOT_SECRET_CODE + page.id} alt= {page.originalname} style={index === currentPage ? {}  : {display: "none"}}/>
+                    <img src={process.env.REACT_APP_SERVER + page.id} alt= {page.originalname} style={index === currentPage ? {}  : {display: "none"}}/>
                 ))}
 
                 <img className='page' src={state.pages[index]} alt={index} onClick={() => nextPage()}/>
