@@ -5,8 +5,7 @@ const PageSchema = new mongoose.Schema({
     
         name: String,
         size: Number,
-        key: String,
-        url: String,
+        key: String,        
         filename: String, 
         originalname: String,  
    
@@ -30,8 +29,8 @@ const ChapterSchema = new mongoose.Schema({
         default: [{
             originalname: "none",           
             size: 0,   
-            filename: "none",        
-            url: "none", 
+            filename: "none"      
+            
         }]
     },
     createdAt: {

@@ -38,7 +38,7 @@ module.exports = {
                 
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
-
+                    console.log(i)
                     let temp = { 
                         originalname:  file.originalname,
                         size: file.size,
@@ -229,9 +229,9 @@ module.exports = {
         
                     Manga.findOne({ _id: manga_id }, function (err, manga){ 
                         if(manga){
-                            cloneData = [...manga.data];
+                            cloneData = [...manga.chapters];
                             let index = 0;
-                            manga.data.forEach(function (pos, i){
+                            manga.chapters.forEach(function (pos, i){
                                 if(pos === chapter_id){
                                     console.log("here")
                                     index = i;
