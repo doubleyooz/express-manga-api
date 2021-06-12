@@ -40,8 +40,8 @@ export default function Reader(){
                        
                         setState({ pages: response.data.data[0].imgCollection })
                         setInfo({
-                            title: response.data.data[0].imgCollection.title,
-                            number: response.data.data[0].imgCollection.number
+                            title: response.data.data[0].title,
+                            number: response.data.data[0].number
                         })
                         console.log("list chapters well succeed")
                        
@@ -66,8 +66,9 @@ export default function Reader(){
     
     
     function nextPage(){    
-      
-        if (currentPage === state.pages.length){
+        
+
+        if (currentPage === state.pages.length - 1){
             console.log("last page reached")
         } else{
             //setCurrentPage({id: currentPage.id+1, path: pages[currentPage.id+1]})
@@ -119,10 +120,12 @@ export default function Reader(){
             <div className='board'>       
                 {state.pages.map((page, index) => (                   
                     //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
-                    <img src={process.env.REACT_APP_SERVER + page.id} alt= {page.originalname} style={index === currentPage ? {}  : {display: "none"}}/>
+                    < img src={process.env.REACT_APP_SERVER + page.filename}
+                      alt= {page.originalname}
+                      style={index === currentPage ? {}  : {display: "none"}}
+                      onClick={() => nextPage()}/>
                 ))}
 
-                <img className='page' src={state.pages[index]} alt={index} onClick={() => nextPage()}/>
             </div>
 
 
