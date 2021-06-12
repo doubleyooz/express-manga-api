@@ -36,10 +36,10 @@ export default function Reader(){
                     if(response.data !== null){
                         console.log(response.data);
                        
-                        setState({ pages: response.data.data[0].imgCollection })
+                        setState({ pages: response.data.chapters[0].imgCollection })
                         setInfo({
-                            title: response.data.data[0].title,
-                            number: response.data.data[0].number
+                            title: response.data.chapters[0].title,
+                            number: response.data.chapters[0].number
                         })
                         console.log("list chapters well succeed")
                        
@@ -116,7 +116,7 @@ export default function Reader(){
             <div className='board'>       
                 {state.pages.map((page, index) => (                   
                     //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
-                    <img src= {page.url} alt= {page.originalname} style={index === currentPage ? {}  : {display: "none"}}/>
+                    <img src={process.env.REACT_APP_NOT_SECRET_CODE + page.id} alt= {page.originalname} style={index === currentPage ? {}  : {display: "none"}}/>
                 ))}
 
                 <img className='page' src={state.pages[index]} alt={index} onClick={() => nextPage()}/>
