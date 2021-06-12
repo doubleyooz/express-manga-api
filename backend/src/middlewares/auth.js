@@ -45,7 +45,7 @@ function auth(roles = []){
                             console.log(current_time)
                             if ((payload.exp - payload.iat)/2 > payload.exp - current_time) {
                                 let new_token = jwt.generateJwt({id: payload.id, role: payload.role, token_version: payload.token_version}, 1)
-                                req.headers.authorization = `Bearer ${new_token}`
+                                req.new_token = `Bearer ${new_token}`
                                 console.log(`New Token: ${new_token}`)
                             } else{
                                 console.log("Token not expired")

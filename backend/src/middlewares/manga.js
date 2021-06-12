@@ -6,7 +6,7 @@ const response = require("../common/response");
 module.exports = {
     async valid_manga_store(req, res, next){         
                        
-        const { title, genre, synopsis, chapters, status, nsfw, language } = req.body;  
+        const { title, genre, synopsis, n_chapters, status, nsfw, language } = req.body;  
         
         
         console.log(title)
@@ -15,7 +15,7 @@ module.exports = {
             title: yup.string("title must be a string.").strict().min(2, 'title must be between 2-60 characters.').max(60, 'title must be between 2-60 characters.').required(),
             genre: yup.string("genre must be a string.").strict().required(),
             synopsis: yup.string("synopsis must be a string.").strict().min(10, 'synopsis must be between 10-400 characters.').max(400, 'synopsis must be between 10-400 characters.').required(),
-            chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.').required(),
+            n_chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.').required(),
             status: yup.number("status must be a number.").min(1, 'Invalid code.').max(6, 'Invalid code.').required(),
             nsfw: yup.bool("nsfw must be a boolean.").strict().required(),
             language: yup.string("language must be a string.").strict().default({ language: 'pt' }).required(),
@@ -23,7 +23,7 @@ module.exports = {
         })
 
         try{
-            await schema.validate({title, genre, synopsis, chapters, status, nsfw, language})
+            await schema.validate({title, genre, synopsis, n_chapters, status, nsfw, language})
             .catch(function(e) {
                 return res.json(
                     response.jsonBadRequest(null, "you did not give us want we want", null)
