@@ -74,12 +74,16 @@ module.exports = {
     },
 
     async index(req, res){
-        const { title, genre, scan } = req.query;
+        const { title, genre, scan, manga_id } = req.query;
         const new_token = (req.new_token) ? req.new_token : null;
 
         let docs = [];
 
-        if (title){
+        if (manga_id){        
+            docs.push(await Manga.findById(manga_id).exec());         
+        } 
+
+        else if (title){
             (await Manga.find( {title: {$regex: title, $options: "i"} } )).forEach(function (doc){
                 docs.push(doc)
             });
