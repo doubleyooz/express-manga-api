@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useContext} from 'react';
+import { Link } from 'react-router-dom';
 
 import './styles.css';
-
 
 import { Context } from '../../Contexts/AuthProvider'
 import api from "../../services/api"
 
 require('dotenv').config()
 
-export default function Manga(){
+const Manga = (props) =>{
 
    
     const { token, loading, handleLogin } = useContext(Context)
@@ -25,9 +25,10 @@ export default function Manga(){
     }
 
     let manga_id = "60c3ff94f527df2248dcbff4"
-    useEffect(()=>{
+    useEffect(()=>{        
         async function selectedManga(){
-            api.get(`manga/list/manga_id=${manga_id}`, config)
+            console.log("selectedManga")
+            api.get(`manga/list/manga_id=${props.location.state._id}`, config)
             .then(response => {
                 //setState({ feed: response.data });  
                 if(response.data !== null){
@@ -54,8 +55,9 @@ export default function Manga(){
         }        
 
         async function fetchData(){
+            
             console.log(token)             
-             api.get('chapter/index?manga_id=60c3ff94f527df2248dcbff4&number=1', config)
+             api.get(`chapter/index?manga_id=${props.location.state._id}&number=1`, config)
                 .then(response => {
                     //setState({ feed: response.data });  
                     if(response.data !== null){
@@ -83,7 +85,8 @@ export default function Manga(){
                     return null
                 })        
         }        
-        fetchData()     
+        props.location.state ? fetchData() : selectedManga()
+             
             
     }, []) // <-- empty dependency array
 
@@ -92,13 +95,25 @@ export default function Manga(){
         <div className="reader">
             <div className="header-board">
 
+
                     <div className="title">
                         {info.title}
                     </div>
 
 
             </div>
+            <div className="list">
 
+                {props.location.state.chapters.map((chapter, index) => (                   
+                    <Link to={{ pathname: "/Reader", state: chapter }}>                    
+                        <h2>{chapter.title}</h2>
+                        {chapter.number}
+                    
+                    </Link>
+                ))}
+
+
+            </div>
 
         </div>
       
@@ -106,3 +121,5 @@ export default function Manga(){
 
     </>
 }
+
+export default Manga
