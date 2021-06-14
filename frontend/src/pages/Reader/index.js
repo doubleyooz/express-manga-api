@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useRef} from 'react';
 
 import './styles.css';
 
@@ -8,17 +8,15 @@ import api from "../../services/api"
 
 require('dotenv').config()
 
-export default function Reader(){
 
+export default function Reader(){
    
     const { token, loading, handleLogin } = useContext(Context)
     
     const [state, setState] = useState({pages: []})
     const [info, setInfo] = useState("")
     const [currentPage, setCurrentPage] = useState(0)
-    
-    
-    var index = 0
+        
 
     let config = {
         headers: {
@@ -45,8 +43,7 @@ export default function Reader(){
                         })
                         console.log("list chapters well succeed")
                        
-                       
-                        
+                                               
                     } else {
                         console.log("list chapters failed")
                         return null
@@ -65,30 +62,44 @@ export default function Reader(){
   
     
     
-    function nextPage(){    
-        
-
+    function nextPage(){           
         if (currentPage === state.pages.length - 1){
             console.log("last page reached")
-        } else{
-            //setCurrentPage({id: currentPage.id+1, path: pages[currentPage.id+1]})
+        } else{            
             setCurrentPage(currentPage+1)            
-        }
-        
-
-        
+        }               
     }
 
     function prevPage(){    
         if(currentPage === 0){
             console.log("first page reached")
-        } else{
-            //setCurrentPage({id: currentPage.id-1, path: pages[currentPage.id-1]})
+        } else{           
             setCurrentPage(currentPage-1)
-        }
-        
-     
+        }             
     }
+    
+    function useKey(key, cb){
+        const callbackRef = useRef(cb)
+
+        useEffect(() => {
+            callbackRef.current = cb;
+        })
+
+        useEffect(() => {
+            function handle(event){
+                if(event.code === key){
+                    callbackRef.current(event)
+                }
+            }
+            document.addEventListener("keydown", handle);
+            return () => document.removeEventListener("keydown", handle)
+
+        }, [key]);
+  
+    }
+
+    useKey("ArrowRight", () => nextPage())
+    useKey("ArrowLeft", () => prevPage())
 
     return <>   
         <div className="reader">
@@ -123,7 +134,8 @@ export default function Reader(){
                     < img src={process.env.REACT_APP_SERVER + page.filename}
                       alt= {page.originalname}
                       style={index === currentPage ? {}  : {display: "none"}}
-                      onClick={() => nextPage()}/>
+                      onClick={() => nextPage()}                     
+                    />
                 ))}
 
             </div>
@@ -132,6 +144,5 @@ export default function Reader(){
         </div>
       
         
-
     </>
 }
