@@ -102,7 +102,7 @@ const Manga = (props) =>{
             <div className="list">
 
                 {chapters.length !== 0 ? chapters.map((chapter, index) => (                   
-                    <Link to={{ pathname: "/Reader", state: chapter }}>                    
+                    <Link to={{ pathname: "/Reader", state: {chapter: chapter, manga_title: props.location.state.title}}}>                    
                         <h2>{chapter.title}</h2>
                         Chapter {chapter.number}
                     
