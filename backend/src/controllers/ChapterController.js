@@ -16,14 +16,12 @@ module.exports = {
 
         console.log("here - 0")
            /*
-
             
             Object.keys(req.files).forEach((i) => {
                 let file = req.files[i];                                                    
                 fs.unlinkSync('uploads/' + file.filename)              
                 
             });
-
             return res.json(        
                 response.jsonNotFound(null, response.getMessage("user.error.notfound"), err.message)              
             ) 
@@ -288,4 +286,3 @@ module.exports = {
         
     }
 }
-
