@@ -60,7 +60,7 @@ export default function Home(){
             
     }, []) // <-- empty dependency array
 
-
+    console.log(mangas)
 
 
     return(
@@ -68,13 +68,15 @@ export default function Home(){
             <div className="home-container">
                 <h1>{text}</h1>
 
-                <div className='list'>       
-                    {mangas.map((manga, index) => (                   
+                <div className='list'>
+                           
+                    {mangas.length !== 0 ? mangas.map((manga) => (  
+                                      
                         <Link to={{ pathname: "/Manga", state: manga }}>                    
                             {manga.title}
                         
                         </Link>
-                    ))}
+                    )): <div>no manga to be shown</div>}
 
                 </div>
                

@@ -14,8 +14,8 @@ const Manga = (props) =>{
     const { token, loading, handleLogin } = useContext(Context)
     
     
-    const [info, setInfo] = useState("")    
-    
+    const [chapters, setChapters] = useState([])    
+    const [manga, setManga] = useState({}) 
     
 
     let config = {
@@ -37,7 +37,7 @@ const Manga = (props) =>{
                     
                    
                    
-                    setInfo(response.data[0])
+                    setManga(response.data)
                     console.log("get manga info well succeed")
                    
                    
@@ -66,10 +66,7 @@ const Manga = (props) =>{
                         console.log(response.data.data)
                        
                      
-                        setInfo({
-                            title: response.data.data[0].title,
-                            number: response.data.data[0].number
-                        })
+                        setChapters(response.data.data)
                         console.log("list chapters well succeed")
                        
                        
@@ -97,20 +94,20 @@ const Manga = (props) =>{
 
 
                     <div className="title">
-                        {info.title}
+                        {props.location.state.title}
                     </div>
 
 
             </div>
             <div className="list">
 
-                {props.location.state.chapters.map((chapter, index) => (                   
+                {chapters.length !== 0 ? chapters.map((chapter, index) => (                   
                     <Link to={{ pathname: "/Reader", state: chapter }}>                    
                         <h2>{chapter.title}</h2>
-                        {chapter.number}
+                        Chapter {chapter.number}
                     
                     </Link>
-                ))}
+                )): <div>No chapters to display</div>}
 
 
             </div>
