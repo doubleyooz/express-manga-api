@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import './styles.css';
 
@@ -25,11 +25,11 @@ const Manga = (props) =>{
           }
     }
 
-    let manga_id = "60c3ff94f527df2248dcbff4"
+    
     useEffect(()=>{        
         async function selectedManga(){
             console.log("selectedManga")
-            api.get(`manga/list/manga_id=${props.location.state._id}`, config)
+            api.get(`manga/list/title=${manga_title}`, config)
             .then(response => {
                 //setState({ feed: response.data });  
                 if(response.data !== null){
@@ -38,7 +38,7 @@ const Manga = (props) =>{
                     
                    
                    
-                    setManga(response.data)
+                    setManga(response.data.data[0])
                     console.log("get manga info well succeed")
                    
                    
@@ -58,7 +58,7 @@ const Manga = (props) =>{
         async function fetchData(){
             
             console.log(token)             
-             api.get(`chapter/index?manga_id=${props.location.state._id}&number=1`, config)
+             api.get(`chapter/index?manga_id=${manga.title}`, config)
                 .then(response => {
                     //setState({ feed: response.data });  
                     if(response.data !== null){
@@ -83,19 +83,20 @@ const Manga = (props) =>{
                     return null
                 })        
         }        
-        props.location.state ? fetchData() : selectedManga()
+        selectedManga()
+        fetchData()
              
             
     }, []) // <-- empty dependency array
 
   
     return <>   
-        <div className="reader">
+        <div className="manga-page">
             <div className="header-board">
 
 
                     <div className="title">
-                        {props.location.state.title}
+                        manga_title
                     </div>
 
 

@@ -28,7 +28,7 @@ const Reader = (props) =>{
     useEffect(()=>{
         async function fetchData(){
             console.log(token)             
-            api.get('chapter/index?manga_id=60c3ff94f527df2248dcbff4&number=1', config)
+            api.get(`chapter/index?manga_id=${props.location.state.manga_id}&number=1`, config)
                 .then(response => {
                     //setChapter({ feed: response.data });  
                     if(response.data !== null){
