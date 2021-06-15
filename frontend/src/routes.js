@@ -5,6 +5,7 @@ import Reader from './pages/Reader'
 import ActivateAccount from './pages/ActivateAccount'
 import Home from './pages/Home'
 import Manga from './pages/Manga'
+import Search from './pages/Search'
 
 import HorizontalMenu from './Components/Menu/Horizontal'
 
@@ -19,6 +20,7 @@ export default function Routes(){
                 <Route path="/manga/:manga_id/:chapter" exact component ={Reader}/>
                 <Route path="/" exact component ={Home}/>
                 <Route path="/activateaccount/:token" exact component ={ActivateAccount}/>
+                <Route path="/search" exact component ={Search}/>
             </Switch>
           
             <HorizontalMenu/>
