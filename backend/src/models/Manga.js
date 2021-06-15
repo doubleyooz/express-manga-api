@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const MangaSchema = new mongoose.Schema({
-    title: String,
+    title: {
+        type: String,
+        unique: true
+    },
     genre: String,
     synopsis: String,
     n_chapters:{
