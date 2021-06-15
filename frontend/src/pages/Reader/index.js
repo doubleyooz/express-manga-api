@@ -5,6 +5,7 @@ import './styles.css';
 
 import { Context } from '../../Contexts/AuthProvider'
 import api from "../../services/api"
+import { useParams } from 'react-router-dom';
 
 require('dotenv').config()
 
@@ -15,7 +16,7 @@ const Reader = (props) =>{
     const [chapter, setChapter] = useState({pages: []})
     const [info, setInfo] = useState("")
     const [currentPage, setCurrentPage] = useState(0)
-        
+    const {manga_title, chapter_id} = useParams()
 
     let config = {
         headers: {

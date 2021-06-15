@@ -17,6 +17,7 @@ const Manga = (props) =>{
     const [chapters, setChapters] = useState([])    
     const [manga, setManga] = useState({}) 
     
+    const {manga_title} = useParams()
 
     let config = {
         headers: {
@@ -102,9 +103,11 @@ const Manga = (props) =>{
             <div className="list">
 
                 {chapters.length !== 0 ? chapters.map((chapter, index) => (                   
-                    <Link to={{ pathname: "/Reader", state: {chapter: chapter, manga_title: props.location.state.title}}}>                    
+                    <Link to={{ pathname: `/Manga/${manga_title}/${chapter._id}`, state: {chapter}}}>                    
                         <h2>{chapter.title}</h2>
                         Chapter {chapter.number}
+                        <h4>Scan_name</h4>
+
                     
                     </Link>
                 )): <div>No chapters to display</div>}
