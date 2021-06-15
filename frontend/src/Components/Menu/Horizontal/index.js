@@ -24,9 +24,9 @@ export default function Menu(){
                     </NavBtn>
                 </Link> 
 
-                <Link to='/reader'>
+                <Link to='/search'>
                     <NavBtn isActive={currentNav === "b"} onClick={() => setCurrentNav('b')}>
-                      READER
+                      SEARCH
                     </NavBtn>                       
                 </Link> 
 
