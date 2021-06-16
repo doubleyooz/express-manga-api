@@ -1,6 +1,7 @@
 {
     "badRequest": "You didn't give us what we want!",
     "Unauthorized": "Unauthorized.",
+    "Unauthorizer.refresh.token.missing": "Lack credentials",
     "user.invalid.name.short": "Name is too short - should be 3 chars minimum.",
     "user.invalid.password": "Invalid Password",
     "user.invalid.password.short": "Password is too short - should be 8 chars minimum.",
