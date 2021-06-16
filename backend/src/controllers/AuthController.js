@@ -4,10 +4,9 @@ const bcrypt = require('bcrypt');
 const CryptoJs = require("crypto-js")
 const jwt = require("../common/jwt");
 
-
+const { getMessage } = require("../common/messages")
 const User = require("../models/user");
 
-const response = require("../common/response");
 
 
 
@@ -17,9 +16,8 @@ module.exports = {
       
         const refreshToken = req.cookie.jid
         if(!refreshToken){
-            return res.json( 
-                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-            )
+            return res.jsonUnauthorized(null, getMessage("Unauthorizer.refresh.token.missing"), null)
+            
         }
         console.log(refreshToken)
         let payload = null;
@@ -28,9 +26,8 @@ module.exports = {
 
         }catch(err){
             console.log(err)
-            return res.json( 
-                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-            )
+            return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+            
         }
         User.findOne({_id: payload.id, active: true}).then(result => {
             if (result){
@@ -41,27 +38,23 @@ module.exports = {
                         token_version: result.token_version}
                     , 1) 
                                               
-                    return res.json(
-                        response.jsonOK(null, {accessToken: accessToken}, null)
-                    )
+                    return res.jsonOK(null, {accessToken: accessToken}, null)
+                    
 
                     
                 }   catch(err){
                     console.log(err)
-                    return res.json(
-                        response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-                    )
+                    return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+                    
                 }           
                 
             } else{ 
-                return res.json( 
-                    response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-                )
+                return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+                
             }
         }).catch(err =>{
-            return res.json( 
-                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), err)
-            )
+            return res.jsonUnauthorized(null, getMessage("Unauthorized"), err)
+            
         })
 
     
@@ -73,9 +66,8 @@ module.exports = {
         const [hashType, hash] = req.headers.authorization.split(' ');
        
         if(hashType !== "Basic"){
-            return res.json(        
-                response.jsonUnauthorized(null, null, null)              
-            );  
+            return res.jsonUnauthorized(null, null, null)              
+             
         }
       
         const [email, password] = Buffer.from(hash, "base64").toString().split(":");
@@ -86,9 +78,8 @@ module.exports = {
         const match = user ? await bcrypt.compare(password, user.password) : null;
         
         if(!match){
-            return res.json(
-                response.jsonBadRequest(null, response.getMessage("badRequest"), null)
-            )
+            return res.jsonBadRequest(null, getMessage("badRequest"), null)
+            
         } else{
             
             const token = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 1);
@@ -98,9 +89,8 @@ module.exports = {
             res.cookie('jid', refreshToken, { httpOnly: true, path: "/refresh-token"})
             
             user.password = undefined;
-            return res.json(
-                response.jsonOK(user, response.getMessage("user.valid.sign_in.success"), {token})
-            )
+            return res.jsonOK(user, getMessage("user.valid.sign_in.success"), {token})
+            
         }
     
         
@@ -120,52 +110,45 @@ module.exports = {
                     User.findById(supposed_id).then(user => {
                         if(user.active){
                             console.log("user.active")
-                            return res.json(
-                                response.jsonBadRequest(
+                            return res.jsonBadRequest(
                                     null,
-                                    response.getMessage("user.activation.error.already.activated"),
+                                    getMessage("user.activation.error.already.activated"),
                                     null
                                 )
-                            )
+                            
                             
                         }
                         user.active = true;
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
                                                                
-                                return res.json(
-                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
-                                );   
+                                return res.jsonOK(user, getMessage("user.valid.sign_up.success"), null)
+                                
                             } else{
                                
-                                return res.json(
-                                    response.jsonServerError(user, null, null)
-                                );  
+                                return res.jsonServerError(user, null, null)
+                            
                             }                                                 
                         });                       
                            
                     }).catch(err => {                        
-                        return res.json(
-                            response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                        )
+                        return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                        
                     });                          
                 } else{
-                    return res.json(
-                        response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                    )
+                    return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                    
                 }
             
             }catch(err){
-                return res.json(
-                    response.jsonUnauthorized(err, response.getMessage("Unauthorized"), null)
-                )
+                return res.jsonUnauthorized(err, getMessage("Unauthorized"), null)
+                
             };
           
 
         } else{
-            return res.json(
-                response.jsonBadRequest(null, response.getMessage("badRequest"), null)
-            )
+            return res.jsonBadRequest(null, getMessage("badRequest"), null)
+            
         }
     },
     //missing test
@@ -185,31 +168,26 @@ module.exports = {
                         user.email = email;
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
-                                return res.json(
-                                    response.jsonOK(user, response.getMessage("user.update.email.success"), null)
-                                );   
+                                return res.jsonOK(user, getMessage("user.update.email.success"), null)
+                                
                             } else{
-                                return res.json(
-                                    response.jsonServerError(user, null, null)
-                                );  
+                                return res.jsonServerError(user, null, null)
+                            
                             }                                              
                         });
                     }
                                
                     else{
-                        return res.json(
-                            response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                        )
+                        return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                        
                     }                                           
                 }).catch(err => {
-                    return res.json(
-                        response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                    )
+                    return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                    
                 });                          
             } else{                
-                return res.json(
-                    response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                )
+                return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                
             }           
         }
     },
@@ -229,31 +207,26 @@ module.exports = {
                        
                         user.save().then(savedDoc => {
                             if(savedDoc === user){
-                                return res.json(
-                                    response.jsonOK(user, response.getMessage("user.valid.sign_up.success"), null)
-                                );   
+                                return res.jsonOK(user, getMessage("user.valid.sign_up.success"), null)
+                                
                             } else{
-                                return res.json(
-                                    response.jsonServerError(user, null, null)
-                                );  
+                                return res.jsonServerError(user, null, null)
+                            
                             }                                                
                           });                      
                     }).catch(err => {
-                        return res.json(
-                            response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                        )
+                        return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                        
                     });                          
                 } else{
                     
-                    return res.json(
-                        response.jsonBadRequest(err, response.getMessage("badRequest"), null)
-                    )
+                    return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                    
                 }           
 
         } else{
-            return res.json(
-                response.jsonBadRequest(null, response.getMessage("badRequest"), null)
-            )
+            return res.jsonBadRequest(null, getMessage("badRequest"), null)
+            
         }
     }
 

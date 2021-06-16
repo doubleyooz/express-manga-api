@@ -1,5 +1,5 @@
 const yup = require("yup");
-const response = require("../common/response");
+const { getMessage } = require("../common/messages")
 
 
 
@@ -7,17 +7,17 @@ const response = require("../common/response");
 const rules = {
     email:  yup.string().email().required(),
     password: yup.string()
-                .min(8, response.getMessage("user.invalid.password.short"))
+                .min(8, getMessage("user.invalid.password.short"))
                 .matches( /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-                        response.getMessage("user.invalid.password.weak"))
+                        getMessage("user.invalid.password.weak"))
                 .required(),
     name: yup.string()
-                .min(3, response.getMessage("user.invalid.name.short"))               
+                .min(3, getMessage("user.invalid.name.short"))               
                 .required(),
     role: yup.string()
-                .matches("Scan" || "User", response.getMessage("badRequest")),
+                .matches("Scan" || "User", getMessage("badRequest")),
     sign_in_password: yup.string()
-                .min(8, response.getMessage("user.invalid.password.short"))
+                .min(8, getMessage("user.invalid.password.short"))
                 .required()
 }
 
@@ -37,9 +37,8 @@ module.exports = {
 
         yupObject.validate(req.body).then(() => next())
                  .catch((err) => {
-                    return res.json(        
-                        response.jsonBadRequest(null, response.getMessage("badRequest"), err.errors)              
-                    )  
+                    return res.jsonBadRequest(null, getMessage("badRequest"), err.errors)              
+                    
                 })
        
     },
@@ -49,9 +48,8 @@ module.exports = {
         const [hashType, hash] = req.headers.authorization.split(' ');
        
         if(hashType !== "Basic"){
-            return res.json(        
-                response.jsonUnauthorized(null, null, null)              
-            );  
+            return res.jsonUnauthorized(null, null, null)              
+            
         }
     
         const [email, password] = Buffer.from(hash, "base64").toString().split(":");
@@ -63,9 +61,8 @@ module.exports = {
 
         yupObject.validate({email: email, password: password}).then(() => next())
                  .catch((err) => {
-                    return res.json(        
-                        response.jsonBadRequest(null, response.getMessage("badRequest"), err.errors)              
-                    )  
+                    return res.jsonBadRequest(null, getMessage("badRequest"), err.errors)              
+                    
                 })
 
        

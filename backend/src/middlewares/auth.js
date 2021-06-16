@@ -1,7 +1,7 @@
 require('dotenv').config();
-const { generateJwt } = require('../common/jwt');
+
 const jwt = require('../common/jwt');
-const response = require('../common/response');
+const { getMessage } = require("../common/messages")
 const User = require("../models/user");
 
 module.exports = auth
@@ -23,16 +23,14 @@ function auth(roles = []){
             
             }catch(err){ 
                 //Invalid Token            
-                return res.json( 
-                    response.jsonUnauthorized(err, response.getMessage("Unauthorized"), null)
-                )
+                return res.jsonUnauthorized(err, getMessage("Unauthorized"), null)
+                
             }
 
             if (roles.length && !roles.includes(payload.role)){   
                 //Invalid roles       
-                return res.json( 
-                    response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-                )
+                return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+                
                 
             } else{                
                 User.exists({_id: payload.id, active: true, token_version: payload.token_version}).then(result => {
@@ -57,27 +55,23 @@ function auth(roles = []){
                         }   catch(err){
                             console.log(err)
                             //Server error
-                            return res.json(
-                                response.jsonServerError(null, null, null)
-                            )
+                            return res.jsonServerError(null, null, null)
+                            
                         }           
                         
                     } else{ 
-                        return res.json( 
-                            response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-                        )
+                        return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+                        
                     }
                 }).catch(err =>{
-                    return res.json( 
-                        response.jsonUnauthorized(null, response.getMessage("Unauthorized"), err)
-                    )
+                    return res.jsonUnauthorized(null, getMessage("Unauthorized"), err)
+                    
                 })
             
             }    
         } catch(err){
-            return res.json( 
-                response.jsonUnauthorized(null, response.getMessage("Unauthorized"), null)
-            )
+            return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+            
         }
        
                

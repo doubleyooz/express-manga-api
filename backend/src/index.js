@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser")
 const app = express();
 const server = require('http').Server(app);
 
+const response = require('./middlewares/response');
+
 //const io = require('socket.io')(server);
 
 
@@ -60,6 +62,7 @@ app.use(cookieParser())
 
 app.use(cors(corsOptionsDelegate));
 
+app.use(response)
 
 
 

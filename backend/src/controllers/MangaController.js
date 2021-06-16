@@ -4,16 +4,13 @@ const multer = require('multer');
 const fs = require('fs');
 const CryptoJs = require("crypto-js");
 
-const response = require("../common/response");
+const { getMessage } = require("../common/messages")
 const jwt = require('../common/jwt');
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 const User = require('../models/user');
 
-
-const { update } = require('../models/Chapter');
-const ChapterController = require('./ChapterController');
 
 
 
@@ -32,16 +29,14 @@ module.exports = {
         
         if(doesMangaExist){            
             
-            return res.json(
-                response.jsonBadRequest(null, "This manga already exists or the title is unavaliable", new_token)
-            );
+            return res.jsonBadRequest(null, "This manga already exists or the title is unavaliable", new_token)
+            
 
         } 
        
         if(!mongoose.isValidObjectId(scan_id)){
-            return res.json(
-                response.jsonBadRequest(null, "Scan_id must be a valid id", null)
-            );
+            return res.jsonBadRequest(null, "Scan_id must be a valid id", null)
+            
         }
         console.log("here")
         const manga = new Manga({
@@ -60,15 +55,13 @@ module.exports = {
         
         
         manga.save().then(result => {   
-            return res.json(
-                response.jsonOK(result, "Manga added!", new_token)
-            )                      
+            return res.jsonOK(result, "Manga added!", new_token)
+                              
                         
         }).catch(err => {
             console.log(err)
-            return res.json(
-                response.jsonServerError(null, null, err)
-            )
+            return res.jsonServerError(null, null, err)
+        
         });
                
     },
@@ -114,9 +107,8 @@ module.exports = {
             doc.user = undefined
 
         });
-        return res.json(
-            response.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, new_token)
-        )           
+        return res.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, new_token)
+                 
 
     },
 
@@ -126,9 +118,8 @@ module.exports = {
         req.new_token = null
 
         if(!manga_id){           
-            return res.json(
-                response.jsonBadRequest(null, "manga_id undefined", null)
-            )
+            return res.jsonBadRequest(null, "manga_id undefined", null)
+        
         } else{
             const manga = await Manga.findById(manga_id);
 
@@ -160,17 +151,17 @@ module.exports = {
                    
                     Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
                         if (err) 
-                            return res.json(response.jsonServerError(null, null, err))
+                            return res.jsonServerError(null, null, err)
                             
-                        return res.json(response.jsonOK(update, "Saved Sucessfully", new_token))
+                        return res.jsonOK(update, "Saved Sucessfully", new_token)
                     });
             
                 } else{
-                    return res.json(response.jsonUnauthorized(null, null, null));
+                    return res.jsonUnauthorized(null, null, null);
                 }
     
             } else{
-                return res.json(response.jsonServerError(null, "manga required doesnt exists", new_token))
+                return res.jsonServerError(null, "manga required doesnt exists", new_token)
                
             }                       
         }     
@@ -217,13 +208,12 @@ module.exports = {
                 
             } 
 
-            return res.json(response.jsonUnauthorized(null, null, null))
+            return res.jsonUnauthorized(null, null, null)
             
         } 
 
-        return res.json(
-            response.jsonBadRequest(null, "manga could not be found", new_token)
-        )
+        return res.jsonBadRequest(null, "manga could not be found", new_token)
+    
         
     }
 }

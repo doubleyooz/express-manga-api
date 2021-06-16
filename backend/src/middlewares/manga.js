@@ -1,7 +1,7 @@
 const yup = require('yup')
 const mongoose = require('mongoose');
 
-const response = require("../common/response");
+const { getMessage } = require("../common/messages");
 
 module.exports = {
     async valid_manga_store(req, res, next){         
@@ -25,9 +25,8 @@ module.exports = {
         try{
             await schema.validate({title, genre, synopsis, n_chapters, status, nsfw, language})
             .catch(function(e) {
-                return res.json(
-                    response.jsonBadRequest(null, "you did not give us want we want", null)
-                )
+                return res.jsonBadRequest(null, "you did not give us want we want", null)
+                
             });
 
             valid_scan = true;
@@ -40,15 +39,13 @@ module.exports = {
                 next();
             
             } else{
-                return res.json(
-                    response.jsonBadRequest(null, "unregistered scan", null)
-                )
+                return res.jsonBadRequest(null, "unregistered scan", null)
+                
             }
 
         } catch(err){
-            return res.json(
-                response.jsonBadRequest(null, null, err)
-            )
+            return res.jsonBadRequest(null, null, err)
+            
         }
               
                         
@@ -66,9 +63,8 @@ module.exports = {
         try{
             await schema.validate({title, genre, scan})
             .catch(function(e) {
-                return res.json(
-                    response.jsonBadRequest(null, "you did not give us want we want", e.errors)
-                )
+                return res.jsonBadRequest(null, "you did not give us want we want", e.errors)
+                
             });
 
             if(genre)
@@ -83,9 +79,8 @@ module.exports = {
                 next();
             
             } else{
-                return res.json(
-                    response.jsonBadRequest(null, "unregistered scan", null)
-                )
+                return res.jsonBadRequest(null, "unregistered scan", null)
+                
             }
 
         } catch(err){
@@ -103,24 +98,17 @@ module.exports = {
                 next();     
             } else { 
 
-                return res.json(
-                    response.jsonBadRequest(
+                return res.jsonBadRequest(
                         null,
                         "You need to provide a valid IdObject to continue this operation.",
-                        null)
-                );
+                        null);
                
             } 
         } else {
-            return res.json(
-                response.jsonBadRequest(
+            return res.jsonBadRequest(
                     null,
                     "You need to provide a valid IdObject to continue this operation.",
-                    null)
-            );         
-        } 
-            
-        
-                        
+                    null);         
+        }                     
     }  
 }

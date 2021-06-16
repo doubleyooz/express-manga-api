@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer')
 const ProtonMail = require('protonmail-api');
 //const smtpTransport = require('nodemailer-smtp-transport');
 
-const response = require("../common/response");
+const { getMessage } = require("../common/messages")
 const jwt = require("../common/jwt");
 
 
@@ -50,14 +50,14 @@ module.exports = {
                     console.log("aqui - 1")
                     await pm.sendEmail({
                       to: email,
-                      subject: response.getMessage("user.activation.account.subject"),
+                      subject: getMessage("user.activation.account.subject"),
                       body: `
-                          <h2>${response.getMessage("user.activation.account.text")}</h2>
+                          <h2>${getMessage("user.activation.account.text")}</h2>
                           <p>${process.env.CLIENT_URL}/activateaccount/${activationToken}</p>
                           
                       `
                     })
-                    console.log("aqui - 2")
+                    
                     pm.close()
                   } else{
                     
@@ -79,9 +79,9 @@ module.exports = {
                     const mailOptions = {
                         from: `${process.env.GMAIL_USER}`, // sender address
                         to: email, // receiver (use array of string for a list)
-                        subject: response.getMessage("user.activation.account.subject"), // Subject line
+                        subject: getMessage("user.activation.account.subject"), // Subject line
                         html: `
-                            <h2>${response.getMessage("user.activation.account.text")}</h2>
+                            <h2>${getMessage("user.activation.account.text")}</h2>
                             <a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
                             Activate your account                               
                             <a/>
@@ -99,14 +99,12 @@ module.exports = {
                   }                
                   
                 })().then(info => {
-                    console.log(response.getMessage("user.activation.account.activate"))
-                    return res.json(                                
-                        response.jsonOK(result, response.getMessage("user.activation.account.activate"), null)              
-                    );                       
+                    console.log(getMessage("user.activation.account.activate"))
+                    return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
+                                       
                 }).catch(err => {
-                    return res.json(        
-                        response.jsonBadRequest(null, response.getMessage("badRequest"), {err})              
-                    );  
+                    return res.jsonBadRequest(null, getMessage("badRequest"), {err});              
+                    
                 })           
                             
 
@@ -115,21 +113,18 @@ module.exports = {
                 console.log(err)
                 if (err.name === 'MongoError' && err.code === 11000) {
                     //next(new Error('There was a duplicate key error'));
-                    return res.json(        
-                        response.jsonBadRequest(null, response.getMessage("user.error.sign_up.duplicatekey"), {err})              
-                    );  
+                    return res.jsonBadRequest(null, getMessage("user.error.sign_up.duplicatekey"), {err})              
+                    
                 
                 } else {
-                    return res.json(        
-                        response.jsonBadRequest(null, null, {err})              
-                    );                  
+                    return res.jsonBadRequest(null, null, {err});             
+                                      
                 }                           
             });                       
         } 
         else{
-            return res.json(        
-                response.jsonBadRequest(null, response.getMessage("badRequest"), null)              
-            ); 
+            return res.jsonBadRequest(null, getMessage("badRequest"), null)              
+            
         }                                                                     
     },
 
@@ -154,9 +149,8 @@ module.exports = {
           
 
         console.log(docs)
-        res.json(        
-            response.jsonOK(docs, `Page list retrieved successfully! Users found: ${docs.length}`, null)              
-        );
+        res.jsonOK(docs, `Page list retrieved successfully! Users found: ${docs.length}`, null)              
+        
     },
 
     async update(req, res){
@@ -164,9 +158,8 @@ module.exports = {
         const { email, name, password } = req.body;
 
         if(req.auth){           
-            return res.json(
-                response.jsonServerError(null, null, null)
-            )
+            return res.jsonServerError(null, null, null)
+            
         } else{
            
 
@@ -180,12 +173,12 @@ module.exports = {
                 if(name){
                     user.update(name, function(err, doc) {
                         if (err) 
-                            return res.json(response.jsonServerError(null, null, err))
+                            return res.jsonServerError(null, null, err)
                         else {
                             p1.save().then(result => {    
-                                return res.json(response.jsonOK(null, "User Name changed", null))
+                                return res.jsonOK(null, "User Name changed", null)
                             }).catch(err =>{
-                                return res.json(response.jsonServerError(null, null, null))
+                                return res.jsonServerError(null, null, null)
                             })
                             
                         }  
@@ -210,9 +203,9 @@ module.exports = {
                          
                           await pm.sendEmail({
                             to: email,
-                            subject: response.getMessage("user.update.email.subject"),
+                            subject: getMessage("user.update.email.subject"),
                             body: `
-                                <h2>${response.getMessage("user.update.email.text")}</h2>
+                                <h2>${getMessage("user.update.email.text")}</h2>
                                 <p>${process.env.CLIENT_URL}/authentication/recover/${activationToken}</p>
                                 
                             `
@@ -239,9 +232,9 @@ module.exports = {
                           const mailOptions = {
                               from: `${process.env.GMAIL_USER}`, // sender address
                               to: email, // receiver (use array of string for a list)
-                              subject: response.getMessage("user.update.email.subject"), // Subject line
+                              subject: getMessage("user.update.email.subject"), // Subject line
                               html: `
-                                  <h2>${response.getMessage("user.update.email.text")}</h2>
+                                  <h2>${getMessage("user.update.email.text")}</h2>
                                   <a href="${process.env.CLIENT_URL}/authentication/recover/${activationToken}">
                                   Activate your account                               
                                   <a/>
@@ -258,14 +251,12 @@ module.exports = {
                         }
     
                       })().then(info => {
-                          console.log(response.getMessage("user.activation.account.activate"))
-                          return res.json(                                
-                              response.jsonOK(result, response.getMessage("user.activation.account.activate"), null)              
-                          );                       
+                          console.log(getMessage("user.activation.account.activate"))
+                          return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
+                                                 
                       }).catch(err => {
-                          return res.json(        
-                              response.jsonBadRequest(null, response.getMessage("badRequest"), {err})              
-                          );  
+                          return res.jsonBadRequest(null, getMessage("badRequest"), {err});             
+                            
                       })           
                 }
 
@@ -293,21 +284,18 @@ module.exports = {
         User.findOne({ _id: user_id }).then(result =>  {
             User.deleteOne({ _id: user_id }, function (err) {
                 if (err){
-                    return res.json(        
-                        response.jsonNotFound(null, "The specified user could not be deleted", err.message)              
-                    )  
+                    return res.jsonNotFound(null, "The specified user could not be deleted", err.message);              
+                     
                 } else {
-                    return res.json(        
-                        response.jsonOK(null, "The specified user was deleted", result)              
-                    )  
+                    return res.jsonOK(null, "The specified user was deleted", result);              
+                     
                   }
                    
                 // deleted at most one tank document
                 });  
         }).catch(err => {
-            return res.json(        
-                response.jsonNotFound(null, response.getMessage("user.error.notfound"), err.message)              
-            )             
+            return res.jsonNotFound(null, getMessage("user.error.notfound"), err.message)              
+                       
         })
 
              
