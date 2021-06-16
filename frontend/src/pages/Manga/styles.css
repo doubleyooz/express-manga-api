@@ -1,0 +1,5 @@
+.chapter{
+    display: flex;
+    flex-direction: row;
+    
+}

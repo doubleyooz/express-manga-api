@@ -11,11 +11,13 @@ require('dotenv').config()
 
 const Reader = (props) =>{
    
-    const { token, loading, handleLogin } = useContext(Context)
+    const { token, handleLogin } = useContext(Context)
     
     const [chapter, setChapter] = useState({pages: []})
     const [info, setInfo] = useState("")
     const [currentPage, setCurrentPage] = useState(0)
+    const [loading, setLoading] = useState(true)
+
     const {manga_title, chapter_id} = useParams()
 
     let config = {
@@ -26,23 +28,30 @@ const Reader = (props) =>{
 
 
     useEffect(()=>{
+
+        async function setStates(data){
+            setChapter({ pages: data.imgCollection })
+            setInfo({
+                title: data.title,
+                number: data.number
+            })
+        } 
+
+
         async function fetchData(){
             console.log(token)             
-            api.get(`chapter/index?manga_id=${props.location.state.manga_id}&number=1`, config)
+            props.location.state ? setStates(props.location.state.chapter) :
+            api.get(`chapter/index?chapter_id=${chapter_id}`, config)
                 .then(response => {
+                    console.log("call api")
                     //setChapter({ feed: response.data });  
-                    if(response.data !== null){
-                        console.log(response)
-                        console.log(response.data);
-                        console.log(response.data.data)
+                    if(response.data !== null){                        
                        
-                        setChapter({ pages: response.data.data[0].imgCollection })
-                        setInfo({
-                            title: response.data.data[0].title,
-                            number: response.data.data[0].number
-                        })
+                       
+                        setStates(response.data)
+                        
                         console.log("list chapters well succeed")
-                       
+                        
                                                
                     } else {
                         console.log("list chapters failed")
@@ -57,7 +66,7 @@ const Reader = (props) =>{
         }        
         fetchData()     
             
-    }, []) // <-- empty dependency array
+    }, [loading]) // <-- empty dependency array
 
   
     
@@ -97,16 +106,16 @@ const Reader = (props) =>{
         }, [key]);
   
     }
-
+    
+    
     useKey("ArrowRight", () => nextPage())
     useKey("ArrowLeft", () => prevPage())
-    console.log(props)
     return <>   
         <div className="reader">
             <div className="header-board">
 
                     <div className="title">
-                        {props.location.state ? props.location.state.manga_title : "no_title"}
+                        {manga_title}
                     </div>
 
                     <div className="controllers">

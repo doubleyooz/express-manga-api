@@ -11,7 +11,7 @@ export default function Home(){
 
     const [text, setText] = useState("");  
     const [mangas, setMangas] = useState([]);
-
+   
 
     let config = {
         headers: {
@@ -69,10 +69,10 @@ export default function Home(){
                 <h1>{text}</h1>
 
                 <div className='list'>
-                           
+                         
                     {mangas.length !== 0 ? mangas.map((manga) => (  
                                       
-                        <Link to={{ pathname: "/Manga", state: manga }}>                    
+                        <Link to={{ pathname: `/Manga/${manga.title}`, state: manga }}>                    
                             {manga.title}
                         
                         </Link>

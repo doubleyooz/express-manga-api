@@ -11,12 +11,13 @@ require('dotenv').config()
 const Manga = (props) =>{
 
    
-    const { token, loading, handleLogin } = useContext(Context)
+    const { token, handleLogin } = useContext(Context)
     
     
     const [chapters, setChapters] = useState([])    
-    const [manga, setManga] = useState({}) 
-    
+    const [manga, setManga] = useState({})
+    const [loading, setLoading] = useState(true)
+
     const {manga_title} = useParams()
 
     let config = {
@@ -26,68 +27,69 @@ const Manga = (props) =>{
     }
 
     
-    useEffect(()=>{        
-        async function selectedManga(){
-            console.log("selectedManga")
-            api.get(`manga/list/title=${manga_title}`, config)
+    useEffect(()=>{
+     
+        async function getMangaData(){
+            console.log(manga_title)    
+            console.log(token)                   
+            api.get(`manga/index?title=${manga_title}`, config)
             .then(response => {
                 //setState({ feed: response.data });  
                 if(response.data !== null){
-                    console.log(response)
+                   
                     console.log(response.data);
+                   
                     
-                   
-                   
                     setManga(response.data.data[0])
+                    console.log(manga)
                     console.log("get manga info well succeed")
-                   
+
+                    api.get(`chapter/index?manga_id=${manga._id}`, config)
+                    .then(response => {
+                        //setState({ feed: response.data });  
+                        if(response.data !== null){
+                            console.log(response)
+                            console.log(response.data);
+                            console.log(response.data.data)
+                           
+                            
+                            setChapters(response.data.data)
+                            console.log("list chapters well succeed")
+                            setLoading(false)
+                           
+                            
+                        } else {
+                            console.log("list chapters failed")
+                            setLoading(false)
+                        }           
+                
+                    }).catch(err =>{
+                        console.log(err)
+                        console.log("list chapters failed")
+                        setLoading(false)
+                    })        
                    
                     
                 } else {
                     console.log("get manga info failed")
-                    return null
+                    setLoading(false)
                 }           
         
             }).catch(err =>{
                 console.log(err)
                 console.log("get manga info failed")
-                return null
+                setLoading(false)
             })        
         }        
 
-        async function fetchData(){
-            
-            console.log(token)             
-             api.get(`chapter/index?manga_id=${manga.title}`, config)
-                .then(response => {
-                    //setState({ feed: response.data });  
-                    if(response.data !== null){
-                        console.log(response)
-                        console.log(response.data);
-                        console.log(response.data.data)
-                       
-                     
-                        setChapters(response.data.data)
-                        console.log("list chapters well succeed")
-                       
-                       
-                        
-                    } else {
-                        console.log("list chapters failed")
-                        return null
-                    }           
-            
-                }).catch(err =>{
-                    console.log(err)
-                    console.log("list chapters failed")
-                    return null
-                })        
-        }        
-        selectedManga()
-        fetchData()
+        
+        getMangaData()
+        
+        
+        
              
             
-    }, []) // <-- empty dependency array
+    }, [loading]) // <-- empty dependency array
 
   
     return <>   
@@ -96,21 +98,25 @@ const Manga = (props) =>{
 
 
                     <div className="title">
-                        manga_title
+                        {manga_title}
                     </div>
 
 
             </div>
             <div className="list">
 
-                {chapters.length !== 0 ? chapters.map((chapter, index) => (                   
-                    <Link to={{ pathname: `/Manga/${manga_title}/${chapter._id}`, state: {chapter}}}>                    
-                        <h2>{chapter.title}</h2>
-                        Chapter {chapter.number}
+                {!loading ? chapters.map((chapter, index) => (       
+                    <div className="chapter">
+                        <Link to={{ pathname: `/Manga/${manga_title}/${chapter._id}`, state: {chapter}}}>                    
+                            <h2>{chapter.title}</h2>
+                            Chapter {chapter.number}
+                            
+                        
+                        </Link>
                         <h4>Scan_name</h4>
-
+                    </div>            
+                   
                     
-                    </Link>
                 )): <div>No chapters to display</div>}
 
 

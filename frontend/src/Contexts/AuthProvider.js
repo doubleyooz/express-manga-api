@@ -41,7 +41,7 @@ function AuthProvider({ children }) {
     } = useAuth();*/
 
     return (
-    <Context.Provider value={{ token, loading, handleLogin }}>
+    <Context.Provider value={{ token, setToken, loading, handleLogin }}>
         {children}
     </Context.Provider>
     );
