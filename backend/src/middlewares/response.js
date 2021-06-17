@@ -13,9 +13,9 @@ const STATUS_CODE_SERVER_ERROR = 500;
 const jsonOK = function (data, message, metadata) {   
   const status = STATUS_CODE_OK;     
   data = (data) ? data : null;
-  message = (message) ? message : 'Successful request.';
+  message = (message) ? message : getMessage("default.successfulRequest");
   metadata = (metadata) ? metadata : {};  
-
+  
   this.status(status);
   this.type(TYPE_JSON);
 
@@ -25,7 +25,7 @@ const jsonOK = function (data, message, metadata) {
 const jsonBadRequest = function (data, message, metadata){
   const status = STATUS_CODE_BAD_REQUEST;
   data = (data) ? data : null;
-  message = (message) ? message : 'Bad request.';
+  message = (message) ? message : getMessage("default.badRequest");
   metadata = (metadata) ? metadata : {};
 
   this.status(status);
@@ -38,7 +38,7 @@ const jsonBadRequest = function (data, message, metadata){
 const jsonUnauthorized = function (data, message, metadata){
   const status = STATUS_CODE_UNAUTHORIZED
   data = (data) ? data : null;
-  message = (message) ? message : 'Unauthorized request.';
+  message = (message) ? message : getMessage("default.unauthorized");
   metadata = (metadata) ? metadata : {};
 
   this.status(status);
@@ -51,7 +51,7 @@ const jsonUnauthorized = function (data, message, metadata){
 const jsonNotFound = function (data, message, metadata){
   const status = STATUS_CODE_NOT_FOUND
   data = (data) ? data : null;
-  message = (message) ? message : 'Not Found.';
+  message = (message) ? message : getMessage("default.notfound");
   metadata = (metadata) ? metadata : {};
 
   this.status(status);
@@ -65,7 +65,7 @@ const jsonNotFound = function (data, message, metadata){
 const jsonServerError = function (data, message, metadata){
   const status = STATUS_CODE_SERVER_ERROR
   data = (data) ? data : null;
-  message = (message) ? message : "It's not you, it's us. Server Error";
+  message = (message) ? message : getMessage("default.server.error");
   metadata = (metadata) ? metadata : {};
 
   this.status(status);
