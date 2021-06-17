@@ -14,11 +14,13 @@ const { corsOptionsDelegate } = require('./config/cors');
 //const io = require('socket.io')(server);
 
 mongoose.connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-c09yq.mongodb.net/MangaReader?retryWrites=true&w=majority`, {
-useNewUrlParser: true,
-useUnifiedTopology: true,
-useFindAndModify: false
-});
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-c09yq.mongodb.net/MangaReader?retryWrites=true&w=majority`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false
+    }
+);
 
 
 app.use(express.json());
@@ -31,7 +33,6 @@ app.use(cookieParser())
 app.use(cors(corsOptionsDelegate));
 
 app.use(response)
-
 
 
 app.use(require('./routes'));
