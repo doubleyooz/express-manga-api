@@ -12,11 +12,11 @@ module.exports = {
         console.log(title)
 
         let schema = yup.object().shape({
-            title: yup.string("title must be a string.").strict().min(2, 'title must be between 2-60 characters.').max(60, 'title must be between 2-60 characters.').required(),
+            title: yup.string("title must be a string.").strict().min(2, getMessage("manga.invalid.title.short")).max(60, getMessage("manga.invalid.title.long")).required(),
             genre: yup.string("genre must be a string.").strict().required(),
-            synopsis: yup.string("synopsis must be a string.").strict().min(10, 'synopsis must be between 10-400 characters.').max(400, 'synopsis must be between 10-400 characters.').required(),
+            synopsis: yup.string("synopsis must be a string.").strict().min(10, getMessage("manga.invalid.synopsis.short")).max(400, getMessage("manga.invalid.synopsis.long")).required(),
             n_chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.').required(),
-            status: yup.number("status must be a number.").min(1, 'Invalid code.').max(6, 'Invalid code.').required(),
+            status: yup.number("status must be a number.").min(1, getMessage("manga.invalid.code")).max(6, getMessage("manga.invalid.code")).required(),
             nsfw: yup.bool("nsfw must be a boolean.").strict().required(),
             language: yup.string("language must be a string.").strict().default({ language: 'pt' }).required(),
            
@@ -25,21 +25,19 @@ module.exports = {
         try{
             await schema.validate({title, genre, synopsis, n_chapters, status, nsfw, language})
             .catch(function(e) {
-                return res.jsonBadRequest(null, "you did not give us want we want", null)
+                return res.jsonBadRequest(null, null, null)
                 
             });
-
-            valid_scan = true;
 
             valid_language = true;
     
             valid_genre = true;
     
-            if (valid_scan && valid_language && valid_genre){
+            if (valid_language && valid_genre){
                 next();
             
             } else{
-                return res.jsonBadRequest(null, "unregistered scan", null)
+                return res.jsonBadRequest(null, null, null)
                 
             }
 
@@ -52,7 +50,7 @@ module.exports = {
     },
 
     async valid_manga_index(req, res, next){
-        const { title, genre, scan } = req.query;
+        
         let schema = yup.object().shape({
             title: yup.string("title must be a string.").strict(),
             genre: yup.string("genre must be a string.").strict(),
@@ -61,30 +59,15 @@ module.exports = {
         })
 
         try{
-            await schema.validate({title, genre, scan})
-            .catch(function(e) {
-                return res.jsonBadRequest(null, "you did not give us want we want", e.errors)
-                
-            });
-
-            if(genre)
-                valid_genre = true; //validate genre
-
-            if (scan)
-                valid_scan = true;  //validate scan        
-    
-            
-    
-            if (valid_scan && valid_genre){
-                next();
-            
-            } else{
-                return res.jsonBadRequest(null, "unregistered scan", null)
-                
-            }
+            schema.validate(req.query).then(() => next())
+            .catch((err) => {
+               return res.jsonBadRequest(null, null, err.errors)              
+               
+           })
+           
 
         } catch(err){
-           
+            return res.jsonBadRequest(null, null, err.errors)
         }
        
     },
@@ -100,14 +83,14 @@ module.exports = {
 
                 return res.jsonBadRequest(
                         null,
-                        "You need to provide a valid IdObject to continue this operation.",
+                        getMessage("manga.invalid.id"),
                         null);
                
             } 
         } else {
             return res.jsonBadRequest(
                     null,
-                    "You need to provide a valid IdObject to continue this operation.",
+                    getMessage("manga.invalid.id"),
                     null);         
         }                     
     }  
