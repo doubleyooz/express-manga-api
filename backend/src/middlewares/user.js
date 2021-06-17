@@ -1,5 +1,6 @@
 const yup = require("yup");
-const { getMessage } = require("../common/messages")
+const { getMessage } = require("../common/messages");
+const { valid_manga_delete } = require("./manga");
 
 
 
@@ -67,5 +68,21 @@ module.exports = {
 
        
     },
+
+    async valid_user_delete(req, res, next){
+        const { user_id } = req.query;
+        if(user_id){
+            let req_id = require("crypto-js").AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+
+            if (req_id === user_id){
+                next();
+            }
+            req.auth = null;
+            return res.jsonBadRequest(null, getMessage("badRequest"), err.errors)
+        }
+
+        return res.jsonBadRequest(null, getMessage("badRequest"), err.errors)
+        
+    }
    
 }

@@ -31,18 +31,18 @@ routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
 routes.get('/refresh-token', AuthController.refreshAccessToken)
 
-routes.get('/user/index', Authorize("User"), UserController.index);
-routes.put('/user/update', Authorize("User"), UserController.update)
-routes.delete('/user/delete', Authorize("User"), UserController.delete);
+routes.get('/user/index', Authorize(["Scan", "User"]), UserController.index);
+routes.put('/user/update', Authorize(["Scan", "User"]), UserController.update)
+routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_delete, UserController.delete);
 
 routes.post('/manga/post', Authorize("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
-routes.get('/manga/index', Authorize(), MangaController.index);
+routes.get('/manga/index', MangaController.index);
 routes.put('/manga/update', Authorize("Scan"), MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
 
 
 routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig).array('imgCollection'), ChapterController.store);
-routes.get('/chapter/index', Authorize(), ChapterController.index);
+routes.get('/chapter/index', ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterController.delete);
 
