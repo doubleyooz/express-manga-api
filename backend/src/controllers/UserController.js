@@ -83,7 +83,7 @@ module.exports = {
                         html: `
                             <h2>${getMessage("user.activation.account.text")}</h2>
                             <a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
-                            Activate your account                               
+                            ${getMessage("user.activation.account.text.subtitle")}                               
                             <a/>
                            
                         `// plain text body
@@ -103,7 +103,7 @@ module.exports = {
                     return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
                                        
                 }).catch(err => {
-                    return res.jsonBadRequest(null, getMessage("badRequest"), {err});              
+                    return res.jsonBadRequest(null, null, {err});              
                     
                 })           
                             
@@ -123,7 +123,7 @@ module.exports = {
             });                       
         } 
         else{
-            return res.jsonBadRequest(null, getMessage("badRequest"), null)              
+            return res.jsonBadRequest(null, null, null)              
             
         }                                                                     
     },
@@ -149,7 +149,7 @@ module.exports = {
           
 
         console.log(docs)
-        res.jsonOK(docs, `Page list retrieved successfully! Users found: ${docs.length}`, null)              
+        res.jsonOK(docs, getMessage("user.list.success") + docs.length, null)              
         
     },
 
@@ -176,7 +176,7 @@ module.exports = {
                             return res.jsonServerError(null, null, err)
                         else {
                             p1.save().then(result => {    
-                                return res.jsonOK(null, "User Name changed", null)
+                                return res.jsonOK(null, getMessage("user.update.name.success"), null)
                             }).catch(err =>{
                                 return res.jsonServerError(null, null, null)
                             })
@@ -236,7 +236,7 @@ module.exports = {
                               html: `
                                   <h2>${getMessage("user.update.email.text")}</h2>
                                   <a href="${process.env.CLIENT_URL}/authentication/recover/${activationToken}">
-                                  Activate your account                               
+                                  ${getMessage("user.update.email.text.subtitle")}                              
                                   <a/>
                                  
                               `// plain text body
@@ -255,7 +255,7 @@ module.exports = {
                           return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
                                                  
                       }).catch(err => {
-                          return res.jsonBadRequest(null, getMessage("badRequest"), {err});             
+                          return res.jsonBadRequest(null, null, {err});             
                             
                       })           
                 }
@@ -265,13 +265,8 @@ module.exports = {
                 }
                
 
-              
-                              
-
-
             })
 
-           
                       
         }     
     },
@@ -284,10 +279,10 @@ module.exports = {
         User.findOne({ _id: user_id }).then(result =>  {
             User.deleteOne({ _id: user_id }, function (err) {
                 if (err){
-                    return res.jsonNotFound(null, "The specified user could not be deleted", err.message);              
+                    return res.jsonNotFound(null, getMessage("user.delete.fail"), err.message);              
                      
                 } else {
-                    return res.jsonOK(null, "The specified user was deleted", result);              
+                    return res.jsonOK(null, getMessage("user.delete.success"), result);              
                      
                   }
                    
@@ -297,8 +292,6 @@ module.exports = {
             return res.jsonNotFound(null, getMessage("user.error.notfound"), err.message)              
                        
         })
-
              
     },
-
 }

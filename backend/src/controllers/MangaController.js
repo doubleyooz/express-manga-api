@@ -29,13 +29,13 @@ module.exports = {
         
         if(doesMangaExist){            
             
-            return res.jsonBadRequest(null, "This manga already exists or the title is unavaliable", new_token)
+            return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
             
 
         } 
        
         if(!mongoose.isValidObjectId(scan_id)){
-            return res.jsonBadRequest(null, "Scan_id must be a valid id", null)
+            return res.jsonBadRequest(null, getMessage("manga.error.scan_id"), null)
             
         }
         console.log("here")
@@ -55,7 +55,7 @@ module.exports = {
         
         
         manga.save().then(result => {   
-            return res.jsonOK(result, "Manga added!", new_token)
+            return res.jsonOK(result, getMessage("manga.save.success"), new_token)
                               
                         
         }).catch(err => {
@@ -107,7 +107,7 @@ module.exports = {
             doc.user = undefined
 
         });
-        return res.jsonOK(docs, `Page list retrieved successfully! Mangas found: ${docs.length}`, new_token)
+        return res.jsonOK(docs, getMessage("manga.list.success") + docs.length, new_token)
                  
 
     },
@@ -118,7 +118,7 @@ module.exports = {
         req.new_token = null
 
         if(!manga_id){           
-            return res.jsonBadRequest(null, "manga_id undefined", null)
+            return res.jsonBadRequest(null, getMessage("manga.error.manga_id"), null)
         
         } else{
             const manga = await Manga.findById(manga_id);
@@ -153,7 +153,7 @@ module.exports = {
                         if (err) 
                             return res.jsonServerError(null, null, err)
                             
-                        return res.jsonOK(update, "Saved Sucessfully", new_token)
+                        return res.jsonOK(update, getMessage("manga.update.success"), new_token)
                     });
             
                 } else{
@@ -161,7 +161,7 @@ module.exports = {
                 }
     
             } else{
-                return res.jsonServerError(null, "manga required doesnt exists", new_token)
+                return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)
                
             }                       
         }     
@@ -183,7 +183,7 @@ module.exports = {
                 const mangas = await Manga.deleteMany({ _id: manga_id });        
 
                 if (mangas.n === 0)
-                    return res.jsonNotFound(mangas, "Manga not found", new_token);
+                    return res.jsonNotFound(mangas, getMessage("manga.notfound"), new_token);
                                   
                 
                 (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
@@ -212,7 +212,7 @@ module.exports = {
             
         } 
 
-        return res.jsonBadRequest(null, "manga could not be found", new_token)
+        return res.jsonBadRequest(null, getMessage("manga.notfound"), new_token)
     
         
     }

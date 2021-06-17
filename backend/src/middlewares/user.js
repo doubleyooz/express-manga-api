@@ -16,7 +16,7 @@ const rules = {
                 .min(3, getMessage("user.invalid.name.short"))               
                 .required(),
     role: yup.string()
-                .matches("Scan" || "User", getMessage("badRequest")),
+                .matches("Scan" || "User", null),
     sign_in_password: yup.string()
                 .min(8, getMessage("user.invalid.password.short"))
                 .required()
@@ -38,7 +38,7 @@ module.exports = {
 
         yupObject.validate(req.body).then(() => next())
                  .catch((err) => {
-                    return res.jsonBadRequest(null, getMessage("badRequest"), err.errors)              
+                    return res.jsonBadRequest(null, null, err.errors)              
                     
                 })
        
@@ -62,10 +62,9 @@ module.exports = {
 
         yupObject.validate({email: email, password: password}).then(() => next())
                  .catch((err) => {
-                    return res.jsonBadRequest(null, getMessage("badRequest"), err.errors)              
+                    return res.jsonBadRequest(null, null, err.errors)              
                     
                 })
-
        
     },
 
@@ -78,11 +77,10 @@ module.exports = {
                 next();
             }
             req.auth = null;
-            return res.jsonBadRequest(null, getMessage("badRequest"), err.errors)
+            return res.jsonBadRequest(null, null, err.errors)
         }
 
-        return res.jsonBadRequest(null, getMessage("badRequest"), err.errors)
+        return res.jsonBadRequest(null, null, err.errors)
         
-    }
-   
+    }   
 }

@@ -16,7 +16,7 @@ module.exports = {
       
         const refreshToken = req.cookie.jid
         if(!refreshToken){
-            return res.jsonUnauthorized(null, getMessage("Unauthorizer.refresh.token.missing"), null)
+            return res.jsonUnauthorized(null, getMessage("unauthorized.refresh.token.missing"), null)
             
         }
         console.log(refreshToken)
@@ -26,7 +26,7 @@ module.exports = {
 
         }catch(err){
             console.log(err)
-            return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+            return res.jsonUnauthorized(null, null, null)
             
         }
         User.findOne({_id: payload.id, active: true}).then(result => {
@@ -44,16 +44,16 @@ module.exports = {
                     
                 }   catch(err){
                     console.log(err)
-                    return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+                    return res.jsonUnauthorized(null, null, null)
                     
                 }           
                 
             } else{ 
-                return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+                return res.jsonUnauthorized(null, null, null)
                 
             }
         }).catch(err =>{
-            return res.jsonUnauthorized(null, getMessage("Unauthorized"), err)
+            return res.jsonUnauthorized(null, null, err)
             
         })
 
@@ -78,7 +78,7 @@ module.exports = {
         const match = user ? await bcrypt.compare(password, user.password) : null;
         
         if(!match){
-            return res.jsonBadRequest(null, getMessage("badRequest"), null)
+            return res.jsonBadRequest(null, null, null)
             
         } else{
             
@@ -132,22 +132,22 @@ module.exports = {
                         });                       
                            
                     }).catch(err => {                        
-                        return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                        return res.jsonBadRequest(err, null, null)
                         
                     });                          
                 } else{
-                    return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                    return res.jsonBadRequest(null, null, null)
                     
                 }
             
             }catch(err){
-                return res.jsonUnauthorized(err, getMessage("Unauthorized"), null)
+                return res.jsonUnauthorized(err, null, null)
                 
             };
           
 
         } else{
-            return res.jsonBadRequest(null, getMessage("badRequest"), null)
+            return res.jsonBadRequest(null, null, null)
             
         }
     },
@@ -178,15 +178,15 @@ module.exports = {
                     }
                                
                     else{
-                        return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                        return res.jsonBadRequest(null, null, null)
                         
                     }                                           
                 }).catch(err => {
-                    return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                    return res.jsonBadRequest(err, null, null)
                     
                 });                          
             } else{                
-                return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                return res.jsonBadRequest(err, null, null)
                 
             }           
         }
@@ -215,19 +215,17 @@ module.exports = {
                             }                                                
                           });                      
                     }).catch(err => {
-                        return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                        return res.jsonBadRequest(err, null, null)
                         
                     });                          
-                } else{
-                    
-                    return res.jsonBadRequest(err, getMessage("badRequest"), null)
+                } else{                    
+                    return res.jsonBadRequest(null, null, null)
                     
                 }           
 
         } else{
-            return res.jsonBadRequest(null, getMessage("badRequest"), null)
+            return res.jsonBadRequest(null, null, null)
             
         }
     }
-
 }

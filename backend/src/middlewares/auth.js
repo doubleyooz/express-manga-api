@@ -23,13 +23,13 @@ function auth(roles = []){
             
             }catch(err){ 
                 //Invalid Token            
-                return res.jsonUnauthorized(err, getMessage("Unauthorized"), null)
+                return res.jsonUnauthorized(err, null, null)
                 
             }
 
             if (roles.length && !roles.includes(payload.role)){   
                 //Invalid roles       
-                return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+                return res.jsonUnauthorized(null, null, null)
                 
                 
             } else{                
@@ -60,17 +60,17 @@ function auth(roles = []){
                         }           
                         
                     } else{ 
-                        return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+                        return res.jsonUnauthorized(null, null, null)
                         
                     }
                 }).catch(err =>{
-                    return res.jsonUnauthorized(null, getMessage("Unauthorized"), err)
+                    return res.jsonUnauthorized(null, null, err)
                     
                 })
             
             }    
         } catch(err){
-            return res.jsonUnauthorized(null, getMessage("Unauthorized"), null)
+            return res.jsonUnauthorized(null, null, null)
             
         }
        

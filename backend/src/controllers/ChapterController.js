@@ -78,10 +78,8 @@ module.exports = {
                         return res.jsonServerError(null, null, err)
                         
                     });
-                    return res.jsonOK(result, "Upload Done!", null)
+                    return res.jsonOK(result, getMessage("chapter.upload.success"), null)
                     
-
-                 
                 
                 }).catch(err => {
                     Object.keys(req.files).forEach((i) => {
@@ -101,8 +99,7 @@ module.exports = {
                     fs.unlinkSync('uploads/' + file.filename)
                     
                 });
-                return res.jsonNotFound(null, "Manga could not be found", err)
-                
+                return res.jsonNotFound(null, getMessage("manga.notfound"), err)                
             }
         });         
     },
@@ -122,7 +119,6 @@ module.exports = {
             update.number = number;
         }
 
-
         if(!(chapter_id === undefined)){
             Chapter.findOneAndUpdate({_id: chapter_id}, update, {upsert: true}, function(err, doc) {
                 if (err){
@@ -130,16 +126,14 @@ module.exports = {
         
                 } 
 
-                return res.jsonOK(update, "Succesfully saved.", null)
+                return res.jsonOK(update, getMessage("chapter.update.success"), null)
                 
                
             });
 
-
         } else{
-            return res.jsonBadRequest(null, getMessage("badRequest"), null) 
+            return res.jsonBadRequest(null, null, null) 
         
-            
          
         }        
     },
@@ -161,7 +155,7 @@ module.exports = {
                                 
                                 
                 }).catch(err =>{
-                    return res.jsonBadRequest(err, getMessage("badRequest"), null) 
+                    return res.jsonBadRequest(err, null, null) 
         
                 })
             )
@@ -173,7 +167,7 @@ module.exports = {
                 Chapter.findById(chapter_id).then(doc=>{
                     docs.push(doc)             
                 }).catch(err =>{
-                    return res.jsonBadRequest(err, getMessage("badRequest"), null) 
+                    return res.jsonBadRequest(err, null, null) 
         
                 })
             )
@@ -190,20 +184,19 @@ module.exports = {
                                 
                                 
                 }).catch(err =>{
-                    return res.jsonBadRequest(err, getMessage("badRequest"), null) 
+                    return res.jsonBadRequest(err, null, null) 
         
                 })
             )
         }
           
         else{
-            return res.jsonBadRequest(null, getMessage("badRequest"), null) 
-        
+            return res.jsonBadRequest(null, null, null) 
+
         }
 
         Promise.all(promises).then(() => {            
-            return res.jsonOK(docs, "Page list retrieved successfully!", null)
-            
+            return res.jsonOK(docs, getMessage("chapter.list.success"), null)            
         });
         
        
@@ -219,11 +212,9 @@ module.exports = {
                 fs.unlinkSync('uploads/' + file.filename)   
             });
 
-
             Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id }).then(chapters =>{
                 if (chapters.n === 0 ){//chapter could not be found
                     return res.jsonBadRequest({removed: false}, null, null) 
-        
                     
                 } else{
         
@@ -241,15 +232,12 @@ module.exports = {
                                 }
                                   
                             })
-                            cloneData.slice(index, 1);
-        
+                            cloneData.slice(index, 1);        
                            
-                        } else{
-                            console.log("error")
+                        } else{                           
                             
                             return res.jsonBadRequest({removed: false}, null, null) 
-                        }
-                       
+                        }                
                        
                     });
                            
@@ -260,29 +248,22 @@ module.exports = {
                             return res.jsonServerError({Mangas_matched: result.n}, null, null)
                             
                         } else{
-                            return res.jsonOK({ removed: true, chapters: chapters }, "Chapters deleted.", null)
+                            return res.jsonOK({ removed: true, chapters: chapters }, getMessage("chapter.delete.success"), null)
                             
                         }
-
                        
                     }).catch(err =>{
                         return res.jsonServerError(err, null, null)
                         
-                    });                    
-        
+                    });    
                 }
             }).catch(err=>{
-                return res.jsonBadRequest(err, null, null)
-                
+                return res.jsonBadRequest(err, null, null)                
             });                    
 
         }).catch(err=>{
             return res.jsonBadRequest(err, null, null)
             
-        });
-        
-        
-
-        
+        });                
     }
 }
