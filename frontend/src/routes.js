@@ -17,7 +17,7 @@ export default function Routes(){
             
             <Switch>
                 <Route path="/manga/:manga_title" exact component ={Manga}/>
-                <Route path="/manga/:manga_id/:chapter" exact component ={Reader}/>
+                <Route path="/manga/:manga_title/:chapter" exact component ={Reader}/>
                 <Route path="/" exact component ={Home}/>
                 <Route path="/activateaccount/:token" exact component ={ActivateAccount}/>
                 <Route path="/search" exact component ={Search}/>
