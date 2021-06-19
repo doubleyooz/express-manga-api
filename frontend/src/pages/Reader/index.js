@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useContext, useRef} from 'react';
-
+import { Link, useParams } from 'react-router-dom';
 import './styles.css';
 
 
 import { Context } from '../../Contexts/AuthProvider'
 import api from "../../services/api"
-import { useParams } from 'react-router-dom';
+
 
 require('dotenv').config()
 
@@ -40,16 +40,16 @@ const Reader = (props) =>{
 
         async function fetchData(){
             console.log(token)             
-            props.location.state ? setStates(props.location.state.chapter) :
+            props.location.state.chapter ? setStates(props.location.state.chapter) :
             api.get(`chapter/index?chapter_id=${chapter_id}`, config)
-                .then(response => {
+                .then(chapter => {
                     console.log("call api")
-                    //setChapter({ feed: response.data });  
-                    if(response.data !== null){                        
+                    //setChapter({ feed: chapter.data });  
+                    if(chapter.data !== null){                        
                        
-                       
-                        setStates(response.data)
-                        
+                                             
+                        setStates(chapter.data)
+
                         console.log("list chapters well succeed")
                         
                                                
@@ -107,7 +107,7 @@ const Reader = (props) =>{
   
     }
     
-    
+    console.log(manga_title)
     useKey("ArrowRight", () => nextPage())
     useKey("ArrowLeft", () => prevPage())
     return <>   
@@ -115,7 +115,10 @@ const Reader = (props) =>{
             <div className="header-board">
 
                     <div className="title">
-                        {manga_title}
+                        <Link to={{ pathname: `/Manga/${manga_title.replace(" ", "%20")}`}}>                    
+                            <h2>{manga_title}</h2>
+                        
+                        </Link>
                     </div>
 
                     <div className="controllers">
