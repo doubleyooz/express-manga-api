@@ -8,32 +8,39 @@ const Context = createContext();
 
 
 function AuthProvider({ children }) {
-    const [token, setToken] = useState("");
-    const [loading, setLoading] = useState(true) 
+    const [token, setToken] = useState(undefined);    
+    const [loading, setLoading] = useState(true);
+    
 
-    async function handleLogin(){
-        let config = {
-            
+   
+    
+    async function handleLogin(){     
+
+        let config = {            
             auth: {
                 username: "itachiut1r4@gmail.com",
                 password: "Lucarneiro@0009"
             }
             
         }        
-
-        api.get('sign-in', config).then(response =>{
+        
+        await api.get('sign-in', config).then(async response =>{
             
-            setToken(response.data.metadata.token.toString())
-            console.log("sign-in well succeed")
+            const accessToken = await response.data.metadata.token.toString()
+            setToken(accessToken)
            
-            setLoading(false)
+            
+            
+            
+
             
         }).catch(err=>{
-            console.log(err)
-            console.log("sign-error")         
-            setToken("")
-            setLoading(false)
+            console.log(err)                   
+            setToken(undefined)
+            
+            
         })
+        
     }
 
    /* const {
@@ -41,7 +48,7 @@ function AuthProvider({ children }) {
     } = useAuth();*/
 
     return (
-    <Context.Provider value={{ token, setToken, loading, handleLogin }}>
+    <Context.Provider value={{ token, setToken, handleLogin}}>
         {children}
     </Context.Provider>
     );

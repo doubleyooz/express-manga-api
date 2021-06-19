@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import './styles.css';
 import { Link } from 'react-router-dom';
 
@@ -7,32 +7,68 @@ import api from "../../services/api"
 import { Context } from '../../Contexts/AuthProvider'
 
 export default function Home(){
-    const { token, loading, handleLogin } = useContext(Context)
+    const { token, handleLogin } = useContext(Context)
 
-    const [text, setText] = useState("");  
+      
     const [mangas, setMangas] = useState([]);
-   
+    const [text, setText] = useState("")
+    const [usingLogin, setUsingLogin] = useState(false)
 
+    const notInitialRender = useRef(false)
     let config = {
         headers: {
             'Authorization': `Bearer ${token}`
           }
     }
 
+    
+    useEffect (() =>{
+        async function login() {        
+                
+            if (!token){                
+                handleLogin().then(() => {
+                    setUsingLogin(false)
+                                    
+                }).catch(err =>{              
+                    setUsingLogin(false)
+                    
+                })
+            } else{
+                setUsingLogin(false)
+            }
+           
+            
+           
+            
+            
+
+            if(usingLogin){
+                setText("loading...")
+            } else{  
+                token ? setText(`login well succeed: ${token}`) : setText('login failed')             
+                   
+                
+            }
+    
+        }
+        
+        if (notInitialRender.current) {
+            login()
+        } else {
+            notInitialRender.current = true
+        }
+            
+    }, [usingLogin] )
+   
+
+    
 
     useEffect(()=>{
       
         async function fetchData(){
-            handleLogin()
-            if(!loading){
-                //console.log(token)
-                if(token !== ""){
-                    setText(`login well succeed: ${token}`)
-                } else{
-                    setText("login failed")
-                }  
-                
-                api.get('manga/index', config)
+            
+           
+            api.get('manga/index')
                 .then(response => {
                     //setState({ feed: response.data });  
                     if(response.data !== null){
@@ -52,30 +88,36 @@ export default function Home(){
                     console.log("list mangas failed")
                     return null
                 })        
-            }      
-            
             
         }        
         fetchData()     
             
     }, []) // <-- empty dependency array
 
-    console.log(mangas)
-
-
+    
     return(
         <>  
             <div className="home-container">
-                <h1>{text}</h1>
+                {token ? text : <div className="div">not auth</div>}
+                
+                <div className="button">
+                    <button onClick={() =>  setUsingLogin(true)}>login</button>
+                </div>
+                
 
                 <div className='list'>
                          
-                    {mangas.length !== 0 ? mangas.map((manga) => (  
-                                      
-                        <Link to={{ pathname: `/Manga/${manga.title}`, state: manga }}>                    
-                            {manga.title}
+                    {mangas.length !== 0 ? mangas.map((manga) => (
+                       
                         
+                        <Link to={{ pathname: `/Manga/${manga.title.replace(" ", "%20")}`, state: manga }}>                    
+                            {manga.title}
+
                         </Link>
+                        
+                        
+                      
+                        
                     )): <div>no manga to be shown</div>}
 
                 </div>

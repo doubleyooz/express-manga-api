@@ -37,9 +37,7 @@ const Manga = (props) =>{
                 //setState({ feed: response.data });  
                 if(response.data !== null){
                    
-                    console.log(response.data);
-                   
-                    
+                    console.log(response.data);                  
                     setManga(response.data.data[0])
                     console.log(manga)
                     console.log("get manga info well succeed")
@@ -91,7 +89,7 @@ const Manga = (props) =>{
             
     }, [loading]) // <-- empty dependency array
 
-  
+    console.log(manga_title)
     return <>   
         <div className="manga-page">
             <div className="header-board">
@@ -107,7 +105,7 @@ const Manga = (props) =>{
 
                 {!loading ? chapters.map((chapter, index) => (       
                     <div className="chapter">
-                        <Link to={{ pathname: `/Manga/${manga_title}/${chapter._id}`, state: {chapter}}}>                    
+                        <Link to={{ pathname: `/Manga/${manga_title.replace(" ", "%20")}/${chapter._id}`, state: {chapter}}}>                    
                             <h2>{chapter.title}</h2>
                             Chapter {chapter.number}
                             

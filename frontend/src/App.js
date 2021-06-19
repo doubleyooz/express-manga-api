@@ -7,20 +7,7 @@ import api from "./services/api"
 import GlobalStyle from './styles/global';
 
 function App() {
-  const [loading, setLoading] = useState(true);
  
-  useEffect(() => {
-    api.get("refresh-token").then(x => {
-      const { accessToken } = x.data.accessToken;
-      //setAccessToken(accessToken);
-      setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
-    return <div>loading...</div>;
-  }
-
   return (
     <>
       <div className="body">
