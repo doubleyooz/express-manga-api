@@ -105,7 +105,8 @@ const Manga = (props) =>{
 
                 {!loading ? chapters.map((chapter, index) => (       
                     <div className="chapter">
-                        <Link to={{ pathname: `/Manga/${manga_title.replace(" ", "%20")}/${chapter._id}`, state: {chapter}}}>                    
+                        <Link to={{ pathname: `/Manga/${manga_title.replace(" ", "%20")}/${chapter.number}`, 
+                            state: {chapter: chapter, chapters: manga.chapters}}}>                    
                             <h2>{chapter.title}</h2>
                             Chapter {chapter.number}
                             

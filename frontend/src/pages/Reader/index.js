@@ -13,69 +13,117 @@ const Reader = (props) =>{
    
     const { token, handleLogin } = useContext(Context)
     
-    const [chapter, setChapter] = useState({pages: []})
-    const [info, setInfo] = useState("")
-    const [currentPage, setCurrentPage] = useState(0)
-    const [loading, setLoading] = useState(true)
+    const {manga_title, chapter_number} = useParams()
 
-    const {manga_title, chapter_id} = useParams()
+    const [chapter, setChapter] = useState({ imgCollection: [] })
+    const [manga, setManga] = useState({ chapters: []})
+
+    const [currentPage, setCurrentPage] = useState(0)
+    const [currentChapter, setCurrentChapter] = useState(chapter_number - 1)
+
+    
 
     let config = {
         headers: {
             'Authorization': `Bearer ${token}`
           }
     }
-
-
+    const notInitialRender = useRef(false)
     useEffect(()=>{
 
-        async function setStates(data){
-            setChapter({ pages: data.imgCollection })
-            setInfo({
-                title: data.title,
-                number: data.number
-            })
-        } 
-
-
-        async function fetchData(){
-            console.log(token)             
-            props.location.state.chapter ? setStates(props.location.state.chapter) :
-            api.get(`chapter/index?chapter_id=${chapter_id}`, config)
-                .then(chapter => {
-                    console.log("call api")
-                    //setChapter({ feed: chapter.data });  
-                    if(chapter.data !== null){                        
-                       
-                                             
-                        setStates(chapter.data)
-
-                        console.log("list chapters well succeed")
-                        
-                                               
-                    } else {
-                        console.log("list chapters failed")
-                        return null
-                    }           
+        
+        async function usingProps(){
+            console.log("using props")
+            setChapter( props.location.state.chapter )
             
-                }).catch(err =>{
-                    console.log(err)
-                    console.log("list chapters failed")
-                    return null
-                })        
+            setManga({
+                chapters: props.location.state.chapters,
+                
+            })
+            setCurrentChapter(chapter_number - 1)
+        
+           
+        }
+
+        async function usingApi(){
+            console.log("using api")
+            
+
+            api.get(`manga/index?title=${manga_title}`, config)
+            .then(manga => {                    
+                                    
+                if(manga.data !== null){                        
+                   
+                    console.log(manga.data.data[0])         
+                    setManga(manga.data.data[0])
+                    
+                    console.log("chapter list successfuly retrieved")
+                    
+                    api.get(`chapter/index?chapter_id=${manga.data.data[0].chapters[currentChapter]}`, config)
+                    .then(chapter => {
+                    
+                        if(chapter.data !== null){
+                            setChapter(chapter.data.data[0])
+                            setCurrentChapter(chapter.data.data[0].number - 1)
+                            console.log("list pages well succeed")
+                        } else {
+                            console.log("list pages failed")
+                        }
+
+                    }).catch(err =>{
+                        console.log(err)
+                        console.log("list pages failed")
+                        
+                    })    
+                                                                   
+                } else {
+                    console.log("chapter list retrieve failed")
+                    
+                }           
+        
+            }).catch(err =>{
+                console.log(err)
+                console.log("chapter list retrieve failed")
+                
+            })        
+        }
+
+        async function fetchData(){         
+
+            notInitialRender ? usingApi() : props.location.state ? usingProps() : usingApi()   
+                
+            
         }        
         fetchData()     
             
-    }, [loading]) // <-- empty dependency array
+    }, [currentChapter]) // <-- empty dependency array
 
-  
-    
-    
+    function nextChapter(){
+        if (currentChapter === manga.chapters.length){
+            console.log("last chapter reached")
+        } else{
+            notInitialRender.current = true
+            setCurrentChapter(currentChapter+1)
+            setCurrentPage(0)            
+        }    
+    }
+
+    function prevChapter(){    
+        if(currentChapter === 0){
+            console.log("first chapter reached")
+        } else{           
+            notInitialRender.current = true
+            setCurrentChapter(currentChapter-1)
+            setCurrentPage(0)
+        }             
+    }
+
     function nextPage(){           
-        if (currentPage === chapter.pages.length - 1){
+        if (currentPage === chapter.imgCollection.length){
             console.log("last page reached")
         } else{            
-            setCurrentPage(currentPage+1)            
+            setCurrentPage(currentPage+1)
+
         }               
     }
 
@@ -107,7 +155,7 @@ const Reader = (props) =>{
   
     }
     
-    console.log(manga_title)
+    
     useKey("ArrowRight", () => nextPage())
     useKey("ArrowLeft", () => prevPage())
     return <>   
@@ -122,9 +170,17 @@ const Reader = (props) =>{
                     </div>
 
                     <div className="controllers">
-                        <button className='button'>◄◄</button>
-                        <div className="chapters"> Chapter #0{info.number} </div>
-                        <button className='button'>►►</button>
+                        <Link to={{ pathname: `/Manga/${manga_title}/${currentChapter-2 <= 0 ? 1 : currentChapter-2}`}}>                    
+                            <button className='button' onClick= {() => prevChapter()}>◄◄</button>
+                        
+                        </Link>
+                        
+                        <div className="chapters"> Chapter #0{chapter.number} </div>
+                        <Link to={{ pathname: `/Manga/${manga_title}/${currentChapter+2 >= manga.chapters.length ? manga.chapters.length : currentChapter + 2}`}}>                    
+                            <button className='button'onClick= {() => nextChapter()}>►►</button>
+                        
+                        </Link>
+                        
                    
                    
                     </div>
@@ -141,14 +197,14 @@ const Reader = (props) =>{
 
 
             <div className='board'>       
-                {chapter.pages.map((page, index) => (                   
+                {chapter ? chapter.imgCollection.map((page, index) => (                   
                     //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
                     < img src={process.env.REACT_APP_SERVER + page.filename}
                       alt= {page.originalname}
                       style={index === currentPage ? {}  : {display: "none"}}
                       onClick={() => nextPage()}                     
                     />
-                ))}
+                )): <div>no data</div>}
 
             </div>
 
