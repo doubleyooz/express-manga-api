@@ -36,13 +36,14 @@ routes.put('/user/update', Authorize(["Scan", "User"]), UserController.update)
 routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_delete, UserController.delete);
 
 routes.post('/manga/post', Authorize("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
-routes.get('/manga/index', MangaController.index);
+routes.get('/manga/index',  MangaController.index);
+
 routes.put('/manga/update', Authorize("Scan"), MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
 
 
 routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig).array('imgCollection'), ChapterController.store);
-routes.get('/chapter/index', ChapterController.index);
+routes.get('/chapter/index',  ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterController.delete);
 
