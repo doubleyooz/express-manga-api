@@ -7,7 +7,30 @@ const Manga = require('../models/Manga');
 
 const { getMessage } = require("../common/messages")
 
-
+const projection = {
+    0 : {
+        title: 1,
+        number: 1,
+        imgCollection: 1,
+    },
+    1 : {
+        updatedAt: 1,
+        createdAt: 1,
+        title: 1,
+        number: 1,
+        imgCollection: 1,
+        __v: 1
+        
+    },
+    2 : { 
+       
+        title: 1,
+        number: 1,
+        imgCollection: 1
+        
+         
+    }
+}
 
 module.exports = {
     async store(req, res){            
@@ -155,30 +178,7 @@ module.exports = {
         }
        
        
-        let projection = {
-            0 : {
-                title: 1,
-                number: 1,
-                imgCollection: 1,
-            },
-            1 : {
-                updatedAt: 1,
-                createdAt: 1,
-                title: 1,
-                number: 1,
-                imgCollection: 1,
-                __v: 1
-                
-            },
-            2 : { 
-               
-                title: 1,
-                number: 1,
-                imgCollection: 1
-                
-                 
-            }
-        }
+        
                  
        
         let docs = [], promises = []

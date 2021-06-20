@@ -12,7 +12,50 @@ const Manga = require('../models/Manga');
 const User = require('../models/user');
 
 
-
+const projection = {
+    0 : {
+        
+        title: 1,
+        genre: 1,
+        synopsis: 1,                
+        n_chapters: 1,
+        chapters: 1,
+        
+        nsfw: 1,
+       
+        likes: 1,
+       
+        _id: 0
+    },
+    1 : {
+        updatedAt: 1,
+        createdAt: 1,
+        title: 1,
+        genre: 1,
+        synopsis: 1,
+        n_chapters: 1,
+        chapters: 1,
+        language: 1,
+        nsfw: 1,
+        scan_id: 1,
+        likes: 1,
+        __v: 1,
+        
+        
+    },
+    2 : {                 
+        title: 1,
+        genre: 1,
+        synopsis: 1,                
+        n_chapters: 1,
+        chapters: 1,
+        
+        nsfw: 1,
+        
+        likes: 1,
+       
+    }
+}
 
 
 
@@ -79,6 +122,7 @@ module.exports = {
         if (req.auth){
             let temp = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
             role = temp.slice(0, 1);
+            
             temp = null;
             req.auth = null
         }else{
@@ -86,49 +130,7 @@ module.exports = {
         }
        
        
-        let projection = {
-            0 : {
-                
-                title: 1,
-                genre: 1,
-                synopsis: 1,                
-                n_chapters: 1,
-                chapters: 1,
-                
-                nsfw: 1,
-               
-                likes: 1,
-               
-                _id: 0
-            },
-            1 : {
-                updatedAt: 1,
-                createdAt: 1,
-                title: 1,
-                genre: 1,
-                synopsis: 1,
-                n_chapters: 1,
-                chapters: 1,
-                language: 1,
-                nsfw: 1,
-                scan_id: 1,
-                likes: 1,
-                __v: 1
-                
-            },
-            2 : {                 
-                title: 1,
-                genre: 1,
-                synopsis: 1,                
-                n_chapters: 1,
-                chapters: 1,
-                
-                nsfw: 1,
-                
-                likes: 1,
-               
-            }
-        }
+      
 
 
 

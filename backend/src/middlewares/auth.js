@@ -27,6 +27,8 @@ function auth(roles = []){
                 
             }
 
+            
+
             if (roles.length && !roles.includes(payload.role)){   
                 //Invalid roles       
                 return res.jsonUnauthorized(null, null, null)
