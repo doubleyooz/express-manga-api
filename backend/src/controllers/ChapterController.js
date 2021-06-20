@@ -251,27 +251,21 @@ module.exports = {
             //get the deleted chapter index in order to exclude it from chapters array inside manga object
             Manga.findOne({ _id: manga_id }, function (err, manga){ 
                 if(manga){
-                    cloneData = [...manga.chapters];
-                    
-                    let index = manga.chapters.filter(function (chap_id, i){
-                       
-                        if(chap_id === chapter_id){                           
-                            return i;
+                   
+                    cloneData = manga.chapters.filter(function (chap_id){
                         
-                        }
+                        return chap_id.toString() !== chapter_id.toString()
                           
                     })
                     
-                    try{
-                        if(manga.chapters.length > 1)
-                            cloneData.slice(index, manga.chapters.length);     
+                    try{                                                 
                        
                         chapter.imgCollection.forEach(function (file){
                             fs.unlinkSync('uploads/' + manga_id + "/" + chapter.number + "/" + file.filename)   
                         });
             
                     } catch(err) {
-                        return res.jsonBadRequest(null, null, null)
+                        return res.jsonServerError(null, null, null)
                     }
                    
                     Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id }).then(chapters =>{
