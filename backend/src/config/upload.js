@@ -4,17 +4,20 @@ const multer = require("multer");
 const crypto = require('crypto');
 const fs = require('fs');
 
-const folder = "uploads"
+const folder = "uploads/"
 
 module.exports = {
-  dest: path.resolve(__dirname, '..', '..', folder),
+  
   storage: multer.diskStorage({
     destination: (req, files, cb) => {
-      cb(null, path.resolve(__dirname, '..', '..', folder));
+      cb(null, path.resolve(__dirname, '..', '..', folder, req.body.manga_id + "/", req.body.number));
 
-      if (!fs.existsSync("./" + folder))       
-        fs.mkdirSync("./" + folder);
-      
+      let dir = "./" + folder + req.body.manga_id + "/"
+      if (!fs.existsSync(dir))       
+        fs.mkdirSync(dir);
+
+      if (!fs.existsSync(dir + req.body.number))       
+        fs.mkdirSync(dir + req.body.number);
 
     },
     filename: (req, file, cb) => {
