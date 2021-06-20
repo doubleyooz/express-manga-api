@@ -7,6 +7,7 @@ const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
 const AuthController = require('./controllers/AuthController');
 
+const ChapterMiddleware = require('./middlewares/chapter');
 const MangaMiddleware = require('./middlewares/manga');
 const UserMiddleware = require('./middlewares/user');
 const Authorize = require('./middlewares/auth');
@@ -42,7 +43,7 @@ routes.put('/manga/update', Authorize("Scan"), MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
 
 
-routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig).array('imgCollection'), ChapterController.store);
+routes.post('/chapter/post', Authorize("Scan"), ChapterMiddleware.valid_chapter_store, multer(multerConfig).array('imgCollection'), ChapterController.store);
 routes.get('/chapter/index',  ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterController.delete);
