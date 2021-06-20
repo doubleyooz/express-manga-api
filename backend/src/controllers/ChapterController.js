@@ -142,12 +142,34 @@ module.exports = {
     async index(req, res){
 
         const { manga_id, number, chapter_id } = req.query;
+
+        let temp = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+        
+        const scan_id = temp.slice(1, temp.length);
+        const role = temp.slice(0, 1);
+        temp = null;
+        req.auth = null
+
+        let projection = {
+            0 : {},
+            1 : { 
+                __v: false,
+                _id: false
+            },
+            2 : { 
+                __v: false,
+                _id: false
+            }
+        }
+        
+           
+    
        
         let docs = [], promises = []
        
         if (number){
             promises.push(
-                Chapter.find({ manga_id: manga_id, number: number }).then(result=>{
+                Chapter.find({ manga_id: manga_id, number: number }).select(projection[role]).then(result=>{
                     result.forEach(doc =>{
                         docs.push(doc)
                         
@@ -164,7 +186,7 @@ module.exports = {
 
         else if (chapter_id){
             promises.push(
-                Chapter.findById(chapter_id).then(doc=>{
+                Chapter.findById(chapter_id).select(projection[role]).then(doc=>{
                     docs.push(doc)             
                 }).catch(err =>{
                     return res.jsonBadRequest(err, null, null) 
@@ -176,7 +198,7 @@ module.exports = {
 
         else if (manga_id){
             promises.push(
-                Chapter.find({ manga_id: manga_id}).then(result=>{
+                Chapter.find({ manga_id: manga_id}).select(projection[role]).then(result=>{
                     result.forEach(doc =>{
                         docs.push(doc)
                         
