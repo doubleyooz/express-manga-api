@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
+const Page = require('../models/Page');
 
 const { getMessage } = require("../common/messages")
 
@@ -59,6 +60,7 @@ module.exports = {
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
                     console.log(i)
+                    
                     let temp = { 
                         originalname:  file.originalname,
                         size: file.size,
@@ -93,7 +95,7 @@ module.exports = {
                         Chapter.deleteOne({_id: result._id});
                         Object.keys(req.files).forEach((i) => {
                             let file = req.files[i];   
-                            fs.unlinkSync('uploads/' + file.filename)    
+                            fs.unlinkSync('uploads/' + manga_id + "/" + number + file.filename)    
                             
                         });
                         console.log(err)
@@ -107,7 +109,7 @@ module.exports = {
                 }).catch(err => {
                     Object.keys(req.files).forEach((i) => {
                         let file = req.files[i];   
-                        fs.unlinkSync('uploads/' + file.filename)    
+                        fs.unlinkSync('uploads/' + manga_id + "/" + number + file.filename)    
                         
                     });
                     console.log(err)
@@ -119,7 +121,7 @@ module.exports = {
 
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
-                    fs.unlinkSync('uploads/' + file.filename)
+                    fs.unlinkSync('uploads/' + manga_id + "/" + number + file.filename)
                     
                 });
                 return res.jsonNotFound(null, getMessage("manga.notfound"), err)                
@@ -245,59 +247,62 @@ module.exports = {
         const { manga_id, chapter_id } = req.query;
 
         Chapter.findById(chapter_id).then( chapter => {
-
-            chapter.imgCollection.forEach(function (file){
-                fs.unlinkSync('uploads/' + file.filename)   
-            });
-
-            Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id }).then(chapters =>{
-                if (chapters.n === 0 ){//chapter could not be found
-                    return res.jsonBadRequest({removed: false}, null, null) 
+            cloneData = []
+            //get the deleted chapter index in order to exclude it from chapters array inside manga object
+            Manga.findOne({ _id: manga_id }, function (err, manga){ 
+                if(manga){
+                    cloneData = [...manga.chapters];
                     
-                } else{
-        
-                    cloneData = []
-        
-                    Manga.findOne({ _id: manga_id }, function (err, manga){ 
-                        if(manga){
-                            cloneData = [...manga.chapters];
-                            let index = 0;
-                            manga.chapters.forEach(function (pos, i){
-                                if(pos === chapter_id){
-                                    
-                                    index = i;
-                                    return;
-                                }
-                                  
-                            })
-                            cloneData.slice(index, 1);        
-                           
-                        } else{                           
-                            
-                            return res.jsonBadRequest({removed: false}, null, null) 
-                        }                
+                    let index = manga.chapters.filter(function (chap_id, i){
                        
-                    });
-                           
-        
-                    Manga.updateOne({ _id: manga_id }, { data: cloneData }).then(result => {
-
-                        if (result.n === 0){
-                            return res.jsonServerError({Mangas_matched: result.n}, null, null)
+                        if(chap_id === chapter_id){                           
+                            return i;
+                        
+                        }
+                          
+                    })
+                    
+                    try{
+                        if(manga.chapters.length > 1)
+                            cloneData.slice(index, manga.chapters.length);     
+                       
+                        chapter.imgCollection.forEach(function (file){
+                            fs.unlinkSync('uploads/' + manga_id + "/" + chapter.number + "/" + file.filename)   
+                        });
+            
+                    } catch(err) {
+                        return res.jsonBadRequest(null, null, null)
+                    }
+                   
+                    Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id }).then(chapters =>{
+                        console.log(chapters)
+                        if (chapters.n === 0 ){//chapter could not be found
+                            return res.jsonBadRequest({removed: false}, null, null) 
                             
                         } else{
-                            return res.jsonOK({ removed: true, chapters: chapters }, getMessage("chapter.delete.success"), null)
+                            manga.chapters = cloneData
+                            manga.save().then(result => {   
+                                return res.jsonOK({ removed: true, chapters: chapters }, getMessage("chapter.delete.success"), null)
+                                                  
+                                            
+                            }).catch(err => {
+                                console.log(err)
+                                return res.jsonServerError(null, null, err)
                             
+                            });
+                
                         }
-                       
-                    }).catch(err =>{
-                        return res.jsonServerError(err, null, null)
-                        
-                    });    
-                }
-            }).catch(err=>{
-                return res.jsonBadRequest(err, null, null)                
-            });                    
+                    }).catch(err=>{
+                        return res.jsonBadRequest(err, null, null)                
+                    });                    
+                } else{                           
+                    
+                    return res.jsonBadRequest({removed: false}, null, null) 
+                }                
+               
+            });
+                   
+            
 
         }).catch(err=>{
             return res.jsonBadRequest(err, null, null)
