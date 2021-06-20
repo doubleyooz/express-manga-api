@@ -1,20 +1,6 @@
 const mongoose = require('mongoose');
 
-
-const PageSchema = new mongoose.Schema({
-    
-        name: String,
-        size: Number,
-        key: String,        
-        filename: String, 
-        originalname: String,  
-   
-},{
-
-    toJSON: {
-        virtuals: true,
-    }
-})
+const PageSchema = require('./Page').schema;
 
 const ChapterSchema = new mongoose.Schema({
     manga_id: String,
