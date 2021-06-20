@@ -143,27 +143,43 @@ module.exports = {
 
         const { manga_id, number, chapter_id } = req.query;
 
-        let temp = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
-        
-        const scan_id = temp.slice(1, temp.length);
-        const role = temp.slice(0, 1);
-        temp = null;
-        req.auth = null
+        let role;
 
+        if (req.auth){
+            let temp = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+            role = temp.slice(0, 1);
+            temp = null;
+            req.auth = null
+        }else{
+            role = 0;
+        }
+       
+       
         let projection = {
-            0 : {},
-            1 : { 
-                __v: false,
-                _id: false
+            0 : {
+                title: 1,
+                number: 1,
+                imgCollection: 1,
+            },
+            1 : {
+                updatedAt: 1,
+                createdAt: 1,
+                title: 1,
+                number: 1,
+                imgCollection: 1,
+                __v: 1
+                
             },
             2 : { 
-                __v: false,
-                _id: false
+               
+                title: 1,
+                number: 1,
+                imgCollection: 1
+                
+                 
             }
         }
-        
-           
-    
+                 
        
         let docs = [], promises = []
        
@@ -248,7 +264,7 @@ module.exports = {
                             let index = 0;
                             manga.chapters.forEach(function (pos, i){
                                 if(pos === chapter_id){
-                                    console.log("here")
+                                    
                                     index = i;
                                     return;
                                 }
