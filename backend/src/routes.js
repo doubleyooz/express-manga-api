@@ -43,10 +43,10 @@ routes.put('/manga/update', Authorize("Scan"), MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
 
 
-routes.post('/chapter/post', Authorize("Scan"), ChapterMiddleware.valid_chapter_store, multer(multerConfig).array('imgCollection'), ChapterController.store);
-routes.get('/chapter/index',  ChapterController.index);
+routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig).array('imgCollection'),  ChapterMiddleware.valid_chapter_store, ChapterController.store);
+routes.get('/chapter/index', ChapterMiddleware.valid_chapter_index, ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
-routes.delete('/chapter/delete', Authorize("Scan"), ChapterController.delete);
+routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
 
 /*
 routes.post('/sessions', function(req, res){
