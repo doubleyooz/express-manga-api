@@ -12,6 +12,7 @@
     "chapter.update.success": "Update Done!",
     "chapter.list.success": "Chapter list retrieved successfully!",
     "chapter.delete.success": "Chapter deleted.",
+    "chapter.delete.error": "The chapter pages could not be found",
 
 
     "manga.error.duplicate": "This manga already exists or the title is unavaliable.",
