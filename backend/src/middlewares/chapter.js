@@ -58,7 +58,7 @@ module.exports = {
        
         if (number){
             promises.push(
-                schema.validate({number, manga_id}).then().catch(err => {                    
+                schema.validate({number, manga_id}).then(console.log("number valid")).catch(err => {                    
                     return res.jsonBadRequest(null, null, err.errors)
                 })
             )
@@ -68,10 +68,11 @@ module.exports = {
         if (chapter_id){
             promises.push(
                 new Promise((resolve, reject) => {
-                    console.log("chapter_id2")
+                    
                     if (mongoose.Types.ObjectId.isValid(chapter_id)) {   
                         if (String(new mongoose.Types.ObjectId(chapter_id)) === chapter_id) {  
-                                
+                                console.log("chapter_id2")
+                                resolve("chapter id valid")
                         } else { 
 
                             return res.jsonBadRequest(
@@ -101,7 +102,7 @@ module.exports = {
                 new Promise((resolve, reject) => {
                     if (mongoose.Types.ObjectId.isValid(manga_id)) {   
                         if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
-                            console.log("manga id valid")
+                            resolve("manga id valid")
                         } else{
                             return res.jsonBadRequest(
                                 null,
@@ -121,14 +122,10 @@ module.exports = {
             )
         }
           
-        else{
-            return res.jsonBadRequest(null, null, null) 
-
-        }
-
-        Promise.all(promises).then(() => {            
+        
+        Promise.all(promises).then(() =>         
             next()            
-        }).catch(err => {
+        ).catch(err => {
             console.log("catch")
             return res.jsonBadRequest(null, null, err)       
         });
@@ -139,39 +136,41 @@ module.exports = {
                        
         const { manga_id, chapter_id } = req.query;       
     
-        try{
-            if (mongoose.Types.ObjectId.isValid(manga_id)) {   
-                if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
-                    if (mongoose.Types.ObjectId.isValid(chapter_id)) {   
-                        if (String(new mongoose.Types.ObjectId(chapter_id)) === chapter_id) {  
-                            next();     
-                        } else { 
-        
-                        return res.jsonBadRequest(
-                                null,
-                                getMessage("chapter.invalid.id"),
-                                null);
-                            
-                        } 
-                    }
-                } 
-                else { 
+        console.log(manga_id)
+        console.log(chapter_id)
 
-                    return res.jsonBadRequest(
-                            null,
-                            getMessage("manga.invalid.id"),
-                            null);
+        if (mongoose.Types.ObjectId.isValid(manga_id)) {   
+            if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
+                if (mongoose.Types.ObjectId.isValid(chapter_id)) {   
+                    if (String(new mongoose.Types.ObjectId(chapter_id)) === chapter_id){                        
+                        next(); 
+                    } 
+                            
                         
-                } 
-            }         
-        } catch(err){
-            return res.jsonServerError(
-                null,
-                null,
-                null
-            );
+                    else {
+                        console.log("chapter id invalid string")
+                        return res.jsonBadRequest(null, getMessage("chapter.invalid.id"), null); 
+                    }                           
+                        
+                } else {
+                    console.log("chapter id invalid object")
+                    return res.jsonBadRequest(null, getMessage("chapter.invalid.id"), null);
+                }               
+                
+                                        
+            } else {
+                console.log("manga id invalid string")
+                return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+            }
             
-        }
-                      
+                                        
+        } else{
+            console.log("manga id invalid object")
+            return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+        }  
+        
+        
+    
+                    
     }  
 }

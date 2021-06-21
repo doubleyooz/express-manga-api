@@ -50,7 +50,8 @@ module.exports = {
     },
 
     async valid_manga_index(req, res, next){
-        
+        const {manga_id} = req.query
+
         let schema = yup.object().shape({
             title: yup.string("title must be a string.").strict(),
             genre: yup.string("genre must be a string.").strict(),
@@ -58,8 +59,36 @@ module.exports = {
 
         })
 
+        
+        
+
         try{
-            schema.validate(req.query).then(() => next())
+            schema.validate(req.query).then(() => {
+                if(manga_id){
+                    if (mongoose.Types.ObjectId.isValid(manga_id)) {   
+                        if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
+                            next();     
+                        } else { 
+            
+                            return res.jsonBadRequest(
+                                    null,
+                                    getMessage("manga.invalid.id"),
+                                    null);
+                           
+                        } 
+                    } else {
+                        return res.jsonBadRequest(
+                                null,
+                                getMessage("manga.invalid.id"),
+                                null);         
+                    }              
+                }
+                      
+                else {
+                    next();
+                }
+            
+            })
             .catch((err) => {
                return res.jsonBadRequest(null, null, err.errors)              
                
