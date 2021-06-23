@@ -54,6 +54,9 @@
     "user.update.email.text": "Please click on given link to change your email, if wasn't you just ignore this email.\n",
     "user.update.email.activate": "Please check your email to finish this operation.",
     "user.update.email.success": "Your email has been changed.",
-    "user.update.name.success": "User Name changed"
+    "user.update.name.success": "User Name changed",
+    "user.like.success": "Like given successfuly",
+    "user.like.error.same.id": "Same id",
+    "user.notfound": "User not found"
 
 }
