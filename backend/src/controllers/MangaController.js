@@ -119,17 +119,14 @@ module.exports = {
 
         let role;
 
-        if (req.auth){
-            let temp = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
-            role = temp.slice(0, 1);
-            
-            temp = null;
-            req.auth = null
+        if (req.role){
+            role = CryptoJs.AES.decrypt(req.role, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))            
+            req.role = null
         }else{
             role = 0;
         }
        
-       
+        console.log("Role: " + role)
       
 
 
