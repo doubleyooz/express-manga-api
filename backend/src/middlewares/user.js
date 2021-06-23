@@ -16,7 +16,7 @@ const rules = {
                 .min(3, getMessage("user.invalid.name.short"))               
                 .required(),
     role: yup.string()
-                .matches("Scan" || "User", null),
+                .matches(/(Scan|User)/, null),
     sign_in_password: yup.string()
                 .min(8, getMessage("user.invalid.password.short"))
                 .required()
