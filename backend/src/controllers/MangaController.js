@@ -37,6 +37,7 @@ const projection = {
         chapters: 1,
         language: 1,
         nsfw: 1,
+        status: 1,
         scan_id: 1,
         likes: 1,
         __v: 1,
@@ -115,7 +116,8 @@ module.exports = {
 
     async index(req, res){
         const { title, genre, scan, manga_id } = req.query;
-        const new_token = (req.new_token) ? req.new_token : null;
+        const new_token = (req.new_token) ? req.new_token : null;       
+        req.new_token = null
 
         let role;
 
@@ -174,7 +176,7 @@ module.exports = {
     },
 
     async update(req, res){
-        const { title, genre, synopsis, chapters, status, language, manga_id } = req.body;
+        const { title, genre, synopsis, n_chapters, status, language, manga_id, nsfw } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
 
@@ -186,36 +188,41 @@ module.exports = {
 
             if(manga){
                 if(manga.scan_id.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
-                    let update = {};
-    
+                    
                     if(title){
-                        update.title = title;
+                        manga.title = title;
                     }
                     if(genre){
-                        update.genre = genre;
+                        manga.genre = genre;
                     }
                     if(synopsis){
-                        update.synopsis = synopsis;
+                        manga.synopsis = synopsis;
                     }
-                    if(chapters){
-                        update.chapters = chapters;
+                    if(n_chapters){
+                        manga.n_chapters = n_chapters;
                     }                   
                     
                     if(status){
-                        update.status = status;
-                    }
-                    if(language){
-                        update.language = language;
+                        manga.status = status;
                     }
 
-                    update.updated_At = Date.now()
+                    if(nsfw){
+                        manga.nsfw = nsfw;
+                    }
+                    if(language){
+                        manga.language = language;
+                    }
+
+                    manga.updatedAt = Date.now()
+                    let changes = manga.getChanges()
+                    manga.save().then(answer => {  
+                        return res.jsonOK(changes, getMessage("manga.update.success"), new_token)
+
+                    }).catch(err => {
+                        return res.jsonServerError(null, null, err)
+                    })
                    
-                    Manga.findOneAndUpdate({_id: manga_id}, update, {upsert: true}, function(err, doc) {
-                        if (err) 
-                            return res.jsonServerError(null, null, err)
-                            
-                        return res.jsonOK(update, getMessage("manga.update.success"), new_token)
-                    });
+                  
             
                 } else{
                     return res.jsonUnauthorized(null, null, null);

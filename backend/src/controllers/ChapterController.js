@@ -36,19 +36,8 @@ const projection = {
 module.exports = {
     async store(req, res){            
         const { manga_id, number, title } = req.body;
-
-        console.log("here - 0")
-           /*
-            
-            Object.keys(req.files).forEach((i) => {
-                let file = req.files[i];                                                    
-                fs.unlinkSync('uploads/' + file.filename)              
-                
-            });
-            return res.json(        
-                jsonNotFound(null, getMessage("user.error.notfound"), err.message)              
-            ) 
-          */
+        const new_token = (req.new_token) ? req.new_token : null;       
+        req.new_token = null
         
 
         Manga.findOne({_id: manga_id}, function (err, manga){ 
@@ -101,7 +90,7 @@ module.exports = {
                         return res.jsonServerError(null, null, err)
                         
                     });
-                    return res.jsonOK(result, getMessage("chapter.upload.success"), null)
+                    return res.jsonOK(result, getMessage("chapter.upload.success"), new_token)
                     
                 
                 }).catch(err => {
@@ -122,7 +111,7 @@ module.exports = {
                     fs.unlinkSync('uploads/' + manga_id + "/" + number + file.filename)
                     
                 });
-                return res.jsonNotFound(null, getMessage("manga.notfound"), err)                
+                return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)                
             }
         });         
     },
@@ -131,6 +120,8 @@ module.exports = {
     async update(req, res){        
 
         const { title, number, chapter_id } = req.body;
+        const new_token = (req.new_token) ? req.new_token : null;       
+        req.new_token = null
 
         let update = {};
 
@@ -149,7 +140,7 @@ module.exports = {
         
                 } 
 
-                return res.jsonOK(update, getMessage("chapter.update.success"), null)
+                return res.jsonOK(update, getMessage("chapter.update.success"), new_token)
                                
             });
 
@@ -163,6 +154,8 @@ module.exports = {
     async index(req, res){
 
         const { manga_id, number, chapter_id } = req.query;
+        const new_token = (req.new_token) ? req.new_token : null;       
+        req.new_token = null
 
         let role;
         
@@ -227,13 +220,15 @@ module.exports = {
         }
 
         Promise.all(promises).then(() => {            
-            return res.jsonOK(docs, getMessage("chapter.list.success"), null)            
+            return res.jsonOK(docs, getMessage("chapter.list.success"), new_token)            
         });
                
     },
 
     async delete(req, res){        
         const { manga_id, chapter_id } = req.query;
+        const new_token = (req.new_token) ? req.new_token : null;       
+        req.new_token = null
 
         Chapter.findById(chapter_id).then( chapter => {
             cloneData = []
@@ -250,7 +245,7 @@ module.exports = {
                     Chapter.deleteMany( { manga_id: manga_id, _id: chapter_id }).then(chapters =>{
                         console.log(chapters)
                         if (chapters.n === 0 ){//chapter could not be found
-                            return res.jsonNotFound({removed: false}, null, null) 
+                            return res.jsonNotFound({removed: false}, getMessage("chapter.notfound"), new_token) 
                             
                         } else{
                             manga.chapters = cloneData
@@ -265,7 +260,7 @@ module.exports = {
                                     return res.jsonServerError({ removed: true }, getMessage("chapter.delete.error"), null)
                                 } 
 
-                                return res.jsonOK({ removed: true, chapters: chapters }, getMessage("chapter.delete.success"), null)
+                                return res.jsonOK({ removed: true, chapters: chapters }, getMessage("chapter.delete.success"), new_token)
                                           
                             }).catch(err => {
                                 console.log(err)
@@ -277,7 +272,7 @@ module.exports = {
                         return res.jsonBadRequest(err, null, null)                
                     });                    
                 } else{                       
-                    return res.jsonNotFound({removed: false}, getMessage("manga.notfound"), null) 
+                    return res.jsonNotFound({removed: false}, getMessage("manga.notfound"), new_token) 
                 }                               
             });           
 
