@@ -50,12 +50,8 @@ function auth(roles = []){
                             } else{
                                 console.log("Token not expired")
                             }
-                            var dict = {
-                                "": 0,
-                                "Scan": 1,
-                                "User": 2
-                            }
-                            req.auth = require("crypto-js").AES.encrypt(dict[payload.role] + payload.id, `${process.env.SHUFFLE_SECRET}`);
+                           
+                            req.auth = require("crypto-js").AES.encrypt(payload.id, `${process.env.SHUFFLE_SECRET}`);
                             payload = null
                             next();
                             
