@@ -13,7 +13,7 @@
     "chapter.list.success": "Chapter list retrieved successfully!",
     "chapter.delete.success": "Chapter deleted.",
     "chapter.delete.error": "The chapter pages could not be found",
-
+    "chapter.notfound": "The Chapter could not be found.",
 
     "manga.error.duplicate": "This manga already exists or the title is unavaliable.",
     "manga.error.manga_id": "manga_id undefined.",
