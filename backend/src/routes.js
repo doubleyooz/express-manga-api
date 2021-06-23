@@ -36,6 +36,8 @@ routes.get('/refresh-token', AuthController.refreshAccessToken)
 routes.get('/user/index', Authorize(["Scan", "User"]), UserController.index);
 routes.put('/user/update', Authorize(["Scan", "User"]), UserController.update)
 routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_delete, UserController.delete);
+routes.put('/user/like', Authorize("User"), UserController.likeUser);
+
 
 routes.post('/manga/post', Authorize("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
 routes.get('/manga/index',  getRole(), MangaMiddleware.valid_manga_index, MangaController.index);
