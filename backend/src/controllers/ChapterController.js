@@ -122,33 +122,42 @@ module.exports = {
         const { title, number, chapter_id } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
-
-        let update = {};
-
-        if(!(title === undefined)){
-            update.title = title;
-        }      
         
-        if(!(number === undefined)){
-            update.number = number;
+        const chapter = await Chapter.findById(chapter_id);
+     
+        if(!chapter){
+            return res.jsonNotFound(null, getMessage("chapter.notfound"), new_token)
         }
+  
+        let manga = await Manga.findById(chapter.manga_id)
+        if(!manga){
+            return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)
+        } 
 
-        if(!(chapter_id === undefined)){
-            Chapter.findOneAndUpdate({_id: chapter_id}, update, {upsert: true}, function(err, doc) {
-                if (err){
-                    return res.jsonNotFound(null, null, err)
-        
-                } 
+        if(manga.scan_id.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
+            manga = null
+            if(number){
+                chapter.number = number;
+            }
+            if(title){
+                chapter.title = title;
+            }
+            
+            chapter.updatedAt = Date.now()                
+            let changes = chapter.getChanges()
+            chapter.save().then(answer => {  
+                return res.jsonOK(changes, getMessage("chapter.update.success"), new_token)
 
-                return res.jsonOK(update, getMessage("chapter.update.success"), new_token)
-                               
-            });
-
+            }).catch(err => {
+                return res.jsonServerError(null, null, err)
+            })
+            
+                    
         } else{
-            return res.jsonBadRequest(null, null, null) 
+            return res.jsonUnauthorized(null, null, null);
+        }
+                    
         
-         
-        }        
     },
    
     async index(req, res){
