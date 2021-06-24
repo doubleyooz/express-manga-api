@@ -25,6 +25,7 @@
     "manga.invalid.synopsis.short": "Synopsis is too short - it must be at least 10 characters long.",
     "manga.invalid.synopsis.long": "Synopsis is too long - it must be a maximum of 400 characters.",
     "manga.list.success": "Manga list retrieved successfully! Mangas found: ",
+    "manga.like.success": "Like given successfuly",
     "manga.save.success": "Manga added!",
     "manga.update.success": "Manga updated!",
     "manga.deleted": "",
