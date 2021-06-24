@@ -35,11 +35,6 @@ const UserSchema = new mongoose.Schema({
         ref: 'User'
     }],
 
-    likedMangas:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Manga'
-    }],
-
     token_version:{
         type: Number,
         default: 0
