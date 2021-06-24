@@ -42,6 +42,7 @@ routes.put('/user/like', Authorize("User"), LikeController.likeUser);
 
 routes.post('/manga/post', Authorize("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
 routes.get('/manga/index',  getRole(), MangaMiddleware.valid_manga_index, MangaController.index);
+routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
 
 routes.put('/manga/update', Authorize("Scan"), MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
