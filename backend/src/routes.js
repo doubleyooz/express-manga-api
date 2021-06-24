@@ -6,6 +6,7 @@ const UserController = require("./controllers/UserController");
 const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
 const AuthController = require('./controllers/AuthController');
+const LikeController = require('./controllers/LikeController');
 
 const ChapterMiddleware = require('./middlewares/chapter');
 const MangaMiddleware = require('./middlewares/manga');
@@ -36,7 +37,7 @@ routes.get('/refresh-token', AuthController.refreshAccessToken)
 routes.get('/user/index', Authorize(["Scan", "User"]), UserController.index);
 routes.put('/user/update', Authorize(["Scan", "User"]), UserController.update)
 routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_delete, UserController.delete);
-routes.put('/user/like', Authorize("User"), UserController.likeUser);
+routes.put('/user/like', Authorize("User"), LikeController.likeUser);
 
 
 routes.post('/manga/post', Authorize("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
