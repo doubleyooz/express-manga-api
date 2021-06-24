@@ -35,15 +35,15 @@ const projection = {
 
 module.exports = {
     async store(req, res){            
-        const { manga_id, number, title } = req.body;
+        const { manga_title, number, title } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
         
+        console.log("here")
 
-        Manga.findOne({_id: manga_id}, function (err, manga){ 
+        Manga.findOne({title: manga_title}, function (err, manga){ 
             if(manga){          
-                console.log("here")
-               
+                               
                 let jsonString = [];         
                 
                 Object.keys(req.files).forEach((i) => {
