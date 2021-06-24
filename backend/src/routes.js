@@ -42,14 +42,13 @@ routes.put('/user/like', Authorize("User"), LikeController.likeUser);
 
 routes.post('/manga/post', Authorize("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
 routes.get('/manga/index',  getRole(), MangaMiddleware.valid_manga_index, MangaController.index);
-routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
-
 routes.put('/manga/update', Authorize("Scan"), MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
+routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
 
 
 routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig).array('imgCollection'),  ChapterMiddleware.valid_chapter_store, ChapterController.store);
-routes.get('/chapter/index', getRole(),ChapterMiddleware.valid_chapter_index, ChapterController.index);
+routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
 
