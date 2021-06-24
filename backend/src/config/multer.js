@@ -11,9 +11,9 @@ const files = {
   
   storage: multer.diskStorage({
     destination: (req, files, cb) => {
-      cb(null, path.resolve(__dirname, '..', '..', folder, req.body.manga_id + "/", req.body.number));
+      cb(null, path.resolve(__dirname, '..', '..', folder, req.body.manga_title + "/", req.body.number));
 
-      let dir = "./" + folder + req.body.manga_id + "/"
+      let dir = "./" + folder + req.body.manga_title + "/"
       if (!fs.existsSync(dir))       
         fs.mkdirSync(dir);
 
@@ -59,9 +59,9 @@ const file = {
   
   storage: multer.diskStorage({
     destination: (req, files, cb) => {
-      cb(null, path.resolve(__dirname, '..', '..', folder, req.body.manga_id + "/", req.body.number));
+      cb(null, path.resolve(__dirname, '..', '..', folder, req.body.manga_title + "/", req.body.number));
 
-      let dir = "./" + folder + req.body.manga_id + "/"
+      let dir = "./" + folder + req.body.manga_title + "/"
       if (!fs.existsSync(dir))       
         fs.mkdirSync(dir);
 
