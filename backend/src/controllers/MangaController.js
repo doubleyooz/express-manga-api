@@ -263,15 +263,30 @@ module.exports = {
                 if (mangas.n === 0)
                     return res.jsonNotFound(mangas, getMessage("manga.notfound"), new_token);
                                   
+                const scan = await User.findById(scan_id);
+
+
+                scan.mangas = scan.mangas.filter(function (_id){ return _id.toString() !== manga_id.toString() })
                 
+                scan.save(function(err) {
+                    // yet another err object to deal with
+                    if (err) {
+                      return res.jsonServerError(null, null, err)
+                    }
+                                      
+                });
+                
+
                 (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
                     doc.imgCollection.forEach(function (page){                            
                         fs.unlinkSync('uploads/' + page.filename)  
                     })                      
                 });
     
-                const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err, result){
-    
+                const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err){
+                    if(err){
+                        return res.jsonServerError(null, null, err)
+                    }
                 }))   
                 
               
