@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const multerConfig = require('./config/upload')
+const multerConfig = require('./config/multer')
 
 const UserController = require("./controllers/UserController");
 const ChapterController = require('./controllers/ChapterController');
@@ -14,6 +14,7 @@ const UserMiddleware = require('./middlewares/user');
 const Authorize = require('./middlewares/auth');
 const getRole = require('./middlewares/getRole');
 const routes = express.Router()
+
 
 
 routes.get('/', (req, res) => {
@@ -47,7 +48,7 @@ routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_de
 routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
 
 
-routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig).array('imgCollection'),  ChapterMiddleware.valid_chapter_store, ChapterController.store);
+routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig.files).array('imgCollection'), ChapterMiddleware.valid_chapter_store, ChapterController.store);
 routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
