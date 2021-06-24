@@ -10,6 +10,7 @@ const jwt = require('../common/jwt');
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 const User = require('../models/user');
+const user = require('../models/user');
 
 
 const projection = {
@@ -68,11 +69,9 @@ module.exports = {
         
         const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
         
-        let temp = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+        let scan_id = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
         
-        const scan_id = temp.slice(1, temp.length);
-        const role = temp.slice(0, 1);
-        temp = null;
+       
         req.auth = null
         
         if(doesMangaExist){            
@@ -82,11 +81,15 @@ module.exports = {
 
         } 
        
-        if(!mongoose.isValidObjectId(scan_id)){
-            return res.jsonBadRequest(null, getMessage("manga.error.scan_id"), null)
+      
+        const scan = await User.findById(scan_id);
+
+        if(!scan){
+            return res.jsonNotFound(null, getMessage("manga.error.scan_id"), null)
             
         }
-        console.log("here")
+
+        
         const manga = new Manga({
             title: title,
             genre: genre,
@@ -100,10 +103,17 @@ module.exports = {
 
         });
 
-        
-        
+                
         manga.save().then(result => {   
-            return res.jsonOK(result, getMessage("manga.save.success"), new_token)
+            scan.mangas.push(manga._id)
+
+           
+            scan.save().then(() => {
+                return res.jsonOK(result, getMessage("manga.save.success"), new_token)
+            }).catch(err => {
+                console.log(err)
+                return res.jsonServerError(null, null, err)
+            })          
                               
                         
         }).catch(err => {
@@ -265,13 +275,12 @@ module.exports = {
                 }))   
                 
               
-                return res.json(
-                    response.jsonOK(
+                return res.jsonOK(
                         ({"mangas affected": mangas.deletedCount, "chapters affected": chapters},
                             null,
                             new_token
                         )
-                    )
+                    
                 );
                 
             } 
