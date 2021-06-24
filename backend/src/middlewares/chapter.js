@@ -5,35 +5,25 @@ const { getMessage } = require("../common/messages");
 
 module.exports = {
     async valid_chapter_store(req, res, next){         
-        const { manga_id, number, title } = req.body;        
+        const { manga_title, number, chapter_title } = req.body;        
         
         let schema = yup.object().shape({
-            title: yup.string("title must be a string.").strict()                
+            manga_title: yup.string("manga title must be a string.").strict()                
+                .max(60, getMessage("manga.invalid.title.long")),
+            chapter_title: yup.string("title must be a string.").strict()                
                 .max(40, getMessage("chapter.invalid.title.long")),
             number: yup.number("Must to be a valid number").min(1, 'Must be a positive number').required(),
                                
         })
 
         try{
-            await schema.validate({title, number})
+            await schema.validate({manga_title, chapter_title, number})
             .catch(function(e) {
                 return res.jsonBadRequest(null, null, e)
                 
             });
 
-            if (mongoose.Types.ObjectId.isValid(manga_id)) {   
-                if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
-                    next();     
-                } else { 
-    
-                return res.jsonBadRequest(
-                        null,
-                        getMessage("manga.invalid.id"),
-                        null);
-                   
-                } 
-            }
-        
+                  
 
         } catch(err){
             return res.jsonBadRequest(null, null, err)

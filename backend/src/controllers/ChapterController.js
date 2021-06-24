@@ -35,7 +35,7 @@ const projection = {
 
 module.exports = {
     async store(req, res){            
-        const { manga_title, number, title } = req.body;
+        const { manga_title, number, chapter_title } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
         
@@ -66,7 +66,7 @@ module.exports = {
                 const chapter = new Chapter({                    
                     manga_id: manga_id,
                     number: number,
-                    title: title,
+                    title: chapter_title,
                     imgCollection: [
                             
                     ],
