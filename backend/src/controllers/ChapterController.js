@@ -90,7 +90,7 @@ module.exports = {
                         return res.jsonServerError(null, null, err)
                         
                     });
-                    console.log(result.imgCollection)
+                    
                     return res.jsonOK(result, getMessage("chapter.upload.success"), new_token)
                     
                 

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-const PageSchema = require('./Page').schema;
 
 const ChapterSchema = new mongoose.Schema({
     manga_id: String,
@@ -10,15 +9,19 @@ const ChapterSchema = new mongoose.Schema({
         default: 'none'
     },
     //pages: Number,
-    imgCollection: {
-        type: [PageSchema],
+    imgCollection: [{
+        type: Object,
+        size: Number,         
+        filename: String, 
+        originalname: String,  
+
         default: [{
             originalname: "none",           
             size: 0,   
             filename: "none"      
             
         }]
-    },
+    }],
     createdAt: {
         type: Date,
         default: Date.now,
