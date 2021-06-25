@@ -14,12 +14,13 @@ const files = {
       cb(null, path.resolve(__dirname, '..', '..', folder, req.body.manga_title + "/", req.body.number));
 
       let dir = "./" + folder + req.body.manga_title + "/"
+
+
       if (!fs.existsSync(dir))       
         fs.mkdirSync(dir);
 
       if (!fs.existsSync(dir + req.body.number))       
         fs.mkdirSync(dir + req.body.number);
-
     },
     filename: (req, file, cb) => {
       crypto.randomBytes(16, (err, hash) => {
@@ -64,16 +65,12 @@ const file = {
       let dir = "./" + folder + req.body.manga_title + "/"
       if (!fs.existsSync(dir))       
         fs.mkdirSync(dir);
-
-      if (!fs.existsSync(dir + req.body.number))       
-        fs.mkdirSync(dir + req.body.number);
-
+    
     },
     filename: (req, file, cb) => {
       crypto.randomBytes(16, (err, hash) => {
         if (err) cb(err);
         
-       
           var filename = `${hash.toString('hex')}-${file.originalname}`
         
          
