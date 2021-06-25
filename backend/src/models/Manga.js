@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const MangaSchema = new mongoose.Schema({
+    cover: {
+        type: String,
+        unique: true,
+        default: ""
+
+    },
     title: {
         type: String,
         unique: true

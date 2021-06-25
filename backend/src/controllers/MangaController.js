@@ -91,6 +91,7 @@ module.exports = {
 
         
         const manga = new Manga({
+            cover: req.file.filename,
             title: title,
             genre: genre,
             synopsis: synopsis,
