@@ -38,9 +38,7 @@ module.exports = {
         const { manga_title, number, chapter_title } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
-        
-        console.log("here")
-
+       
         Manga.findOne({title: manga_title}, function (err, manga){ 
             if(manga){          
                                
@@ -61,7 +59,7 @@ module.exports = {
                     
                 });
 
-                console.log(jsonString);
+                
 
                 const chapter = new Chapter({                    
                     manga_id: manga._id,
@@ -73,6 +71,8 @@ module.exports = {
                 });
 
                 chapter.imgCollection = jsonString;
+
+              
             
                 chapter.save().then(result => {
                     manga.chapters.push(result._id) 
@@ -82,7 +82,7 @@ module.exports = {
                         Chapter.deleteOne({_id: result._id});
                         Object.keys(req.files).forEach((i) => {
                             let file = req.files[i];   
-                            fs.unlinkSync('uploads/' + manga_id + "/" + number + file.filename)    
+                            fs.unlinkSync('uploads/' + manga_id + "/" + number + "/" + file.filename)    
                             
                         });
                         console.log(err)
@@ -90,13 +90,14 @@ module.exports = {
                         return res.jsonServerError(null, null, err)
                         
                     });
+                    console.log(result.imgCollection)
                     return res.jsonOK(result, getMessage("chapter.upload.success"), new_token)
                     
                 
                 }).catch(err => {
                     Object.keys(req.files).forEach((i) => {
                         let file = req.files[i];   
-                        fs.unlinkSync('uploads/' + manga_id + "/" + number + file.filename)    
+                        fs.unlinkSync('uploads/' + manga_id + "/" + number + "/" + file.filename)    
                         
                     });
                     console.log(err)
@@ -262,7 +263,7 @@ module.exports = {
                                 
                                 try{                                         
                                     chapter.imgCollection.forEach(function (file){
-                                        fs.unlinkSync('uploads/' + manga_id + "/" + chapter.number + "/" + file.filename)   
+                                        fs.unlinkSync('uploads/' + manga.title + "/" + chapter.number + "/" + file.filename)   
                                     });
                         
                                 } catch(err) {

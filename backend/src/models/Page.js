@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 
 const PageSchema = new mongoose.Schema({
     
-    name: String,
-    size: Number,
-    key: String,        
+    size: Number,         
     filename: String, 
     originalname: String,  
 
