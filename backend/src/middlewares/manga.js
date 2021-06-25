@@ -10,41 +10,43 @@ module.exports = {
         
         
         console.log(title)
-
+       
         let schema = yup.object().shape({
             title: yup.string("title must be a string.").strict().min(2, getMessage("manga.invalid.title.short")).max(60, getMessage("manga.invalid.title.long")).required(),
             genre: yup.string("genre must be a string.").strict().required(),
             synopsis: yup.string("synopsis must be a string.").strict().min(10, getMessage("manga.invalid.synopsis.short")).max(400, getMessage("manga.invalid.synopsis.long")).required(),
             n_chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.').required(),
             status: yup.number("status must be a number.").min(1, getMessage("manga.invalid.code")).max(6, getMessage("manga.invalid.code")).required(),
-            nsfw: yup.bool("nsfw must be a boolean.").strict().required(),
+            nsfw: yup.string("nsfw must be a string.").strict().matches(/(true|false)/, null).required(),
             language: yup.string("language must be a string.").strict().default({ language: 'pt' }).required(),
            
         })
 
-        try{
-            await schema.validate({title, genre, synopsis, n_chapters, status, nsfw, language})
-            .catch(function(e) {
-                return res.jsonBadRequest(null, null, null)
-                
-            });
+       
 
+        schema.validate({title, genre, synopsis, n_chapters, status, nsfw, language}).then(() => {
             valid_language = true;
-    
+
             valid_genre = true;
     
             if (valid_language && valid_genre){
+                req.nsfw = (nsfw === "true")
                 next();
             
             } else{
                 return res.jsonBadRequest(null, null, null)
                 
             }
-
-        } catch(err){
-            return res.jsonBadRequest(null, null, err)
+        })
+        .catch(function(e) {
+            console.log(e)
+            return res.jsonBadRequest(null, null, e)
             
-        }
+        });
+        
+        
+
+    
               
                         
     },

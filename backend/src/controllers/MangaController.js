@@ -67,24 +67,24 @@ module.exports = {
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
         
-        const doesMangaExist = await Manga.exists({ title: title, genre: genre });         
+        const doesMangaExist = await Manga.exists({ title: title });         
         
         let scan_id = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
         
-       
-        req.auth = null
         
-        if(doesMangaExist){            
+        req.auth = null
+    
+        if(doesMangaExist)          
+           return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
             
-            return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
             
-
-        } 
-       
+        
+        console.log(req.file)
       
         const scan = await User.findById(scan_id);
 
         if(!scan){
+            
             return res.jsonNotFound(null, getMessage("manga.error.scan_id"), null)
             
         }
@@ -106,18 +106,19 @@ module.exports = {
                 
         manga.save().then(result => {   
             scan.mangas.push(manga._id)
-
-           
+                       
             scan.save().then(() => {
                 return res.jsonOK(result, getMessage("manga.save.success"), new_token)
             }).catch(err => {
                 console.log(err)
+                
                 return res.jsonServerError(null, null, err)
             })          
                               
                         
         }).catch(err => {
             console.log(err)
+            
             return res.jsonServerError(null, null, err)
         
         });
