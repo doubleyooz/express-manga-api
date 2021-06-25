@@ -13,6 +13,7 @@ const MangaMiddleware = require('./middlewares/manga');
 const UserMiddleware = require('./middlewares/user');
 const Authorize = require('./middlewares/auth');
 const getRole = require('./middlewares/getRole');
+const track_progress = require('./middlewares/upload')
 const routes = express.Router()
 
 
@@ -41,7 +42,7 @@ routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_
 routes.put('/user/like', Authorize("User"), LikeController.likeUser);
 
 
-routes.post('/manga/post', Authorize("Scan"), MangaMiddleware.valid_manga_store, MangaController.store);
+routes.post('/manga/post', Authorize("Scan"), track_progress, multer(multerConfig.file).single('cover'), MangaMiddleware.valid_manga_store, MangaController.store);
 routes.get('/manga/index',  getRole(), MangaMiddleware.valid_manga_index, MangaController.index);
 routes.put('/manga/update', Authorize("Scan"), MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
