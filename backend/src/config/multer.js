@@ -60,9 +60,9 @@ const file = {
   
   storage: multer.diskStorage({
     destination: (req, files, cb) => {
-      cb(null, path.resolve(__dirname, '..', '..', folder, req.body.manga_title + "/", req.body.number));
+      cb(null, path.resolve(__dirname, '..', '..', folder, req.body.title));
 
-      let dir = "./" + folder + req.body.manga_title + "/"
+      let dir = "./" + folder + req.body.title + "/"
       if (!fs.existsSync(dir))       
         fs.mkdirSync(dir);
     
@@ -72,7 +72,7 @@ const file = {
         if (err) cb(err);
         
           var filename = `${hash.toString('hex')}-${file.originalname}`
-        
+          
          
           
           cb(null, filename)
