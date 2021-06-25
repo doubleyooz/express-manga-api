@@ -64,7 +64,7 @@ module.exports = {
                 console.log(jsonString);
 
                 const chapter = new Chapter({                    
-                    manga_id: manga_id,
+                    manga_id: manga._id,
                     number: number,
                     title: chapter_title,
                     imgCollection: [
