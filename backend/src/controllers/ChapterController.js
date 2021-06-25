@@ -4,7 +4,7 @@ const CryptoJs = require("crypto-js");
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
-const Page = require('../models/Page');
+
 
 const { getMessage } = require("../common/messages")
 
@@ -82,7 +82,7 @@ module.exports = {
                         Chapter.deleteOne({_id: result._id});
                         Object.keys(req.files).forEach((i) => {
                             let file = req.files[i];   
-                            fs.unlinkSync('uploads/' + manga_id + "/" + number + "/" + file.filename)    
+                            fs.unlinkSync('uploads/' + manga.title + "/" + number + "/" + file.filename)    
                             
                         });
                         console.log(err)
@@ -97,7 +97,7 @@ module.exports = {
                 }).catch(err => {
                     Object.keys(req.files).forEach((i) => {
                         let file = req.files[i];   
-                        fs.unlinkSync('uploads/' + manga_id + "/" + number + "/" + file.filename)    
+                        fs.unlinkSync('uploads/' + manga.title + "/" + number + "/" + file.filename)    
                         
                     });
                     console.log(err)
@@ -109,7 +109,7 @@ module.exports = {
 
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
-                    fs.unlinkSync('uploads/' + manga_id + "/" + number + file.filename)
+                    fs.unlinkSync('uploads/' + manga.title + "/" + number + "/" + file.filename)
                     
                 });
                 return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)                
