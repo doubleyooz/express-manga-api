@@ -22,6 +22,10 @@ const MangaSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     }],
+    user_alert: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     nsfw:{
         type:Boolean,
         default: false

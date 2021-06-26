@@ -125,19 +125,24 @@ module.exports = {
         const current_user = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
         req.auth = null             
 
-        const doesMangaExist = await Manga.exists({ _id: manga_id }); 
+        const manga = await Manga.findById(manga_id); 
 
-        if(!doesMangaExist){
+        if(!manga){
             return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)        
         }
-
+     
         const user = await User.findById(current_user)
 
         if(!user){
             return res.jsonNotFound(null, getMessage("user.notfound"), new_token)        
         }
 
-    
+        manga.user_alert.includes(current_user) ? 
+            manga.user_alert = manga.user_alert.filter(function (_id){ return _id.toString() !== current_user.toString() }) :
+            manga.user_alert.push(current_user)
+   
+        manga.updatedAt = Date.now()  
+
         user.manga_alert.includes(manga_id) ? 
             user.manga_alert = user.manga_alert.filter(function (_id){ return _id.toString() !== manga_id.toString() }) :
             user.manga_alert.push(manga_id)
@@ -145,11 +150,19 @@ module.exports = {
         let changes = user.getChanges()
         
         
-        user.save().then(() => {
-            
-            return res.jsonOK(changes, getMessage("manga.pin.success"), new_token)
+        
+        manga.save().then(() => {
+            user.save().then(() => {
+                
+                return res.jsonOK(changes, getMessage("manga.pin.success"), new_token)
 
-        }).catch(err => {
+            }).catch(err => {
+                console.log(err)         
+                return res.jsonServerError(null, null, err.toString())
+
+            })
+                       
+        }).catch(err => {   
             console.log(err)         
             return res.jsonServerError(null, null, err.toString())
 

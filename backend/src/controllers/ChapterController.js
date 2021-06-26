@@ -5,6 +5,7 @@ const CryptoJs = require("crypto-js");
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 
+const NotifyController = require('./NotifyController')
 
 const { getMessage } = require("../common/messages")
 
@@ -76,7 +77,9 @@ module.exports = {
             
                 chapter.save().then(result => {
                     manga.chapters.push(result._id) 
-                    manga.save().then(answer => {
+                    manga.save().then(answer => {                       
+
+                        return res.jsonOK(result, getMessage("chapter.upload.success"), new_token)
 
                     }).catch(err =>{
                         Chapter.deleteOne({_id: result._id});
@@ -91,7 +94,7 @@ module.exports = {
                         
                     });
                     
-                    return res.jsonOK(result, getMessage("chapter.upload.success"), new_token)
+                
                     
                 
                 }).catch(err => {
