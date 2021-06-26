@@ -18,7 +18,7 @@ module.exports = {
             n_chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.').required(),
             status: yup.number("status must be a number.").min(1, getMessage("manga.invalid.code")).max(6, getMessage("manga.invalid.code")).required(),
             nsfw: yup.string("nsfw must be a string.").strict().matches(/(true|false)/, null).required(),
-            language: yup.string("language must be a string.").strict().default({ language: 'pt' }).required(),
+            language: yup.string("language must be a string.").strict().matches(/(pt-br|en-us|en-uk)/, null).default({ language: 'pt-br' }).required(),
            
         })
 
