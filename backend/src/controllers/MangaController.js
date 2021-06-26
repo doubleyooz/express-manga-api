@@ -1,16 +1,13 @@
-const mongoose = require('mongoose');
-const path = require('path');
-const multer = require('multer');
 const fs = require('fs');
 const CryptoJs = require("crypto-js");
 
 const { getMessage } = require("../common/messages")
-const jwt = require('../common/jwt');
+
 
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 const User = require('../models/user');
-const user = require('../models/user');
+
 
 
 const projection = {

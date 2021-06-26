@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { boolean } = require('yup');
 
 const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },

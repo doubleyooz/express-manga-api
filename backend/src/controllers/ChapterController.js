@@ -5,7 +5,7 @@ const CryptoJs = require("crypto-js");
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 
-const NotifyController = require('./NotifyController')
+
 
 const { getMessage } = require("../common/messages")
 

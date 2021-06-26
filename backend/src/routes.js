@@ -7,6 +7,7 @@ const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
 const AuthController = require('./controllers/AuthController');
 const LikeController = require('./controllers/LikeController');
+const NotifyController = require('./controllers/NotifyController')
 
 const ChapterMiddleware = require('./middlewares/chapter');
 const MangaMiddleware = require('./middlewares/manga');
@@ -14,6 +15,7 @@ const UserMiddleware = require('./middlewares/user');
 const Authorize = require('./middlewares/auth');
 const getRole = require('./middlewares/getRole');
 const track_progress = require('./middlewares/upload')
+
 const routes = express.Router()
 
 
@@ -40,6 +42,7 @@ routes.get('/user/index', Authorize(["Scan", "User"]), UserController.index);
 routes.put('/user/update', Authorize(["Scan", "User"]), UserController.update)
 routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_delete, UserController.delete);
 routes.put('/user/like', Authorize("User"), LikeController.likeUser);
+routes.get('/user/notify', Authorize("Scan"), NotifyController.notifyUsers)
 
 
 routes.post('/manga/post', Authorize("Scan"), track_progress, multer(multerConfig.file).single('cover'), MangaMiddleware.valid_manga_store, MangaController.store);
