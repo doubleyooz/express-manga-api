@@ -5,6 +5,7 @@ const ProtonMail = require('protonmail-api');
 
 const User = require("../models/user");
 const Manga = require("../models/manga");
+const Chapter = require("../models/chapter");
 
 const Protonmail = false;
 
@@ -17,10 +18,26 @@ module.exports = {
         if(!manga){
             return res.jsonNotFound(null, getMessage("manga.notfound"), null)        
         }
+
+        const oneday = 60 * 60 * 24 * 1000 
+
+        const chapters = await Chapter.find({
+            created_At: {
+                $gte: Date.now() - oneday,
+                $lt: Date.now() 
+            },
+            manga_id: manga_id 
+        })
+
+        if(!chapters){
+            return res.jsonNotFound(null, getMessage("chapter.list.empty"), null)     
+        }
+
         let success, failed = 0
         manga.user_alert.forEach((user_id, i) => {
             let user = await User.findById(user_id).select({email: 1})
-            if(user){
+            if(user){                
+
 
                 (async () => {
 
@@ -37,9 +54,12 @@ module.exports = {
                             body: `
                                 <h2>${manga.title} ${getMessage("user.email.notification.manga.text")}</h2>
 
-                                <a href="${process.env.CLIENT_URL}">
-                                    ${getMessage("user.email.notification.manga.text.url")}                               
-                                <a/>
+                              
+                                ${chapters.forEach((chapter, index) => {
+                                    return ` <a href="${process.env.CLIENT_URL}/${index}">
+                                        ${getMessage("user.email.notification.manga.text.url")}                               
+                                    <a/>`
+                                })}
                                 
                                 <div>
                                     <h4>${getMessage("user.email.notification.manga.text.warning")}</h4>
@@ -78,10 +98,13 @@ module.exports = {
                             html: `
                                 <h2>${manga.title} ${getMessage("user.email.notification.manga.text")}</h2>
 
-                                 
-                                <a href="${process.env.CLIENT_URL}">
-                                    ${getMessage("user.email.notification.manga.text.url")}                               
-                                <a/>
+                                
+                                ${chapters.forEach((chapter, index) => {
+                                    return ` <a href="${process.env.CLIENT_URL}/${index}/${chapter.title}">
+                                        ${getMessage("user.email.notification.manga.text.url")}                               
+                                    <a/>`
+                                })}
+                               
                                 
                                 <div>
                                     <h4>${getMessage("user.email.notification.manga.text.warning")}</h4>
