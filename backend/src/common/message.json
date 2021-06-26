@@ -31,7 +31,8 @@
     "manga.update.success": "Manga updated!",
     "manga.deleted": "",
     "manga.notfound": "Manga could not be found.",
-
+    "manga.notify.success": "Users notified successfuly",
+    "manga.notify.error": "Users weren't notified successfuly",
 
     "unauthorized.refresh.token.missing": "Lack credentials.",
 
@@ -59,6 +60,14 @@
     "user.update.name.success": "User Name changed",
     "user.like.success": "Like given successfuly",
     "user.like.error.same.id": "Same id",
-    "user.notfound": "User not found"
+    "user.notfound": "User not found",
+
+    "user.email.notification.manga.subject": "No Reply - New Chapters",
+    "user.email.notification.manga.text": "Just added new chapters.\n",
+    "user.email.notification.manga.text.url": "Read now!!\n",
+    "user.email.notification.manga.text.warning": "You choose being notified by email, if you want to turn it off click in this link\n",
+    "user.email.notification.manga.text.warning.url": "Click here!!\n"
+    
+
 
 }
