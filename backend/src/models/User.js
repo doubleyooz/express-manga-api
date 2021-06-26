@@ -30,6 +30,12 @@ const UserSchema = new mongoose.Schema({
         ref: 'Manga'
     
     }],
+
+    manga_alert: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Manga'
+    }],
+    
     likes:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

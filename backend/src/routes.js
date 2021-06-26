@@ -47,6 +47,7 @@ routes.get('/manga/index',  getRole(), MangaMiddleware.valid_manga_index, MangaC
 routes.put('/manga/update', Authorize("Scan"), MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_delete, MangaController.delete);
 routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
+routes.put('/manga/pin', Authorize("User"), LikeController.pinManga);
 
 
 routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig.files).array('imgCollection'), ChapterMiddleware.valid_chapter_store, ChapterController.store);
