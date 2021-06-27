@@ -11,11 +11,11 @@ export const HorizontalNavBar = styled.ul`
     background-color: #151121;
     width: 100vw;
     margin: 0px;
-    
-    top:0;
-    position: fixed;
+    top: 0;
    
-    z-index: 100;
+    position: sticky;
+   
+    
     a{
       text-decoration: none;
     }
@@ -32,6 +32,8 @@ export const Logo = styled.button`
     
     
     margin: 10px;
+
+    
     
 `;
 
