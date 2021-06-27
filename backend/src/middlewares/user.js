@@ -27,6 +27,38 @@ const credentials = {
 }
 
 module.exports = {
+
+    async valid_google_sign_up(req, res, next){
+        const { token }  = req.body;
+
+        let payload = null;
+
+        try{
+            payload = jwt.verifyJwt(token, 3)
+            
+
+        }catch(err){
+            console.log(err)
+            return res.jsonUnauthorized(null, null, null)
+            
+        }
+
+        const yupObject = yup.object().shape({
+            email: rules.email,
+            password: rules.password,
+            name: rules.name,
+            role: rules.role
+        });
+
+        yupObject.validate(req.body).then(() => next())
+                    .catch((err) => {
+                    return res.jsonBadRequest(null, null, err.errors)              
+                    
+                })
+        
+
+    },
+
     async valid_sign_up(req, res, next){                                   
                
         const yupObject = yup.object().shape({
