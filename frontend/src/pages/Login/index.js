@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import { Link, useParams} from 'react-router-dom';
+import { Link, useParams, useHistory} from 'react-router-dom';
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,7 +9,7 @@ import { GoogleLogin } from 'react-google-login';
 import './styles.css';
 
 import { Context } from '../../Contexts/AuthProvider'
-import  userSchema from '../../Validations/LoginValidation'
+import  {userSchema, passwordSchema} from '../../Validations/LoginValidation'
 import api from "../../services/api"
 
 require('dotenv').config()
@@ -18,12 +18,14 @@ const Login = () =>{
 
     const [activationToken, setActivationToken] = useState(null)
 
+    let history = useHistory();
+
     const { token, setToken } = useContext(Context)
     
     const { register, handleSubmit,  formState: { errors } } = useForm({
         // defaultValues: { firstName: data.firstName, lastName: data.lastName },
         mode: "onBlur",
-        resolver: yupResolver(userSchema),
+        resolver: yupResolver(activationToken ? passwordSchema : userSchema),
     });
 
 
@@ -48,7 +50,7 @@ const Login = () =>{
 
     const sendPassword = data => {
         console.log(data)
-        api.post('/google-sign-up', {password: data.password}, {token: activationToken})
+        api.post('/google-sign-up', {password: data.password, token: activationToken})
             .then(async result =>  {
                 console.log(result)
                 const accessToken = result.data.metadata.token.toString()
@@ -69,10 +71,18 @@ const Login = () =>{
 
         api.post('/google-sign-in', config).then(async response =>{
             
+           
+
+            const goHome = () =>{                
+                setToken(response.data.metadata.token.toString())
+                history.push("/")
+            
+            }
+
             console.log(response)
             response.data.metadata.activationToken 
                 ? setActivationToken(response.data.metadata.activationToken )
-                : setToken(response.data.metadata.token.toString())
+                : goHome()
                 
            
          
@@ -141,7 +151,7 @@ const Login = () =>{
                     
                     </div>
                 </div> :
-               <form onSubmit={handleSubmit(sendPassword)}>                   
+                <form onSubmit={handleSubmit(sendPassword)}>                   
 
                     <div className="field">
                         {/* include validation with required or other standard HTML validation rules */}
