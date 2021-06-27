@@ -8,3 +8,5 @@ const userSchema = yup.object().shape({
                 "the password must contain at least 1 number, at least 1 lower case letter, at least 1 upper case and at least 1 special character.")
         .required(),  
 });
+
+export default userSchema

@@ -1,5 +1,7 @@
 .login-page{
     background-color: aquamarine;
+    width: 100vw;
+    height: 100vw;
     
 }
 
@@ -18,32 +20,38 @@
 }
 
 
-.login-page .card .form{
+.login-page .card form{
     color: white;
     background-color: black;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
 
 }
 
-.login-page .card .form .field {
+.login-page .card form .field {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
     margin-bottom: 20px;
 
 }
 
-.login-page .card .form .field span{
-    margin-right: 20px;
+.login-page .card form .field span{
+    color: red;
+    font-size: 10px;
 
 }
 
-.login-page .card .form .field input{
+.login-page .card form .field input{
     border-radius: 10%;
 
 }
 
-
+.login-page .card form input{
+    border-radius: 10%;
+   
+    
+}
 
 .help {
     color: white;
