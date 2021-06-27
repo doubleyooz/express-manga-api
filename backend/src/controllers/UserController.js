@@ -16,7 +16,8 @@ const Protonmail = false;
 module.exports = {
     async store(req, res){                              
         const {email, password, name, role} = req.body;
-                                    
+                          
+        
         const salt = bcrypt.genSaltSync(10);
         const _hash = bcrypt.hashSync(password, salt);
         
@@ -24,7 +25,7 @@ module.exports = {
             email: email,
             password: _hash,
             name: name,
-            role: role
+            role: role? role : "User"
             
         });
 

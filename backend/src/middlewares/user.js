@@ -1,6 +1,7 @@
 const yup = require("yup");
-const { getMessage } = require("../common/messages");
 
+const jwt = require('../common/jwt');
+const { getMessage } = require("../common/messages");
 
 
 
@@ -29,10 +30,10 @@ const credentials = {
 module.exports = {
 
     async valid_google_sign_up(req, res, next){
-        const { token }  = req.body;
+        const { token, password }  = req.body;
 
         let payload = null;
-
+        console.log(token)
         try{
             payload = jwt.verifyJwt(token, 3)
             
@@ -42,6 +43,8 @@ module.exports = {
             return res.jsonUnauthorized(null, null, null)
             
         }
+        
+        
 
         const yupObject = yup.object().shape({
             email: rules.email,
@@ -49,10 +52,15 @@ module.exports = {
             name: rules.name,
             role: rules.role
         });
-
-        yupObject.validate(req.body).then(() => next())
+        console.log(req.body)
+        yupObject.validate({email: payload.email, name: payload.name, password: password}).then(
+                    () => {
+                        req.body = {email: payload.email, name: payload.name, password: password}
+                        next()
+                    })
                     .catch((err) => {
-                    return res.jsonBadRequest(null, null, err.errors)              
+                        console.log(err)
+                        return res.jsonBadRequest(null, null, err.errors)              
                     
                 })
         
@@ -67,9 +75,10 @@ module.exports = {
             name: rules.name,
             role: rules.role
         });
-
+        
         yupObject.validate(req.body).then(() => next())
                  .catch((err) => {
+                    
                     return res.jsonBadRequest(null, null, err.errors)              
                     
                 })
