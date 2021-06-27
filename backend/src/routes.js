@@ -37,7 +37,7 @@ routes.put("/authentication/recover/:tky", AuthController.recoverPassword);// PU
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
 routes.post("/google-sign-in", AuthController.google_sign_in)
-routes.post("/google-sign-up", AuthController.google_sign_in)
+routes.post("/google-sign-up", UserMiddleware.valid_google_sign_up, UserController.store)
 routes.get('/refresh-token', AuthController.refreshAccessToken)
 
 routes.get('/user/index', Authorize(["Scan", "User"]), UserController.index);

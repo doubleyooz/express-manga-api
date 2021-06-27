@@ -208,23 +208,7 @@ module.exports = {
        
     },
     
-    async google_sign_up(req, res){
-        const { token }  = req.body;
-
-        let payload = null;
-
-        try{
-            payload = jwt.verifyJwt(token, 3)
-
-        }catch(err){
-            console.log(err)
-            return res.jsonUnauthorized(null, null, null)
-            
-        }
-
-
-    },
-
+   
     async sign_in(req, res){        
         const [hashType, hash] = req.headers.authorization.split(' ');
        
