@@ -7,12 +7,13 @@ import api from "../../services/api"
 import { Context } from '../../Contexts/AuthProvider'
 
 export default function Home(){
-    const { token, handleLogin } = useContext(Context)
+    const { token, setToken, handleLogin } = useContext(Context)
 
       
     const [mangas, setMangas] = useState([]);
     const [text, setText] = useState("")
-    const [usingLogin, setUsingLogin] = useState(false)
+    
+    
 
     const notInitialRender = useRef(false)
     let config = {
@@ -20,46 +21,7 @@ export default function Home(){
             'Authorization': `Bearer ${token}`
           }
     }
-
-    
-    useEffect (() =>{
-        async function login() {        
-                
-            if (!token){                
-                handleLogin().then(() => {
-                    setUsingLogin(false)
-                                    
-                }).catch(err =>{              
-                    setUsingLogin(false)
-                    
-                })
-            } else{
-                setUsingLogin(false)
-            }
-           
-            
-           
-            
-            
-
-            if(usingLogin){
-                setText("loading...")
-            } else{  
-                token ? setText(`login well succeed: ${token}`) : setText('login failed')             
-                   
-                
-            }
-    
-        }
-        
-        if (notInitialRender.current) {
-            login()
-        } else {
-            notInitialRender.current = true
-        }
-            
-    }, [usingLogin] )
-   
+ 
 
     
 
@@ -94,29 +56,38 @@ export default function Home(){
             
     }, []) // <-- empty dependency array
 
-    
+    console.log(token)
     return(
         <>  
             <div className="home-container">
                 {token ? text : <div className="div">not auth</div>}
                 
-                <div className="button">
-                    <button onClick={() =>  setUsingLogin(true)}>login</button>
+                <div className="button" style={token ? {pointerEvents: "none"}  : {}}>
+                    <Link to='/login'>                    
+                        <button>login</button>
+
+                    </Link>
+                   
+                </div>
+
+                <div className="button" style={token ? {}  : {pointerEvents: "none"}}>
+                                        
+                    <button onClick={() => setToken(undefined)}>logout</button>
+                   
+                
                 </div>
                 
 
                 <div className='list'>
                          
                     {mangas.length !== 0 ? mangas.map((manga) => (
-                       
-                        
+                                             
                         <Link to={{ pathname: `/Manga/${manga.title.replace(" ", "%20")}`, state: manga }}>                    
                             {manga.title}
 
                         </Link>
                         
-                        
-                      
+                                              
                         
                     )): <div>no manga to be shown</div>}
 
