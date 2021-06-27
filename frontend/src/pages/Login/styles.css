@@ -1,0 +1,55 @@
+.login-page{
+    background-color: aquamarine;
+    
+}
+
+.login-page .card{
+    background-color: rgb(41, 39, 39);
+    width: 500px;
+    height: 300px;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 20px;
+
+}
+
+
+.login-page .card .form{
+    color: white;
+    background-color: black;
+    padding: 10px;
+
+}
+
+.login-page .card .form .field {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+}
+
+.login-page .card .form .field span{
+    margin-right: 20px;
+
+}
+
+.login-page .card .form .field input{
+    border-radius: 10%;
+
+}
+
+
+
+.help {
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
