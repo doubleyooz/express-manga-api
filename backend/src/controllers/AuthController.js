@@ -73,6 +73,7 @@ module.exports = {
         });
         const { name, email, picture } = ticket.getPayload();
 
+        console.log(ticket.getPayload())
         const user = await User.findOne({ email: email });; 
 
         if(user){
@@ -88,8 +89,12 @@ module.exports = {
 
 
         } else {
-           
+
+            const activationToken = jwt.generateJwt({email: email, name: name}, 3);
+
+            return res.jsonOK(null, getMessage("user.sign_up.google.password.required"), {activationToken})
             
+            /*
             const p1 = new User ({
                 email: email,
                 password: null,
@@ -188,7 +193,7 @@ module.exports = {
                     return res.jsonBadRequest(null, null, {err});             
                                       
                 }                           
-            });                    
+            });    */                
         }
         /*
         const user = new User.upsert({ 
@@ -203,6 +208,22 @@ module.exports = {
        
     },
     
+    async google_sign_up(req, res){
+        const { token }  = req.body;
+
+        let payload = null;
+
+        try{
+            payload = jwt.verifyJwt(token, 3)
+
+        }catch(err){
+            console.log(err)
+            return res.jsonUnauthorized(null, null, null)
+            
+        }
+
+
+    },
 
     async sign_in(req, res){        
         const [hashType, hash] = req.headers.authorization.split(' ');

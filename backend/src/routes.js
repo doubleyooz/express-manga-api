@@ -36,6 +36,8 @@ routes.put("/authentication/recover/:tky", AuthController.recoverPassword);// PU
 
 routes.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
 routes.get('/sign-in', UserMiddleware.valid_sign_in, AuthController.sign_in);
+routes.post("/google-sign-in", AuthController.google_sign_in)
+routes.post("/google-sign-up", AuthController.google_sign_in)
 routes.get('/refresh-token', AuthController.refreshAccessToken)
 
 routes.get('/user/index', Authorize(["Scan", "User"]), UserController.index);
@@ -58,7 +60,7 @@ routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, C
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
 
-routes.post("/api/v1/auth/google", AuthController.google_sign_in)
+
 /*
 routes.post('/sessions', function(req, res){
     SessionController.store

@@ -44,6 +44,7 @@
     "user.invalid.password.weak": "the password must contain at least 1 number, at least 1 lower case letter, at least 1 upper case and at least 1 special character.",
     "user.valid.sign_in.success": "Successful login.",
     "user.valid.sign_up.success": "Successful resgistration. Please log in to your account to proceed.",
+    "user.sign_up.google.password.required": "Set a password",
     "user.error.sign_up.duplicatekey": "There was a duplicate key error.",
     "user.error.notfound": "The specified user could not be found.",
     "user.activation.account.activate": "Please check your email to activate your account.",
