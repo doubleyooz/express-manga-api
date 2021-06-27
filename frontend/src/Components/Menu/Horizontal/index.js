@@ -9,7 +9,6 @@ export default function Menu(){
     const [currentNav, setCurrentNav] = useState("");  
    
    
-
     return (
         
         <HorizontalNavBar className="horizontal_navbar">           
@@ -35,7 +34,6 @@ export default function Menu(){
             </Options>           
            
         </HorizontalNavBar>       
-       
-        
+               
     )
 };
