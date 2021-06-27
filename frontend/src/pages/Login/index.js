@@ -15,7 +15,7 @@ import api from "../../services/api"
 require('dotenv').config()
 
 const Login = () =>{
-    //const { token, loading } = useContext(Context)
+    const { token, setToken } = useContext(Context)
     
     const { register, handleSubmit,  formState: { errors } } = useForm({
         // defaultValues: { firstName: data.firstName, lastName: data.lastName },
@@ -44,17 +44,44 @@ const Login = () =>{
     }*/
 
     const handleLogin = async googleData => {
-        const res = await fetch("/api/v1/auth/google", {
-            method: "POST",
-            body: JSON.stringify({
+
+        let config = {            
             token: googleData.tokenId
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
+            
+        }        
+        
+        api.post('/api/v1/auth/google', config).then(async response =>{
+            
+            console.log(response)
+            response.data.metadata.activationToken 
+                ? api.post('', {token: response.data.metadata.activationToken})
+                    .then(async result =>  {
+                        console.log(result)
+                        const accessToken = result.data.metadata.token.toString()
+                        setToken(accessToken)
+                    }).catch(err=>{
+                        console.log(err)
+                        setToken(undefined)
+                    }) 
+                :   setToken(  response.data.metadata.token.toString())
+                
+           
+           
+            
+            
+            
+
+            
+        }).catch(err=>{
+            console.log(err)                   
+            setToken(undefined)
+            
+            
         })
-        const data = await res.json()
-        // store returned user somehow
+
+
+      
+       
     }
    
     
@@ -82,7 +109,7 @@ const Login = () =>{
 
                 
                     
-                    <input type="submit" />
+                    <input className="submit" type="submit" value="Login" />
                 </form>
 
 
@@ -94,9 +121,16 @@ const Login = () =>{
                     cookiePolicy={'single_host_origin'}
                 />
 
-                <div className="help">
-                    <span>Forgot password?</span>
-                    <span>create account</span>
+                <div className="footer">
+                    <Link to='/'>
+                        Forgot password?          
+                    </Link> 
+
+                    <Link to='/'>
+                        create account           
+                    </Link> 
+
+                   
                 </div>
             </div>
 
