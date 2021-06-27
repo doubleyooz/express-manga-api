@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
 
     role: {
         type: String,
-        default: "Scan"
+        default: "User"
     },
 
     name: { 
