@@ -58,6 +58,7 @@ routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, C
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
 
+routes.post("/api/v1/auth/google", AuthController.google_sign_in)
 /*
 routes.post('/sessions', function(req, res){
     SessionController.store

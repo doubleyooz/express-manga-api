@@ -15,12 +15,12 @@ const MangaSchema = new mongoose.Schema({
     synopsis: String,
     n_chapters:{
         type: Number,
-        default: 0,
+        default: 0
     },    
     status: Number, 
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'User'
     }],
     user_alert: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -47,7 +47,7 @@ const MangaSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now,
-    },
+    }
     //comments?
 
 });

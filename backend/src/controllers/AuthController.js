@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const CryptoJs = require("crypto-js")
 const jwt = require("../common/jwt");
+const { OAuth2Client } = require('google-auth-library')
 
 const { getMessage } = require("../common/messages")
 const User = require("../models/user");
@@ -59,6 +60,147 @@ module.exports = {
 
     
     
+    },
+
+    async google_sign_in(req, res){
+       
+        const client = new OAuth2Client(process.env.CLIENT_ID)
+        
+        const { token }  = req.body
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.CLIENT_ID
+        });
+        const { name, email, picture } = ticket.getPayload();
+
+        const user = await User.findOne({ email: email });; 
+
+        if(user){
+
+            const token = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 1);
+            const refreshToken = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 2);
+            
+            //req.headers.authorization = `Bearer ${token}`           
+            res.cookie('jid', refreshToken, { httpOnly: true, path: "/refresh-token"})
+            
+            user.password = undefined;
+            return res.jsonOK(user, getMessage("user.valid.sign_in.success"), {token})
+
+
+        } else {
+           
+            
+            const p1 = new User ({
+                email: email,
+                password: null,
+                name: name,
+                role: "User"
+                
+            });
+
+            p1.save().then(result => {    
+                result.password = undefined   
+                 
+                const activationToken = jwt.generateJwt({id: require("crypto-js").AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString()}, 3);
+                       
+                // async..await is not allowed in global scope, must use a wrapper
+                // Generate test SMTP service account from ethereal.email
+             
+
+                (async () => {
+
+                  if(Protonmail){
+                    
+                    const pm = await ProtonMail.connect({
+                      username: `${process.env.EMAIL_USER}`,
+                      password: `${process.env.EMAIL_PASSWORD}`
+                    })
+                   
+                    await pm.sendEmail({
+                      to: email,
+                      subject: getMessage("user.activation.account.subject"),
+                      body: `
+                          <h2>${getMessage("user.activation.account.text")}</h2>
+                          <p>${process.env.CLIENT_URL}/activateaccount/${activationToken}</p>
+                          
+                      `
+                    })
+                    
+                    pm.close()
+                  } else{
+                    
+                    // create reusable transporter object using the default SMTP transport
+                    let transporter = nodemailer.createTransport({
+                      service: "gmail",                     
+                      auth: {
+                        user:  `${process.env.GMAIL_USER}`, // generated ethereal user
+                        pass: `${process.env.GMAIL_PASSWORD}` // generated ethereal password
+                      },
+                                           
+                   
+                      tls: {
+                        rejectUnauthorized: false
+                      }
+                
+                    });
+                  
+                    const mailOptions = {
+                        from: `${process.env.GMAIL_USER}`, // sender address
+                        to: email, // receiver (use array of string for a list)
+                        subject: getMessage("user.activation.account.subject"), // Subject line
+                        html: `
+                            <h2>${getMessage("user.activation.account.text")}</h2>
+                            <a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
+                            ${getMessage("user.activation.account.text.subtitle")}                               
+                            <a/>
+                           
+                        `// plain text body
+                      };
+                    
+                    transporter.sendMail(mailOptions, (err, info) => {
+                    if(err)
+                        console.log(err)
+                    else
+                        console.log(info);
+                    });               
+                  
+                  }                
+                  
+                })().then(info => {
+                    console.log(getMessage("user.activation.account.activate"))
+                    return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
+                                       
+                }).catch(err => {
+                    return res.jsonBadRequest(null, null, {err});              
+                    
+                })           
+                            
+
+            }).catch(err => {
+                
+                console.log(err)
+                if (err.name === 'MongoError' && err.code === 11000) {
+                    //next(new Error('There was a duplicate key error'));
+                    return res.jsonBadRequest(null, getMessage("user.error.sign_up.duplicatekey"), {err})              
+                    
+                
+                } else {
+                    return res.jsonBadRequest(null, null, {err});             
+                                      
+                }                           
+            });                    
+        }
+        /*
+        const user = new User.upsert({ 
+            where: { email: email },
+            update: { name, picture },
+            create: { name, email, picture }
+        })*/
+
+
+        res.status(201)
+        res.json(user)
+       
     },
     
 

@@ -4,8 +4,10 @@ const nodemailer = require('nodemailer')
 const ProtonMail = require('protonmail-api');
 
 const User = require("../models/user");
-const Manga = require("../models/manga");
-const Chapter = require("../models/chapter");
+
+const Chapter = require('../models/Chapter');
+const Manga = require('../models/Manga');
+
 
 const Protonmail = false;
 
@@ -35,10 +37,7 @@ module.exports = {
 
         let success, failed = 0
         manga.user_alert.forEach((user_id, i) => {
-            let user = await User.findById(user_id).select({email: 1})
-            if(user){                
-
-
+            User.findById(user_id).select({email: 1}).then((user => {
                 (async () => {
 
                     if(Protonmail){
@@ -137,8 +136,13 @@ module.exports = {
                     failed+=1
                                 
                     
-                }) 
-            }
+                })
+            }))
+                        
+
+
+                
+            
             
         })
         
