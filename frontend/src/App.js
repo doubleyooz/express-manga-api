@@ -4,7 +4,8 @@ import {AuthProvider} from './Contexts/AuthProvider'
 import Routes from "./routes";
 
 import api from "./services/api"
-import GlobalStyle from './styles/global';
+
+import './styles/global.css';
 
 function App() {
  
@@ -13,7 +14,7 @@ function App() {
       <div className="body">
         <AuthProvider>
           <Routes />
-          <GlobalStyle/>
+         
         </AuthProvider>
         
       </div>
