@@ -1,39 +1,38 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { NavBtn, Logo, HorizontalNavBar, Options } from './styles.js';
 
-
+import './styles.css';
 
 export default function Menu(){
     const [currentNav, setCurrentNav] = useState("");  
    
    
     return (
-        
-        <HorizontalNavBar className="horizontal_navbar">           
-            <Options>
+        <ul className="horizontal-navbar">
+            
                 <Link to='/'>
-                    <Logo/>            
+                    <button className="profile">
+                        <ul className="options">
+
+                        </ul>
+                    </button>         
                 </Link> 
 
-                <Link to='/' >
-                    <NavBtn isActive={currentNav === "a"} onClick={() => setCurrentNav('a')}>
-                        HOME
-                    </NavBtn>
+                <Link to='/'> 
+                    <li className="nav-button" style={currentNav === "a" ? {backgroundColor: "#41357E"}  : {backgroundColor: ""}}onClick={() => setCurrentNav('a')}>
+
+                    </li>         
                 </Link> 
 
-                <Link to='/search'>
-                    <NavBtn isActive={currentNav === "b"} onClick={() => setCurrentNav('b')}>
-                      SEARCH
-                    </NavBtn>                       
-                </Link> 
+                <Link to='/'>
+                    <li className="nav-button">
 
-                
+                    </li>         
+                </Link> 
                
-            </Options>           
-           
-        </HorizontalNavBar>       
+            
+        </ul>
                
     )
 };
