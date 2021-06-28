@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import Manga from './pages/Manga'
 import Search from './pages/Search'
 import Login from './pages/Login'
+import User from './pages/User'
 
 import HorizontalMenu from './Components/Menu/Horizontal'
 
@@ -24,6 +25,7 @@ export default function Routes(){
                     <Route path="/activateaccount/:token" exact component ={ActivateAccount}/>
                     <Route path="/search" exact component ={Search}/>
                     <Route path="/login" exact component ={Login}/>
+                    <Route path="/user" exact component ={Login}/>
 
 
                 </Switch>
