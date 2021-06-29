@@ -9,12 +9,12 @@ import { GoogleLogin } from 'react-google-login';
 import './styles.scss';
 
 import { Context } from '../../Contexts/AuthProvider'
-import  {passwordSchema, signinSchema} from '../../Validations/UserValidation'
+import  {signupSchema, passwordSchema} from '../../Validations/UserValidation'
 import api from "../../services/api"
 
 require('dotenv').config()
 
-const Login = () =>{
+const Register= () =>{
 
     const [activationToken, setActivationToken] = useState(null)
 
@@ -25,29 +25,13 @@ const Login = () =>{
     const { register, handleSubmit,  formState: { errors } } = useForm({
         // defaultValues: { firstName: data.firstName, lastName: data.lastName },
         mode: "onBlur",
-        resolver: yupResolver(activationToken ? passwordSchema : signinSchema),
+        resolver: yupResolver(activationToken ? passwordSchema : signupSchema),
     });
 
 
     const onSubmit = data => console.log(data);
   
       
-    /*const login = async (event) =>{
-        event.preventDefault()
-        let formData ={
-            email: event.target[0].value,
-            password: event.target[1].value
-        }
-
-        userSchema.validate(formData).then(() => {
-            
-        })
-            .catch((err) => {
-                      
-            
-        })
-    }*/
-
     const sendPassword = data => {
         console.log(data)
         api.post('/google-sign-up', {password: data.password, token: activationToken})
@@ -106,7 +90,7 @@ const Login = () =>{
  
    
     return <>   
-        <div className="login-page">
+        <div className="register-page">
             {!activationToken ? 
                 <div className="card">
 
@@ -123,29 +107,34 @@ const Login = () =>{
                             <input type="password" placeholder="password" {...register("password")} error={!!errors.password} />
                             <span>{errors.password?.message}</span>
                             
+                        </div>     
+
+                        
+                        <div className="field">
+                            {/* include validation with required or other standard HTML validation rules */}
+                            <input type="password" placeholder="confirm password" {...register("password")} error={!!errors.password} />
+                            <span>{errors.password?.message}</span>
+                            
                         </div>                   
 
                     
                         
-                        <input className="submit" type="submit" value="Login" />
+                        <input className="submit" type="submit" value="Sign up" />
                     </form>
 
 
                     <GoogleLogin
                         clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                        buttonText="Log in with Google"
+                        buttonText="Sign up with Google"
                         onSuccess={handleLogin}
                         onFailure={handleLogin}
                         cookiePolicy={'single_host_origin'}
                     />
 
                     <div className="footer">
-                        <Link to='/'>
-                            Forgot password?          
-                        </Link> 
-
-                        <Link to='/'>
-                            create account           
+                       
+                        <Link to='/Login'>
+                            already have an activateaccount?         
                         </Link> 
 
                     
@@ -158,11 +147,18 @@ const Login = () =>{
                         <input type="password" placeholder="password" {...register("password")} error={!!errors.password} />
                         <span>{errors.password?.message}</span>
                         
-                    </div>                   
+                    </div>           
+
+                    <div className="field">
+                        {/* include validation with required or other standard HTML validation rules */}
+                        <input type="password" placeholder="password" {...register("password")} error={!!errors.password} />
+                        <span>{errors.password?.message}</span>
+                        
+                    </div>            
 
                 
                     
-                    <input className="submit" type="submit" value="Login" />
+                    <input className="submit" type="submit" value="Sign up" />
                 </form>
 
 
@@ -177,5 +173,5 @@ const Login = () =>{
     </>
 }
 
-export default Login
+export default Register
 
