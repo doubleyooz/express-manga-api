@@ -35,8 +35,10 @@ const projection = {
 }
 
 module.exports = {
-    async store(req, res){            
+    async store(req, res){
+    
         const { manga_title, number, chapter_title } = req.body;
+
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
        
@@ -112,7 +114,7 @@ module.exports = {
 
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
-                    fs.unlinkSync('uploads/' + manga.title + "/" + number + "/" + file.filename)
+                    fs.unlinkSync('uploads/' + manga_title + "/" + number + "/" + file.filename)
                     
                 });
                 return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)                

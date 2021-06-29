@@ -1,12 +1,15 @@
 const yup = require('yup')
 const mongoose = require('mongoose');
+const fs = require('fs');
 
+const Manga = require("../models/Manga")
 const { getMessage } = require("../common/messages");
 
 module.exports = {
     async valid_chapter_store(req, res, next){         
-        const { manga_title, number, chapter_title } = req.body;        
+        const { manga_title, number, chapter_title } = req.body;     
         
+       
         let schema = yup.object().shape({
             manga_title: yup.string("manga title must be a string.").strict()                
                 .max(60, getMessage("manga.invalid.title.long")),
@@ -17,8 +20,32 @@ module.exports = {
         })
 
         try{
-            await schema.validate({manga_title, chapter_title, number}).then(next())
+            await schema.validate({manga_title, chapter_title, number}).then(() =>{
+                Manga.exists({ title: manga_title }).then(response =>{
+                    next()
+                    if(response)
+                        next()
+                    else {                            
+                            try{
+                                Object.keys(req.files).forEach((i) => {
+                                    let file = req.files[i];   
+                                    fs.unlinkSync('uploads/' + manga_title + "/" + number + "/" + file.filename)    
+                                
+                                });
+                            } catch(err){
+                                console.log(err)
+                                return res.jsonServerError(null, null, err)
+                            }
+                    }return res.jsonBadRequest(null, null, null)
+                }).catch(err =>{
+                    return res.jsonServerError(null, null, err)
+                })
+               
+               
+                
+            })
             .catch(function(e) {
+                
                 return res.jsonBadRequest(null, null, e)
                 
             });

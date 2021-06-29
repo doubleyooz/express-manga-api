@@ -15,6 +15,7 @@ function auth(roles = []){
             if (typeof roles === 'string') {
                 roles = [roles];
             }
+            
             console.log(token)
             let payload = null
             try{
