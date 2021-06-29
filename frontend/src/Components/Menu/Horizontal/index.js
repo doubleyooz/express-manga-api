@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 
 import { Context } from '../../../Contexts/AuthProvider'
-import './styles.css';
+import './styles.scss';
 
 export default function Menu(){
     const [showOptions, setShowOptions] = useState(false);  
