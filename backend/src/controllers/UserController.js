@@ -99,7 +99,7 @@ module.exports = {
                 
             })().then(info => {
                 console.log(getMessage("user.activation.account.activate"))
-                return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
+                return res.jsonOK(null, getMessage("user.activation.account.activate"), null)              
                                     
             }).catch(err => {
                 return res.jsonBadRequest(null, null, {err});              
