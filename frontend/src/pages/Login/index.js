@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { GoogleLogin } from 'react-google-login';
 
-import './styles.css';
+import './styles.scss';
 
 import { Context } from '../../Contexts/AuthProvider'
 import  {userSchema, passwordSchema} from '../../Validations/LoginValidation'
