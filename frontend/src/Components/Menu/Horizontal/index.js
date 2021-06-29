@@ -47,11 +47,11 @@ export default function Menu(){
                         :
                         
                         <ul className={showOptions ? "options-display" : "options"}>
-                            <Link to='/Login'> 
+                            <Link to='/signin'> 
                                 <li>Login</li>        
                             </Link>                      
                                             
-                            <Link to='/'> 
+                            <Link to='/signup'> 
                                 <li>Create account</li>        
                             </Link> 
                             

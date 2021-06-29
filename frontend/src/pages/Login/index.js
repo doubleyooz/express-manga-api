@@ -144,7 +144,7 @@ const Login = () =>{
                             Forgot password?          
                         </Link> 
 
-                        <Link to='/'>
+                        <Link to='/signup'>
                             create account           
                         </Link> 
 

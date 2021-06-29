@@ -25,8 +25,8 @@ export default function Routes(){
                     <Route path="/manga/:manga_title/:chapter_number" exact component ={Reader}/>                   
                     <Route path="/activateaccount/:token" exact component ={ActivateAccount}/>
                     <Route path="/search" exact component ={Search}/>
-                    <Route path="/login" exact component ={Login}/>
-                    <Route path="/register" exact component ={Register}/>
+                    <Route path="/signin" exact component ={Login}/>
+                    <Route path="/signup" exact component ={Register}/>
                     <Route path="/user" exact component ={User}/>
 
 
