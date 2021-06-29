@@ -49,7 +49,6 @@ const Login = () =>{
     }*/
 
     const sendPassword = data => {
-        console.log(data)
         api.post('/google-sign-up', {password: data.password, token: activationToken})
             .then(async result =>  {
                 console.log(result)
@@ -157,6 +156,13 @@ const Login = () =>{
                         {/* include validation with required or other standard HTML validation rules */}
                         <input type="password" placeholder="password" {...register("password")} error={!!errors.password} />
                         <span>{errors.password?.message}</span>
+                        
+                    </div>      
+
+                     <div className="field">
+                        {/* include validation with required or other standard HTML validation rules */}
+                        <input type="password" placeholder="Confirm password" {...register("confirm_password")} error={!!errors.password} />
+                        <span>{errors.confirm_password?.message}</span>
                         
                     </div>                   
 
