@@ -11,7 +11,7 @@ export default function Home(){
 
       
     const [mangas, setMangas] = useState([]);
-    const [text, setText] = useState("")
+    //const [text, setText] = useState("")
     
     
 
@@ -60,22 +60,8 @@ export default function Home(){
     return(
         <>  
             <div className="home-container">
-                {token ? text : <div className="div">not auth</div>}
+                {token ? <div className="div">auth</div> : <div className="div">not auth</div>}
                 
-                <div className="button" style={token ? {pointerEvents: "none"}  : {}}>
-                    <Link to='/login'>                    
-                        <button>login</button>
-
-                    </Link>
-                   
-                </div>
-
-                <div className="button" style={token ? {}  : {pointerEvents: "none"}}>
-                                        
-                    <button onClick={() => setToken(undefined)}>logout</button>
-                   
-                
-                </div>
                 
 
                 <div className='list'>

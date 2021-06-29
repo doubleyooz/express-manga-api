@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { useSpring, animated } from 'react-spring'
+
 
 import { Context } from '../../../Contexts/AuthProvider'
 import './styles.css';
