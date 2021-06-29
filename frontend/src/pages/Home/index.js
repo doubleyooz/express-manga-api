@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import './styles.css';
+
 import { Link } from 'react-router-dom';
 
 import api from "../../services/api"
-
+import './styles.scss';
 import { Context } from '../../Contexts/AuthProvider'
 
 export default function Home(){

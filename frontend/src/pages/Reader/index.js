@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, useRef} from 'react';
 import { Link, useParams } from 'react-router-dom';
-import './styles.css';
+import './styles.scss';
 
 
 import { Context } from '../../Contexts/AuthProvider'

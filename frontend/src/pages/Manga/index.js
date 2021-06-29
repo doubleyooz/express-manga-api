@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import './styles.css';
+import './styles.scss';
 
 import { Context } from '../../Contexts/AuthProvider'
 import api from "../../services/api"

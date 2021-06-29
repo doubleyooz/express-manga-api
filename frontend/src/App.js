@@ -5,7 +5,7 @@ import Routes from "./routes";
 
 import api from "./services/api"
 
-import './styles/global.css';
+import './styles/global.scss';
 
 function App() {
  
