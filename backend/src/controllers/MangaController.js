@@ -71,8 +71,13 @@ module.exports = {
         
         req.auth = null
     
-        if(doesMangaExist)          
-           return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
+        if(doesMangaExist)   {
+                                   
+            fs.unlinkSync('uploads/' + title + '/' + req.file.filename)  
+            
+            return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
+        }       
+         
             
             
               
