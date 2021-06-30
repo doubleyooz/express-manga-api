@@ -20,7 +20,7 @@ const projection = {
         chapters: 1,
         
         nsfw: 1,
-       
+        cover: 1,
         likes: 1,
        
         _id: 0
@@ -39,7 +39,7 @@ const projection = {
         scan_id: 1,
         likes: 1,
         __v: 1,
-        
+        cover: 1,
         
     },
     2 : {                 
@@ -48,7 +48,7 @@ const projection = {
         synopsis: 1,                
         n_chapters: 1,
         chapters: 1,
-        
+        cover: 1,
         nsfw: 1,
         
         likes: 1,
