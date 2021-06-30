@@ -75,9 +75,7 @@ module.exports = {
            return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
             
             
-        
-        console.log(req.file)
-      
+              
         const scan = await User.findById(scan_id);
 
         if(!scan){

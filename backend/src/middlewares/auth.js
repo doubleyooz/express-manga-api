@@ -16,7 +16,6 @@ function auth(roles = []){
                 roles = [roles];
             }
             
-            console.log(token)
             let payload = null
             try{
                 payload = jwt.verifyJwt(token, 1)  
@@ -39,11 +38,7 @@ function auth(roles = []){
                 User.exists({_id: payload.id, active: true, token_version: payload.token_version}).then(result => {
                     if (result){
                         try{                                
-                            var current_time = Date.now().valueOf() / 1000;
-                            console.log(payload)
-                            console.log(payload.exp - payload.iat)
-                            console.log(payload.exp - current_time)
-                            console.log(current_time)
+                            var current_time = Date.now().valueOf() / 1000;                           
                             if ((payload.exp - payload.iat)/2 > payload.exp - current_time) {
                                 let new_token = jwt.generateJwt({id: payload.id, role: payload.role, token_version: payload.token_version}, 1)
                                 req.new_token = `Bearer ${new_token}`

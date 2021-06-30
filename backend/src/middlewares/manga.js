@@ -29,7 +29,8 @@ module.exports = {
 
             valid_genre = true;
     
-            if (valid_language && valid_genre){
+
+            if (valid_language && valid_genre && req.file){
                 req.nsfw = (nsfw === "true")
                 next();
             
