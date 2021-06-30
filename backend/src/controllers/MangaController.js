@@ -282,31 +282,22 @@ module.exports = {
                     })                      
                 });
                 */
-                const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err){
-                    if(err){
-                        return res.jsonServerError(null, null, err)
-                    }
-                }))   
+                const chapters = await Chapter.deleteMany({ manga_id: manga_id})
                 
-                //console.log(chapters)
+                
                 let dir = 'uploads/' + manga.title
 
-                try{
-                    while(fs.existsSync(dir)){
-                        fs.rmdir(dir, { recursive: true }, (err) => {
-                            if(err){
-                                console.log(err)
-                            }
-                                          
-                            
-                        });
-        
-                        fs.rmdirSync(dir, {recursive: true})
-                    }  
-                   
-                } catch(err){
-                   
-                }          
+                
+                fs.rmdir(dir, { recursive: true }, (err) => {
+                    if(err){
+                        console.log(err)
+                    }
+                                    
+                    
+                });
+
+                fs.rmdirSync(dir, {recursive: true})
+                
               
                 return res.jsonOK(
                         {"mangas affected": mangas.deletedCount, "chapters affected": chapters.deletedCount},
