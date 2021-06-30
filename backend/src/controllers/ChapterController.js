@@ -112,11 +112,23 @@ module.exports = {
 
             } else{
 
-                Object.keys(req.files).forEach((i) => {
+                let dir = 'uploads/' + manga_title
+
+                fs.rmdir(dir, { recursive: true }, (err) => {
+                    if(err){
+                        console.log(err)
+                    }
+                                  
+                    
+                });
+
+                fs.rmdirSync(dir, {recursive: true})
+                  
+                /*Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];
                     fs.unlinkSync('uploads/' + manga_title + "/" + number + "/" + file.filename)
                     
-                });
+                });*/
                 return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)                
             }
         });         

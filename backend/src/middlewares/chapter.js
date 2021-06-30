@@ -20,30 +20,7 @@ module.exports = {
         })
 
         try{
-            await schema.validate({manga_title, chapter_title, number}).then(() =>{
-                Manga.exists({ title: manga_title }).then(response =>{
-                    next()
-                    if(response)
-                        next()
-                    else {                            
-                            try{
-                                Object.keys(req.files).forEach((i) => {
-                                    let file = req.files[i];   
-                                    fs.unlinkSync('uploads/' + manga_title + "/" + number + "/" + file.filename)    
-                                
-                                });
-                            } catch(err){
-                                console.log(err)
-                                return res.jsonServerError(null, null, err)
-                            }
-                    }return res.jsonBadRequest(null, null, null)
-                }).catch(err =>{
-                    return res.jsonServerError(null, null, err)
-                })
-               
-               
-                
-            })
+            await schema.validate({manga_title, chapter_title, number}).then(next())
             .catch(function(e) {
                 
                 return res.jsonBadRequest(null, null, e)
