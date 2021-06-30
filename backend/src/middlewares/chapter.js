@@ -19,8 +19,14 @@ module.exports = {
                                
         })
 
+        
         try{
-            await schema.validate({manga_title, chapter_title, number}).then(next())
+            await schema.validate({manga_title, chapter_title, number}).then(() => {
+                if(req.files.length)
+                    next()
+                else
+                    return res.jsonBadRequest(null, null, null)
+            })
             .catch(function(e) {
                 
                 return res.jsonBadRequest(null, null, e)
