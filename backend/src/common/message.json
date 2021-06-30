@@ -5,6 +5,7 @@
     "default.successfulRequest": "Successful request.",
     "default.unauthorized": "Unauthorized.",
 
+    "chapter.error.duplicate": "This chapter already exists or the number is unavaliable.",
     "chapter.invalid.id": "You need to provide a valid IdObject to continue this operation.",
     "chapter.invalid.title.short": "Title is too short - it must be at least 2 characters long.",
     "chapter.invalid.title.long": "Title is too long - it must be a maximum of 40 characters.",

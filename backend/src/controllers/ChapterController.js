@@ -41,74 +41,88 @@ module.exports = {
 
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
+
+       
        
         Manga.findOne({title: manga_title}, function (err, manga){ 
             if(manga){          
-                               
-                let jsonString = [];         
-                
-                Object.keys(req.files).forEach((i) => {
-                    let file = req.files[i];
-                    console.log(i)
-                    
-                    let temp = { 
-                        originalname:  file.originalname,
-                        size: file.size,
-                        filename: file.filename,
-                                
-                    }                            
-                
-                    jsonString.push(JSON.parse(JSON.stringify(temp)));
-                    
-                });
-
-                
-
-                const chapter = new Chapter({                    
-                    manga_id: manga._id,
-                    number: number,
-                    title: chapter_title,
-                    imgCollection: [
-                            
-                    ],
-                });
-
-                chapter.imgCollection = jsonString;
-
-              
-            
-                chapter.save().then(result => {
-                    manga.chapters.push(result._id) 
-                    manga.save().then(answer => {                       
-
-                        return res.jsonOK(result, getMessage("chapter.upload.success"), new_token)
-
-                    }).catch(err =>{
-                        Chapter.deleteOne({_id: result._id});
+                Chapter.exists({manga_id: manga._id, number: number}).then(exists=>{
+                    if(exists){
                         Object.keys(req.files).forEach((i) => {
                             let file = req.files[i];   
                             fs.unlinkSync('uploads/' + manga.title + "/" + number + "/" + file.filename)    
                             
                         });
-                        console.log(err)
+                        return res.jsonBadRequest(null, getMessage("chapter.error.duplicate"), new_token)
+                    } else {
+                        let jsonString = [];         
+                
+                        Object.keys(req.files).forEach((i) => {
+                            let file = req.files[i];
+                            console.log(i)
+                            
+                            let temp = { 
+                                originalname:  file.originalname,
+                                size: file.size,
+                                filename: file.filename,
+                                        
+                            }                            
+                        
+                            jsonString.push(JSON.parse(JSON.stringify(temp)));
+                            
+                        });
 
-                        return res.jsonServerError(null, null, err)
                         
-                    });
+
+                        const chapter = new Chapter({                    
+                            manga_id: manga._id,
+                            number: number,
+                            title: chapter_title,
+                            imgCollection: [
+                                    
+                            ],
+                        });
+
+                        chapter.imgCollection = jsonString;
+
+                    
+                    
+                        chapter.save().then(result => {
+                            manga.chapters.push(result._id) 
+                            manga.save().then(answer => {                       
+
+                                return res.jsonOK(result, getMessage("chapter.upload.success"), new_token)
+
+                            }).catch(err =>{
+                                Chapter.deleteOne({_id: result._id});
+                                Object.keys(req.files).forEach((i) => {
+                                    let file = req.files[i];   
+                                    fs.unlinkSync('uploads/' + manga.title + "/" + number + "/" + file.filename)    
+                                    
+                                });
+                                console.log(err)
+
+                                return res.jsonServerError(null, null, err)
+                                
+                            });
+                            
+                        
+                            
+                        
+                        }).catch(err => {
+                            Object.keys(req.files).forEach((i) => {
+                                let file = req.files[i];   
+                                fs.unlinkSync('uploads/' + manga.title + "/" + number + "/" + file.filename)    
+                                
+                            });
+                            console.log(err)
+                            return res.jsonServerError(null, null, err)
+                    
+                        });
+                    }
+                })
                     
                 
-                    
-                
-                }).catch(err => {
-                    Object.keys(req.files).forEach((i) => {
-                        let file = req.files[i];   
-                        fs.unlinkSync('uploads/' + manga.title + "/" + number + "/" + file.filename)    
-                        
-                    });
-                    console.log(err)
-                    return res.jsonServerError(null, null, err)
-            
-                });
 
             } else{
 
