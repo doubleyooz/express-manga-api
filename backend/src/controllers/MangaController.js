@@ -71,10 +71,9 @@ module.exports = {
         
         req.auth = null
     
-        if(doesMangaExist)   {
+        if(doesMangaExist){
                                    
-            fs.unlinkSync('uploads/' + title + '/' + req.file.filename)  
-            
+            fs.unlinkSync('uploads/' + title + '/' + req.file.filename)              
             return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
         }       
          
@@ -84,7 +83,7 @@ module.exports = {
         const scan = await User.findById(scan_id);
 
         if(!scan){
-            
+            fs.unlinkSync('uploads/' + title + '/' + req.file.filename)  
             return res.jsonNotFound(null, getMessage("manga.error.scan_id"), null)
             
         }
@@ -119,7 +118,7 @@ module.exports = {
                         
         }).catch(err => {
             console.log(err)
-            
+            fs.unlinkSync('uploads/' + title + '/' + req.file.filename)  
             return res.jsonServerError(null, null, err)
         
         });
@@ -139,10 +138,8 @@ module.exports = {
         }else{
             role = 0;
         }
-       
-        console.log("Role: " + role)
-      
 
+     
 
 
         let docs = [];

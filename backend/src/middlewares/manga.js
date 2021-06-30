@@ -69,7 +69,7 @@ module.exports = {
             schema.validate(req.query).then(() => {
                 if(manga_id){
                     if (mongoose.Types.ObjectId.isValid(manga_id)) {   
-                        if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
+                        if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {                              
                             next();     
                         } else { 
             
@@ -88,12 +88,14 @@ module.exports = {
                 }
                       
                 else {
+                    
                     next();
+                    
                 }
             
             })
             .catch((err) => {
-               return res.jsonBadRequest(null, null, err.errors)              
+                return res.jsonBadRequest(null, null, err.errors)              
                
            })
            
