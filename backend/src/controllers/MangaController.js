@@ -258,7 +258,7 @@ module.exports = {
         if(manga){           
             if(manga.scan_id.toString() === scan_id){              
                 const mangas = await Manga.deleteMany({ _id: manga_id });        
-
+                //console.log(mangas)
                 if (mangas.n === 0)
                     return res.jsonNotFound(mangas, getMessage("manga.notfound"), new_token);
                                   
@@ -276,25 +276,43 @@ module.exports = {
                 });
                 
 
-                (await Chapter.find({manga_id: manga_id})).forEach(function (doc){
+                /*(await Chapter.find({manga_id: manga_id})).forEach(function (doc){
                     doc.imgCollection.forEach(function (page){                            
-                        fs.unlinkSync('uploads/' + page.filename)  
+                        fs.unlinkSync('uploads/' + manga.title + "/"+ page.filename)  
                     })                      
                 });
-    
+                */
                 const chapters = await Chapter.deleteMany({ manga_id: manga_id}, (function (err){
                     if(err){
                         return res.jsonServerError(null, null, err)
                     }
                 }))   
                 
+                //console.log(chapters)
+                let dir = 'uploads/' + manga.title
+
+                try{
+                    while(fs.existsSync(dir)){
+                        fs.rmdir(dir, { recursive: true }, (err) => {
+                            if(err){
+                                console.log(err)
+                            }
+                                          
+                            
+                        });
+        
+                        fs.rmdirSync(dir, {recursive: true})
+                    }  
+                   
+                } catch(err){
+                   
+                }          
               
                 return res.jsonOK(
-                        ({"mangas affected": mangas.deletedCount, "chapters affected": chapters},
+                        {"mangas affected": mangas.deletedCount, "chapters affected": chapters.deletedCount},
                             null,
                             new_token
-                        )
-                    
+                                            
                 );
                 
             } 
