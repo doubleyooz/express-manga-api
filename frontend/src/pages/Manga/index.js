@@ -93,17 +93,22 @@ const Manga = (props) =>{
     return <>   
         <div className="manga-page">
             <div className="header-board">
+                <img src={process.env.REACT_APP_SERVER + "/" + manga_title + "/" + manga.cover}
+                        alt= {"cover"}                  
+                                         
+                    />
 
+                <div className="title">
+                    {manga_title}
+                </div>
 
-                    <div className="title">
-                        {manga_title}
-                    </div>
+                <span>{manga.synopsis}</span>
 
 
             </div>
             <div className="list">
 
-                {!loading ? chapters.map((chapter, index) => (       
+                {!loading ? chapters.length !== 0 ? chapters.map((chapter, index) => (       
                     <div className="chapter">
                         <Link to={{ pathname: `/Manga/${manga_title.replace(" ", "%20")}/${chapter.number}`, 
                             state: {chapter: chapter, chapters: manga.chapters}}}>                    
@@ -116,7 +121,10 @@ const Manga = (props) =>{
                     </div>            
                    
                     
-                )): <div>No chapters to display</div>}
+                )): <div>No chapters to display</div>
+                  : <div>Loading...</div>
+
+            }
 
 
             </div>

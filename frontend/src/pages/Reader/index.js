@@ -199,7 +199,7 @@ const Reader = (props) =>{
             <div className='board'>       
                 {chapter ? chapter.imgCollection.map((page, index) => (                   
                     //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
-                    < img src={process.env.REACT_APP_SERVER + page.filename}
+                    < img src={process.env.REACT_APP_SERVER + manga_title + "/" + chapter.number + "/" + page.filename}
                       alt= {page.originalname}
                       style={index === currentPage ? {}  : {display: "none"}}
                       onClick={() => nextPage()}                     

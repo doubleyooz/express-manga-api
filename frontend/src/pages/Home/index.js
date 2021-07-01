@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-
 import { Link } from 'react-router-dom';
 
-import api from "../../services/api"
-import './styles.scss';
 import { Context } from '../../Contexts/AuthProvider'
+import Manga from '../../Components/Manga'
+import api from "../../services/api"
+
+
+
+import './styles.scss';
+
 
 export default function Home(){
     const { token, setToken, handleLogin } = useContext(Context)
@@ -67,12 +71,9 @@ export default function Home(){
                 <div className='list'>
                          
                     {mangas.length !== 0 ? mangas.map((manga) => (
-                                             
-                        <Link to={{ pathname: `/Manga/${manga.title.replace(" ", "%20")}`, state: manga }}>                    
-                            {manga.title}
-
-                        </Link>
-                        
+                      
+                        <Manga data={manga}/>
+                       
                                               
                         
                     )): <div>no manga to be shown</div>}
