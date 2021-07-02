@@ -1,27 +1,26 @@
 .manga-board{
     display: flex;
     flex-direction: row;
-    .toogler{
-        display: flex;
-        flex-direction: row;
-        align-content: space-between;
-        
-    }
+
+  
 
     .card{
         display: flex;
         flex-direction: row;
-        max-width: 768px;
+        
         
         .responsive-image{
 
-            
+           
             position: relative;
             overflow: hidden;
+            display: flex;
 
             .resizer{
+               
                 transition: padding-bottom .2s cubic-bezier(.25,.8,.5,1);
                 flex-grow: 1;
+                
             }
                     
             .image{
@@ -36,26 +35,39 @@
 
             .content{
                 max-width: 100%;
+                
+
             }
         }
        
        
     }
-    .info{
-        .title{
-            font-size: 20px;
-            
-        }
-    }
-    .list{
-        display: flex;
-        flex-direction: column;
-        background-color: rgb(64, 53, 77);
-        .chapter{
+
+    .content-container{
+  
+        .toogler{
             display: flex;
             flex-direction: row;
+            align-content: space-between;
             
         }
+        .info{
+            .title{
+                font-size: 20px;
+                
+            }
+        }
+        .list{
+            display: flex;
+            flex-direction: column;
+            background-color: rgb(64, 53, 77);
+            .chapter{
+                display: flex;
+                flex-direction: row;
+                
+            }
+        }
     }
+    
     
 }

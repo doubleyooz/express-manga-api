@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect,} from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import './styles.scss';
@@ -8,6 +8,8 @@ import api from "../../services/api"
 
 require('dotenv').config()
 
+
+
 const Manga = (props) =>{
 
    
@@ -16,7 +18,7 @@ const Manga = (props) =>{
     
     const [chapters, setChapters] = useState([])    
     const [manga, setManga] = useState({})
-    const [isSelected, setIsSelected] = useState('a');
+    const [isSelected, setIsSelected] = useState('b');
     const [loading, setLoading] = useState(true)
 
     const {manga_title} = useParams()
@@ -90,14 +92,16 @@ const Manga = (props) =>{
             
     }, [loading]) // <-- empty dependency array
 
-    function ResponsiveImage( { src, width, height } ) {
+
+
+    function ResponsiveImage({width, height}) {
 
         return (
             
             
             <div className="responsive-image" >
                 <div className="resizer" style={ {
-                    paddingTop: "42%"
+                    paddingBottom: `${width / height * 100}%`
                     } } />
                 <div 
                     className="image"               
@@ -107,7 +111,9 @@ const Manga = (props) =>{
                         
                     }}
                     alt={"cover"}/>
-                <div className="content" style={ { width: '1439px'} } />
+                <div className="content" style={{
+                    width: `${width}px`
+                }}/>
             </div>
         );
     }
@@ -116,7 +122,7 @@ const Manga = (props) =>{
         <div className="manga-board">
             <div className="card">
                
-                <ResponsiveImage />
+                <ResponsiveImage width="1200" height="800" />
                 
                
 
