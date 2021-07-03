@@ -111,12 +111,28 @@ const Manga = (props) =>{
                         
                     }}
                     alt={"cover"}/>
-                <div className="content" style={{
-                    width: `${width}px`
-                }}/>
+                <div className="content" />
             </div>
         );
     }
+
+    function renderStatus(param) {
+        console.log(manga)
+        switch(param) {
+            case 0:
+                return <><div>On going</div></>;
+
+            case 1:
+                return <><div>Complete</div></>;
+
+            case 2:
+                return <><div>Dropped</div></>;
+          
+            default:
+                return <><div>Unknow</div></>;;
+        }
+    }
+      
 
     return <>   
         <div className="manga-board">
@@ -128,6 +144,13 @@ const Manga = (props) =>{
 
             </div>
             <div className="content-container">
+                <div className="basic">
+                    <div className="title">
+                        {manga_title}
+                    </div>
+                    {renderStatus(manga.status)}
+                </div>
+
                 <div className="toogler">
                     <button onClick={() => setIsSelected("a")}>info</button>
                     <button onClick={() => setIsSelected("b")}>chapters</button>
@@ -136,9 +159,7 @@ const Manga = (props) =>{
 
                 <div className="info" style={isSelected === "a" ? {display: 'block'} : {display: 'none'}}>
                     
-                    <div className="title">
-                        {manga_title}
-                    </div>
+                  
 
                     <span>{manga.synopsis}</span>
                 </div>

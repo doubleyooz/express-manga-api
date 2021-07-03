@@ -7,7 +7,7 @@
     .card{
         display: flex;
         flex-direction: row;
-        
+        flex-grow: 1;
         
         .responsive-image{
 
@@ -15,11 +15,12 @@
             position: relative;
             overflow: hidden;
             display: flex;
+            width: 100%;
 
             .resizer{
                
                 transition: padding-bottom .2s cubic-bezier(.25,.8,.5,1);
-                flex-grow: 1;
+                
                 
             }
                     
@@ -44,7 +45,7 @@
     }
 
     .content-container{
-  
+        flex-grow: 2;
         .toogler{
             display: flex;
             flex-direction: row;
