@@ -1,7 +1,7 @@
 .manga-board{
     display: flex;
     flex-direction: row;
-
+    margin-right: 20px;
   
 
     .card{
@@ -10,7 +10,6 @@
         flex-grow: 1;
         
         .responsive-image{
-
            
             position: relative;
             overflow: hidden;
@@ -19,7 +18,6 @@
 
             .resizer{
                
-                transition: padding-bottom .2s cubic-bezier(.25,.8,.5,1);
                 
                 
             }
@@ -46,28 +44,81 @@
 
     .content-container{
         flex-grow: 2;
-        .toogler{
-            display: flex;
-            flex-direction: row;
-            align-content: space-between;
-            
-        }
-        .info{
+        margin-left: 20px;
+        max-width: 66%;
+        .header{
             .title{
                 font-size: 20px;
                 
             }
-        }
-        .list{
-            display: flex;
-            flex-direction: column;
-            background-color: rgb(64, 53, 77);
-            .chapter{
+            .status{
                 display: flex;
                 flex-direction: row;
                 
+                .sign{
+                    overflow: hidden;
+                    border-radius: 50%;
+                    width: 10px;
+                    height: 10px;
+                    align-self: center;
+                    margin: 4px 5px 5px 5px;
+                }
+            }
+           
+        }
+
+        .toogler{
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+
+            padding: 5px 0px 5px 0px;
+          
+            border-top: 1px solid red;
+            border-bottom: 1px solid red;
+            margin-bottom: 5px;
+
+            span{
+
+                margin: 0px 5px 0px 5px;
+                border-radius: 30%;
+                transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+                box-shadow: none;
+                padding: 0 16px;
+
+               
+                &:hover{
+                    background-color: #b8b6b6;
+                }
+            }
+
+            
+        }
+
+        .container{
+           
+            .info{
+                background-color: rgb(64, 53, 77);
+                transform: scaleY(0);
+            }
+            .list{
+                display: flex;
+                flex-direction: column;
+                background-color: rgb(64, 53, 77);
+                transform: scaleY(0);
+
+                .chapter{
+                    display: flex;
+                    flex-direction: row;
+                    
+                }
+            }
+            .art{
+                transform: scaleY(0);
             }
         }
+
+      
     }
     
     
