@@ -1,0 +1,16 @@
+.chapter-container{
+    .row{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .title{
+            font-size: 20px;
+        }
+
+        .number{
+            font-size: 10px;
+        }
+
+    }
+}
