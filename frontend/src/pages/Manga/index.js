@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import './styles.scss';
 
 import { Context } from '../../Contexts/AuthProvider'
+import Chapter from '../../Components/Chapter'
 import api from "../../services/api"
 
 require('dotenv').config()
@@ -207,16 +208,13 @@ const Manga = (props) =>{
 
                     <div className="list" style={isSelected === "b" ? {...styles.display} : {...styles.no_display}}>
 
-                        {!loading ? chapters.length !== 0 ? chapters.map((chapter, index) => (       
-                            <div className="chapter">
-                                <Link to={{ pathname: `/Manga/${manga_title.replace(" ", "%20")}/${chapter.number}`, 
-                                    state: {chapter: chapter, chapters: manga.chapters}}}>                    
-                                    <h2>{chapter.title}</h2>
-                                    Chapter {chapter.number}
-                                    
+                        {!loading ? chapters.length !== 0 ? chapters.map((chapter, index) => (  
+                                 
                                 
-                                </Link>
-                                <h4>Scan_name</h4>
+                            <div className="chapter">
+                                 <Chapter data={chapter, manga}/>
+                              
+                               
                             </div>            
                         
                             
