@@ -6,7 +6,6 @@ const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 
 
-
 const { getMessage } = require("../common/messages")
 
 const projection = {
@@ -224,8 +223,6 @@ module.exports = {
 
         })
         
-  
-        
 
     },
 
@@ -249,14 +246,19 @@ module.exports = {
              
         let docs = []
        
-       if (manga_id){
+        if (manga_id){
         
             Chapter.find({manga_id: manga_id}).select(projection[role]).then(result=>{
                 result.forEach(doc =>{
                     docs.push(doc)
                     
-            })                                
-            return res.jsonOK(docs, getMessage("chapter.list.success"), new_token)          
+            })                    
+            if (docs.length === 0){
+                return res.jsonNotFound(docs, getMessage("chapter.list.empty"), new_token) 
+            } else{
+                return res.jsonOK(docs, getMessage("chapter.list.success"), new_token) 
+            }          
+                    
 
             }).catch(err =>{
                 return res.jsonBadRequest(err, null, null) 
@@ -269,10 +271,7 @@ module.exports = {
             return res.jsonBadRequest(null, null, null) 
 
         }
-
-                 
-         
-       
+      
                
     },
 

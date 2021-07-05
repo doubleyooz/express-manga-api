@@ -200,13 +200,17 @@ module.exports = {
                 docs.push(doc)
             });     
         }
-                  
-        docs.forEach(function(doc){
-            doc.user = undefined
-
-        });
-        return res.jsonOK(docs, getMessage("manga.list.success") + docs.length, new_token)
-                 
+               
+        if (docs.length === 0){
+            return res.jsonNotFound(docs, getMessage("manga.list.empty"), new_token)
+        } else{
+            docs.forEach(function(doc){
+                doc.user = undefined
+    
+            });
+            return res.jsonOK(docs, getMessage("manga.list.success") + docs.length, new_token)
+        }
+                        
     },
 
     async update(req, res){
