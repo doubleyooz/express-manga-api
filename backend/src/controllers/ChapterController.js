@@ -211,11 +211,11 @@ module.exports = {
             console.log(doc.views)
             doc.views = doc.views + 1
             doc.save().then(() => {                       
-                return res.jsonOK(doc, null, new_token)                      
+                return res.jsonOK(doc, getMessage("chapter.index.success"), new_token)                      
 
             }).catch(err =>{
                 console.log(err)
-                return res.jsonOK(doc, null, new_token)
+                return res.jsonOK(doc, getMessage("chapter.index.success"), new_token)
                 
             });
                         
