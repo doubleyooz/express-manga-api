@@ -12,7 +12,7 @@ function getRole(){
     return async (req, res, next) => {
         try{  
                   
-            if(req.headers.authorization){
+            if(!req.headers.authorization){
                 next()
             } else{
 
