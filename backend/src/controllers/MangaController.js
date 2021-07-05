@@ -126,7 +126,7 @@ module.exports = {
     },
 
     async index(req, res){
-        const { title, genre, scan, manga_id } = req.query;
+        const { title, manga_id } = req.query;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
@@ -139,22 +139,42 @@ module.exports = {
             role = 0;
         }
 
-     
-
-
-        let docs = [];
 
         if (manga_id){        
-            docs.push(await Manga.findById(manga_id).select(projection[role]).exec());         
+           const manga = await Manga.findById(manga_id).select(projection[role]).exec();
+           return res.jsonOK(manga, getMessage("manga.index.success"), new_token)
         } 
 
         else if (title){
-            (await Manga.find( {title: {$regex: title, $options: "i"} } ).select(projection[role])).forEach(function (doc){
-                docs.push(doc)
-            });
+            const manga = await Manga.find( {title: {$regex: title, $options: "i"} } ).select(projection[role]).exec();
+            return res.jsonOK(manga, getMessage("manga.index.success"), new_token)
+            
         }
 
-        else if (genre){
+        else{            
+            return res.jsonBadRequest(null,null, null)
+        }
+                        
+
+    },
+
+    async list(req, res){
+        const { genre, scan, title } = req.query;
+        const new_token = (req.new_token) ? req.new_token : null;       
+        req.new_token = null
+
+        let role;
+
+        if (req.role){
+            role = CryptoJs.AES.decrypt(req.role, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))            
+            req.role = null
+        }else{
+            role = 0;
+        }
+
+        let docs = [];
+
+        if (genre){
             (await Manga.find({genre: genre}).select(projection[role])).forEach(function (doc){
                 docs.push(doc)
             });
@@ -169,6 +189,12 @@ module.exports = {
             
         }
 
+        else if (title){
+            (await Manga.find( {title: {$regex: title, $options: "i"} } ).select(projection[role])).forEach(function (doc){
+                docs.push(doc)
+            });
+        }
+
         else{            
             (await Manga.find().select(projection[role])).forEach(function (doc){
                 docs.push(doc)
@@ -181,7 +207,6 @@ module.exports = {
         });
         return res.jsonOK(docs, getMessage("manga.list.success") + docs.length, new_token)
                  
-
     },
 
     async update(req, res){
