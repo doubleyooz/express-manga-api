@@ -12,8 +12,8 @@ const { getMessage } = require("../common/messages")
 const projection = {
     0 : {
         title: 1,
-        number: 1
-        
+        number: 1,
+        views: 1
     },
     1 : {
         updatedAt: 1,
@@ -21,20 +21,22 @@ const projection = {
         title: 1,
         number: 1,  
         visualizations: 1,     
-        __v: 1
-        
+        __v: 1,
+        views: 1
     },
     2 : { 
        
         title: 1,
-        number: 1
+        number: 1,
+        views: 1
        
                  
     },
     3 : {       
         title: 1,
         number: 1,
-        imgCollection: 1
+        imgCollection: 1,
+        views: 1
 
       
     }
@@ -200,17 +202,30 @@ module.exports = {
    
     async index(req, res){
         const {chapter_id} = req.query;
-        if (chapter_id){
-           
-            Chapter.findById(chapter_id).select(projection[3]).then(doc=>{
-                return res.jsonOk(doc, null, null)             
+        const new_token = (req.new_token) ? req.new_token : null;       
+        req.new_token = null
+
+        
+        Chapter.findById(chapter_id).select(projection[3]).then(doc=>{
+            console.log(typeof doc.views)
+            console.log(doc.views)
+            doc.views = doc.views + 1
+            doc.save().then(() => {                       
+                return res.jsonOK(doc, null, new_token)                      
+
             }).catch(err =>{
-                return res.jsonBadRequest(err, null, null) 
-    
-            })
-            
+                console.log(err)
+                return res.jsonOK(doc, null, new_token)
+                
+            });
+                        
+        }).catch(err =>{
+            return res.jsonBadRequest(err, null, null) 
+
+        })
+        
   
-        }
+        
 
     },
 
@@ -242,7 +257,7 @@ module.exports = {
                     
             })                                
             return res.jsonOK(docs, getMessage("chapter.list.success"), new_token)          
-                           
+
             }).catch(err =>{
                 return res.jsonBadRequest(err, null, null) 
     
