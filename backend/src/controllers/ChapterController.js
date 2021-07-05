@@ -12,25 +12,31 @@ const { getMessage } = require("../common/messages")
 const projection = {
     0 : {
         title: 1,
-        number: 1,
-        imgCollection: 1,
+        number: 1
+        
     },
     1 : {
         updatedAt: 1,
         createdAt: 1,
         title: 1,
-        number: 1,
-        imgCollection: 1,
+        number: 1,  
+        visualizations: 1,     
         __v: 1
         
     },
     2 : { 
        
         title: 1,
+        number: 1
+       
+                 
+    },
+    3 : {       
+        title: 1,
         number: 1,
         imgCollection: 1
-        
-         
+
+      
     }
 }
 
@@ -193,8 +199,24 @@ module.exports = {
     },
    
     async index(req, res){
+        const {chapter_id} = req.query;
+        if (chapter_id){
+           
+            Chapter.findById(chapter_id).select(projection[3]).then(doc=>{
+                return res.jsonOk(doc, null, null)             
+            }).catch(err =>{
+                return res.jsonBadRequest(err, null, null) 
+    
+            })
+            
+  
+        }
 
-        const { manga_id, number, chapter_id } = req.query;
+    },
+
+    async list(req, res){
+
+        const { manga_id } = req.query;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
@@ -210,49 +232,22 @@ module.exports = {
         console.log("Role: " + role)
       
              
-        let docs = [], promises = []
+        let docs = []
        
-        if (number){
-            promises.push(
-                Chapter.find({ manga_id: manga_id, number: number }).select(projection[role]).then(result=>{
-                    result.forEach(doc =>{
-                        docs.push(doc)
-                        
-                })                                
-                                
-                }).catch(err =>{
-                    return res.jsonBadRequest(err, null, null) 
+       if (manga_id){
         
-                })
-            )
+            Chapter.find({manga_id: manga_id}).select(projection[role]).then(result=>{
+                result.forEach(doc =>{
+                    docs.push(doc)
+                    
+            })                                
+            return res.jsonOK(docs, getMessage("chapter.list.success"), new_token)          
+                           
+            }).catch(err =>{
+                return res.jsonBadRequest(err, null, null) 
+    
+            })
             
-        }     
-
-        else if (chapter_id){
-            promises.push(
-                Chapter.findById(chapter_id).select(projection[role]).then(doc=>{
-                    docs.push(doc)             
-                }).catch(err =>{
-                    return res.jsonBadRequest(err, null, null) 
-        
-                })
-            )
-  
-        }
-
-        else if (manga_id){
-            promises.push(
-                Chapter.find({ manga_id: manga_id}).select(projection[role]).then(result=>{
-                    result.forEach(doc =>{
-                        docs.push(doc)
-                        
-                })                                
-                                
-                }).catch(err =>{
-                    return res.jsonBadRequest(err, null, null) 
-        
-                })
-            )
         }
           
         else{
@@ -260,9 +255,9 @@ module.exports = {
 
         }
 
-        Promise.all(promises).then(() => {            
-            return res.jsonOK(docs, getMessage("chapter.list.success"), new_token)            
-        });
+                 
+         
+       
                
     },
 

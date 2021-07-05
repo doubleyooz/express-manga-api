@@ -56,6 +56,7 @@ routes.put('/manga/pin', Authorize("User"), LikeController.pinManga);
 
 
 routes.post('/chapter/post', Authorize("Scan"), multer(multerConfig.files).array('imgCollection'), ChapterMiddleware.valid_chapter_store, ChapterController.store);
+routes.get('/chapter/list', getRole(), ChapterMiddleware.valid_chapter_list, ChapterController.list);
 routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);

@@ -44,93 +44,70 @@ module.exports = {
     },
 
     async valid_chapter_index(req, res, next){
-        const { manga_id, number, chapter_id } = req.query; 
+        const { chapter_id } = req.query; 
 
-        let schema = yup.object().shape({
-            number: yup.number("Must to be a valid number").min(1, 'Must be a positive number'),
+        let schema = yup.object().shape({          
+            chapter_id: yup.string("genre must be a string.").strict().required(),
+           
+
+        })
+        schema.validate({chapter_id}).then(() => {
+            if (mongoose.Types.ObjectId.isValid(chapter_id)) {   
+                if (String(new mongoose.Types.ObjectId(chapter_id)) === chapter_id) {  
+                    next()
+                } else{
+                    return res.jsonBadRequest(
+                        null,
+                        getMessage("chapter.invalid.id"),
+                        null
+                    );
+                }
+            }   else{
+                return res.jsonBadRequest(
+                    null,
+                    getMessage("chapter.invalid.id"),
+                    null
+                );
+            }
+        }).catch(err => {                    
+            return res.jsonBadRequest(null, null, err.errors)
+        })
+            
+    },
+
+    async valid_chapter_list(req, res, next){
+        const { manga_id } = req.query; 
+
+        let schema = yup.object().shape({          
             manga_id: yup.string("genre must be a string.").strict().required(),
            
 
         })
-
-
-        let promises = []
-       
-        if (number){
-            promises.push(
-                schema.validate({number, manga_id}).then(console.log("number valid")).catch(err => {                    
-                    return res.jsonBadRequest(null, null, err.errors)
-                })
-            )
+        schema.validate({manga_id}).then(() => {
+            if (mongoose.Types.ObjectId.isValid(manga_id)) {   
+                if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
+                    next()
+                } else{
+                    return res.jsonBadRequest(
+                        null,
+                        getMessage("manga.invalid.id"),
+                        null
+                    );
+                }
+            }   else{
+                return res.jsonBadRequest(
+                    null,
+                    getMessage("manga.invalid.id"),
+                    null
+                );
+            }
+        }).catch(err => {                    
+            return res.jsonBadRequest(null, null, err.errors)
+        })
             
-        }     
-
-        if (chapter_id){
-            promises.push(
-                new Promise((resolve, reject) => {
-                    
-                    if (mongoose.Types.ObjectId.isValid(chapter_id)) {   
-                        if (String(new mongoose.Types.ObjectId(chapter_id)) === chapter_id) {  
-                                console.log("chapter_id2")
-                                resolve("chapter id valid")
-                        } else { 
-
-                            return res.jsonBadRequest(
-                                    null,
-                                    getMessage("chapter.invalid.id"),
-                                    null
-                            );
-                                
-                        } 
-                    } else { 
-
-                        return res.jsonBadRequest(
-                                null,
-                                getMessage("chapter.invalid.id"),
-                                null
-                        );
-                            
-                    } 
-                })
-                
-            )
-  
-        }
-
-        if (manga_id){
-            promises.push(
-                new Promise((resolve, reject) => {
-                    if (mongoose.Types.ObjectId.isValid(manga_id)) {   
-                        if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {  
-                            resolve("manga id valid")
-                        } else{
-                            return res.jsonBadRequest(
-                                null,
-                                getMessage("manga.invalid.id"),
-                                null
-                            );
-                        }
-                    }   else{
-                        return res.jsonBadRequest(
-                            null,
-                            getMessage("manga.invalid.id"),
-                            null
-                        );
-                    }
-                  })
-                
-            )
-        }
-          
-        
-        Promise.all(promises).then(() =>         
-            next()            
-        ).catch(err => {
-            console.log("catch")
-            return res.jsonBadRequest(null, null, err)       
-        });
        
     },
+
 
     async valid_chapter_delete(req, res, next){         
                        

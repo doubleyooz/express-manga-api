@@ -22,6 +22,10 @@ const ChapterSchema = new mongoose.Schema({
             
         }]
     }],
+    visualizations: {
+        type: Number,
+        default: 0
+    },
     createdAt: {
         type: Date,
         default: Date.now,
