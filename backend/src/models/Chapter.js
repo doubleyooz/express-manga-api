@@ -22,7 +22,7 @@ const ChapterSchema = new mongoose.Schema({
             
         }]
     }],
-    visualizations: {
+    views: {
         type: Number,
         default: 0
     },
