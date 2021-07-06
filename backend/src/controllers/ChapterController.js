@@ -88,7 +88,6 @@ module.exports = {
                 
                         Object.keys(req.files).forEach((i) => {
                             let file = req.files[i];
-                            console.log(i)
                             
                             let temp = { 
                                 originalname:  file.originalname,
