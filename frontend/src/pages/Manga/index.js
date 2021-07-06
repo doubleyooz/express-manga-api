@@ -31,6 +31,7 @@ const Manga = (props) =>{
     }
 
     
+    
     useEffect(()=>{
      
         async function getMangaData(){
@@ -40,13 +41,13 @@ const Manga = (props) =>{
             .then(response => {
                 //setState({ feed: response.data });  
                 if(response.data !== null){
-                   
-                    console.log(response.data);                  
+                    console.log("here")
+                    console.log(response.data.data[0]);                  
                     setManga(response.data.data[0])
                     console.log(manga)
                     console.log("get manga info well succeed")
 
-                    api.get(`chapter/index?manga_id=${manga._id}`, config)
+                    api.get(`chapter/list?manga_id=${manga._id}`, config)
                     .then(response => {
                         //setState({ feed: response.data });  
                         if(response.data !== null){
@@ -212,9 +213,10 @@ const Manga = (props) =>{
                                  
                                 
                             <div className="chapter">
-                                 <Chapter data={chapter, manga}/>
+
+                                <Chapter data={{chapter: chapter, manga: manga}}/>
                               
-                               
+                                
                             </div>            
                         
                             

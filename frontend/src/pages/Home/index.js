@@ -34,7 +34,7 @@ export default function Home(){
         async function fetchData(){
             
            
-            api.get('manga/index')
+            api.get('manga/list')
                 .then(response => {
                     //setState({ feed: response.data });  
                     if(response.data !== null){
