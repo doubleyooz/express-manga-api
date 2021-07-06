@@ -10,7 +10,52 @@ const User = require('../models/user');
 
 
 
-const projection = {
+const list_projection = {
+    0 : {
+        
+        title: 1,
+        genre: 1,
+        synopsis: 1,                
+        n_chapters: 1,        
+        status: 1,
+        nsfw: 1,
+        cover: 1,
+        likes: 1,
+       
+        _id: 0
+    },
+    1 : {
+        updatedAt: 1,
+        createdAt: 1,
+        title: 1,
+        genre: 1,
+        synopsis: 1,
+        n_chapters: 1,
+        
+        language: 1,
+        nsfw: 1,
+        status: 1,
+        scan_id: 1,
+        likes: 1,
+        __v: 1,
+        cover: 1,
+        
+    },
+    2 : {                 
+        title: 1,
+        genre: 1,
+        synopsis: 1,                
+        n_chapters: 1,        
+        cover: 1,
+        nsfw: 1,
+        status: 1,
+        likes: 1,
+       
+    }
+}
+
+
+const index_projection = {
     0 : {
         
         title: 1,
@@ -141,12 +186,12 @@ module.exports = {
 
 
         if (manga_id){        
-           const manga = await Manga.findById(manga_id).select(projection[role]).exec();
+           const manga = await Manga.findById(manga_id).select(index_projection[role]).exec();
            return res.jsonOK(manga, getMessage("manga.index.success"), new_token)
         } 
 
         else if (title){
-            const manga = await Manga.find( {title: {$regex: title, $options: "i"} } ).select(projection[role]).exec();
+            const manga = await Manga.find( {title: {$regex: title, $options: "i"} } ).select(index_projection[role]).exec();
             return res.jsonOK(manga, getMessage("manga.index.success"), new_token)
             
         }
@@ -175,13 +220,13 @@ module.exports = {
         let docs = [];
 
         if (genre){
-            (await Manga.find({genre: genre}).select(projection[role])).forEach(function (doc){
+            (await Manga.find({genre: genre}).select(list_projection[role])).forEach(function (doc){
                 docs.push(doc)
             });
         }
 
         else if(scan){
-            (await User.find({name: scan, role: "Scan"}).select(projection[role])).forEach(function (result){
+            (await User.find({name: scan, role: "Scan"}).select(list_projection[role])).forEach(function (result){
                 Manga.find({scan_id: result._id}).then(doc => {   
                     docs.push(doc)
                 });
@@ -190,13 +235,13 @@ module.exports = {
         }
 
         else if (title){
-            (await Manga.find( {title: {$regex: title, $options: "i"} } ).select(projection[role])).forEach(function (doc){
+            (await Manga.find( {title: {$regex: title, $options: "i"} } ).select(list_projection[role])).forEach(function (doc){
                 docs.push(doc)
             });
         }
 
         else{            
-            (await Manga.find().select(projection[role])).forEach(function (doc){
+            (await Manga.find().select(list_projection[role])).forEach(function (doc){
                 docs.push(doc)
             });     
         }

@@ -8,7 +8,36 @@ const Manga = require('../models/Manga');
 
 const { getMessage } = require("../common/messages")
 
-const projection = {
+const index_projection = {
+    0 : {
+        imgCollection: 1,
+        title: 1,
+        number: 1,
+        views: 1
+    },
+    1 : {
+        updatedAt: 1,
+        createdAt: 1,
+        title: 1,
+        number: 1,  
+        visualizations: 1,     
+        __v: 1,
+        views: 1,
+        imgCollection: 1
+    },
+    2 : { 
+        imgCollection: 1,
+        title: 1,
+        number: 1,
+        views: 1
+       
+                 
+    },
+   
+}
+
+
+const list_projection = {
     0 : {
         title: 1,
         number: 1,
@@ -31,14 +60,7 @@ const projection = {
        
                  
     },
-    3 : {       
-        title: 1,
-        number: 1,
-        imgCollection: 1,
-        views: 1
-
-      
-    }
+   
 }
 
 module.exports = {
@@ -204,8 +226,17 @@ module.exports = {
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
+        let role;
         
-        Chapter.findById(chapter_id).select(projection[3]).then(doc=>{
+        if (req.role){
+            role = CryptoJs.AES.decrypt(req.role, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))            
+            req.role = null
+        }else{
+            role = 0;
+        }
+       
+        
+        Chapter.findById(chapter_id).select(index_projection[role]).then(doc=>{
             console.log(typeof doc.views)
             console.log(doc.views)
             doc.views = doc.views + 1
@@ -248,7 +279,7 @@ module.exports = {
        
         if (manga_id){
         
-            Chapter.find({manga_id: manga_id}).select(projection[role]).then(result=>{
+            Chapter.find({manga_id: manga_id}).select(list_projection[role]).then(result=>{
                 result.forEach(doc =>{
                     docs.push(doc)
                     
