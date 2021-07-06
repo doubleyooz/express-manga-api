@@ -66,9 +66,9 @@ const index_projection = {
         status: 1,
         nsfw: 1,
         cover: 1,
-        likes: 1,
+        likes: 1
        
-        _id: 0
+        
     },
     1 : {
         updatedAt: 1,
