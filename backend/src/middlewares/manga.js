@@ -104,6 +104,60 @@ module.exports = {
             return res.jsonBadRequest(null, null, err.errors)
         }
        
+    }, 
+
+    async valid_manga_list(req, res, next){
+        const {manga_id} = req.query
+
+        let schema = yup.object().shape({
+            title: yup.string("title must be a string.").strict(),
+            genre: yup.string("genre must be a string.").strict(),
+            scan: yup.string("scan must be a string.").strict(),
+
+        })
+
+        
+        
+
+        try{
+            schema.validate(req.query).then(() => {
+                if(manga_id){
+                    if (mongoose.Types.ObjectId.isValid(manga_id)) {   
+                        if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {                              
+                            next();     
+                        } else { 
+            
+                            return res.jsonBadRequest(
+                                    null,
+                                    getMessage("manga.invalid.id"),
+                                    null);
+                           
+                        } 
+                    } else {
+                        return res.jsonBadRequest(
+                                null,
+                                getMessage("manga.invalid.id"),
+                                null);         
+                    }              
+                }
+                      
+                else {
+                    
+                    next();
+                    
+                }
+            
+            })
+            .catch((err) => {
+                return res.jsonBadRequest(null, null, err.errors)              
+               
+           })
+           
+
+        } catch(err){
+            return res.jsonBadRequest(null, null, err.errors)
+        }
+       
     },
 
     async valid_manga_delete(req, res, next){         

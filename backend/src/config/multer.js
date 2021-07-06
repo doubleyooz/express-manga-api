@@ -15,9 +15,10 @@ const files = {
 
       let dir = "./" + folder + req.body.manga_title + "/"
 
-
+      
       if (!fs.existsSync(dir))       
-        fs.mkdirSync(dir);
+        return false;  
+      //fs.mkdirSync(dir);
 
       if (!fs.existsSync(dir + req.body.number))       
         fs.mkdirSync(dir + req.body.number);
@@ -37,8 +38,7 @@ const files = {
 
       });
       
-    },
-
+    },   
   }),
   limits: {
     fileSize: 3 * 1024 * 1024,
