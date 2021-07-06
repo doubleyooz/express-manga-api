@@ -41,7 +41,8 @@ const list_projection = {
     0 : {
         title: 1,
         number: 1,
-        views: 1
+        views: 1,
+        updatedAt: 1
     },
     1 : {
         updatedAt: 1,
@@ -56,8 +57,8 @@ const list_projection = {
        
         title: 1,
         number: 1,
-        views: 1
-       
+        views: 1,
+        updatedAt: 1
                  
     },
    
