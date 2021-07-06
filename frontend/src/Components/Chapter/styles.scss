@@ -3,14 +3,34 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-
-        .title{
-            font-size: 20px;
+        background-color: rgb(64, 53, 77);
+        width: 100%;
+       
+        .box-1{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            .title{
+               
+                font-size: 20px;
+                color: black;
+            }
+    
+            .number{
+               
+                font-size: 10px;
+                color: black;
+            }
+            &:hover{
+                background-color: rgb(31, 22, 41);
+            }
         }
+    
+        
+      
+        .box-2{
 
-        .number{
-            font-size: 10px;
         }
-
+       
     }
 }
