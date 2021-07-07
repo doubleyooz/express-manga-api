@@ -29,9 +29,10 @@ export default function Chapter(props){
               
                 <div className="box-1" onClick={() => route()}>
                    
-                    <div className="number">{`Chapter ${props.data.chapter.number} : `}</div>
+                    <div className="number">{`Chapter ${props.data.chapter.number}: `}</div>
                     <div className="title">{props.data.chapter.title}</div>
-                    <div className="date">{`${props.data.chapter.updatedAt}`}</div> 
+                    <div className="date">{`28/05/2001`}</div>
+                   {/*<div className="date">{`${props.data.chapter.updatedAt}`}</div> */} 
                 </div>
                                           
 
