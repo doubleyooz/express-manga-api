@@ -156,7 +156,8 @@ const Manga = (props) =>{
             transform: 'scaleX(0)',
             transformOrigin: 'right',
             transition: '.25s'
-        }
+        },
+       
 
     }
    
@@ -181,19 +182,18 @@ const Manga = (props) =>{
                 </div>
 
                 <div className="toogler">
-                    <span 
-                        onClick={() => setIsSelected("a")} 
-                        style={isSelected === "a" ? {backgroundColor: "#000000", color: "#ffffff"} : {backgroundColor: "#999999", color: "#000000"}}>
+                    <span className={isSelected === "a" ? "selected" : "not-selected"}
+                        onClick={() => setIsSelected("a")}>                      
                             info
                     </span>
                     <span 
-                        onClick={() => setIsSelected("b")}
-                        style={isSelected === "b" ? {backgroundColor: "#000000", color: "#ffffff"} : {backgroundColor: "#999999", color: "#000000"}}>
+                        className={isSelected === "b" ? "selected" : "not-selected"}
+                        onClick={() => setIsSelected("b")}>                      
                         chapters
                     </span>
                     <span 
-                        onClick={() => setIsSelected("c")}
-                        style={isSelected === "c" ? {backgroundColor: "#000000", color: "#ffffff"} : {backgroundColor: "#999999", color: "#000000"}}>
+                        className={isSelected === "c" ? "selected" : "not-selected"}
+                        onClick={() => setIsSelected("c")}>                      
                             art
                     </span>
                 </div>
