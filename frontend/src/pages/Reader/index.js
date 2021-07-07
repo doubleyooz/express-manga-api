@@ -50,21 +50,22 @@ const Reader = (props) =>{
             
 
             api.get(`manga/index?title=${manga_title}`, config)
-            .then(manga => {                    
+            .then(result => {                    
                                     
-                if(manga.data !== null){                        
+                if(result.data !== null){                        
                    
-                    console.log(manga.data.data[0])         
-                    setManga(manga.data.data[0])
+                    console.log(result.data.data[0])         
+                    setManga(result.data.data[0])
                     
                     console.log("chapter list successfuly retrieved")
                     
-                    api.get(`chapter/index?chapter_id=${manga.data.data[0].chapters[currentChapter]}`, config)
+                    api.get(`chapter/index?chapter_id=${result.data.data[0].chapters[currentChapter]}`, config)
                     .then(chapter => {
                     
+                        console.log(chapter.data.data)
                         if(chapter.data !== null){
-                            setChapter(chapter.data.data[0])
-                            setCurrentChapter(chapter.data.data[0].number - 1)
+                            setChapter(chapter.data.data)
+                            setCurrentChapter(chapter.data.data.number - 1)
                             console.log("list pages well succeed")
                         } else {
                             console.log("list pages failed")
@@ -99,7 +100,7 @@ const Reader = (props) =>{
     }, [currentChapter]) // <-- empty dependency array
 
     function nextChapter(){
-        if (currentChapter === manga.chapters.length){
+        if (currentChapter === manga.chapters.length - 1){
             console.log("last chapter reached")
         } else{
             notInitialRender.current = true
@@ -119,7 +120,7 @@ const Reader = (props) =>{
     }
 
     function nextPage(){           
-        if (currentPage === chapter.imgCollection.length){
+        if (currentPage === chapter.imgCollection.length - 1){
             console.log("last page reached")
         } else{            
             setCurrentPage(currentPage+1)
@@ -175,7 +176,7 @@ const Reader = (props) =>{
                         
                         </Link>
                         
-                        <div className="chapters"> Chapter #0{chapter.number} </div>
+                        <div className="chapters"> Chapter #0{chapter_number} </div>
                         <Link to={{ pathname: `/Manga/${manga_title}/${currentChapter+2 >= manga.chapters.length ? manga.chapters.length : currentChapter + 2}`}}>                    
                             <button className='button'onClick= {() => nextChapter()}>►►</button>
                         
