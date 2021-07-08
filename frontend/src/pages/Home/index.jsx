@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Context } from '../../Contexts/AuthProvider'
-import Manga from '../../Components/Manga'
+import Manga from '../../Components/Activity'
 import api from "../../services/api"
 
 

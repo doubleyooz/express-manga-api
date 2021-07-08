@@ -5,7 +5,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { Context } from '../../Contexts/AuthProvider'
 import './styles.scss';
 
-export default function Manga(props){    
+export default function Activity(props){    
 
     const { token, setToken, handleLogin } = useContext(Context)
     let history = useHistory();
