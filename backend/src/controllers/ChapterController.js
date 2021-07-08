@@ -299,10 +299,20 @@ module.exports = {
         }
           
         else{
-            return res.jsonBadRequest(null, null, null) 
+            Chapter.find().sort('updatedAt').select(list_projection[role]).then(result=>{
+                result.forEach(doc =>{
+                    docs.push(doc)
+                    
+                })                    
+                if (docs.length === 0){
+                    return res.jsonNotFound(docs, getMessage("chapter.list.empty"), new_token) 
+                } else{
+                    return res.jsonOK(docs, getMessage("chapter.list.success"), new_token) 
+                }          
+                    
 
+            })
         }
-      
                
     },
 

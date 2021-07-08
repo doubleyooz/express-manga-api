@@ -79,7 +79,7 @@ module.exports = {
         const { manga_id } = req.query; 
 
         let schema = yup.object().shape({          
-            manga_id: yup.string("genre must be a string.").strict().required(),
+            manga_id: yup.string("genre must be a string.").strict(),
            
 
         })
