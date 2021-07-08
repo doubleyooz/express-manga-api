@@ -34,11 +34,36 @@ export default function Home(){
         async function fetchData(){
             
            
-            api.get('manga/list')
+            api.get('chapter/list')
                 .then(response => {
                     //setState({ feed: response.data });  
                     if(response.data !== null){
-                       
+                        
+                        let temp2 = [{
+                            "dssada": [{}]
+                        }]
+
+                        let temp = [
+                            {
+                                `${response.data.data[0].manga_id.toString()}`: [{
+                                    cover: "",
+                                    title: "",
+                                    chapters: [{
+                                        number: "",
+                                        
+                                    }],
+                                },],
+                            }]
+                            
+                        
+                        
+                        response.data.data.map((chapter) => (
+                            temp.push()
+                            <Manga data={manga, chapters}/>
+                           
+                                                  
+                            
+                        ))
                         setMangas(response.data.data)
                         console.log("list mangas well succeed")
                        
@@ -72,7 +97,7 @@ export default function Home(){
                          
                     {mangas.length !== 0 ? mangas.map((manga) => (
                       
-                        <Manga data={manga}/>
+                        <Manga data={manga, chapters}/>
                        
                                               
                         

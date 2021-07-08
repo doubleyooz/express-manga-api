@@ -21,11 +21,33 @@ export default function Activity(props){
                 />
 
             <div className="manga-info">
-                
-                <Link to={{ pathname: `/Manga/${props.data.title.replace(" ", "%20")}`, state: props.data.manga }}>                    
+                <div 
+                    className="manga-title"
+                    onClick={() => 
+                        history.push(
+                            `/Manga/${props.data.manga.title.replace(" ", "%20")}/`, 
+                            {state: props.data.manga}
+                        )}
+                >
                     {props.data.title}
-
-                </Link>
+                </div>
+                {props.data.chapters.length !== 0 ? props.data.chapters.map((chapter) => (
+                      
+                    <div 
+                        className="manga-chapter"
+                        onClick={() => 
+                            history.push(
+                                `/Manga/${props.data.manga.title.replace(" ", "%20")}/${chapter.number}` 
+                                
+                            )}
+                    >
+                      {chapter.number}
+                    </div>
+                     
+                                            
+                      
+                  )): <div>no manga to be shown</div>}
+               
                 
 
                 
