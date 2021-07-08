@@ -220,14 +220,14 @@ module.exports = {
         let docs = [];
 
         if (genre){
-            (await Manga.find({genre: genre}).select(list_projection[role])).forEach(function (doc){
+            (await Manga.find({genre: genre}).sort('updatedAt').select(list_projection[role])).forEach(function (doc){
                 docs.push(doc)
             });
         }
 
         else if(scan){
             (await User.find({name: scan, role: "Scan"}).select(list_projection[role])).forEach(function (result){
-                Manga.find({scan_id: result._id}).then(doc => {   
+                Manga.find({scan_id: result._id}).sort('updatedAt').then(doc => {   
                     docs.push(doc)
                 });
             })
@@ -235,13 +235,13 @@ module.exports = {
         }
 
         else if (title){
-            (await Manga.find( {title: {$regex: title, $options: "i"} } ).select(list_projection[role])).forEach(function (doc){
+            (await Manga.find( {title: {$regex: title, $options: "i"} } ).sort('updatedAt').select(list_projection[role])).forEach(function (doc){
                 docs.push(doc)
             });
         }
 
         else{            
-            (await Manga.find().select(list_projection[role])).forEach(function (doc){
+            (await Manga.find().sort('updatedAt').select(list_projection[role])).forEach(function (doc){
                 docs.push(doc)
             });     
         }

@@ -279,7 +279,7 @@ module.exports = {
        
         if (manga_id){
         
-            Chapter.find({manga_id: manga_id}).select(list_projection[role]).then(result=>{
+            Chapter.find({manga_id: manga_id}).sort('updatedAt').select(list_projection[role]).then(result=>{
                 result.forEach(doc =>{
                     docs.push(doc)
                     
