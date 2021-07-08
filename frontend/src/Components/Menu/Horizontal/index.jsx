@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-
+import wordMark from '../../../assets/wordmark.svg'
 import { Context } from '../../../Contexts/AuthProvider'
 import './styles.scss';
 
@@ -18,9 +18,7 @@ export default function Menu(){
                        
 
             <Link to='/'> 
-                <li className="nav-button">
-
-                </li>         
+                <img src={wordMark} alt="MangaReader" />        
             </Link> 
 
             <Link to='/'>
