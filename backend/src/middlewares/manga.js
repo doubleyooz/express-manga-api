@@ -113,6 +113,7 @@ module.exports = {
             title: yup.string("title must be a string.").strict(),
             genre: yup.string("genre must be a string.").strict(),
             scan: yup.string("scan must be a string.").strict(),
+            recent: yup.boolean()
 
         })
 
