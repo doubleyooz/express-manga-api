@@ -243,38 +243,34 @@ module.exports = {
         else if (recent){
             
             const mangas = await Manga.find().sort('updatedAt').select({cover: 1, title: 1})
+                     
             for (let index = 0; index < mangas.length; index++) {
                 let temp = {
-                    [mangas[index]._id] : [{
+                    [mangas[index]._id] : {
                         cover: mangas[index].cover,
                         title: mangas[index].title,
                         chapters: [],
-                    }]
+                    }
+                }
+
+            
+                
+                const chapters = await Chapter.find({manga_id: mangas[index]._id}).sort('updatedAt').select({number: 1, _id: 0})
+                
+                if(chapters.length !== 0){
+                    
+                    chapters.forEach(function (chap){                               
+                        temp[mangas[index]._id].chapters.push({number: chap.number})
+                        
+                    }) 
+                    
+                    docs.push(temp)
+                    
                 }
                 
-            const chapters = await Chapter.find({manga_id: mangas[index]._id}).sort('updatedAt').select({number: 1, _id: 0})
-    
-            
-            if(chapters.length !== 0){
-                
-                chapters.forEach(function (chap){                               
-                    temp[mangas[index]._id][index].chapters.push({number: chap.number})
-                    
-                }) 
-                
-                docs.push(temp)
-                
             }
-
+            
             console.log(docs) 
-               
-                
-
-
-                
-            }
-            
-            
                     
         } else{
             (await Manga.find().sort('updatedAt').select(list_projection[role])).forEach(function (doc){

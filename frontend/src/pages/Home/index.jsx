@@ -34,32 +34,19 @@ export default function Home(){
         async function fetchData(){
             
            
-            api.get('chapter/list')
+            api.get('manga/list?recent=true')
                 .then(response => {
                     //setState({ feed: response.data });  
                     if(response.data !== null){
                         
-                        let temp2 = [{
-                            "dssada": [{}]
-                        }]
-
-                        let temp = [
-                            {
-                                `${response.data.data[0].manga_id.toString()}`: [{
-                                    cover: "",
-                                    title: "",
-                                    chapters: [{
-                                        number: "",
-                                        
-                                    }],
-                                },],
-                            }]
+                       
+                       
                             
                         
                         
-                        response.data.data.map((chapter) => (
-                            temp.push()
-                            <Manga data={manga, chapters}/>
+                        response.data.data.map((obj) => (
+                            
+                            <Manga data={obj}/>
                            
                                                   
                             
