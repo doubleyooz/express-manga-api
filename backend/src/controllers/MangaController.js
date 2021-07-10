@@ -246,11 +246,12 @@ module.exports = {
                      
             for (let index = 0; index < mangas.length; index++) {
                 let temp = {
-                    [mangas[index]._id] : {
-                        cover: mangas[index].cover,
-                        title: mangas[index].title,
-                        chapters: [],
-                    }
+                   
+                    _id: mangas[index]._id,
+                    cover: mangas[index].cover,
+                    title: mangas[index].title,
+                    chapters: [],
+                    
                 }
 
             
@@ -260,7 +261,7 @@ module.exports = {
                 if(chapters.length !== 0){
                     
                     chapters.forEach(function (chap){                               
-                        temp[mangas[index]._id].chapters.push({number: chap.number})
+                        temp.chapters.push({number: chap.number})
                         
                     }) 
                     
