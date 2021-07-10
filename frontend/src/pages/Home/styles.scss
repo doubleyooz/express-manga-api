@@ -5,9 +5,16 @@
         word-wrap: break-word; 
     }
     .last-updated{
-        margin: 0 0 0px 0px;
-       
+        display: flex;
+        flex-direction: column;
+        max-height: 800px;
+        margin: 0px 0px 0px 0px;
+        padding: 20px 1% 0px 5%;
         
+        h2{
+            font-size: 30px;
+            font-weight: lighter;
+        }
     }
 }
 

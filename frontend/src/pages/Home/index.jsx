@@ -76,12 +76,12 @@ export default function Home(){
     return(
         <>  
             <div className="home-container">
-                {token ? <div className="div">auth</div> : <div className="div">not auth</div>}
+                {/*token ? <div className="div">auth</div> : <div className="div">not auth</div>*/}
                 
                 
 
                 <div className='last-updated'>
-                         
+                    <h2>Last Updated</h2>
                     {mangas.length !== 0 ? mangas.map((manga) => (
                       
                         <Manga data={manga}/>
