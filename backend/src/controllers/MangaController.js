@@ -242,7 +242,7 @@ module.exports = {
 
         else if (recent){
             
-            const mangas = await Manga.find().sort('updatedAt').select({cover: 1, title: 1})
+            const mangas = await Manga.find().sort('updatedAt').select({cover: 1, title: 1, updatedAt: 1})
                      
             for (let index = 0; index < mangas.length; index++) {
                 let temp = {
@@ -250,6 +250,7 @@ module.exports = {
                     _id: mangas[index]._id,
                     cover: mangas[index].cover,
                     title: mangas[index].title,
+                    updatedAt: mangas[index].updatedAt,
                     chapters: [],
                     
                 }
