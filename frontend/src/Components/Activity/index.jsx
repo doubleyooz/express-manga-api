@@ -9,7 +9,9 @@ export default function Activity(props){
 
     const { token, setToken, handleLogin } = useContext(Context)
     let history = useHistory();
-   
+    
+    console.log("props")
+    console.log(props)
     
     return (
       
@@ -31,7 +33,7 @@ export default function Activity(props){
                 >
                     {props.data.title}
                 </div>
-                {props.data.chapters.length !== 0 ? props.data.chapters.map((chapter) => (
+                {props.data[0].chapters.length !== 0 ? props.data[0].chapters.map((chapter) => (
                       
                     <div 
                         className="manga-chapter"

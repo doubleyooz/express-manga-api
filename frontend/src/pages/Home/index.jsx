@@ -42,16 +42,15 @@ export default function Home(){
                        
                        
                             
+                        console.log(response.data.data)
                         
-                        
-                        response.data.data.map((obj) => (
+                       
                             
-                            <Manga data={obj}/>
                            
-                                                  
-                            
-                        ))
                         setMangas(response.data.data)
+                                                  
+                       
+                        
                         console.log("list mangas well succeed")
                        
                        
@@ -84,7 +83,7 @@ export default function Home(){
                          
                     {mangas.length !== 0 ? mangas.map((manga) => (
                       
-                        <Manga data={manga, chapters}/>
+                        <Manga data={manga}/>
                        
                                               
                         
