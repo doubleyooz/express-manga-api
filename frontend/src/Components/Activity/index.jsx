@@ -10,9 +10,7 @@ export default function Activity(props){
     const { token, setToken, handleLogin } = useContext(Context)
     let history = useHistory();
     
-    console.log("props")
-    console.log(props)
-    
+        
     return (
       
         
@@ -27,19 +25,19 @@ export default function Activity(props){
                     className="manga-title"
                     onClick={() => 
                         history.push(
-                            `/Manga/${props.data.manga.title.replace(" ", "%20")}/`, 
-                            {state: props.data.manga}
+                            `/Manga/${props.data.title.replace(" ", "%20")}/`, 
+                            {state: props.data}
                         )}
                 >
                     {props.data.title}
                 </div>
-                {props.data[0].chapters.length !== 0 ? props.data[0].chapters.map((chapter) => (
+                {props.data.chapters.length !== 0 ? props.data.chapters.map((chapter) => (
                       
                     <div 
                         className="manga-chapter"
                         onClick={() => 
                             history.push(
-                                `/Manga/${props.data.manga.title.replace(" ", "%20")}/${chapter.number}` 
+                                `/Manga/${props.data.title.replace(" ", "%20")}/${chapter.number}` 
                                 
                             )}
                     >

@@ -32,10 +32,11 @@ export default function Home(){
     useEffect(()=>{
       
         async function fetchData(){
-            
+           
            
             api.get('manga/list?recent=true')
                 .then(response => {
+                   
                     //setState({ feed: response.data });  
                     if(response.data !== null){
                         
@@ -71,7 +72,7 @@ export default function Home(){
             
     }, []) // <-- empty dependency array
 
-    console.log(token)
+    
     return(
         <>  
             <div className="home-container">

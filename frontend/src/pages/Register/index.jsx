@@ -133,7 +133,7 @@ const Register= () =>{
 
                     <div className="footer">
                        
-                        <Link to='/Login'>
+                        <Link to='/signin'>
                             already have an activateaccount?         
                         </Link> 
 
