@@ -31,28 +31,35 @@ export default function Activity(props){
                 >
                     {props.data.title}
                 </div>
-                {props.data.chapters.length !== 0 ? props.data.chapters.map((chapter) => (
+
+                <div className="chapters">
+                    {props.data.chapters.length !== 0 ? props.data.chapters.map((chapter) => (
                       
-                    <div 
-                        className="manga-chapter"
-                        onClick={() => 
-                            history.push(
-                                `/Manga/${props.data.title.replace(" ", "%20")}/${chapter.number}` 
-                                
-                            )}
-                    >
-                      {chapter.number}
-                    </div>
-                     
-                                            
                       
-                  )): <div>no manga to be shown</div>}
-               
+                      <div 
+                          className="manga-chapter"
+                          onClick={() => 
+                              history.push(
+                                  `/Manga/${props.data.title.replace(" ", "%20")}/${chapter.number}` 
+                                  
+                              )}
+                      >
+                        {chapter.number}
+                      </div>
+                       
+                                              
+                        
+                    )): <div>no manga to be shown</div>}
+                 
+                </div>
+                
                 
 
                 
             </div>
-               
+            <div className="updated">
+                28 seconds
+            </div>
             
         </div>
     )

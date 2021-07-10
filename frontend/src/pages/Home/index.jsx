@@ -80,7 +80,7 @@ export default function Home(){
                 
                 
 
-                <div className='list'>
+                <div className='last-updated'>
                          
                     {mangas.length !== 0 ? mangas.map((manga) => (
                       
