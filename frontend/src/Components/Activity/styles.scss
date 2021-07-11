@@ -3,9 +3,9 @@
     margin: 0px 0px 0px 0px;
     max-width: 400px;
     padding: 8px;
-
-
     background-color: rgb(231, 211, 255);
+
+    flex: 1 0 22%;
     &:hover{
         background-color: rgb(200, 177, 231);
     }
@@ -18,7 +18,7 @@
     }
 
     .manga-info{
-        margin: 20px 0px 0px 20px;
+        margin: 10px 0px 0px 20px;
         max-width: 200px;
         .manga-title{
             &:hover{
@@ -27,7 +27,7 @@
             margin: 0px;
             max-width: 200px;
             width: 50vw;
-            font-size: 16px;
+            
             font-weight: bold;
             
             overflow: hidden;
@@ -55,7 +55,7 @@
                 margin: 0 6px 5px 0px;
                 width: 30px;
                 height: 20px;
-                  
+              
               
                 text-align: center;
                 font-size: 14px;

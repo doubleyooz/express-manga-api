@@ -5,7 +5,7 @@ import { Context } from '../../Contexts/AuthProvider'
 import Manga from '../../Components/Activity'
 import api from "../../services/api"
 
-
+import arrowLeft from "../../assets/arrow-left.png"
 
 import './styles.scss';
 
@@ -81,14 +81,34 @@ export default function Home(){
                 
 
                 <div className='last-updated'>
-                    <h2>Last Updated</h2>
+                    <div className="header">
+                        <h2>Lastest Update</h2>
+                        <div className="next">
+                            <img src={arrowLeft}/>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                    <div className="box">
                     {mangas.length !== 0 ? mangas.map((manga) => (
-                      
+                        <>
                         <Manga data={manga}/>
+                        <Manga data={manga}/>
+                        <Manga data={manga}/>
+                        
+                        
+                        </>
+                        
+                       
+                        
+                        
                        
                                               
                         
                     )): <div>no manga to be shown</div>}
+                    </div>
+                   
 
                 </div>
                

@@ -28,6 +28,7 @@ export default function Activity(props){
                             `/Manga/${props.data.title.replace(" ", "%20")}/`, 
                             {state: props.data}
                         )}
+                    style={props.data.title.length > 22 ? {fontSize: '13px'} : {fontSize: '16px'}}
                 >
                     {props.data.title}
                 </div>
