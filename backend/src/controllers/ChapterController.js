@@ -237,7 +237,7 @@ module.exports = {
        
         
         Chapter.findById(chapter_id).select(index_projection[role]).then(doc=>{
-            console.log(typeof doc.views)
+            
             console.log(doc.views)
             doc.views = doc.views + 1
             doc.save().then(() => {                       
