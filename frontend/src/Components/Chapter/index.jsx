@@ -15,7 +15,7 @@ export default function Chapter(props){
     function route(){
         history.push(
             `/Manga/${props.data.manga.title.replace(" ", "%20")}/${props.data.chapter.number}`, 
-            {chapter:  props.data.chapter, chapters: props.data.manga.chapters}
+            {chapter:  props.data.chapter, manga: props.data.manga}
         )
     }
 

@@ -30,11 +30,18 @@ const Reader = (props) =>{
     }
     const notInitialRender = useRef(false)
     useEffect(()=>{
-
+        async function usingProps(){
+            console.log("using Props")            
+            setManga(props.location.state.manga)
+            getChapterData(props.location.state.manga.chapters[currentChapter])
+        }
         
-        async function getChapterData(){
-            console.log("get chapter data")            
-            api.get(`chapter/index?chapter_id=${manga.chapters[currentChapter]}`, config)
+        async function getChapterData(id){
+            console.log("get chapter data")    
+            setLoading(true)   
+            
+            
+            api.get(`chapter/index?chapter_id=${id}`, config)
                     .then(chapter => {                    
                         if(chapter.data !== null){
                             setChapter(chapter.data.data)
@@ -43,13 +50,14 @@ const Reader = (props) =>{
                         } else {
                             console.log("list pages failed")
                         }
+                        setLoading(false)
 
                     }).catch(err =>{
                         console.log(err)
                         console.log("list pages failed")
-                        
+                        setLoading(false)
                     })              
-        
+            
            
         }
 
@@ -65,23 +73,8 @@ const Reader = (props) =>{
                     setManga(result.data.data[0])
                     
                     console.log("chapter list successfuly retrieved")
+                    getChapterData(result.data.data[0].chapters[currentChapter])
                     
-                    api.get(`chapter/index?chapter_id=${result.data.data[0].chapters[currentChapter]}`, config)
-                    .then(chapter => {
-                    
-                        if(chapter.data !== null){
-                            setChapter(chapter.data.data)
-                            setCurrentChapter(chapter.data.data.number - 1)
-                            console.log("list pages well succeed")
-                        } else {
-                            console.log("list pages failed")
-                        }
-
-                    }).catch(err =>{
-                        console.log(err)
-                        console.log("list pages failed")
-                        
-                    })    
                                                                    
                 } else {
                     console.log("chapter list retrieve failed")
@@ -95,9 +88,10 @@ const Reader = (props) =>{
             })        
         }
 
-        async function fetchData(){        
+        async function fetchData(){       
             
-            notInitialRender.current ? getChapterData() : getMangaData()
+            notInitialRender.current ? getChapterData(manga.chapters[currentChapter]) 
+                : props.location.state ? usingProps() : getMangaData()
                 
             
         }        
@@ -106,26 +100,40 @@ const Reader = (props) =>{
     }, [currentChapter]) // <-- empty dependency array
 
     function nextChapter(){
-       
-        if (currentChapter === manga.chapters.length - 1){
-            console.log("last chapter reached")
-        } else{
+        let f1 = function(){
             console.log(currentChapter)
             notInitialRender.current = true
             setCurrentChapter(currentChapter+1)
-            setCurrentPage(0)            
+            setCurrentPage(0)  
+            return null
+        }
+
+        if (currentChapter === manga.chapters.length - 1){
+            console.log("last chapter reached")
+        } else{
+            console.log(loading)
+            !loading ? f1()  : console.log(currentChapter)
+
+                      
         }    
     }
 
     function prevChapter(){    
         
-        if(currentChapter === 0){
-            console.log("first chapter reached")
-        } else{           
+        let f1 = function(){
             console.log(currentChapter)
             notInitialRender.current = true
             setCurrentChapter(currentChapter-1)
             setCurrentPage(0)
+            return null
+        }
+
+        if(currentChapter === 0){
+            console.log("first chapter reached")
+        } else{       
+            console.log(loading)    
+            !loading ? f1() : console.log(currentChapter)
+            
         }             
     }
 
