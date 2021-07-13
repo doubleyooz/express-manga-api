@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-import wordMark from '../../../assets/wordmark.svg'
+import wordmark from '../../../assets/wordmark.svg'
+import logo from '../../../assets/logo2.jpg'
 import { Context } from '../../../Contexts/AuthProvider'
 import './styles.scss';
 
@@ -14,11 +15,10 @@ export default function Menu(){
     return (
         <ul className="horizontal-navbar">
             
-            
                        
 
             <Link to='/'> 
-                <img src={wordMark} alt="MangaReader" />        
+                <img src={logo} alt="MangaReader" />        
             </Link> 
 
             <Link to='/'>
