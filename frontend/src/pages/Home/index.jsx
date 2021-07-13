@@ -15,11 +15,13 @@ export default function Home(){
 
       
     const [mangas, setMangas] = useState([]);
+    const [update, setUpdate] = useState(false)
+    const [block, setBlock] = useState(0);
     //const [text, setText] = useState("")
     
     
 
-    const notInitialRender = useRef(false)
+    const feed = useRef()
     let config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -40,15 +42,14 @@ export default function Home(){
                     //setState({ feed: response.data });  
                     if(response.data !== null){
                         
-                       
-                       
+                      
                             
                         console.log(response.data.data)
                         
                        
                             
                            
-                        setMangas(response.data.data)
+                        setMangas([...mangas, ...response.data.data])
                                                   
                        
                         
@@ -70,7 +71,7 @@ export default function Home(){
         }        
         fetchData()     
             
-    }, []) // <-- empty dependency array
+    }, [update]) // <-- empty dependency array
 
     
     return(
@@ -84,19 +85,17 @@ export default function Home(){
                     <div className="header">
                         <h2>Lastest Update</h2>
                         <div className="next">
-                            <img src={arrowLeft}/>
+                            <img src={arrowLeft} onClick={() => setUpdate(!update)}/>
                         </div>
                         
                         
                     </div>
-                    
-                    <div className="box">
+                   
+                    <div className="box" ref={feed}>
                     {mangas.length !== 0 ? mangas.map((manga) => (
                         <>
                         <Manga data={manga}/>
-                        <Manga data={manga}/>
-                        <Manga data={manga}/>
-                        
+                       
                         
                         </>
                         
@@ -108,7 +107,7 @@ export default function Home(){
                         
                     )): <div>no manga to be shown</div>}
                     </div>
-                   
+                    
 
                 </div>
                

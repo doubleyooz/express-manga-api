@@ -10,11 +10,11 @@ export default function Activity(props){
     const { token, setToken, handleLogin } = useContext(Context)
     let history = useHistory();
     
-        
+    console.log("rendered")
     return (
       
         
-        <div className="manga-container">
+        <div className="manga-container" key={Math.random().toString()}>
             <img src={process.env.REACT_APP_SERVER + "/" + props.data.title + "/" + props.data.cover}
                     alt= {props.data.title}                   
                     onClick={() => history.push(`/manga/${props.data.title}`)}                     
