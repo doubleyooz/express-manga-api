@@ -221,6 +221,7 @@ const Reader = (props) =>{
                     < img src={process.env.REACT_APP_SERVER + manga_title + "/" + chapter.number + "/" + page.filename}
                       alt= {page.originalname}
                       style={index === currentPage ? {}  : {display: "none"}}
+                      key={page.filename}
                       onClick={() => nextPage()}                     
                     />
                 )): <div>no data</div>}
