@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Context } from '../../Contexts/AuthProvider'
 import Manga from '../../Components/Activity'
@@ -46,10 +47,14 @@ export default function Home(){
                             
                         console.log(response.data.data)
                         
-                       
-                            
+                        let temp = response.data.data.map(item => {
                            
-                        setMangas([...mangas, ...response.data.data])
+                            return {uid: uuidv4(), ...item}
+                        }) 
+
+                        console.log(temp)
+                           
+                        setMangas([...mangas, ...temp])
                                                   
                        
                         
@@ -93,11 +98,13 @@ export default function Home(){
                    
                     <div className="box" ref={feed}>
                     {mangas.length !== 0 ? mangas.map((manga) => (
-                        <>
-                        <Manga data={manga}/>
+                        
+        
+                        <div className="manga-container" key={manga.uid.toString()}>
+                            <Manga data={manga}  />
                        
                         
-                        </>
+                        </div>
                         
                        
                         

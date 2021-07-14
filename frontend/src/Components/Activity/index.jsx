@@ -5,16 +5,15 @@ import { Link, useHistory } from 'react-router-dom';
 import { Context } from '../../Contexts/AuthProvider'
 import './styles.scss';
 
-export default function Activity(props){    
+export default function Activity(props) {    
 
     const { token, setToken, handleLogin } = useContext(Context)
     let history = useHistory();
     
     console.log("rendered")
+    
     return (
-      
-        
-        <div className="manga-container" key={Math.random().toString()}>
+        <>
             <img src={process.env.REACT_APP_SERVER + "/" + props.data.title + "/" + props.data.cover}
                     alt= {props.data.title}                   
                     onClick={() => history.push(`/manga/${props.data.title}`)}                     
@@ -39,6 +38,7 @@ export default function Activity(props){
                         
                         <div 
                             className="manga-chapter"
+                            key={(props.data.uid + chapter.number).toString()}
                             onClick={() => 
                                 history.push(
                                     `/Manga/${props.data.title.replace(" ", "%20")}/${chapter.number}` 
@@ -64,7 +64,7 @@ export default function Activity(props){
                 28 seconds ago
             </div>
             
-        </div>
+        </> 
     )
        
            
