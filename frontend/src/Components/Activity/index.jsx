@@ -1,20 +1,19 @@
-import React, { useState, useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
-
-import { Context } from '../../Contexts/AuthProvider'
 import './styles.scss';
 
 export default function Activity(props) {    
 
-    const { token, setToken, handleLogin } = useContext(Context)
     let history = useHistory();
-    
+
     console.log("rendered")
     
+
     return (
         <>
-            <img src={process.env.REACT_APP_SERVER + "/" + props.data.title + "/" + props.data.cover}
+           <img src={process.env.REACT_APP_SERVER + "/" + props.data.title + "/" + props.data.cover}
                     alt= {props.data.title}                   
                     onClick={() => history.push(`/manga/${props.data.title}`)}                     
                 />
@@ -34,7 +33,7 @@ export default function Activity(props) {
 
                 <div className="chapters">
                     {props.data.chapters.length !== 0 ? props.data.chapters.map((chapter) => (
-                      
+                        
                         
                         <div 
                             className="manga-chapter"
@@ -47,11 +46,11 @@ export default function Activity(props) {
                         >
                         {chapter.number}
                         </div>
-                       
-                                              
+                        
+                                                
                         
                     )): <div>no manga to be shown</div>}
-                 
+                    
                 </div>
                 
                 <div className="scan">

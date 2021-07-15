@@ -14,8 +14,8 @@ import './styles.scss';
 export default function Home(){
     const { token, setToken, handleLogin } = useContext(Context)
 
-      
-    const [mangas, setMangas] = useState([]);
+    const mangas = useRef([])
+         
     const [update, setUpdate] = useState(false)
     const [block, setBlock] = useState(0);
     //const [text, setText] = useState("")
@@ -45,8 +45,6 @@ export default function Home(){
                         
                       
                             
-                        console.log(response.data.data)
-                        
                         let temp = response.data.data.map(item => {
                            
                             return {uid: uuidv4(), ...item}
@@ -54,8 +52,15 @@ export default function Home(){
 
                         console.log(temp)
                            
-                        setMangas([...mangas, ...temp])
-                                                  
+                        temp.forEach(element => {
+                            mangas.current.push(
+                                <div className="manga-container" key={element.uid}>
+                                    <Manga data={element} />
+                                </div>
+                            )
+                        });
+                        //setMangas([...mangas, ...temp])
+                        
                        
                         
                         console.log("list mangas well succeed")
@@ -97,22 +102,9 @@ export default function Home(){
                     </div>
                    
                     <div className="box" ref={feed}>
-                    {mangas.length !== 0 ? mangas.map((manga) => (
+                    {mangas.current.length !== 0 ? mangas.current 
                         
-        
-                        <div className="manga-container" key={manga.uid.toString()}>
-                            <Manga data={manga}  />
-                       
-                        
-                        </div>
-                        
-                       
-                        
-                        
-                       
-                                              
-                        
-                    )): <div>no manga to be shown</div>}
+                    : <div>no manga to be shown</div>}
                     </div>
                     
 
