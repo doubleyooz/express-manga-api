@@ -15,14 +15,14 @@ export default function Home(){
     const { token, setToken, handleLogin } = useContext(Context)
 
     const mangas = useRef([])
-         
+    
+    
     const [update, setUpdate] = useState(false)
+    const [fetch, setFetch] = useState(false)
     const [block, setBlock] = useState(0);
     //const [text, setText] = useState("")
     
     
-
-    const feed = useRef()
     let config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -59,9 +59,8 @@ export default function Home(){
                                 </div>
                             )
                         });
-                        //setMangas([...mangas, ...temp])
-                        
-                       
+
+                        setUpdate(!update)
                         
                         console.log("list mangas well succeed")
                        
@@ -81,7 +80,7 @@ export default function Home(){
         }        
         fetchData()     
             
-    }, [update]) // <-- empty dependency array
+    }, [fetch]) // <-- empty dependency array
 
     
     return(
@@ -95,16 +94,16 @@ export default function Home(){
                     <div className="header">
                         <h2>Lastest Update</h2>
                         <div className="next">
-                            <img src={arrowLeft} onClick={() => setUpdate(!update)}/>
+                            <img src={arrowLeft} onClick={() => setFetch(!fetch)}/>
                         </div>
                         
                         
                     </div>
                    
-                    <div className="box" ref={feed}>
-                    {mangas.current.length !== 0 ? mangas.current 
-                        
-                    : <div>no manga to be shown</div>}
+                    <div className="box">
+                        {mangas.current.length !== 0 ? mangas.current 
+                            
+                        : <div>no manga to be shown</div>}
                     </div>
                     
 
