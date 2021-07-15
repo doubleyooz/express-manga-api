@@ -21,11 +21,6 @@ export default function Menu(){
                 <img src={logo} alt="MangaReader" />        
             </Link> 
 
-            <Link to='/'>
-                <li className="nav-button">
-
-                </li>         
-            </Link> 
             <div className="menu">
                 <button className="profile" onClick={() => setShowOptions(!showOptions)}>
                     
