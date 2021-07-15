@@ -15,20 +15,23 @@ const Reader = (props) =>{
     
     const {manga_title, chapter_number} = useParams()
 
-    const [chapter, setChapter] = useState({ imgCollection: [] })
+    const chapter = useRef({ imgCollection: [] })
+    const pages = useRef([])
+    const notInitialRender = useRef(false)
+    
     const [manga, setManga] = useState({ chapters: []})
-
     const [currentPage, setCurrentPage] = useState(0)
     const [currentChapter, setCurrentChapter] = useState(chapter_number - 1)
     const [loading, setLoading] = useState(true)
     
+    const [vertical, setVertical] = useState(false)
 
     let config = {
         headers: {
             'Authorization': `Bearer ${token}`
           }
     }
-    const notInitialRender = useRef(false)
+   
     useEffect(()=>{
         async function usingProps(){
             console.log("using Props")            
@@ -42,10 +45,23 @@ const Reader = (props) =>{
             
             
             api.get(`chapter/index?chapter_id=${id}`, config)
-                    .then(chapter => {                    
-                        if(chapter.data !== null){
-                            setChapter(chapter.data.data)
-                            setCurrentChapter(chapter.data.data.number - 1)
+                    .then(c => {                    
+                        if(c.data !== null){
+                            chapter.current = c.data.data                            
+                            setCurrentChapter(c.data.data.number - 1)
+                            pages.current  = c.data.data.imgCollection.map(
+                                (page, index) => (
+                                    < img src={process.env.REACT_APP_SERVER + manga_title + "/" + (c.data.data.number) + "/" + page.filename}
+                                    alt= {page.originalname}
+                                    
+                                    key={page.filename}
+                                    onClick={() => nextPage()}                     
+                                    />
+                                )
+                            )
+                            
+                           
+                                       
                             console.log("list pages well succeed")
                         } else {
                             console.log("list pages failed")
@@ -137,19 +153,21 @@ const Reader = (props) =>{
         }             
     }
 
-    function nextPage(){           
-        if (currentPage === chapter.imgCollection.length - 1){
+    function nextPage(){       
+          
+        if (currentPage === chapter.current.imgCollection.length - 1){
             console.log("last page reached")
-        } else{            
+        } else{       
             setCurrentPage(currentPage+1)
 
         }               
     }
 
     function prevPage(){    
+        
         if(currentPage === 0){
             console.log("first page reached")
-        } else{           
+        } else{                       
             setCurrentPage(currentPage-1)
         }             
     }
@@ -186,6 +204,7 @@ const Reader = (props) =>{
                             <h2>{manga_title}</h2>
                         
                         </Link>
+                        {currentChapter}
                     </div>
 
                     <div className="controllers">
@@ -215,17 +234,14 @@ const Reader = (props) =>{
             </div>
 
 
-            <div className='board'>       
-                {chapter ? chapter.imgCollection.map((page, index) => (                   
-                    //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
-                    < img src={process.env.REACT_APP_SERVER + manga_title + "/" + chapter.number + "/" + page.filename}
-                      alt= {page.originalname}
-                      style={index === currentPage ? {}  : {display: "none"}}
-                      key={page.filename}
-                      onClick={() => nextPage()}                     
-                    />
-                )): <div>no data</div>}
-
+            <div className='board'>   
+            {
+                pages.current.length !== 0 ?
+                    vertical ? pages.current : pages.current[currentPage]
+                : <div>no page to be shown</div>
+                 
+            }    
+              
             </div>
 
 
