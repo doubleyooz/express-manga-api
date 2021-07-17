@@ -36,5 +36,21 @@
             width: 80%;
         }
     }
+
+    .footer-board{
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+
+
+        .controllers{
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-direction: row;
+        }
+    }
+
 }
 

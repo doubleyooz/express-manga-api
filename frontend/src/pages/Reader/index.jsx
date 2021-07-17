@@ -194,7 +194,7 @@ const Reader = (props) =>{
         <div className="reader">
             <div className="header-board">
 
-                    <div className="title" onClick={() =>  history.push(`/Manga/${manga_title.replace(" ", "%20")}`)}>
+                    <div className="title" onClick={() => history.push(`/Manga/${manga_title.replace(" ", "%20")}`)}>
                         <h2>{manga_title}</h2>                        
                         
                     </div>
@@ -204,24 +204,23 @@ const Reader = (props) =>{
                         <button className='button' onClick= {() => prevChapter()}>◄◄</button>
                         <div className="chapters"> Chapter #0{chapter_number} </div>
                         <button className='button'onClick= {() => nextChapter()}>►►</button>
-                                           
+                        <button className='button' onClick= {() => setVertical(!vertical)}>toogle view</button>             
                                            
                     </div>
-                    <div className="controllers">
-                        <button className='button' onClick= {() => prevPage()}>prev</button>
-                        <div className="pages-list"></div>
-                        <div className="version"></div>
-                        <div className="viewToggle"></div>
-                        <button className='button' onClick={() => nextPage()}>next</button>
                    
-                   
-                    </div>
             </div>
 
 
             <div className='board'>   
             {
-                chapter.current ? chapter.current.imgCollection.map((page, index) => (                   
+                chapter.current ? vertical ? chapter.current.imgCollection.map((page, index) => (                   
+                    //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
+                    <img src={process.env.REACT_APP_SERVER + manga_title + "/" + (chapter.current.number) + "/" + page.filename}
+                        key={page.filename + index}
+                        alt= {page.originalname}
+                                            
+                    />
+                )): chapter.current.imgCollection.map((page, index) => (                   
                     //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
                     <img src={process.env.REACT_APP_SERVER + manga_title + "/" + (chapter.current.number) + "/" + page.filename}
                         key={page.filename + index}
@@ -229,14 +228,27 @@ const Reader = (props) =>{
                         style={index === currentPage ? {}  : {display: "none"}}
                         onClick={() => nextPage()}                     
                     />
-                )): <div>no data</div>
+                )):<div>no data</div>
 
                  
             }    
               
             </div>
-
-
+            <div className="footer-board" style={!vertical ? {}  : {display: "none"}}>
+               
+                <div className="controllers">
+                    <button className='button' onClick= {() => prevPage()}>prev</button>
+                    <div className="pages-list"></div>
+                    <div className="version"></div>
+                    <div className="viewToggle"></div>
+                    <button className='button' onClick={() => nextPage()}>next</button>
+                
+                
+                </div>
+                 
+                
+            </div>
+          
         </div>
       
         
