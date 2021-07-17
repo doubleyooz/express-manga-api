@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef} from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import './styles.scss';
 
 
@@ -12,11 +12,13 @@ require('dotenv').config()
 const Reader = (props) =>{
    
     const { token, handleLogin } = useContext(Context)
+
+    const history = useHistory();
     
     const {manga_title, chapter_number} = useParams()
 
     const chapter = useRef({ imgCollection: [] })
-    const pages = useRef([])
+    
     const notInitialRender = useRef(false)
     
     const [manga, setManga] = useState({ chapters: []})
@@ -49,16 +51,7 @@ const Reader = (props) =>{
                         if(c.data !== null){
                             chapter.current = c.data.data                            
                             setCurrentChapter(c.data.data.number - 1)
-                            pages.current  = c.data.data.imgCollection.map(
-                                (page, index) => (
-                                    < img src={process.env.REACT_APP_SERVER + manga_title + "/" + (c.data.data.number) + "/" + page.filename}
-                                    alt= {page.originalname}
-                                    
-                                    key={page.filename}
-                                    onClick={() => nextPage()}                     
-                                    />
-                                )
-                            )
+                            
                             
                            
                                        
@@ -118,6 +111,7 @@ const Reader = (props) =>{
     function nextChapter(){
         let f1 = function(){
             console.log(currentChapter)
+            history.push(`/Manga/${manga_title}/${currentChapter+1 >= manga.chapters.length ? manga.chapters.length : currentChapter + 2}`)
             notInitialRender.current = true
             setCurrentChapter(currentChapter+1)
             setCurrentPage(0)  
@@ -138,6 +132,7 @@ const Reader = (props) =>{
         
         let f1 = function(){
             console.log(currentChapter)
+            history.push(`/Manga/${manga_title}/${currentChapter-1 <= 0 ? 1 : currentChapter}`)
             notInitialRender.current = true
             setCurrentChapter(currentChapter-1)
             setCurrentPage(0)
@@ -199,28 +194,18 @@ const Reader = (props) =>{
         <div className="reader">
             <div className="header-board">
 
-                    <div className="title">
-                        <Link to={{ pathname: `/Manga/${manga_title.replace(" ", "%20")}`}}>                    
-                            <h2>{manga_title}</h2>
+                    <div className="title" onClick={() =>  history.push(`/Manga/${manga_title.replace(" ", "%20")}`)}>
+                        <h2>{manga_title}</h2>                        
                         
-                        </Link>
-                        {currentChapter}
                     </div>
 
                     <div className="controllers">
-                        <Link to={{ pathname: `/Manga/${manga_title}/${currentChapter-1 <= 0 ? 1 : currentChapter}`}}>                    
-                            <button className='button' onClick= {() => prevChapter()}>◄◄</button>
-                        
-                        </Link>
-                        
+                                         
+                        <button className='button' onClick= {() => prevChapter()}>◄◄</button>
                         <div className="chapters"> Chapter #0{chapter_number} </div>
-                        <Link to={{ pathname: `/Manga/${manga_title}/${currentChapter+1 >= manga.chapters.length ? manga.chapters.length : currentChapter + 2}`}}>                    
-                            <button className='button'onClick= {() => nextChapter()}>►►</button>
-                        
-                        </Link>
-                        
-                   
-                   
+                        <button className='button'onClick= {() => nextChapter()}>►►</button>
+                                           
+                                           
                     </div>
                     <div className="controllers">
                         <button className='button' onClick= {() => prevPage()}>prev</button>
@@ -236,9 +221,16 @@ const Reader = (props) =>{
 
             <div className='board'>   
             {
-                pages.current.length !== 0 ?
-                    vertical ? pages.current : pages.current[currentPage]
-                : <div>no page to be shown</div>
+                chapter.current ? chapter.current.imgCollection.map((page, index) => (                   
+                    //<img src= {`http://localhost:3333/files/${post.image}`} alt= "post"/>
+                    <img src={process.env.REACT_APP_SERVER + manga_title + "/" + (chapter.current.number) + "/" + page.filename}
+                        key={page.filename + index}
+                        alt= {page.originalname}
+                        style={index === currentPage ? {}  : {display: "none"}}
+                        onClick={() => nextPage()}                     
+                    />
+                )): <div>no data</div>
+
                  
             }    
               
