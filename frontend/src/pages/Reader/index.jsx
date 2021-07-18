@@ -211,17 +211,21 @@ const Reader = (props) =>{
                            
                         </div>
                     </div>
-                    <div className="right" style={!vertical ? {}  : {display: "none"}}>
-                
-                        <div className="controllers">
-                            <button className='button' onClick= {() => prevPage()}>◄</button>
-                            <div className="pages-list">Page {currentPage}</div>
-                            <div className="version"></div>
-                            <div className="viewToggle"></div>
-                            <button className='button' onClick={() => nextPage()}>►</button>
+                    <div className="right" >
+                        {
+                            !vertical ? 
+                                <div className="controllers">
+                                    <button className='button' onClick= {() => prevPage()}>◄</button>
+                                    <div className="pages-list">Page {currentPage}</div>
+                                    <div className="version"></div>
+                                    <div className="viewToggle"></div>
+                                    <button className='button' onClick={() => nextPage()}>►</button>
                         
                         
-                        </div>
+                                </div>
+                            : <div className="controllers" style={{width: "10%", minWidth: "80px"}}> </div>
+                        }
+                     
                     
                
                     </div>
