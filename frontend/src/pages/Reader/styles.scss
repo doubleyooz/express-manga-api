@@ -72,12 +72,47 @@
         height: 100%;
 
         img{            
-            height: 50%;
-            width: 50%;
+            height: 60%;
+            width: 60%;
 
             min-width: 320px;
             min-height: 200px;
             cursor: pointer;
+        }
+    }
+    .footer-reader{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        padding: 0px 40px 0px 40px;
+
+        .comments{
+
+        }
+
+        .rate{
+            display: flex;
+            flex-direction: row-reverse;
+
+            input{
+                visibility: hidden;
+                width: 0;
+               
+            }
+
+            > input:checked ~ label{
+                color: #ffc700;
+            }
+            label{
+                cursor: pointer;
+                color: #c2bdc1;  
+               
+                &:hover{
+                    color: #c59b08;
+                }
+               
+            }
         }
     }
 
