@@ -193,20 +193,39 @@ const Reader = (props) =>{
     return <>   
         <div className="reader">
             <div className="header-board">
+                    <div className="left">
+                        <div className='button' onClick= {() => setVertical(!vertical)}>{vertical ? <span>horizontal</span> : <span>vertical</span> }</div>             
+                                            
+                    </div>
+                    <div className="center">
+                        <div className="title" onClick={() => history.push(`/Manga/${manga_title.replace(" ", "%20")}`)}>
+                            <h2>{manga_title}</h2>                        
+                            
+                        </div>
 
-                    <div className="title" onClick={() => history.push(`/Manga/${manga_title.replace(" ", "%20")}`)}>
-                        <h2>{manga_title}</h2>                        
+                        <div className="controllers">
+                                            
+                            <button className='button' onClick= {() => prevChapter()}>◄◄</button>
+                            <div className="chapters"> Chapter #0{chapter_number} </div>
+                            <button className='button'onClick= {() => nextChapter()}>►►</button>
+                           
+                        </div>
+                    </div>
+                    <div className="right" style={!vertical ? {}  : {display: "none"}}>
+                
+                        <div className="controllers">
+                            <button className='button' onClick= {() => prevPage()}>◄</button>
+                            <div className="pages-list">Page {currentPage}</div>
+                            <div className="version"></div>
+                            <div className="viewToggle"></div>
+                            <button className='button' onClick={() => nextPage()}>►</button>
                         
+                        
+                        </div>
+                    
+               
                     </div>
-
-                    <div className="controllers">
-                                         
-                        <button className='button' onClick= {() => prevChapter()}>◄◄</button>
-                        <div className="chapters"> Chapter #0{chapter_number} </div>
-                        <button className='button'onClick= {() => nextChapter()}>►►</button>
-                        <button className='button' onClick= {() => setVertical(!vertical)}>toogle view</button>             
-                                           
-                    </div>
+                   
                    
             </div>
 
@@ -234,20 +253,7 @@ const Reader = (props) =>{
             }    
               
             </div>
-            <div className="footer-board" style={!vertical ? {}  : {display: "none"}}>
-               
-                <div className="controllers">
-                    <button className='button' onClick= {() => prevPage()}>prev</button>
-                    <div className="pages-list"></div>
-                    <div className="version"></div>
-                    <div className="viewToggle"></div>
-                    <button className='button' onClick={() => nextPage()}>next</button>
-                
-                
-                </div>
-                 
-                
-            </div>
+          
           
         </div>
       
