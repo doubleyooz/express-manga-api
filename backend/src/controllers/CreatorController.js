@@ -14,7 +14,7 @@ const User = require('../models/user');
 
 module.exports = {
     async store(req, res){ 
-        const {type, name, birthDate, socialMedia, deathDate } = req.body;
+        const {type, name, birthDate, socialMedia, deathDate, biography } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
         
@@ -85,16 +85,6 @@ module.exports = {
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
-        let role;
-
-        if (req.role){
-            role = CryptoJs.AES.decrypt(req.role, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))            
-            req.role = null
-        }else{
-            role = 0;
-        }
-
-
         if (creator){        
            const creator = await Creator.findById(creator_id).exec();
            return res.jsonOK(creator, getMessage("creator.index.success"), new_token)
@@ -108,78 +98,31 @@ module.exports = {
     },
 
     async list(req, res){
-        const { type, name, title, recent } = req.query;
+        const { type, name } = req.query;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
-        let role;
-
-        if (req.role){
-            role = CryptoJs.AES.decrypt(req.role, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))            
-            req.role = null
-        }else{
-            role = 0;
-        }
+       
 
         let docs = [];
 
-        if (genre){
-            (await Manga.find({genre: genre}).sort('updatedAt').select(list_projection[role])).forEach(function (doc){
-                docs.push(doc)
-            });
-        }
-
-        else if(scan){
-            (await User.find({name: scan, role: "Scan"}).select(list_projection[role])).forEach(function (result){
-                Manga.find({scan_id: result._id}).sort('updatedAt').then(doc => {   
+        if (type){
+            if(name){
+                (await Creator.find({name: name, type: type}).sort('updatedAt')).forEach(function (doc){
                     docs.push(doc)
                 });
-            })
-            
-        }
-
-        else if (title){
-            (await Manga.find( {title: {$regex: title, $options: "i"} } ).sort('updatedAt').select(list_projection[role])).forEach(function (doc){
+            } else{
+                (await Creator.find({type: type}).sort('updatedAt')).forEach(function (doc){
+                    docs.push(doc)
+                });
+            }
+           
+        } else if (name){
+            (await Creator.find({name: name}).sort('updatedAt')).forEach(function (doc){
                 docs.push(doc)
             });
-        }
-
-        else if (recent){
-            
-            const mangas = await Manga.find().sort('updatedAt').select({cover: 1, title: 1, updatedAt: 1})
-                     
-            for (let index = 0; index < mangas.length; index++) {
-                let temp = {
-                   
-                    _id: mangas[index]._id,
-                    cover: mangas[index].cover,
-                    title: mangas[index].title,
-                    updatedAt: mangas[index].updatedAt,
-                    chapters: [],
-                    
-                }
-
-            
-                
-                const chapters = await Chapter.find({manga_id: mangas[index]._id}).sort('updatedAt').select({number: 1, _id: 0})
-                
-                if(chapters.length !== 0){
-                    
-                    chapters.forEach(function (chap){                               
-                        temp.chapters.push({number: chap.number})
-                        
-                    }) 
-                    
-                    docs.push(temp)
-                    
-                }
-                
-            }
-            
-            console.log(docs) 
-                    
         } else{
-            (await Manga.find().sort('updatedAt').select(list_projection[role])).forEach(function (doc){
+            (await Creator.find().sort('updatedAt')).forEach(function (doc){
                 docs.push(doc)
             });
         }  
@@ -187,13 +130,10 @@ module.exports = {
         
                
         if (docs.length === 0){
-            return res.jsonNotFound(docs, getMessage("manga.list.empty"), new_token)
+            return res.jsonNotFound(docs, getMessage("creator.list.empty"), new_token)
         } else{
-            docs.forEach(function(doc){
-                doc.user = undefined
-    
-            });
-            return res.jsonOK(docs, getMessage("manga.list.success") + docs.length, new_token)
+           
+            return res.jsonOK(docs, getMessage("creator.list.success") + docs.length, new_token)
         }
                         
     },
