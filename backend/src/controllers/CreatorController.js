@@ -7,6 +7,7 @@ const { getMessage } = require("../common/messages")
 const Chapter = require('../models/Chapter');
 const Creator = require('../models/Creator');
 const User = require('../models/user');
+const Manga = require('../models/Manga');
 
 
 
@@ -192,74 +193,67 @@ module.exports = {
     },
 
     async delete(req, res){
-        const { manga_id } = req.query;            
-        const manga = await Manga.findById(manga_id);
+        const { creator_id } = req.query;            
+        const creator = await Creator.findById(creator_id);
 
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
         
       
-        const scan_id =  CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
-        req.auth = null
 
-        if(manga){           
-            if(manga.scan_id.toString() === scan_id){              
-                const mangas = await Manga.deleteMany({ _id: manga_id });        
-                //console.log(mangas)
-                if (mangas.n === 0)
-                    return res.jsonNotFound(mangas, getMessage("manga.notfound"), new_token);
-                                  
-                const scan = await User.findById(scan_id);
+        if(creator){           
+                        
+         
+            Creator.deleteOne({ _id: creator_id }).then(answer => {
+                let mangas = []
+                creator.works.forEach(manga_id => {
+                    Manga.findById(manga_id).then(manga => {
+                        manga[creator.type] =  manga[creator.type].filter(function (crt_id){
+                        
+                            return crt_id.toString() !== creator_id.toString()
+                              
+                        });
+                        manga.save().then(answer => {  
+                            let dir = 'uploads/' + "creators/" + creator.type + "/" + creator.name + "/" 
 
-
-                scan.mangas = scan.mangas.filter(function (_id){ return _id.toString() !== manga_id.toString() })
-                
-                scan.save(function(err) {
-                    // yet another err object to deal with
-                    if (err) {
-                      return res.jsonServerError(null, null, err)
-                    }
-                                      
-                });
-                
-
-                /*(await Chapter.find({manga_id: manga_id})).forEach(function (doc){
-                    doc.imgCollection.forEach(function (page){                            
-                        fs.unlinkSync('uploads/' + manga.title + "/"+ page.filename)  
-                    })                      
-                });
-                */
-                const chapters = await Chapter.deleteMany({ manga_id: manga_id})
-                
-                
-                let dir = 'uploads/' + manga.title
-
-                
-                fs.rmdir(dir, { recursive: true }, (err) => {
-                    if(err){
-                        console.log(err)
-                    }
-                                    
-                    
-                });
-
-                fs.rmdirSync(dir, {recursive: true})
-                
-              
-                return res.jsonOK(
-                        {"mangas affected": mangas.deletedCount, "chapters affected": chapters.deletedCount},
-                            null,
-                            new_token
-                                            
-                );
-                
-            } 
-
-            return res.jsonUnauthorized(null, null, null)
+                            creator.photos.forEach((file) => {
+                                let file = req.files[i];   
+                                fs.unlinkSync(dir + file.filename)    
+                            
+                            });
             
-        } 
+                            fs.rmdir(dir, { recursive: true }, (err) => {
+                                if(err){
+                                    console.log(err)
+                                }
+                                                
+                                
+                            });
+                
+                            fs.rmdirSync(dir, {recursive: true})
 
-        return res.jsonBadRequest(null, getMessage("manga.notfound"), new_token)
+                            mangas.push({'creator-deleted': manga_id})
+                            
+                        }).catch(err => {
+                            mangas.push({'creator-not-deleted': manga_id})
+                        })
+
+                    }).catch(err =>{
+                        mangas.push({'manga-not-found': manga_id})
+                    })
+                })
+                return res.jsonOK({ removed: true, mangas: mangas }, getMessage("creator.delete.success"), new_token)
+
+            }).catch(err=>{
+                return res.jsonBadRequest(null, getMessage("creator.notfound"), new_token)
+            })
+                         
+            
+        } else {
+            return res.jsonServerError(null, null, new_token)
+        }
+
+       
     
         
     }
