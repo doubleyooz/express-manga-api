@@ -81,7 +81,7 @@ module.exports = {
     },
 
     async index(req, res){
-        const { title, creator_id } = req.query;
+        const { creator_id } = req.query;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
@@ -95,16 +95,10 @@ module.exports = {
         }
 
 
-        if (manga_id){        
-           const manga = await Manga.findById(manga_id).select(index_projection[role]).exec();
-           return res.jsonOK(manga, getMessage("manga.index.success"), new_token)
-        } 
-
-        else if (title){
-            const manga = await Manga.find( {title: {$regex: title, $options: "i"} } ).select(index_projection[role]).exec();
-            return res.jsonOK(manga, getMessage("manga.index.success"), new_token)
-            
-        }
+        if (creator){        
+           const creator = await Creator.findById(creator_id).exec();
+           return res.jsonOK(creator, getMessage("creator.index.success"), new_token)
+        }      
 
         else{            
             return res.jsonBadRequest(null,null, null)
@@ -114,7 +108,7 @@ module.exports = {
     },
 
     async list(req, res){
-        const { genre, scan, title, recent } = req.query;
+        const { type, name, title, recent } = req.query;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
