@@ -139,60 +139,53 @@ module.exports = {
     },
 
     async update(req, res){
-        const { title, genre, synopsis, n_chapters, status, language, manga_id, nsfw } = req.body;
+        const { type, name, birthDate, socialMedia, deathDate, biography, creator_id } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
 
-        if(!manga_id){           
-            return res.jsonBadRequest(null, getMessage("manga.error.manga_id"), null)
+        if(!creator_id){           
+            return res.jsonBadRequest(null, getMessage("creator.error.creator_id"), null)
         
         } else{
-            const manga = await Manga.findById(manga_id);
+            const creator = await Creator.findById(creator_id);
 
-            if(manga){
-                if(manga.scan_id.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
-                    
-                    if(title){
-                        manga.title = title;
-                    }
-                    if(genre){
-                        manga.genre = genre;
-                    }
-                    if(synopsis){
-                        manga.synopsis = synopsis;
-                    }
-                    if(n_chapters){
-                        manga.n_chapters = n_chapters;
-                    }                   
-                    
-                    if(status){
-                        manga.status = status;
-                    }
-
-                    if(nsfw){
-                        manga.nsfw = nsfw;
-                    }
-                    if(language){
-                        manga.language = language;
-                    }
-
-                    manga.updatedAt = Date.now()
-                    let changes = manga.getChanges()
-                    manga.save().then(answer => {  
-                        return res.jsonOK(changes, getMessage("manga.update.success"), new_token)
-
-                    }).catch(err => {
-                        return res.jsonServerError(null, null, err)
-                    })
-                   
-                  
-            
-                } else{
-                    return res.jsonUnauthorized(null, null, null);
+            if(creator){
+                
+                if(type){
+                    creator.type = type;
                 }
+                else if(birthDate){
+                    creator.birthDate = birthDate;
+                }
+                else if(name){
+                    creator.name = name;
+                }
+                else if(deathDate){
+                    creator.deathDate = deathDate;
+                }                   
+                
+                else if(biography){
+                    creator.biography = biography;
+                }
+
+                else if(socialMedia){
+                    creator.socialMedia = socialMedia;
+                }
+               
+
+                creator.updatedAt = Date.now()
+                let changes = creator.getChanges()
+                creator.save().then(answer => {  
+                    return res.jsonOK(changes, getMessage("creator.update.success"), new_token)
+
+                }).catch(err => {
+                    return res.jsonServerError(null, null, err)
+                })
+                
+                        
     
             } else{
-                return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)
+                return res.jsonNotFound(null, getMessage("creator.notfound"), new_token)
                
             }                       
         }     
