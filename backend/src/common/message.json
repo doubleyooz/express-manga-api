@@ -18,6 +18,17 @@
     "chapter.delete.error": "The chapter pages could not be found",
     "chapter.notfound": "The Chapter could not be found.",
 
+    "creator.error.duplicate": "This creator already exists or the number is unavaliable.",
+    "creator.invalid.id": "You need to provide a valid IdObject to continue this operation.",    
+    "creator.upload.success": "Upload Done!",
+    "creator.update.success": "Update Done!",
+    "creator.index.success": "creator retrieved successfully!",
+    "creator.list.success": "creator list retrieved successfully!",
+    "creator.list.empty": "No creators matched",
+    "creator.delete.success": "creator deleted.",
+    "creator.delete.error": "The creator pages could not be found",
+    "creator.notfound": "The creator could not be found.",
+
     "manga.error.duplicate": "This manga already exists or the title is unavaliable.",
     "manga.error.manga_id": "manga_id undefined.",
     "manga.error.scan_id": "Scan_id must be a valid id.",

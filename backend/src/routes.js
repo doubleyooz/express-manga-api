@@ -1,8 +1,7 @@
 const express = require('express');
-const multer = require('multer');
-const multerConfig = require('./config/multer')
 
 const UserController = require("./controllers/UserController");
+const CreatorController = require("./controllers/CreatorController");
 const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
 const AuthController = require('./controllers/AuthController');
@@ -61,6 +60,8 @@ routes.get('/chapter/list', getRole(), ChapterMiddleware.valid_chapter_list, Cha
 routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
+
+routes.post('/creator/post', Authorize("Scan"), UploadMiddleware.upload_many_2, CreatorController.store);
 
 
 /*

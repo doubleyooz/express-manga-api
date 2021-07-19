@@ -4,6 +4,8 @@ const multerConfig = require('../config/multer')
 
 const upload1 = multer(multerConfig.file).single('cover')
 const upload2 = multer(multerConfig.files).array('imgCollection')
+const upload2 = multer(multerConfig.creatorFiles).array('imgCollection')
+
 
 module.exports = {
     
@@ -26,6 +28,23 @@ module.exports = {
 
     upload_many(req, res, next){        
         upload2(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                // A Multer error occurred when uploading.                
+                return res.jsonBadRequest(null, null, err)
+                
+            } else if (err) {
+                // An unknown error occurred when uploading.                 
+                return res.jsonBadRequest(null, null, err)
+                
+            } 
+            // Everything went fine.
+            next()
+            
+        })
+    },
+
+    upload_many_2(req, res, next){        
+        upload3(req, res, function (err) {
             if (err instanceof multer.MulterError) {
                 // A Multer error occurred when uploading.                
                 return res.jsonBadRequest(null, null, err)
