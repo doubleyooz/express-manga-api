@@ -1,7 +1,7 @@
 const express = require('express');
 
 const UserController = require("./controllers/UserController");
-const CreatorController = require("./controllers/CreatorController");
+const AuthorController = require("./controllers/AuthorController");
 const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
 const AuthController = require('./controllers/AuthController');
@@ -61,8 +61,11 @@ routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, C
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
 
-routes.post('/creator/post', Authorize("Scan"), UploadMiddleware.upload_many_2, CreatorController.store);
-
+routes.post('/author/post', Authorize("Scan"), UploadMiddleware.upload_many_2, AuthorController.store);
+routes.put('/author/update', Authorize("Scan"), AuthorController.update);
+routes.get('/author/list', AuthorController.list);
+routes.get('/author/index', AuthorController.index);
+routes.delete('/author/delete', Authorize("Scan"), AuthorController.delete);
 
 /*
 routes.post('/sessions', function(req, res){

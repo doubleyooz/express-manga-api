@@ -105,7 +105,7 @@ const index_projection = {
 
 module.exports = {
     async store(req, res){ 
-        const {title, genre, synopsis, writer, artist, n_chapters, status, language, nsfw} = req.body;
+        const {title, genre, synopsis, writer_id, artist_id, n_chapters, status, language, nsfw} = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
         
@@ -122,8 +122,6 @@ module.exports = {
             return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
         }       
          
-        
-        const author = (await Author.findOne({name: writer}).exec())
         
 
         const scan = await User.findById(scan_id);
@@ -145,7 +143,9 @@ module.exports = {
             status: status,                  
             language: language,
             nsfw: nsfw,               
-            scan_id: scan_id
+            scan_id: scan_id,
+            writer_id: writer_id,
+            artist_id: artist_id
             //comments?
 
         });
@@ -206,7 +206,7 @@ module.exports = {
     },
 
     async list(req, res){
-        const { genre, scan, title, recent } = req.query;
+        const { genre, scan, title, writer_id, artist_id, recent } = req.query;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
@@ -234,6 +234,17 @@ module.exports = {
                 });
             })
             
+        }
+        else if(writer_id){
+            (await Manga.find( {writer_id: writer_id } ).sort('updatedAt').select(list_projection[role])).forEach(function (doc){
+                docs.push(doc)
+            });
+        }
+
+        else if(artist_id){
+            (await Manga.find( {artist_id: artist_id } ).sort('updatedAt').select(list_projection[role])).forEach(function (doc){
+                docs.push(doc)
+            });
         }
 
         else if (title){
@@ -297,7 +308,7 @@ module.exports = {
     },
 
     async update(req, res){
-        const { title, genre, synopsis, n_chapters, status, language, manga_id, nsfw } = req.body;
+        const { title, genre, synopsis, n_chapters, status, language, writer_id, artist_id, manga_id, nsfw } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
 
@@ -332,6 +343,16 @@ module.exports = {
                     }
                     if(language){
                         manga.language = language;
+                    }
+
+                    if(writer_id){
+                        manga.writer_id = writer_id;
+                        //update writer document
+                    }
+
+                    if(artist_id){
+                        manga.artist_id = artist_id;
+                        //update artist document
                     }
 
                     manga.updatedAt = Date.now()
@@ -371,6 +392,8 @@ module.exports = {
             if(manga.scan_id.toString() === scan_id){              
                 const mangas = await Manga.deleteMany({ _id: manga_id });        
                 //console.log(mangas)
+
+                // update writer and artist documents
                 if (mangas.n === 0)
                     return res.jsonNotFound(mangas, getMessage("manga.notfound"), new_token);
                                   

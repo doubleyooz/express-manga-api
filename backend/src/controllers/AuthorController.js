@@ -216,8 +216,7 @@ module.exports = {
                         manga.save().then(answer => {  
                             let dir = 'uploads/' + "authors/" + author.type + "/" + author.name + "/" 
 
-                            author.photos.forEach((file) => {
-                                let file = req.files[i];   
+                            author.photos.forEach((file) => {                               
                                 fs.unlinkSync(dir + file.filename)    
                             
                             });
