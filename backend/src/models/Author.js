@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
-const CreatorSchema = new mongoose.Schema({
+const AuthorSchema = new mongoose.Schema({
     type: {
         type: String,
-        default: "Author"
+        default: "Writer"
     },
 
     photos:[{
         type: String,
-        default: "Author"
+        default: "Writer"
     }],
 
     name: { 

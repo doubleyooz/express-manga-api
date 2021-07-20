@@ -7,7 +7,7 @@ const { getMessage } = require("../common/messages")
 const Chapter = require('../models/Chapter');
 const Manga = require('../models/Manga');
 const User = require('../models/user');
-
+const Author = require('../models/Author');
 
 
 const list_projection = {
@@ -105,7 +105,7 @@ const index_projection = {
 
 module.exports = {
     async store(req, res){ 
-        const {title, genre, synopsis, n_chapters, status, language, nsfw} = req.body;
+        const {title, genre, synopsis, writer, artist, n_chapters, status, language, nsfw} = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
         
@@ -122,9 +122,10 @@ module.exports = {
             return res.jsonBadRequest(null, getMessage("manga.error.duplicate"), new_token)
         }       
          
-            
-            
-              
+        
+        const author = (await Author.findOne({name: writer}).exec())
+        
+
         const scan = await User.findById(scan_id);
 
         if(!scan){
@@ -133,6 +134,7 @@ module.exports = {
             
         }
 
+        
         
         const manga = new Manga({
             cover: req.file.filename,

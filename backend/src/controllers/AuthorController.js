@@ -5,7 +5,7 @@ const { getMessage } = require("../common/messages")
 
 
 const Chapter = require('../models/Chapter');
-const Creator = require('../models/Creator');
+const Author = require('../models/Author');
 const User = require('../models/user');
 const Manga = require('../models/Manga');
 
@@ -19,19 +19,19 @@ module.exports = {
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
         
-        const doesCreatorExist = await Creator.exists({ name: name, type: type });         
+        const doesAuthorExist = await Author.exists({ name: name, type: type });         
         
         
         req.auth = null
     
-        if(doesCreatorExist){
+        if(doesAuthorExist){
             Object.keys(req.files).forEach((i) => {
                 let file = req.files[i];   
-                fs.unlinkSync('uploads/' + "creators/" + type + "/" + name + "/" + file.filename)    
+                fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
                
             });
                           
-            return res.jsonBadRequest(null, getMessage("creator.error.duplicate"), new_token)
+            return res.jsonBadRequest(null, getMessage("author.error.duplicate"), new_token)
         }       
         let jsonString = [];         
                                             
@@ -49,7 +49,7 @@ module.exports = {
             
         });
 
-        const creator = new Creator({
+        const author = new author({
             photos: [],
             type: type,
             name: name,
@@ -60,11 +60,11 @@ module.exports = {
             //comments?
 
         });
-        creator.photos = jsonString
+        author.photos = jsonString
                 
-        creator.save().then(result => {   
+        author.save().then(result => {   
         
-            return res.jsonOK(result, getMessage("creator.save.success"), new_token)
+            return res.jsonOK(result, getMessage("author.save.success"), new_token)
         
                               
                         
@@ -72,7 +72,7 @@ module.exports = {
             console.log(err)
             Object.keys(req.files).forEach((i) => {
                 let file = req.files[i];   
-                fs.unlinkSync('uploads/' + "creators/" + type + "/" + name + "/" + file.filename)    
+                fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
                
             });
             return res.jsonServerError(null, null, err)
@@ -82,13 +82,13 @@ module.exports = {
     },
 
     async index(req, res){
-        const { creator_id } = req.query;
+        const { author_id } = req.query;
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
-        if (creator){        
-           const creator = await Creator.findById(creator_id).exec();
-           return res.jsonOK(creator, getMessage("creator.index.success"), new_token)
+        if (author){        
+           const author = await Author.findById(author_id).exec();
+           return res.jsonOK(author, getMessage("author.index.success"), new_token)
         }      
 
         else{            
@@ -109,21 +109,21 @@ module.exports = {
 
         if (type){
             if(name){
-                (await Creator.find({name: name, type: type}).sort('updatedAt')).forEach(function (doc){
+                (await Author.find({name: name, type: type}).sort('updatedAt')).forEach(function (doc){
                     docs.push(doc)
                 });
             } else{
-                (await Creator.find({type: type}).sort('updatedAt')).forEach(function (doc){
+                (await Author.find({type: type}).sort('updatedAt')).forEach(function (doc){
                     docs.push(doc)
                 });
             }
            
         } else if (name){
-            (await Creator.find({name: name}).sort('updatedAt')).forEach(function (doc){
+            (await Author.find({name: name}).sort('updatedAt')).forEach(function (doc){
                 docs.push(doc)
             });
         } else{
-            (await Creator.find().sort('updatedAt')).forEach(function (doc){
+            (await Author.find().sort('updatedAt')).forEach(function (doc){
                 docs.push(doc)
             });
         }  
@@ -131,53 +131,53 @@ module.exports = {
         
                
         if (docs.length === 0){
-            return res.jsonNotFound(docs, getMessage("creator.list.empty"), new_token)
+            return res.jsonNotFound(docs, getMessage("author.list.empty"), new_token)
         } else{
            
-            return res.jsonOK(docs, getMessage("creator.list.success") + docs.length, new_token)
+            return res.jsonOK(docs, getMessage("author.list.success") + docs.length, new_token)
         }
                         
     },
 
     async update(req, res){
-        const { type, name, birthDate, socialMedia, deathDate, biography, creator_id } = req.body;
+        const { type, name, birthDate, socialMedia, deathDate, biography, author_id } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
 
-        if(!creator_id){           
-            return res.jsonBadRequest(null, getMessage("creator.error.creator_id"), null)
+        if(!author_id){           
+            return res.jsonBadRequest(null, getMessage("author.error.author_id"), null)
         
         } else{
-            const creator = await Creator.findById(creator_id);
+            const author = await Author.findById(author_id);
 
-            if(creator){
+            if(author){
                 
                 if(type){
-                    creator.type = type;
+                    author.type = type;
                 }
                 else if(birthDate){
-                    creator.birthDate = birthDate;
+                    author.birthDate = birthDate;
                 }
                 else if(name){
-                    creator.name = name;
+                    author.name = name;
                 }
                 else if(deathDate){
-                    creator.deathDate = deathDate;
+                    author.deathDate = deathDate;
                 }                   
                 
                 else if(biography){
-                    creator.biography = biography;
+                    author.biography = biography;
                 }
 
                 else if(socialMedia){
-                    creator.socialMedia = socialMedia;
+                    author.socialMedia = socialMedia;
                 }
                
 
-                creator.updatedAt = Date.now()
-                let changes = creator.getChanges()
-                creator.save().then(answer => {  
-                    return res.jsonOK(changes, getMessage("creator.update.success"), new_token)
+                author.updatedAt = Date.now()
+                let changes = author.getChanges()
+                author.save().then(answer => {  
+                    return res.jsonOK(changes, getMessage("author.update.success"), new_token)
 
                 }).catch(err => {
                     return res.jsonServerError(null, null, err)
@@ -186,37 +186,37 @@ module.exports = {
                         
     
             } else{
-                return res.jsonNotFound(null, getMessage("creator.notfound"), new_token)
+                return res.jsonNotFound(null, getMessage("author.notfound"), new_token)
                
             }                       
         }     
     },
 
     async delete(req, res){
-        const { creator_id } = req.query;            
-        const creator = await Creator.findById(creator_id);
+        const { author_id } = req.query;            
+        const author = await Author.findById(author_id);
 
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
         
       
 
-        if(creator){           
+        if(author){           
                         
          
-            Creator.deleteOne({ _id: creator_id }).then(answer => {
+            Author.deleteOne({ _id: author_id }).then(answer => {
                 let mangas = []
-                creator.works.forEach(manga_id => {
+                author.works.forEach(manga_id => {
                     Manga.findById(manga_id).then(manga => {
-                        manga[creator.type] =  manga[creator.type].filter(function (crt_id){
+                        manga[author.type] =  manga[author.type].filter(function (crt_id){
                         
-                            return crt_id.toString() !== creator_id.toString()
+                            return crt_id.toString() !== author_id.toString()
                               
                         });
                         manga.save().then(answer => {  
-                            let dir = 'uploads/' + "creators/" + creator.type + "/" + creator.name + "/" 
+                            let dir = 'uploads/' + "authors/" + author.type + "/" + author.name + "/" 
 
-                            creator.photos.forEach((file) => {
+                            author.photos.forEach((file) => {
                                 let file = req.files[i];   
                                 fs.unlinkSync(dir + file.filename)    
                             
@@ -232,20 +232,20 @@ module.exports = {
                 
                             fs.rmdirSync(dir, {recursive: true})
 
-                            mangas.push({'creator-deleted': manga_id})
+                            mangas.push({'author-deleted': manga_id})
                             
                         }).catch(err => {
-                            mangas.push({'creator-not-deleted': manga_id})
+                            mangas.push({'author-not-deleted': manga_id})
                         })
 
                     }).catch(err =>{
                         mangas.push({'manga-not-found': manga_id})
                     })
                 })
-                return res.jsonOK({ removed: true, mangas: mangas }, getMessage("creator.delete.success"), new_token)
+                return res.jsonOK({ removed: true, mangas: mangas }, getMessage("author.delete.success"), new_token)
 
             }).catch(err=>{
-                return res.jsonBadRequest(null, getMessage("creator.notfound"), new_token)
+                return res.jsonBadRequest(null, getMessage("author.notfound"), new_token)
             })
                          
             
