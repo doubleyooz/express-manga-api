@@ -6,7 +6,7 @@ const multerConfig = require('../config/multer')
 const upload1 = multer(multerConfig.file).single('cover')
 const upload2 = multer(multerConfig.files).array('imgCollection')
 const upload3 = multer(multerConfig.artistFiles).array('photos')
-const upload4 = multer(multerConfig.writerFiles).array('photos')
+
 
 module.exports = {
     
@@ -43,16 +43,20 @@ module.exports = {
             
         })
     },
-    
-    upload_many_artist(req, res, next){ 
+
+    upload_many_author(req, res, next){ 
         let dir = "./" + "uploads/" + "authors/" 
        
         if (!fs.existsSync(dir))       
           fs.mkdirSync(dir);
-        dir = dir + "artist" + "/"
+       
 
-        if (!fs.existsSync(dir))       
-            fs.mkdirSync(dir);      
+        if (!fs.existsSync(dir + "artist" + "/"))       
+            fs.mkdirSync(dir + "artist" + "/");  
+            
+        if (!fs.existsSync(dir + "writer" + "/"))       
+            fs.mkdirSync(dir + "writer" + "/");  
+            
         
         upload3(req, res, function (err) {
              
@@ -73,35 +77,5 @@ module.exports = {
         })
     },
 
-    upload_many_writer(req, res, next){ 
-        let dir = "./" + "uploads/" + "authors/" 
-       
-        if (!fs.existsSync(dir))       
-          fs.mkdirSync(dir);
-        dir = dir + "writer" + "/"
-
-        if (!fs.existsSync(dir))       
-            fs.mkdirSync(dir);      
-        
-        upload4(req, res, function (err) {
-             
-            if (err instanceof multer.MulterError) {
-                // A Multer error occurred when uploading. 
-                console.log("if")                  
-                return res.jsonBadRequest(null, null, err)
-                
-            } else if (err) {
-                // An unknown error occurred when uploading.          
-                console.log("else")          
-                return res.jsonBadRequest(null, null, err)
-                
-            } 
-            // Everything went fine.
-            next()
-            
-        })
-    },
-
-   
   
 }

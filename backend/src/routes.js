@@ -61,8 +61,7 @@ routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, C
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
 
-routes.post('/writer/post', Authorize("Scan"), UploadMiddleware.upload_many_writer, AuthorController.store);
-routes.post('/artist/post', Authorize("Scan"), UploadMiddleware.upload_many_artist, AuthorController.store);
+routes.post('/author/post', Authorize("Scan"), UploadMiddleware.upload_many_author, AuthorController.store);
 routes.put('/author/update', Authorize("Scan"), AuthorController.update);
 routes.get('/author/list', AuthorController.list);
 routes.get('/author/index', AuthorController.index);

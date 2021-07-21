@@ -19,21 +19,53 @@ module.exports = {
         const {type, name, birthDate, socialMedia, deathDate, biography } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
-        
-        const doesAuthorExist = await Author.exists({ name: name, type: type });         
-        
+        console.log(res)
+        Author.find({name: name}).then(author =>{
+            if(author !== null){
+                
+                if(author.type === type){
+                    Object.keys(req.files).forEach((i) => {
+                        let file = req.files[i];   
+                        fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
+                       
+                    });
+                                  
+                    return res.jsonBadRequest(null, getMessage("author.error.duplicate"), new_token)
+                } else {
+                    
+                   
+                    author[0].type.push(type)
+                    author[0].save().then(result=>{
+                        return res.jsonOK(result, getMessage("author.save.success"), new_token)
+            
+                    }).catch(err=>{
+                        console.log(err)
+                        Object.keys(req.files).forEach((i) => {
+                            let file = req.files[i];   
+                            fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
+                        
+                        });
+                        return res.jsonServerError(null, null, err)
+                    })
+                }
+            }
+                            
+        }).catch(err=>{
+           
+                console.log(err)
+                Object.keys(req.files).forEach((i) => {
+                    let file = req.files[i];   
+                    fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
+                
+                });
+                return res.jsonServerError(null, null, err)
+            
+        })
+
+
         
         req.auth = null
     
-        if(doesAuthorExist){
-            Object.keys(req.files).forEach((i) => {
-                let file = req.files[i];   
-                fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
-               
-            });
-                          
-            return res.jsonBadRequest(null, getMessage("author.error.duplicate"), new_token)
-        }       
         let jsonString = [];         
                                             
         Object.keys(req.files).forEach((i) => {
@@ -52,7 +84,7 @@ module.exports = {
 
         const author = new Author({
             photos: [],
-            type: type,
+            type: [type],
             name: name,
             birthDate: birthDate,
             deathDate: deathDate,
