@@ -7,8 +7,17 @@ const AuthorSchema = new mongoose.Schema({
     },
 
     photos:[{
-        type: String,
-        default: "Writer"
+        type: Object,
+        size: Number,         
+        filename: String, 
+        originalname: String,  
+
+        default: [{
+            originalname: "none",           
+            size: 0,   
+            filename: "none"      
+            
+        }]
     }],
 
     name: { 

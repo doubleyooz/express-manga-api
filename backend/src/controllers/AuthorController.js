@@ -15,6 +15,7 @@ const Manga = require('../models/Manga');
 
 module.exports = {
     async store(req, res){ 
+        
         const {type, name, birthDate, socialMedia, deathDate, biography } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
@@ -49,13 +50,14 @@ module.exports = {
             
         });
 
-        const author = new author({
+        const author = new Author({
             photos: [],
             type: type,
             name: name,
             birthDate: birthDate,
             deathDate: deathDate,
-            socialMedia: socialMedia,                  
+            socialMedia: socialMedia,    
+            biography: biography              
            
             //comments?
 

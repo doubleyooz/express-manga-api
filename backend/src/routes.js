@@ -4,7 +4,7 @@ const UserController = require("./controllers/UserController");
 const AuthorController = require("./controllers/AuthorController");
 const ChapterController = require('./controllers/ChapterController');
 const MangaController = require('./controllers/MangaController');
-const AuthController = require('./controllers/AuthController');
+const AuthController = require('./controllers/SessionController');
 const LikeController = require('./controllers/LikeController');
 const NotifyController = require('./controllers/NotifyController')
 
@@ -46,7 +46,7 @@ routes.put('/user/like', Authorize("User"), LikeController.likeUser);
 routes.get('/user/notify', Authorize("Scan"), NotifyController.notifyUsers)
 
 
-routes.post('/manga/post', Authorize("Scan"), UploadMiddleware.track_progress, UploadMiddleware.upload_single, MangaMiddleware.valid_manga_store, MangaController.store);
+routes.post('/manga/post', Authorize("Scan"), UploadMiddleware.upload_single, MangaMiddleware.valid_manga_store, MangaController.store);
 routes.get('/manga/list',  getRole(), MangaMiddleware.valid_manga_list, MangaController.list);
 routes.get('/manga/index',  getRole(), MangaMiddleware.valid_manga_index, MangaController.index);
 routes.put('/manga/update', Authorize("Scan"), MangaController.update);
@@ -55,13 +55,14 @@ routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
 routes.put('/manga/pin', Authorize("User"), LikeController.pinManga);
 
 
-routes.post('/chapter/post', Authorize("Scan"), UploadMiddleware.upload_many, ChapterMiddleware.valid_chapter_store, ChapterController.store);
+routes.post('/chapter/post', Authorize("Scan"), UploadMiddleware.upload_many_manga, ChapterMiddleware.valid_chapter_store, ChapterController.store);
 routes.get('/chapter/list', getRole(), ChapterMiddleware.valid_chapter_list, ChapterController.list);
 routes.get('/chapter/index', getRole(), ChapterMiddleware.valid_chapter_index, ChapterController.index);
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_delete,  ChapterController.delete);
 
-routes.post('/author/post', Authorize("Scan"), UploadMiddleware.upload_many_2, AuthorController.store);
+routes.post('/writer/post', Authorize("Scan"), UploadMiddleware.upload_many_writer, AuthorController.store);
+routes.post('/artist/post', Authorize("Scan"), UploadMiddleware.upload_many_artist, AuthorController.store);
 routes.put('/author/update', Authorize("Scan"), AuthorController.update);
 routes.get('/author/list', AuthorController.list);
 routes.get('/author/index', AuthorController.index);

@@ -6,19 +6,14 @@ const fs = require('fs');
 
 const folder = "uploads/"
 
-const creatorFiles = {
+const writerFiles = {
   
   storage: multer.diskStorage({
     destination: (req, files, cb) => {
-      cb(null, path.resolve(__dirname, '..', '..', folder, "creators/", req.body.type + "/", req.body.name));
-
-      let dir = "./" + folder + "creators/" + req.body.type + "/"
-
+      cb(null, path.resolve(__dirname, '..', '..', folder, "authors/", "writer/", req.body.name));
       
-      if (!fs.existsSync(dir))       
-        return false;  
-      //fs.mkdirSync(dir);
-
+      let dir = "./" + folder + "authors/" + req.body.type + "/"
+          
       if (!fs.existsSync(dir + req.body.name))       
         fs.mkdirSync(dir + req.body.name);
     },
@@ -26,12 +21,54 @@ const creatorFiles = {
       crypto.randomBytes(16, (err, hash) => {
         if (err) cb(err);
         
-       
-          var filename = `${hash.toString('hex')}-${file.originalname}`
+        var filename = `${hash.toString('hex')}-${file.originalname}`
+      
         
-         
+        
+        cb(null, filename)
+
+
+
+      });
+      
+    },   
+  }),
+  limits: {
+    fileSize: 3 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (allowedMimes.includes(file.mimetype)){
+      
+      cb(null, true)
+    } else{
+      var message = `${file.originalname} is invalid. Only accept png/jpeg/jpg.`;
+      cb(new Error(message));
+    } 
+  }
+
+}
+
+const artistFiles = {
+  
+  storage: multer.diskStorage({
+    destination: (req, files, cb) => {
+      cb(null, path.resolve(__dirname, '..', '..', folder, "authors/", "artist/", req.body.name));
+      
+      let dir = "./" + folder + "authors/" + req.body.type + "/"
           
-          cb(null, filename)
+      if (!fs.existsSync(dir + req.body.name))       
+        fs.mkdirSync(dir + req.body.name);
+    },
+    filename: (req, file, cb) => {
+      crypto.randomBytes(16, (err, hash) => {
+        if (err) cb(err);
+        
+        var filename = `${hash.toString('hex')}-${file.originalname}`
+      
+        
+        
+        cb(null, filename)
 
 
 
@@ -150,5 +187,5 @@ const file = {
 
 
 module.exports = {
-  file, files, creatorFiles
+  file, files, artistFiles, writerFiles
 }
