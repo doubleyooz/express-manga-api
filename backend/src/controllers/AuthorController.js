@@ -110,6 +110,10 @@ module.exports = {
 
         if (author_id){        
            const author = await Author.findById(author_id).exec();
+
+           if(author === null){
+               return res.jsonNotFound(author, getMessage("author.notfound", new_token))
+           }
            return res.jsonOK(author, getMessage("author.index.success"), new_token)
         }      
 
@@ -174,7 +178,7 @@ module.exports = {
 
             if(author){
                 
-                if(type){
+                if(type){ //need to realocate images
                     author.type = [type];
                 }
                 else if(birthDate){
@@ -273,8 +277,5 @@ module.exports = {
             return res.jsonServerError(null, null, new_token)
         }
 
-       
-    
-        
     }
 }
