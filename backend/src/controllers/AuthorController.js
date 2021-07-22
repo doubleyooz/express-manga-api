@@ -175,7 +175,7 @@ module.exports = {
             if(author){
                 
                 if(type){
-                    author.type = type;
+                    author.type = [type];
                 }
                 else if(birthDate){
                     author.birthDate = birthDate;
@@ -195,7 +195,6 @@ module.exports = {
                     author.socialMedia = socialMedia;
                 }
                
-
                 author.updatedAt = Date.now()
                 let changes = author.getChanges()
                 author.save().then(answer => {  

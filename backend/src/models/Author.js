@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const AuthorSchema = new mongoose.Schema({
     type: [{
         type: String,
-        validate: [arrayLimit, '{PATH} exceeds the limit of 10']
+        
     }],
+      
 
     photos:[{
         type: Object,
@@ -58,9 +59,5 @@ const AuthorSchema = new mongoose.Schema({
         default: Date.now
     },
 });
-
-function arrayLimit(val) {
-    return val.length <= 2;
-  }
 
 module.exports = mongoose.model('Author', AuthorSchema);
