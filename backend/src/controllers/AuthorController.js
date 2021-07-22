@@ -22,7 +22,9 @@ module.exports = {
         const storedAuthor = await Author.findOne({name: name})
 
         if(storedAuthor !== null){
-            if(storedAuthor.type === type){
+           
+            if(storedAuthor.type[0] === type){
+                console.log("if")
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];   
                     fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
@@ -106,7 +108,7 @@ module.exports = {
         const new_token = (req.new_token) ? req.new_token : null;       
         req.new_token = null
 
-        if (author){        
+        if (author_id){        
            const author = await Author.findById(author_id).exec();
            return res.jsonOK(author, getMessage("author.index.success"), new_token)
         }      
@@ -129,7 +131,7 @@ module.exports = {
 
         if (type){
             if(name){
-                (await Author.find({name: name, type: type}).sort('updatedAt')).forEach(function (doc){
+                (await Author.find({name: {$regex: name, $options: "i"}, type: type}).sort('updatedAt')).forEach(function (doc){
                     docs.push(doc)
                 });
             } else{
@@ -139,7 +141,7 @@ module.exports = {
             }
            
         } else if (name){
-            (await Author.find({name: name}).sort('updatedAt')).forEach(function (doc){
+            (await Author.find({name: {$regex: name, $options: "i"} }).sort('updatedAt')).forEach(function (doc){
                 docs.push(doc)
             });
         } else{
@@ -154,7 +156,7 @@ module.exports = {
             return res.jsonNotFound(docs, getMessage("author.list.empty"), new_token)
         } else{
            
-            return res.jsonOK(docs, getMessage("author.list.success") + docs.length, new_token)
+            return res.jsonOK(docs, getMessage("author.list.success") + ": " + docs.length, new_token)
         }
                         
     },
