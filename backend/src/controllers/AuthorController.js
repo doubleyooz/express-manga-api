@@ -1,6 +1,5 @@
 const fs = require('fs');
-const CryptoJs = require("crypto-js");
-
+const parseISO = require('date-fns/parseISO')
 const { getMessage } = require("../common/messages")
 
 
@@ -19,51 +18,39 @@ module.exports = {
         const {type, name, birthDate, socialMedia, deathDate, biography } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
-        console.log(res)
-        Author.find({name: name}).then(author =>{
-            if(author !== null){
-                
-                if(author.type === type){
-                    Object.keys(req.files).forEach((i) => {
-                        let file = req.files[i];   
-                        fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
-                       
-                    });
-                                  
-                    return res.jsonBadRequest(null, getMessage("author.error.duplicate"), new_token)
-                } else {
-                    
-                   
-                    author[0].type.push(type)
-                    author[0].save().then(result=>{
-                        return res.jsonOK(result, getMessage("author.save.success"), new_token)
-            
-                    }).catch(err=>{
-                        console.log(err)
-                        Object.keys(req.files).forEach((i) => {
-                            let file = req.files[i];   
-                            fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
-                        
-                        });
-                        return res.jsonServerError(null, null, err)
-                    })
-                }
-            }
-                            
-        }).catch(err=>{
-           
-                console.log(err)
+       
+        const storedAuthor = await Author.findOne({name: name})
+
+        if(storedAuthor !== null){
+            if(storedAuthor.type === type){
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];   
                     fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
-                
+                   
                 });
-                return res.jsonServerError(null, null, err)
-            
-        })
-
-
+                              
+                return res.jsonBadRequest(null, getMessage("author.error.duplicate"), new_token)
+            } else {
+                
+                console.log('else')
+               
+                storedAuthor.type.push(type)
+                storedAuthor.save().then(result=>{
+                    return res.jsonOK(result, getMessage("author.save.success"), new_token)
         
+                }).catch(err=>{
+                    console.log(err)
+                    Object.keys(req.files).forEach((i) => {
+                        let file = req.files[i];   
+                        fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
+                    
+                    });
+                    return res.jsonServerError(null, null, err)
+                })
+            }
+        }
+
+                
         req.auth = null
     
         let jsonString = [];         
@@ -86,8 +73,8 @@ module.exports = {
             photos: [],
             type: [type],
             name: name,
-            birthDate: birthDate,
-            deathDate: deathDate,
+            birthDate: parseISO(birthDate),
+            deathDate: parseISO(deathDate),
             socialMedia: socialMedia,    
             biography: biography              
            
@@ -100,8 +87,7 @@ module.exports = {
         
             return res.jsonOK(result, getMessage("author.save.success"), new_token)
         
-                              
-                        
+                                                    
         }).catch(err => {
             console.log(err)
             Object.keys(req.files).forEach((i) => {
