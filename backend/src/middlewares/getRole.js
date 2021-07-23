@@ -1,14 +1,13 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
 
-const jwt = require('../common/jwt');
-const { getMessage } = require("../common/messages")
-const User = require("../models/user");
+import User from '../models/User.js';
+import jwt from '../common/jwt.js';
 
-module.exports = getRole
+import { getMessage } from '../common/messages.js';
 
+dotenv.config()
 
-
-function getRole(){
+export function getRole(){
     return async (req, res, next) => {
         try{  
                   

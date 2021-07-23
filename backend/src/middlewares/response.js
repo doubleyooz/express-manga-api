@@ -1,6 +1,6 @@
-const { getMessage } = require("../common/messages")
+import { getMessage } from '../common/messages.js';
 
-const TYPE_JSON = 'application/json';
+const TYPE_JSON = "application/json";
 const STATUS_CODE_OK = 200;
 const STATUS_CODE_BAD_REQUEST = 400;
 const STATUS_CODE_UNAUTHORIZED = 401;
@@ -75,7 +75,7 @@ const jsonServerError = function (data, message, metadata){
   return this.json({ message, data, metadata, status: status })
 }  
 
-const response = (req, res, next) => {
+export const response = (req, res, next) => {
   res.jsonOK = jsonOK;
   res.jsonBadRequest = jsonBadRequest;
   res.jsonUnauthorized = jsonUnauthorized;
@@ -84,5 +84,3 @@ const response = (req, res, next) => {
 
   next();
 };
-
-module.exports = response;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const MangaSchema = new mongoose.Schema({
     cover: {
@@ -60,5 +60,4 @@ const MangaSchema = new mongoose.Schema({
 
 });
 
-
-module.exports = mongoose.model('Manga', MangaSchema);
+export default mongoose.model('Manga', MangaSchema);

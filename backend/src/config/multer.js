@@ -1,8 +1,11 @@
+import path from 'path';
+import multer from 'multer';
+import crypto from 'crypto';
+import fs from 'fs';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const path = require("path");
-const multer = require("multer");
-const crypto = require('crypto');
-const fs = require('fs');
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const folder = "uploads/"
 
@@ -143,6 +146,6 @@ const file = {
 }
 
 
-module.exports = {
+export default {
   file, files, authorFiles
 }

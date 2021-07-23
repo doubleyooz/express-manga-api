@@ -1,9 +1,11 @@
-const fs = require('fs');
+import fs from 'fs';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const messages = JSON.parse(fs.readFileSync(__dirname + '/message.json'));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const getMessage = (path) => {
+const messages = JSON.parse(fs.readFileSync(__dirname + "/message.json"));
+
+export const getMessage = (path) => {
   return messages[path] || null;
 };
-
-module.exports = { getMessage };

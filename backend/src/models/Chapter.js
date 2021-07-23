@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+import mongoose from 'mongoose';
 
 const ChapterSchema = new mongoose.Schema({
     manga_id: String,
@@ -38,5 +37,4 @@ const ChapterSchema = new mongoose.Schema({
 
 });
 
-
-module.exports = mongoose.model('Chapter', ChapterSchema);
+export default mongoose.model('Chapter', ChapterSchema);

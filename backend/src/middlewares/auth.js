@@ -1,14 +1,14 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+import CryptoJs from 'crypto-js';
 
-const jwt = require('../common/jwt');
-const { getMessage } = require("../common/messages")
-const User = require("../models/user");
+import User from '../models/User.js';
+import jwt from '../common/jwt.js';
 
-module.exports = auth
+import { getMessage } from '../common/messages.js';
 
+dotenv.config()
 
-
-function auth(roles = []){
+export function auth(roles = []){
     return async (req, res, next) => {
         try{          
             const [, token] = req.headers.authorization.split(" ")
@@ -26,7 +26,6 @@ function auth(roles = []){
                 return res.jsonUnauthorized(err, null, null)
                 
             }
-
             
 
             if (roles.length && !roles.includes(payload.role)){   
@@ -47,7 +46,7 @@ function auth(roles = []){
                                 console.log("Token not expired")
                             }
                            
-                            req.auth = require("crypto-js").AES.encrypt(payload.id, `${process.env.SHUFFLE_SECRET}`);
+                            req.auth = CryptoJs.AES.encrypt(payload.id, `${process.env.SHUFFLE_SECRET}`);
                             payload = null
                             next();
                             
@@ -71,21 +70,6 @@ function auth(roles = []){
         } catch(err){
             return res.jsonUnauthorized(null, null, null)
             
-        }
-       
-               
-     
-            
-        
-        
-        
+        }        
     }
-   
-    
-
-    
-
-    
-
 }
-
