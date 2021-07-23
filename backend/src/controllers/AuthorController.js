@@ -13,18 +13,15 @@ const Manga = require('../models/Manga');
 
 
 module.exports = {
-    async store(req, res){ 
-        
+    async store(req, res){         
         const {type, name, birthDate, socialMedia, deathDate, biography } = req.body;
         const new_token = (req.new_token) ? req.new_token : null;
         req.new_token = null
        
         const storedAuthor = await Author.findOne({name: name})
 
-        if(storedAuthor !== null){
-           
-            if(storedAuthor.type[0] === type){
-                console.log("if")
+        if(storedAuthor !== null){            
+            if(storedAuthor.type.includes(type)){                
                 Object.keys(req.files).forEach((i) => {
                     let file = req.files[i];   
                     fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
@@ -33,73 +30,78 @@ module.exports = {
                               
                 return res.jsonBadRequest(null, getMessage("author.error.duplicate"), new_token)
             } else {
-                
-                console.log('else')
-               
+                               
                 storedAuthor.type.push(type)
                 storedAuthor.save().then(result=>{
+                    Object.keys(req.files).forEach((i) => {
+                        let file = req.files[i];   
+                        fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
+                       
+                    });
                     return res.jsonOK(result, getMessage("author.save.success"), new_token)
         
                 }).catch(err=>{
                     console.log(err)
                     Object.keys(req.files).forEach((i) => {
                         let file = req.files[i];   
-                        fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
+                        fs.unlinkSync('uploads/' + "authors/" + storedAuthor.type + "/" + name + "/" + file.filename)    
                     
                     });
                     return res.jsonServerError(null, null, err)
                 })
             }
+        } else {
+     
+            req.auth = null
+    
+            let jsonString = [];         
+                                                
+            Object.keys(req.files).forEach((i) => {
+                let file = req.files[i];
+                
+                let temp = { 
+                    originalname:  file.originalname,
+                    size: file.size,
+                    filename: file.filename,
+                            
+                }                            
+            
+                jsonString.push(JSON.parse(JSON.stringify(temp)));
+                
+            });
+    
+            const author = new Author({
+                photos: [],
+                type: [type],
+                name: name,
+                birthDate: parseISO(birthDate),
+                deathDate: parseISO(deathDate),
+                socialMedia: socialMedia,    
+                biography: biography              
+               
+                //comments?
+    
+            });
+            author.photos = jsonString
+                    
+            author.save().then(result => {   
+            
+                return res.jsonOK(result, getMessage("author.save.success"), new_token)
+            
+                                                        
+            }).catch(err => {
+                console.log(err)
+                Object.keys(req.files).forEach((i) => {
+                    let file = req.files[i];   
+                    fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
+                   
+                });
+                return res.jsonServerError(null, null, err)
+            
+            });
         }
 
-                
-        req.auth = null
-    
-        let jsonString = [];         
-                                            
-        Object.keys(req.files).forEach((i) => {
-            let file = req.files[i];
-            
-            let temp = { 
-                originalname:  file.originalname,
-                size: file.size,
-                filename: file.filename,
-                        
-            }                            
-        
-            jsonString.push(JSON.parse(JSON.stringify(temp)));
-            
-        });
-
-        const author = new Author({
-            photos: [],
-            type: [type],
-            name: name,
-            birthDate: parseISO(birthDate),
-            deathDate: parseISO(deathDate),
-            socialMedia: socialMedia,    
-            biography: biography              
            
-            //comments?
-
-        });
-        author.photos = jsonString
-                
-        author.save().then(result => {   
-        
-            return res.jsonOK(result, getMessage("author.save.success"), new_token)
-        
-                                                    
-        }).catch(err => {
-            console.log(err)
-            Object.keys(req.files).forEach((i) => {
-                let file = req.files[i];   
-                fs.unlinkSync('uploads/' + "authors/" + type + "/" + name + "/" + file.filename)    
-               
-            });
-            return res.jsonServerError(null, null, err)
-        
-        });
                
     },
 

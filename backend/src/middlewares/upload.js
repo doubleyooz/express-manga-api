@@ -5,7 +5,7 @@ const multerConfig = require('../config/multer')
 
 const upload1 = multer(multerConfig.file).single('cover')
 const upload2 = multer(multerConfig.files).array('imgCollection')
-const upload3 = multer(multerConfig.artistFiles).array('photos')
+const upload3 = multer(multerConfig.authorFiles).array('photos')
 
 
 module.exports = {
@@ -67,7 +67,7 @@ module.exports = {
                 
             } else if (err) {
                 // An unknown error occurred when uploading.          
-                console.log("else")          
+                console.log(err)          
                 return res.jsonBadRequest(null, null, err)
                 
             } 
