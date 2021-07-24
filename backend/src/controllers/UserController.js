@@ -176,121 +176,30 @@ async function list(req, res){
 
 
 async function update(req, res){
+    const { name } = req.query;
+   
 
-    const { email, name, password } = req.body;
+    User.findOne({
+        _id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8)),
+        active: true
+    }).then(user => {           
 
-    if(req.auth){           
-        return res.jsonServerError(null, null, null)
-        
-    } else{
-       
-
-        User.findOne({
-           _id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8)),
-           active: true
-        }).then(user => {
+        if(name){
+            user.name = name;
+            user.save().then(result => {    
+                return res.jsonOK(null, getMessage("user.update.name.success"), null)
+            }).catch(err =>{
+                return res.jsonServerError(null, null, null)
+            })
 
             
-
-            if(name){
-                user.update(name, function(err, doc) {
-                    if (err) 
-                        return res.jsonServerError(null, null, err)
-                    else {
-                        p1.save().then(result => {    
-                            return res.jsonOK(null, getMessage("user.update.name.success"), null)
-                        }).catch(err =>{
-                            return res.jsonServerError(null, null, null)
-                        })
-                        
-                    }  
-                    
-                });
-            }
-            
-            else if(email){
-                const activationToken = jwt.generateJwt({
-                    id: CryptoJs.AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString(),
-                    email: CryptoJs.AES.encrypt(email, `${process.env.SHUFFLE_SECRET}`).toString()
-                    }, 5);
-                       
-
-                (async () => {
-
-                    if(Protonmail){                      
-                      const pm = await ProtonMail.connect({
-                        username: `${process.env.EMAIL_USER}`,
-                        password: `${process.env.EMAIL_PASSWORD}`
-                      })
-                     
-                      await pm.sendEmail({
-                        to: email,
-                        subject: getMessage("user.update.email.subject"),
-                        body: `
-                            <h2>${getMessage("user.update.email.text")}</h2>
-                            <p>${process.env.CLIENT_URL}/authentication/recover/${activationToken}</p>
-                            
-                        `
-                      })
-                      console.log("aqui - 2")
-                      pm.close()
-                    } else{
-                      
-                      // create reusable transporter object using the default SMTP transport
-                      let transporter = nodemailer.createTransport({
-                        service: "gmail",                     
-                        auth: {
-                          user:  `${process.env.GMAIL_USER}`, // generated ethereal user
-                          pass: `${process.env.GMAIL_PASSWORD}` // generated ethereal password
-                        },
-                                             
-                     
-                        tls: {
-                          rejectUnauthorized: false
-                        }
-                  
-                      });
-                    
-                      const mailOptions = {
-                          from: `${process.env.GMAIL_USER}`, // sender address
-                          to: email, // receiver (use array of string for a list)
-                          subject: getMessage("user.update.email.subject"), // Subject line
-                          html: `
-                              <h2>${getMessage("user.update.email.text")}</h2>
-                              <a href="${process.env.CLIENT_URL}/authentication/recover/${activationToken}">
-                              ${getMessage("user.update.email.text.subtitle")}                              
-                              <a/>
-                             
-                          `// plain text body
-                        };
-                      
-                      transporter.sendMail(mailOptions, (err, info) => {
-                      if(err)
-                          console.log(err)
-                      else
-                          console.log(info);
-                      });                  
-                    }
-
-                  })().then(info => {
-                      console.log(getMessage("user.activation.account.activate"))
-                      return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
-                                             
-                  }).catch(err => {
-                      return res.jsonBadRequest(null, null, {err});             
-                        
-                  })           
-            }
-
-            else if (password){
+        } else{
+            return res.jsonBadRequest(null, null, null);
+        }
                 
-            }
-           
-
-        })
-
-                  
-    }     
+    })
+                 
+        
 }
 
 async function remove(req, res){
