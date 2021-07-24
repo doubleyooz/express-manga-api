@@ -16,7 +16,7 @@ import MangaMiddleware from './middlewares/Manga.js';
 import UserMiddleware from './middlewares/User.js';
 
 import { auth as Authorize }  from './middlewares/auth.js';
-import { getRole } from './middlewares/getRole.js';
+import { getRole } from './middlewares/easyAuth.js';
 import UploadMiddleware from './middlewares/upload.js';
 
 
@@ -43,7 +43,8 @@ routes.post("/google-sign-in", SessionController.google_sign_in)
 routes.post("/google-sign-up", UserMiddleware.valid_google_sign_up, UserController.store)
 routes.get('/refresh-token', SessionController.refreshAccessToken)
 
-routes.get('/user/index', Authorize(["Scan", "User"]), UserController.index);
+routes.get('/user/index', getRole(), UserController.index);
+routes.get('/user/list', getRole(), UserController.list);
 routes.put('/user/update', Authorize(["Scan", "User"]), UserController.update)
 routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_remove, UserController.remove);
 routes.put('/user/like', Authorize("User"), LikeController.likeUser);
