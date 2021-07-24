@@ -157,14 +157,10 @@ async function valid_user_index(req, res, next){
 
 async function valid_user_list(req, res, next){        
     let schema = yup.object().shape({
-        title: yup.string("title must be a string.").strict(),
-        genre: yup.string("genre must be a string.").strict(),
-        scan: yup.string("scan must be a string.").strict(),
-        recent: yup.boolean()
+        email: yup.string().email()    
 
     })
            
-
     try{
         schema.validate(req.query).then(() => {                                             
             next();    
@@ -204,5 +200,6 @@ export default {
     valid_sign_up,
     valid_sign_in, 
     valid_user_index,
+    valid_user_list,
     valid_user_remove
 }

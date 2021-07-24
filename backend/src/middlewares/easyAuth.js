@@ -47,7 +47,7 @@ export function getRole(){
                                     "User": 2
                                 }
                                 
-                                req.role =  CryptoJS.AES.encrypt(dict[payload.role].toString(), `${process.env.SHUFFLE_SECRET}`)
+                                req.role =  CryptoJs.AES.encrypt(dict[payload.role].toString(), `${process.env.SHUFFLE_SECRET}`)
                                 payload = null
                                 dict = null
                                 next();
