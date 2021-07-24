@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import CryptoJs from 'crypto-js';
 
 import User from '../models/User.js';
 import jwt from '../common/jwt.js';
@@ -46,7 +47,7 @@ export function getRole(){
                                     "User": 2
                                 }
                                 
-                                req.role =  require("crypto-js").AES.encrypt(dict[payload.role].toString(), `${process.env.SHUFFLE_SECRET}`)
+                                req.role =  CryptoJS.AES.encrypt(dict[payload.role].toString(), `${process.env.SHUFFLE_SECRET}`)
                                 payload = null
                                 dict = null
                                 next();

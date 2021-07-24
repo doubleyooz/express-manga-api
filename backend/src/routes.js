@@ -43,7 +43,7 @@ routes.post("/google-sign-in", SessionController.google_sign_in)
 routes.post("/google-sign-up", UserMiddleware.valid_google_sign_up, UserController.store)
 routes.get('/refresh-token', SessionController.refreshAccessToken)
 
-routes.get('/user/index', getRole(), UserController.index);
+routes.get('/user/index', getRole(), UserMiddleware.valid_user_index, UserController.index);
 routes.get('/user/list', getRole(), UserController.list);
 routes.put('/user/update', Authorize(["Scan", "User"]), UserController.update)
 routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_remove, UserController.remove);

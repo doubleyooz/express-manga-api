@@ -52,7 +52,8 @@
 
     "unauthorized.refresh.token.missing": "Lack credentials.",
 
-
+    
+    "user.invalid.id": "You need to provide a valid IdObject to continue this operation.",
     "user.invalid.name.short": "Name is too short - it must be at least 3 characters long.",
     "user.invalid.password": "Invalid Password.",
     "user.invalid.password.short": "Password is too short -it must be at least 8 characters long.",

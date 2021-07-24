@@ -1,5 +1,6 @@
 import yup from 'yup';
 import CryptoJs from 'crypto-js';
+import mongoose from 'mongoose';
 
 import jwt from '../common/jwt.js';
 
@@ -21,6 +22,24 @@ const rules = {
     sign_in_password: yup.string()
                 .min(8, getMessage("user.invalid.password.short"))
                 .required()
+}
+
+function isValidMongoId(object_id){
+    try{
+        if (mongoose.Types.ObjectId.isValid(object_id)) {   
+            if (String(new mongoose.Types.ObjectId(object_id)) === object_id){
+                return true;
+            } else{
+                return false;
+            }
+        } else{
+            return false;
+        }
+    }catch(err){
+        console.log(err)
+        return false;
+    }
+
 }
 
 async function valid_google_sign_up(req, res, next){
@@ -103,6 +122,67 @@ async function valid_sign_in(req, res, next){
    
 }
 
+async function valid_user_index(req, res, next){
+    const { user_id } = req.query
+
+    let schema = yup.object().shape({
+        user_id: yup.string("user_id must be a string.").strict().required()
+    })
+           
+           
+    try{
+        schema.validate(req.query).then(() => {
+        
+            if(isValidMongoId(user_id)){
+                next();  
+            } else{
+                return res.jsonBadRequest(
+                    null,
+                    getMessage("user.invalid.id"),
+                    null);
+            }
+               
+            
+        })
+        .catch((err) => {            
+            return res.jsonBadRequest(null, null, err.errors)              
+           
+       })       
+
+    } catch(err){
+        return res.jsonBadRequest(null, null, err.errors)
+    }
+   
+}
+
+async function valid_user_list(req, res, next){        
+    let schema = yup.object().shape({
+        title: yup.string("title must be a string.").strict(),
+        genre: yup.string("genre must be a string.").strict(),
+        scan: yup.string("scan must be a string.").strict(),
+        recent: yup.boolean()
+
+    })
+           
+
+    try{
+        schema.validate(req.query).then(() => {                                             
+            next();    
+                    
+        })
+        .catch((err) => {
+            return res.jsonBadRequest(null, null, err.errors)              
+           
+       })
+       
+
+    } catch(err){
+        return res.jsonBadRequest(null, null, err.errors)
+    }
+   
+}
+
+
 async function valid_user_remove(req, res, next){
     const { user_id } = req.query;
     if(user_id){
@@ -123,5 +203,6 @@ export default {
     valid_google_sign_up,
     valid_sign_up,
     valid_sign_in, 
+    valid_user_index,
     valid_user_remove
 }

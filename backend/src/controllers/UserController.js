@@ -124,7 +124,7 @@ async function store(req, res){
 }
 
 async function index(req, res){
-    
+    console.log("index")
     const { user_id } = req.query;
 
     const new_token = (req.new_token) ? req.new_token : null;
