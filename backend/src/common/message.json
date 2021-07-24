@@ -69,6 +69,7 @@
     "user.activation.error.already.activated": "The user account is already activated.\n",
     "user.delete.fail": "The specified user could not be deleted",
     "user.delete.success": "The specified user was deleted",
+    "user.index.success": "User retrieved successfully!",
     "user.list.success": "User list retrieved successfully! Users found: ",
     "user.update.email.subject": "No reply - Change your email.",
     "user.update.email.text": "Please click on given link to change your email, if wasn't you just ignore this email.\n",

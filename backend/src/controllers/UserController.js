@@ -125,26 +125,19 @@ async function store(req, res){
 
 async function index(req, res){
     
-    const { email } = req.query;
-   
-    let docs = [];
+    const { user_id } = req.query;
 
-    if (email){
-        (await User.find( {email: {$regex: email, $options: "i"} } )).forEach(function (doc){
-            docs.push(doc)
-        });
-    }
+    const new_token = (req.new_token) ? req.new_token : null;
+    req.new_token = null
 
-
-    else{
-        (await User.find()).forEach(function (doc){
-            docs.push(doc)
-        });     
-    }
+    User.findById(user_id).then(doc => {
+        return res.jsonOK(doc, getMessage("user.list.index"), new_token)
+    }).catch(err => {
+        return res.jsonServerError(null, null, null)
+    })
       
 
-    console.log(docs)
-    res.jsonOK(docs, getMessage("user.list.success") + docs.length, null)              
+      
     
 }
 
@@ -152,7 +145,10 @@ async function index(req, res){
 async function list(req, res){
     
     const { email } = req.query;
-   
+
+    const new_token = (req.new_token) ? req.new_token : null;
+    req.new_token = null
+    
     let docs = [];
 
     if (email){
@@ -168,9 +164,8 @@ async function list(req, res){
         });     
     }
       
-
-    console.log(docs)
-    res.jsonOK(docs, getMessage("user.list.success") + docs.length, null)              
+    
+    res.jsonOK(docs, getMessage("user.list.success") + docs.length, new_token)              
     
 }
 
@@ -226,4 +221,4 @@ async function remove(req, res){
          
 }
 
-export default {store, index, update, remove}
+export default {store, index, list, update, remove}
