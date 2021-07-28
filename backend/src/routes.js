@@ -45,7 +45,7 @@ routes.get('/refresh-token', SessionController.refreshAccessToken)
 
 routes.get('/user/index', getRole(), UserMiddleware.valid_user_index, UserController.index);
 routes.get('/user/list', getRole(),  UserMiddleware.valid_user_list,UserController.list);
-routes.put('/user/update', Authorize(["Scan", "User"]), UserController.update)
+routes.put('/user/update', Authorize(["Scan", "User"]), UserMiddleware.valid_user_update, UserController.update)
 routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_remove, UserController.remove);
 routes.put('/user/like', Authorize("User"), LikeController.likeUser);
 routes.get('/user/notify', Authorize("Scan"), NotifyController.notifyUsers)

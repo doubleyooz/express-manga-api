@@ -171,13 +171,26 @@ async function valid_user_list(req, res, next){
            
        })
        
-
     } catch(err){
         return res.jsonBadRequest(null, null, err.errors)
     }
    
 }
 
+async function valid_user_update(req, res, next){    
+    let schema = yup.object().shape({       
+        name: yup.string("name must be a string.").required(),
+       
+    })
+    
+    schema.validate(req.query).then(() => {        
+            next();
+               
+    }).catch(err => {
+        
+        return res.jsonBadRequest(null, null, err.toString())
+    })      
+}  
 
 async function valid_user_remove(req, res, next){
     const { user_id } = req.query;
@@ -201,5 +214,6 @@ export default {
     valid_sign_in, 
     valid_user_index,
     valid_user_list,
+    valid_user_update,
     valid_user_remove
 }
