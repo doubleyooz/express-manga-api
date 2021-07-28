@@ -153,6 +153,45 @@ async function valid_manga_list(req, res, next){
    
 }
 
+async function valid_manga_update(req, res, next){        
+    let schema = yup.object().shape({
+        title: yup.string("title must be a string.").strict().min(2, getMessage("manga.invalid.title.short")).max(60, getMessage("manga.invalid.title.long")),
+        genre: yup.string("genre must be a string.").strict(),
+        writer_id: yup.string("must be a string").strict(),
+        artist_id: yup.string("must be a string").strict(),
+        synopsis: yup.string("synopsis must be a string.").strict().min(10, getMessage("manga.invalid.synopsis.short")).max(400, getMessage("manga.invalid.synopsis.long")),
+        n_chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.'),
+        status: yup.number("status must be a number.").min(1, getMessage("manga.invalid.code")).max(6, getMessage("manga.invalid.code")),
+        nsfw: yup.string("nsfw must be a string.").strict().matches(/(true|false)/, null),
+        language: yup.string("language must be a string.").strict().matches(/(pt-br|en-us|en-uk)/, null).default({ language: 'pt-br' }),
+        manga_id: yup.string("must be a string").strict().required(),
+    })
+           
+
+    try{
+        schema.validate(req.body).then(() => {             
+            if(isValidMongoId(manga_id)){
+                next();                                             
+            }
+            else{
+                return res.jsonBadRequest(
+                    null,
+                    getMessage("manga.invalid.id"),
+                    null);
+            }                                
+        })
+        .catch((err) => {
+            return res.jsonBadRequest(null, null, err.errors)              
+           
+       })
+       
+
+    } catch(err){
+        return res.jsonBadRequest(null, null, err.errors)
+    }
+   
+}
+
 async function valid_manga_remove(req, res, next){        
     const { manga_id } = req.query;       
 
@@ -179,5 +218,6 @@ export default {
     valid_manga_store,
     valid_manga_index,
     valid_manga_list, 
+    valid_manga_update,
     valid_manga_remove
 }

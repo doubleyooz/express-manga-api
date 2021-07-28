@@ -54,7 +54,7 @@ routes.get('/user/notify', Authorize("Scan"), NotifyController.notifyUsers)
 routes.post('/manga/post', Authorize("Scan"), UploadMiddleware.upload_single, MangaMiddleware.valid_manga_store, MangaController.store);
 routes.get('/manga/list',  getRole(), MangaMiddleware.valid_manga_list, MangaController.list);
 routes.get('/manga/index',  getRole(), MangaMiddleware.valid_manga_index, MangaController.index);
-routes.put('/manga/update', Authorize("Scan"), MangaController.update);
+routes.put('/manga/update', Authorize("Scan"), MangaMiddleware.valid_manga_update, MangaController.update);
 routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_remove, MangaController.remove);
 routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
 routes.put('/manga/pin', Authorize("User"), LikeController.pinManga);
