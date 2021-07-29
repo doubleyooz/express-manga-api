@@ -68,7 +68,7 @@ async function store(req, res){
             type: [type],
             name: name,
             birthDate: parseISO(birthDate),
-            deathDate: parseISO(deathDate),
+            deathDate: deathDate ? parseISO(deathDate) : null,
             socialMedia: socialMedia,    
             biography: biography              
            

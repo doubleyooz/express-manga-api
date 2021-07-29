@@ -11,6 +11,7 @@ import LikeController from './controllers/LikeController.js';
 import NotifyController from './controllers/NotifyController.js';
 
 //middlewares
+import AuthorMiddleware from './middlewares/Author.js';
 import ChapterMiddleware from './middlewares/Chapter.js';
 import MangaMiddleware from './middlewares/Manga.js';
 import UserMiddleware from './middlewares/User.js';
@@ -62,7 +63,7 @@ routes.get('/chapter/read', easyAuth(), ChapterMiddleware.valid_chapter_read, Ch
 routes.put('/chapter/update', Authorize("Scan"), ChapterController.update);
 routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_remove,  ChapterController.remove);
 
-routes.post('/author/post', Authorize("Scan"), UploadMiddleware.upload_many_author, AuthorController.store);
+routes.post('/author/post', Authorize("Scan"), UploadMiddleware.upload_many_author, AuthorMiddleware.valid_author_store, AuthorController.store);
 routes.put('/author/update', Authorize("Scan"), AuthorController.update);
 routes.get('/author/list', AuthorController.list);
 routes.get('/author/read', AuthorController.read);
