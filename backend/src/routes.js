@@ -29,10 +29,7 @@ routes.get('/', (req, res) => {
 });
 
 
-routes.get('/me', Authorize(), (req, res) => {
-    res.send(req.auth)
-   
-})
+routes.get('/me', Authorize(), SessionController.me);
 
 routes.post("/authentication/activate/:tky", SessionController.activateAccount);// POST
 routes.put("/authentication/recover/:tky", SessionController.recoverPassword);// PUT

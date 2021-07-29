@@ -245,6 +245,7 @@ async function sign_in(req, res){
 }
 
 async function activateAccount(req, res){
+
     const token = req.params.tky;       
     if(token){                      
         try{
@@ -295,6 +296,16 @@ async function activateAccount(req, res){
         return res.jsonBadRequest(null, null, null)
         
     }
+}
+
+async function me (req, res){
+    const new_token = (req.new_token) ? req.new_token : null;
+    const session_id = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
+    
+    req.new_token = null    
+    req.auth = null
+
+    return res.jsonOK( session_id, null, new_token)
 }
 //missing test
 async function changeEmail(req, res){
@@ -380,6 +391,7 @@ export default {
     google_sign_in,
     sign_in,
     activateAccount,
+    me,
     changeEmail,
     recoverPassword
 }
