@@ -171,7 +171,8 @@ async function list(req, res){
 
 async function update(req, res){
     const { name } = req.query;
-   
+    const new_token = (req.new_token) ? req.new_token : null;
+    req.new_token = null
 
     User.findOne({
         _id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8)),
@@ -181,9 +182,9 @@ async function update(req, res){
         if(name){
             user.name = name;
             user.save().then(result => {    
-                return res.jsonOK(null, getMessage("user.update.name.success"), null)
+                return res.jsonOK(null, getMessage("user.update.name.success"), new_token)
             }).catch(err =>{
-                return res.jsonServerError(null, null, null)
+                return res.jsonServerError(null, null, new_token)
             })
 
             
