@@ -55,7 +55,7 @@ const list_projection = {
 }
 
 
-const index_projection = {
+const read_projection = {
     0 : {
         
         title: 1,
@@ -169,7 +169,7 @@ async function store(req, res){
            
 }
 
-async function index(req, res){
+async function read(req, res){
     const { title, manga_id } = req.query;
     const new_token = (req.new_token) ? req.new_token : null;       
     req.new_token = null
@@ -185,13 +185,13 @@ async function index(req, res){
 
 
     if (manga_id){        
-       const manga = await Manga.findById(manga_id).select(index_projection[role]).exec();
-       return res.jsonOK(manga, getMessage("manga.index.success"), new_token)
+       const manga = await Manga.findById(manga_id).select(read_projection[role]).exec();
+       return res.jsonOK(manga, getMessage("manga.read.success"), new_token)
     } 
 
     else if (title){
-        const manga = await Manga.find( {title: {$regex: title, $options: "i"} } ).select(index_projection[role]).exec();
-        return res.jsonOK(manga, getMessage("manga.index.success"), new_token)
+        const manga = await Manga.find( {title: {$regex: title, $options: "i"} } ).select(read_projection[role]).exec();
+        return res.jsonOK(manga, getMessage("manga.read.success"), new_token)
         
     }
 
@@ -449,4 +449,4 @@ async function remove(req, res){
     
 }
 
-export default {store, index, list, update, remove}
+export default {store, read, list, update, remove}

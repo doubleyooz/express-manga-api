@@ -98,7 +98,7 @@ async function store(req, res){
            
 }
 
-async function index(req, res){
+async function read(req, res){
     const { author_id } = req.query;
     const new_token = (req.new_token) ? req.new_token : null;       
     req.new_token = null
@@ -109,7 +109,7 @@ async function index(req, res){
        if(author === null){
            return res.jsonNotFound(author, getMessage("author.notfound", new_token))
        }
-       return res.jsonOK(author, getMessage("author.index.success"), new_token)
+       return res.jsonOK(author, getMessage("author.read.success"), new_token)
     }      
 
     else{            
@@ -276,4 +276,4 @@ async function remove(req, res){
 
 }
 
-export default {store, index, list, update, remove}
+export default {store, read, list, update, remove}

@@ -123,14 +123,14 @@ async function store(req, res){
                                                                       
 }
 
-async function index(req, res){   
+async function read(req, res){   
     const { user_id } = req.query;
 
     const new_token = (req.new_token) ? req.new_token : null;
     req.new_token = null
 
     User.findById(user_id).then(doc => {
-        return res.jsonOK(doc, getMessage("user.list.index"), new_token)
+        return res.jsonOK(doc, getMessage("user.read.success"), new_token)
     }).catch(err => {
         return res.jsonServerError(null, null, null)
     })
@@ -220,4 +220,4 @@ async function remove(req, res){
          
 }
 
-export default {store, index, list, update, remove}
+export default {store, read, list, update, remove}

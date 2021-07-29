@@ -122,7 +122,7 @@ async function valid_sign_in(req, res, next){
    
 }
 
-async function valid_user_index(req, res, next){
+async function valid_user_read(req, res, next){
     const { user_id } = req.query
 
     let schema = yup.object().shape({
@@ -212,7 +212,7 @@ export default {
     valid_google_sign_up,
     valid_sign_up,
     valid_sign_in, 
-    valid_user_index,
+    valid_user_read,
     valid_user_list,
     valid_user_update,
     valid_user_remove

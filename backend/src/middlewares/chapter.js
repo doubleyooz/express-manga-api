@@ -45,7 +45,7 @@ async function valid_chapter_store(req, res, next){
                     
 }
 
-async function valid_chapter_index(req, res, next){
+async function valid_chapter_read(req, res, next){
     const { chapter_id } = req.query; 
 
     let schema = yup.object().shape({          
@@ -155,7 +155,7 @@ async function valid_chapter_remove(req, res, next){
 
 export default {
     valid_chapter_store,
-    valid_chapter_index,
+    valid_chapter_read,
     valid_chapter_list, 
     valid_chapter_remove
 }

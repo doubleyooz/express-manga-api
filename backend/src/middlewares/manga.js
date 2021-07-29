@@ -79,7 +79,7 @@ async function valid_manga_store(req, res, next){
                     
 }
 
-async function valid_manga_index(req, res, next){
+async function valid_manga_read(req, res, next){
     const {manga_id, title} = req.query
 
     let schema = yup.object().shape({
@@ -216,7 +216,7 @@ async function valid_manga_remove(req, res, next){
 
 export default {
     valid_manga_store,
-    valid_manga_index,
+    valid_manga_read,
     valid_manga_list, 
     valid_manga_update,
     valid_manga_remove

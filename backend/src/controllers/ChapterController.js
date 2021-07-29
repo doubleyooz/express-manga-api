@@ -9,7 +9,7 @@ import { getMessage } from '../common/messages.js';
 
 
 
-const index_projection = {
+const read_projection = {
     0 : {
         imgCollection: 1,
         title: 1,
@@ -220,7 +220,7 @@ async function update(req, res){
     
 }
 
-async function index(req, res){
+async function read(req, res){
     const {chapter_id} = req.query;
     const new_token = (req.new_token) ? req.new_token : null;       
     req.new_token = null
@@ -235,16 +235,16 @@ async function index(req, res){
     }
    
     
-    Chapter.findById(chapter_id).select(index_projection[role]).then(doc=>{
+    Chapter.findById(chapter_id).select(read_projection[role]).then(doc=>{
         
         console.log(doc.views)
         doc.views = doc.views + 1
         doc.save().then(() => {                       
-            return res.jsonOK(doc, getMessage("chapter.index.success"), new_token)                      
+            return res.jsonOK(doc, getMessage("chapter.read.success"), new_token)                      
 
         }).catch(err =>{
             console.log(err)
-            return res.jsonOK(doc, getMessage("chapter.index.success"), new_token)
+            return res.jsonOK(doc, getMessage("chapter.read.success"), new_token)
             
         });
                     
@@ -323,7 +323,7 @@ async function remove(req, res){
 
     Chapter.findById(chapter_id).then( chapter => {
         cloneData = []
-        //get the deleted chapter index in order to exclude it from chapters array inside manga object
+        //get the deleted chapter read in order to exclude it from chapters array inside manga object
         Manga.findOne({ _id: manga_id }, function (err, manga){ 
             if(manga){
                
@@ -372,4 +372,4 @@ async function remove(req, res){
         
     });                
 }
-export default {store, index, list, update, remove}
+export default {store, read, list, update, remove}
