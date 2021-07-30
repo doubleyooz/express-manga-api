@@ -1,5 +1,6 @@
 import yup from 'yup';
 import mongoose from 'mongoose';
+import { differenceInCalendarDays } from 'date-fns'
 
 import { getMessage } from '../common/messages.js';
 
@@ -25,14 +26,17 @@ function isValidMongoId(object_id){
 async function valid_author_store(req, res, next){         
                        
     const { type, name, birthDate, socialMedia, deathDate, biography } = req.body;
-       
+    
+    let currentDate = new Date()
+    currentDate.setFullYear( currentDate.getFullYear() - 10 );
+    
     let schema = yup.object().shape({
         type: yup.string("type must be a string.").strict().matches(/(writer|artist)/, null).required(),
         name: yup.string("name must be a string.").strict().required(),
-        birthDate: yup.date().max(new Date()).required(),
+        birthDate: yup.date().max(currentDate).required(),
         deathDate: yup.date().min(
-            yup.ref('birthDate'),
-            "end date can't be before start date"
+            yup.ref('birthDate') + 3650,
+            "death date must be at least 10 years longer than birthDate"
           ),
         socialMedia: yup.string("socialMedia must be a string.").strict().required(),        
         biography: yup.string("biography").strict().min(15, getMessage("author.invalid.biography.short")).required()

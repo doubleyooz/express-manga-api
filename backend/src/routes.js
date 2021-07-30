@@ -65,8 +65,8 @@ routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chap
 
 routes.post('/author/post', Authorize("Scan"), UploadMiddleware.upload_many_author, AuthorMiddleware.valid_author_store, AuthorController.store);
 routes.put('/author/update', Authorize("Scan"), AuthorController.update);
-routes.get('/author/list', AuthorController.list);
-routes.get('/author/read', AuthorController.read);
+routes.get('/author/list', easyAuth(), AuthorController.list);
+routes.get('/author/read', easyAuth(), AuthorController.read);
 routes.delete('/author/delete', Authorize("Scan"), AuthorController.remove);
 
 export default routes;
