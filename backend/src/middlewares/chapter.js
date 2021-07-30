@@ -49,7 +49,7 @@ async function valid_chapter_read(req, res, next){
     const { chapter_id } = req.query; 
 
     let schema = yup.object().shape({          
-        chapter_id: yup.string("genre must be a string.").strict().required(),
+        chapter_id: yup.string("chapter_id must be a string.").strict().required(),
        
 
     })
@@ -81,7 +81,7 @@ async function valid_chapter_list(req, res, next){
     const { manga_id } = req.query; 
 
     let schema = yup.object().shape({          
-        manga_id: yup.string("genre must be a string.").strict(),
+        manga_id: yup.string("manga_id must be a string.").strict(),
        
 
     })
@@ -110,6 +110,50 @@ async function valid_chapter_list(req, res, next){
    
 }
 
+
+async function valid_chapter_update(req, res, next){        
+    let schema = yup.object().shape({       
+        title: yup.string("title must be a string.").strict()                
+            .max(40, getMessage("chapter.invalid.title.long"))
+            .when(["number"], {
+                is: (number) => !number,
+                then: yup.string().required()
+            }
+        ),
+        number: yup.number("Must to be a valid number")
+            .min(1, 'Must be a positive number')
+            .when(["title"], {
+                is: (title) => !title,
+                then: yup.number().required()
+            }
+        ),
+        chapter_id: yup.string("chapter_id must be a string.").strict().required(),
+    })
+   
+
+    try{
+        schema.validate(req.body).then(() => {             
+            if(isValidMongoId(chapter_id)){
+                next();                                             
+            }
+            else{
+                return res.jsonBadRequest(
+                    null,
+                    getMessage("chapter.invalid.id"),
+                    null);
+            }                                
+        })
+        .catch((err) => {
+            return res.jsonBadRequest(null, null, err.errors)              
+           
+       })
+       
+
+    } catch(err){
+        return res.jsonBadRequest(null, null, err.errors)
+    }
+   
+}
 
 async function valid_chapter_remove(req, res, next){         
                    
@@ -156,6 +200,7 @@ async function valid_chapter_remove(req, res, next){
 export default {
     valid_chapter_store,
     valid_chapter_read,
-    valid_chapter_list, 
+    valid_chapter_list,
+    valid_chapter_update,
     valid_chapter_remove
 }
