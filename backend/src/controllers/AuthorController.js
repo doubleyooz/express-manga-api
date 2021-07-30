@@ -160,56 +160,24 @@ async function list(req, res){
                     
 }
 
-async function update(req, res){
-    const { type, name, birthDate, socialMedia, deathDate, biography, author_id } = req.body;
+async function update(req, res){   
     const new_token = (req.new_token) ? req.new_token : null;
     req.new_token = null
-
-    if(!author_id){           
-        return res.jsonBadRequest(null, getMessage("author.error.author_id"), null)
+    req.body.updatedAt = Date.now()
     
-    } else{
-        const author = await Author.findById(author_id);
-
-        if(author){
-            
-            if(type){ //need to realocate images
-                author.type = [type];
-            }
-            else if(birthDate){
-                author.birthDate = birthDate;
-            }
-            else if(name){
-                author.name = name;
-            }
-            else if(deathDate){
-                author.deathDate = deathDate;
-            }                   
-            
-            else if(biography){
-                author.biography = biography;
-            }
-
-            else if(socialMedia){
-                author.socialMedia = socialMedia;
-            }
-           
-            author.updatedAt = Date.now()
-            let changes = author.getChanges()
-            author.save().then(answer => {  
-                return res.jsonOK(changes, getMessage("author.update.success"), new_token)
-
-            }).catch(err => {
-                return res.jsonServerError(null, null, err)
-            })
-            
-                    
-
-        } else{
+    Author.findByIdAndUpdate(req.body.author_id, req.body).then(doc => {
+        if(!doc){
             return res.jsonNotFound(null, getMessage("author.notfound"), new_token)
-           
-        }                       
-    }     
+        }
+       
+        else{
+            return res.jsonOK(doc, getMessage("author.update.success"), new_token)
+        }
+    }).catch(err => {       
+        return res.jsonServerError(err, null, new_token)
+    })
+             
+      
 }
 
 

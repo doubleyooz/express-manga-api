@@ -23,26 +23,25 @@ function isValidMongoId(object_id){
 
 }
 
+
 async function valid_author_store(req, res, next){         
    
-    let currentDate = new Date()
-    currentDate.setFullYear( currentDate.getFullYear() - 10 );
-    
-    let schema = yup.object().shape({
+    const schema = yup.object().shape({
         type: yup.string("type must be a string.").strict().matches(/(writer|artist)/, null).required(),
         name: yup.string("name must be a string.").strict().required(),
         birthDate: yup.date().max(currentDate).required(),
         deathDate: yup.date().min(
             yup.ref('birthDate') + 3650,
             "death date must be at least 10 years longer than birthDate"
-          ),
+        ),
         socialMedia: yup.string("socialMedia must be a string.").strict().required(),        
         biography: yup.string("biography").strict().min(15, getMessage("author.invalid.biography.short")).required()
         
     })
 
-   
-
+    let currentDate = new Date()
+    currentDate.setFullYear( currentDate.getFullYear() - 10 );
+       
     schema.validate(req.body).then(() => {      
        next();
     })
@@ -51,12 +50,7 @@ async function valid_author_store(req, res, next){
         return res.jsonBadRequest(null, null, e)
         
     });
-    
-    
-
-
-          
-                    
+                                    
 }
 
 async function valid_author_read(req, res, next){
@@ -134,23 +128,26 @@ async function valid_author_list(req, res, next){
 }
 
 async function valid_author_update(req, res, next){        
-    let schema = yup.object().shape({
-        title: yup.string("title must be a string.").strict().min(2, getMessage("manga.invalid.title.short")).max(60, getMessage("manga.invalid.title.long")),
-        genre: yup.string("genre must be a string.").strict(),
-        writer_id: yup.string("must be a string").strict(),
-        artist_id: yup.string("must be a string").strict(),
-        synopsis: yup.string("synopsis must be a string.").strict().min(10, getMessage("manga.invalid.synopsis.short")).max(400, getMessage("manga.invalid.synopsis.long")),
-        n_chapters: yup.number("chapters must be a number.").min(1, 'There must be at least one chapter.'),
-        status: yup.number("status must be a number.").min(1, getMessage("manga.invalid.code")).max(6, getMessage("manga.invalid.code")),
-        nsfw: yup.string("nsfw must be a string.").strict().matches(/(true|false)/, null),
-        language: yup.string("language must be a string.").strict().matches(/(pt-br|en-us|en-uk)/, null).default({ language: 'pt-br' }),
-        manga_id: yup.string("must be a string").strict().required(),
-    })
-           
-
+   
+    const schema = yup.object().shape({
+        author_id: yup.string("author_id must be a string.").strict(),
+        type: yup.string("type must be a string.").strict().matches(/(writer|artist)/, null),
+        name: yup.string("name must be a string.").strict(),
+        birthDate: yup.date().max(currentDate),
+        deathDate: yup.date().min(
+            yup.ref('birthDate') + 3650,
+            "death date must be at least 10 years longer than birthDate"
+        ),
+        socialMedia: yup.string("socialMedia must be a string.").strict(),        
+        biography: yup.string("biography").strict().min(15, getMessage("author.invalid.biography.short"))
+        
+    }).test('at-least-one-field', "you must provide at least one field", value =>
+    !!(value.type || value.name || value.birthDate || value.deathDate || value.socialMedia || value.biography)
+  )
     try{
         schema.validate(req.body).then(() => {             
-            if(isValidMongoId(manga_id)){
+            if(isValidMongoId(req.body.author_id)){
+                schema.cast(req.body, { stripUnknown: true})               
                 next();                                             
             }
             else{
