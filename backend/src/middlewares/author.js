@@ -25,7 +25,9 @@ function isValidMongoId(object_id){
 
 
 async function valid_author_store(req, res, next){         
-   
+    let currentDate = new Date()
+    currentDate.setFullYear( currentDate.getFullYear() - 10 );
+       
     const schema = yup.object().shape({
         type: yup.string("type must be a string.").strict().matches(/(writer|artist)/, null).required(),
         name: yup.string("name must be a string.").strict().required(),
@@ -39,9 +41,7 @@ async function valid_author_store(req, res, next){
         
     })
 
-    let currentDate = new Date()
-    currentDate.setFullYear( currentDate.getFullYear() - 10 );
-       
+   
     schema.validate(req.body).then(() => {      
        next();
     })
@@ -128,7 +128,9 @@ async function valid_author_list(req, res, next){
 }
 
 async function valid_author_update(req, res, next){        
-   
+    let currentDate = new Date()
+    currentDate.setFullYear( currentDate.getFullYear() - 10 );
+       
     const schema = yup.object().shape({
         author_id: yup.string("author_id must be a string.").strict(),
         type: yup.string("type must be a string.").strict().matches(/(writer|artist)/, null),

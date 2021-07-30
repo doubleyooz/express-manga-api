@@ -164,13 +164,31 @@ async function update(req, res){
     const new_token = (req.new_token) ? req.new_token : null;
     req.new_token = null
     req.body.updatedAt = Date.now()
-    
-    Author.findByIdAndUpdate(req.body.author_id, req.body).then(doc => {
+
+  
+    Author.findByIdAndUpdate(req.body.author_id, req.body).select({type: 1, name: 1}).then(doc => {
         if(!doc){
             return res.jsonNotFound(null, getMessage("author.notfound"), new_token)
         }
        
-        else{
+        else{   
+            let temp;
+            req.body.type ? temp = req.body.type : temp = doc.type        
+            if(req.body.name){                           
+               
+                const currPath = `./uploads/authors/${doc.type}/${doc.name}`
+                const newPath = `./uploads/authors/${temp}/${req.body.name}`
+                
+                fs.rename(currPath, newPath, function(err) {
+                    if (err) {
+                    console.log(err)
+                    } else {
+                    console.log("Successfully renamed the directory.")
+                    }
+                })
+            }
+        
+            
             return res.jsonOK(doc, getMessage("author.update.success"), new_token)
         }
     }).catch(err => {       
