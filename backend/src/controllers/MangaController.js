@@ -314,41 +314,47 @@ async function update(req, res){
     let scan_id = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))       
     Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body).then(manga=>{
         if(writer_id){
-            const writer = await Author.findById(writer_id)
-            
-            cloneData = writer.works.filter(function (work_id){
+            Author.findById(writer_id).then(writer =>{
+                cloneData = writer.works.filter(function (work_id){
                         
-                return manga_id.toString() !== work_id.toString()
-                  
-            }) 
-            //update writer document
-            writer.works = cloneData
-            writer.updatedAt = Date.now()
-            writer.save().then(answer => {  
-                console.log(answer)
-        
+                    return manga_id.toString() !== work_id.toString()
+                      
+                }) 
+                //update writer document
+                writer.works = cloneData
+                writer.updatedAt = Date.now()
+                writer.save().then(answer => {  
+                    console.log(answer)
+            
+                }).catch(err => {
+                    console.log(err)
+                })
             }).catch(err => {
                 console.log(err)
             })
+                      
         }
     
         if(artist_id){
-            const artist = await Author.findById(artist_id)
-            
-            cloneData = artist.works.filter(function (work_id){
+            Author.findById(artist_id).then(artist =>{
+                cloneData = artist.works.filter(function (work_id){
                         
-                return manga_id.toString() !== work_id.toString()
-                  
-            }) 
-            //update artist document
-            artist.works = cloneData
-            artist.updatedAt = Date.now()
-            artist.save().then(answer => {  
-                console.log(answer)
-        
+                    return manga_id.toString() !== work_id.toString()
+                      
+                }) 
+                //update artist document
+                artist.works = cloneData
+                artist.updatedAt = Date.now()
+                artist.save().then(answer => {  
+                    console.log(answer)
+            
+                }).catch(err => {
+                    console.log(err)
+                })
             }).catch(err => {
                 console.log(err)
             })
+                      
         }
         return res.jsonOK(null, getMessage("manga.update.success"), new_token)
     }).catch(err => {
