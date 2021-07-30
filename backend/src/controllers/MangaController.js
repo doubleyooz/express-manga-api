@@ -6,6 +6,7 @@ import Manga from '../models/Manga.js';
 import User from '../models/User.js';
 
 import { getMessage } from '../common/messages.js';
+import { writer } from 'repl';
 
 
 
@@ -305,73 +306,57 @@ async function list(req, res){
 }
 
 async function update(req, res){
-    const { title, genre, synopsis, n_chapters, status, language, writer_id, artist_id, manga_id, nsfw } = req.body;
+    const {writer_id, artist_id, manga_id } = req.body;
     const new_token = (req.new_token) ? req.new_token : null;
     req.new_token = null
 
-    if(!manga_id){           
-        return res.jsonBadRequest(null, getMessage("manga.error.manga_id"), null)
-    
-    } else{
-        const manga = await Manga.findById(manga_id);
-
-        if(manga){
-            if(manga.scan_id.toString() === CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))){
-                
-                if(title){
-                    manga.title = title;
-                }
-                if(genre){
-                    manga.genre = genre;
-                }
-                if(synopsis){
-                    manga.synopsis = synopsis;
-                }
-                if(n_chapters){
-                    manga.n_chapters = n_chapters;
-                }                   
-                
-                if(status){
-                    manga.status = status;
-                }
-
-                if(nsfw){
-                    manga.nsfw = nsfw;
-                }
-                if(language){
-                    manga.language = language;
-                }
-
-                if(writer_id){
-                    manga.writer_id = writer_id;
-                    //update writer document
-                }
-
-                if(artist_id){
-                    manga.artist_id = artist_id;
-                    //update artist document
-                }
-
-                manga.updatedAt = Date.now()
-                let changes = manga.getChanges()
-                manga.save().then(answer => {  
-                    return res.jsonOK(changes, getMessage("manga.update.success"), new_token)
-
-                }).catch(err => {
-                    return res.jsonServerError(null, null, err)
-                })
-               
-              
+    req.body.updatedAt = Date.now()   
+    let scan_id = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))       
+    Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body).then(manga=>{
+        if(writer_id){
+            const writer = await Author.findById(writer_id)
+            
+            cloneData = writer.works.filter(function (work_id){
+                        
+                return manga_id.toString() !== work_id.toString()
+                  
+            }) 
+            //update writer document
+            writer.works = cloneData
+            writer.updatedAt = Date.now()
+            writer.save().then(answer => {  
+                console.log(answer)
         
-            } else{
-                return res.jsonUnauthorized(null, null, null);
-            }
-
-        } else{
-            return res.jsonNotFound(null, getMessage("manga.notfound"), new_token)
-           
-        }                       
-    }     
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+    
+        if(artist_id){
+            const artist = await Author.findById(artist_id)
+            
+            cloneData = artist.works.filter(function (work_id){
+                        
+                return manga_id.toString() !== work_id.toString()
+                  
+            }) 
+            //update artist document
+            artist.works = cloneData
+            artist.updatedAt = Date.now()
+            artist.save().then(answer => {  
+                console.log(answer)
+        
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+        return res.jsonOK(null, getMessage("manga.update.success"), new_token)
+    }).catch(err => {
+        return res.jsonServerError(null, null, err)
+    })
+        
+                                
+       
 }
 
 async function remove(req, res){
