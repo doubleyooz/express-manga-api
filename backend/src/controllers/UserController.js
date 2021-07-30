@@ -178,19 +178,13 @@ async function update(req, res){
         _id: CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8)),
         active: true
     }).then(user => {           
-
-        if(name){
-            user.name = name;
-            user.save().then(result => {    
-                return res.jsonOK(null, getMessage("user.update.name.success"), new_token)
-            }).catch(err =>{
-                return res.jsonServerError(null, null, new_token)
-            })
-
-            
-        } else{
-            return res.jsonBadRequest(null, null, null);
-        }
+    
+        user.name = name;
+        user.save().then(result => {    
+            return res.jsonOK(null, getMessage("user.update.name.success"), new_token)
+        }).catch(err =>{
+            return res.jsonServerError(null, null, new_token)
+        })                
                 
     })
                  
