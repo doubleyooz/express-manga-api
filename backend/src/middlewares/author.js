@@ -24,9 +24,7 @@ function isValidMongoId(object_id){
 }
 
 async function valid_author_store(req, res, next){         
-                       
-    const { type, name, birthDate, socialMedia, deathDate, biography } = req.body;
-    
+   
     let currentDate = new Date()
     currentDate.setFullYear( currentDate.getFullYear() - 10 );
     
