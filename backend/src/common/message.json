@@ -19,6 +19,7 @@
     "chapter.notfound": "The Chapter could not be found.",
 
     "author.error.duplicate": "This author already exists or the number is unavaliable.",
+    "author.error.overwrite": "You cant overwrite a existing author",
     "author.invalid.biography.short": "Biography must be at least 15 characters long",    
     "author.invalid.id": "You need to provide a valid IdObject to continue this operation.",    
     "author.upload.success": "Upload Done!",
