@@ -34,6 +34,8 @@
     "manga.error.duplicate": "This manga already exists or the title is unavaliable.",
     "manga.error.manga_id": "manga_id undefined.",
     "manga.error.scan_id": "Scan_id must be a valid id.",
+    "manga.error.artist": "Must provide a valid artist id.",
+    "manga.error.writer": "Must provide a valid writer id.",
     "manga.invalid.id": "You need to provide a valid IdObject to continue this operation.",
     "manga.invalid.code": "Invalid code.",
     "manga.invalid.title.short": "Title is too short - it must be at least 2 characters long.",

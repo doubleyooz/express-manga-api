@@ -140,7 +140,7 @@ async function valid_author_update(req, res, next) {
 			deathDate: yup
 				.date()
 				.min(
-					yup.ref("birthDate") + 3650,
+					yup.ref("birthDate") + 10,
 					"death date must be at least 10 years longer than birthDate"
 				),
 			socialMedia: yup.string("socialMedia must be a string.").strict(),
