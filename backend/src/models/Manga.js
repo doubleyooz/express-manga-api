@@ -10,11 +10,11 @@ const MangaSchema = new mongoose.Schema({
 		type: String,
 		unique: true,
 	},
-	writer: {
+	writer_id: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Author",
 	},
-	artist: {
+	artist_id: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Author",
 	},
