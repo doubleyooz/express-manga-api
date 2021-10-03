@@ -1,6 +1,7 @@
 import fs from "fs";
 import CryptoJs from "crypto-js";
 
+import Author from "../models/Author.js";
 import Chapter from "../models/Chapter.js";
 import Manga from "../models/Manga.js";
 import User from "../models/User.js";

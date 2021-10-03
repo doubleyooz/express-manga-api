@@ -7,7 +7,7 @@ const upload1 = multer(multerConfig.file).single('cover')
 const upload2 = multer(multerConfig.files).array('imgCollection')
 const upload3 = multer(multerConfig.authorFiles).array('photos')
 
-function upload_single(req, res){
+function upload_single(req, res, next){
     upload1(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             // A Multer error occurred when uploading.                

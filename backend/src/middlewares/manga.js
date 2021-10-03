@@ -23,8 +23,6 @@ function isValidMongoId(object_id) {
 async function valid_manga_store(req, res, next) {
 	const { writer_id, artist_id } = req.body;
 
-	console.log(title);
-
 	let schema = yup.object().shape({
 		title: yup
 			.string("title must be a string.")
@@ -66,14 +64,14 @@ async function valid_manga_store(req, res, next) {
 	schema
 		.validate(req.body)
 		.then(() => {
-			valid_language = true;
+			let valid_language = true;
 
-			valid_genre = true;
+			let valid_genre = true;
 
 			if (valid_language && valid_genre && req.file) {
 				if (isValidMongoId(writer_id)) {
 					if (isValidMongoId(artist_id)) {
-						req.nsfw = nsfw === "true";
+						req.nsfw = req.nsfw === "true";
 						next();
 					} else {
 						return res.jsonBadRequest(null, null, null);
