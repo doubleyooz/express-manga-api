@@ -56,7 +56,7 @@ async function valid_manga_store(req, res, next) {
 		language: yup
 			.string("language must be a string.")
 			.strict()
-			.matches(/(pt-br|en-us|en-uk)/, null)
+			.matches(/(pt-br|pt-pt|en-us|en-uk)/, null)
 			.default({ language: "pt-br" })
 			.required(),
 	});
