@@ -1,59 +1,72 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required:true, select: false },
+	email: { type: String, required: true, unique: true },
+	password: { type: String, required: true, select: false },
 
-    role: {
-        type: String,
-        default: "User"
-    },
+	role: {
+		type: String,
+		default: "User",
+	},
 
-    name: { 
-        type: String,
-        required: true,
-    },
+	name: {
+		type: String,
+		required: true,
+	},
 
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    },
+	updatedAt: {
+		type: Date,
+		default: Date.now,
+	},
 
-    addedAt: {
-        type: Date,
-        default: Date.now
-    },
+	addedAt: {
+		type: Date,
+		default: Date.now,
+	},
 
-    mangas: [{ //a array fill with the mangas ids
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Manga'
-    
-    }],
+	mangas: [
+		{
+			//a array fill with the mangas ids
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Manga",
+		},
+	],
 
-    manga_alert: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Manga'
-    }],
-    
-    likes:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
+	manga_alert: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Manga",
+		},
+	],
 
-    token_version:{
-        type: Number,
-        default: 0
-    },
+	likes: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+		},
+	],
 
-    active:{
-        type: Boolean,
-        default: false
-    },
+	reviews: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Manga",
+		},
+	],
 
-    resetLink:{
-        type: String,
-        default: ""
-    }
+	token_version: {
+		type: Number,
+		default: 0,
+	},
+
+	active: {
+		type: Boolean,
+		default: false,
+	},
+
+	resetLink: {
+		type: String,
+		default: "",
+	},
 });
 
-export default mongoose.model('User', UserSchema);
+export default mongoose.model("User", UserSchema);

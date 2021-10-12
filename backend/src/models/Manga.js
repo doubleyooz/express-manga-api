@@ -53,6 +53,21 @@ const MangaSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 	},
+
+	rating: {
+		type: Number,
+	},
+	reviews: [
+		{
+			type: Object,
+			text: String,
+			rating: Number,
+			user_id: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		},
+	],
 	createdAt: {
 		type: Date,
 		default: Date.now,
