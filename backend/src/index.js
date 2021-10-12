@@ -10,11 +10,14 @@ import http from 'http';
 import routes from './routes.js';
 import { response } from './middlewares/response.js';
 import corsOptionsDelegate from './config/cors.js';
+import limiter from './config/limiter.js';
 
 dotenv.config()
 
 const app = express();
 const server = http.Server(app);
+
+
 
 mongoose.connect(
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-c09yq.mongodb.net/MangaReader?retryWrites=true&w=majority`,
@@ -32,6 +35,7 @@ app.use("/files", express.static("uploads"));
 
 app.use(cookieParser())
 app.use(cors(corsOptionsDelegate));
+app.use(limiter); // limiting all requests
 app.use(response)
 
 app.use(routes);
