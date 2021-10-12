@@ -43,30 +43,30 @@ routes.get('/refresh-token', SessionController.refreshAccessToken)
 
 routes.get('/user/read', easyAuth(), UserMiddleware.valid_user_read, UserController.read);
 routes.get('/user/list', easyAuth(),  UserMiddleware.valid_user_list,UserController.list);
-routes.put('/user/update', Authorize(["Scan", "User"]), UserMiddleware.valid_user_update, UserController.update)
-routes.delete('/user/delete', Authorize(["Scan", "User"]), UserMiddleware.valid_user_remove, UserController.remove);
+routes.put('/user', Authorize(["Scan", "User"]), UserMiddleware.valid_user_update, UserController.update)
+routes.delete('/user', Authorize(["Scan", "User"]), UserMiddleware.valid_user_remove, UserController.remove);
 routes.put('/user/like', Authorize("User"), LikeController.likeUser);
 routes.get('/user/notify', Authorize("Scan"), NotifyController.notifyUsers)
 
 
-routes.post('/manga/post', Authorize("Scan"), UploadMiddleware.upload_single, MangaMiddleware.valid_manga_store, MangaController.store);
+routes.post('/manga', Authorize("Scan"), UploadMiddleware.upload_single, MangaMiddleware.valid_manga_store, MangaController.store);
 routes.get('/manga/list',  easyAuth(), MangaMiddleware.valid_manga_list, MangaController.list);
 routes.get('/manga/read',  easyAuth(), MangaMiddleware.valid_manga_read, MangaController.read);
-routes.put('/manga/update', Authorize("Scan"), MangaMiddleware.valid_manga_update, MangaController.update);
-routes.delete('/manga/delete', Authorize("Scan"), MangaMiddleware.valid_manga_remove, MangaController.remove);
+routes.put('/manga', Authorize("Scan"), MangaMiddleware.valid_manga_update, MangaController.update);
+routes.delete('/manga', Authorize("Scan"), MangaMiddleware.valid_manga_remove, MangaController.remove);
 routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
 routes.put('/manga/pin', Authorize("User"), LikeController.pinManga);
 
-routes.post('/chapter/post', Authorize("Scan"), UploadMiddleware.upload_many_manga, ChapterMiddleware.valid_chapter_store, ChapterController.store);
+routes.post('/chapter', Authorize("Scan"), UploadMiddleware.upload_many_manga, ChapterMiddleware.valid_chapter_store, ChapterController.store);
 routes.get('/chapter/list', easyAuth(), ChapterMiddleware.valid_chapter_list, ChapterController.list);
 routes.get('/chapter/read', easyAuth(), ChapterMiddleware.valid_chapter_read, ChapterController.read);
-routes.put('/chapter/update', Authorize("Scan"), ChapterMiddleware.valid_chapter_update, ChapterController.update);
-routes.delete('/chapter/delete', Authorize("Scan"), ChapterMiddleware.valid_chapter_remove,  ChapterController.remove);
+routes.put('/chapter', Authorize("Scan"), ChapterMiddleware.valid_chapter_update, ChapterController.update);
+routes.delete('/chapter', Authorize("Scan"), ChapterMiddleware.valid_chapter_remove,  ChapterController.remove);
 
-routes.post('/author/post', Authorize("Scan"), UploadMiddleware.upload_many_author, AuthorMiddleware.valid_author_store, AuthorController.store);
-routes.put('/author/update', AuthorMiddleware.valid_author_update, Authorize("Scan"), AuthorController.update);
+routes.post('/author', Authorize("Scan"), UploadMiddleware.upload_many_author, AuthorMiddleware.valid_author_store, AuthorController.store);
+routes.put('/author', AuthorMiddleware.valid_author_update, Authorize("Scan"), AuthorController.update);
 routes.get('/author/list', easyAuth(), AuthorController.list);
 routes.get('/author/read', easyAuth(), AuthorController.read);
-routes.delete('/author/delete', Authorize("Scan"), AuthorController.remove);
+routes.delete('/author', Authorize("Scan"), AuthorController.remove);
 
 export default routes;
