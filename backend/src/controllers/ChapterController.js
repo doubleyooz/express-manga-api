@@ -308,8 +308,8 @@ async function list(req, res) {
 	console.log("Role: " + role);
 
 	let docs = [];
-
-	if (manga_id) {
+    const doesMangaExist = await Manga.exists({ _id: manga_id });
+	if (doesMangaExist) {
 		Chapter.find({ manga_id: manga_id })
 			.sort("updatedAt")
 			.select(list_projection[role])
@@ -326,7 +326,7 @@ async function list(req, res) {
 				} else {
 					return res.jsonOK(
 						docs,
-						getMessage("chapter.list.success"),
+						getMessage("chapter.list.success") + docs.length,
 						new_token
 					);
 				}
@@ -335,28 +335,8 @@ async function list(req, res) {
 				return res.jsonBadRequest(err, null, null);
 			});
 	} else {
-		Chapter.find()
-			.sort("updatedAt")
-			.select(list_projection[role])
-			.then((result) => {
-				result.forEach((doc) => {
-					docs.push(doc);
-				});
-				if (docs.length === 0) {
-					return res.jsonNotFound(
-						docs,
-						getMessage("chapter.list.empty"),
-						new_token
-					);
-				} else {
-					return res.jsonOK(
-						docs,
-						getMessage("chapter.list.success"),
-						new_token
-					);
-				}
-			});
-	}
+        return res.jsonNotFound(null, getMessage("manga.notfound"), null);
+    }
 }
 
 async function remove(req, res) {

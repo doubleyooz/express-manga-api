@@ -14,7 +14,7 @@
     "chapter.upload.success": "Upload Done!",
     "chapter.update.success": "Update Done!",
     "chapter.read.success": "Chapter retrieved successfully!",
-    "chapter.list.success": "Chapter list retrieved successfully!",
+    "chapter.list.success": "Chapter list retrieved successfully! Chapters found: ",
     "chapter.list.empty": "No chapters matched",
     "chapter.delete.success": "Chapter deleted.",
     "chapter.delete.error": "The chapter pages could not be found",
