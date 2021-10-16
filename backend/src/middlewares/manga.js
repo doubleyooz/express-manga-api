@@ -56,8 +56,11 @@ async function valid_manga_store(req, res, next) {
 		language: yup
 			.string("language must be a string.")
 			.strict()
-			.matches(/(pt-br|pt-pt|en-us|en-uk)/, null)
-			.default({ language: "pt-br" })
+			.matches(
+				/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
+				null
+			)
+			.default({ language: "pt" })
 			.required(),
 	});
 
@@ -72,6 +75,7 @@ async function valid_manga_store(req, res, next) {
 				if (isValidMongoId(writer_id)) {
 					if (isValidMongoId(artist_id)) {
 						req.nsfw = req.nsfw === "true";
+						console.log(req.body.language);
 						next();
 					} else {
 						return res.jsonBadRequest(null, null, null);
@@ -180,8 +184,11 @@ async function valid_manga_update(req, res, next) {
 		language: yup
 			.string("language must be a string.")
 			.strict()
-			.matches(/(pt-br|en-us|en-uk)/, null)
-			.default({ language: "pt-br" }),
+			.matches(
+				/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
+				null
+			)
+			.default({ language: "pt" }),
 		manga_id: yup.string("must be a string").strict().required(),
 	});
 
