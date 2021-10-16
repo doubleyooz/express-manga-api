@@ -2,6 +2,7 @@ import path from "path";
 import multer from "multer";
 import crypto from "crypto";
 import fs from "fs";
+import CryptoJs from "crypto-js";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -57,6 +58,11 @@ const authorFiles = {
 const files = {
 	storage: multer.diskStorage({
 		destination: (req, files, cb) => {
+			let scan_id = CryptoJs.AES.decrypt(
+				req.auth,
+				`${process.env.SHUFFLE_SECRET}`
+			).toString(CryptoJs.enc.Utf8);
+
 			cb(
 				null,
 				path.resolve(
@@ -64,14 +70,25 @@ const files = {
 					"..",
 					"..",
 					folder,
+					"mangas/",
 					req.body.language + "/",
+					scan_id + "/",
 					req.body.manga_title + "/",
 					req.body.number
 				)
 			);
 
+			
 			let dir =
-				"./" + folder + req.body.language + "/" + req.body.manga_title + "/";
+				"./" +
+				folder +
+				"mangas/" +
+				req.body.language +
+				"/" +
+				scan_id +
+				"/" +
+				req.body.manga_title +
+				"/";
 
 			if (!fs.existsSync(dir)) return false;
 			//fs.mkdirSync(dir);
@@ -106,10 +123,39 @@ const files = {
 const file = {
 	storage: multer.diskStorage({
 		destination: (req, files, cb) => {
-			cb(null, path.resolve(__dirname, "..", "..", folder, req.body.title));
+			let scan_id = CryptoJs.AES.decrypt(
+				req.auth,
+				`${process.env.SHUFFLE_SECRET}`
+			).toString(CryptoJs.enc.Utf8);
 
-			let dir = "./" + folder + req.body.title + "/";
-			if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+			cb(
+				null,
+				path.resolve(
+					__dirname,
+					"..",
+					"..",
+					folder,
+					"mangas/",
+					req.body.language + "/",
+					scan_id + "/",
+					req.body.title + "/"
+				)
+			);
+
+			let dir =
+				"./" +
+				folder +
+				"mangas/" +
+				req.body.language +
+				"/" +
+				scan_id +
+				"/" +
+				req.body.title +
+				"/";
+				
+			if (!fs.existsSync(dir))
+				fs.mkdirSync(dir, { recursive: true });
+			
 		},
 		filename: (req, file, cb) => {
 			crypto.randomBytes(16, (err, hash) => {

@@ -19,7 +19,7 @@ const list_projection = {
 		nsfw: 1,
 		cover: 1,
 		likes: 1,
-        writer_id: 1,
+		writer_id: 1,
 		artist_id: 1,
 		_id: 0,
 	},
@@ -34,7 +34,7 @@ const list_projection = {
 		language: 1,
 		nsfw: 1,
 		status: 1,
-        writer_id: 1,
+		writer_id: 1,
 		artist_id: 1,
 		scan_id: 1,
 		likes: 1,
@@ -47,7 +47,7 @@ const list_projection = {
 		synopsis: 1,
 		n_chapters: 1,
 		cover: 1,
-        writer_id: 1,
+		writer_id: 1,
 		artist_id: 1,
 		nsfw: 1,
 		status: 1,
@@ -63,7 +63,7 @@ const read_projection = {
 		n_chapters: 1,
 		chapters: 1,
 		status: 1,
-        writer_id: 1,
+		writer_id: 1,
 		artist_id: 1,
 		nsfw: 1,
 		cover: 1,
@@ -79,8 +79,8 @@ const read_projection = {
 		chapters: 1,
 		language: 1,
 		nsfw: 1,
-        artist_id: 1,
-        writer_id: 1,
+		artist_id: 1,
+		writer_id: 1,
 		status: 1,
 		scan_id: 1,
 		likes: 1,
@@ -94,7 +94,7 @@ const read_projection = {
 		n_chapters: 1,
 		chapters: 1,
 		cover: 1,
-        writer_id: 1,
+		writer_id: 1,
 		artist_id: 1,
 		nsfw: 1,
 		status: 1,
@@ -114,10 +114,9 @@ async function store(req, res) {
 		language,
 		nsfw,
 	} = req.body;
+
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
-
-	const doesMangaExist = await Manga.exists({ title: title });
 
 	let scan_id = CryptoJs.AES.decrypt(
 		req.auth,
@@ -126,8 +125,35 @@ async function store(req, res) {
 
 	req.auth = null;
 
+	const scan = await User.findById(scan_id);
+
+	if (!scan) {
+		fs.unlinkSync(
+			"uploads/" +
+				language +
+				"/" +
+				email +
+				"/" +
+				title +
+				"/" +
+				req.file.filename
+		);
+		return res.jsonNotFound(null, getMessage("manga.error.scan_id"), null);
+	}
+
+	const doesMangaExist = await Manga.exists({ title: title });
+
 	if (doesMangaExist) {
-		fs.unlinkSync("uploads/" + title + "/" + req.file.filename);
+		fs.unlinkSync(
+				"uploads/mangas/" +
+				language +
+				"/" +
+				scan_id +
+				"/" +
+				title +
+				"/" +
+				req.file.filename
+		);
 		return res.jsonBadRequest(
 			null,
 			getMessage("manga.error.duplicate"),
@@ -135,24 +161,35 @@ async function store(req, res) {
 		);
 	}
 
-	const scan = await User.findById(scan_id);
-
-	if (!scan) {
-		fs.unlinkSync("uploads/" + title + "/" + req.file.filename);
-		return res.jsonNotFound(null, getMessage("manga.error.scan_id"), null);
-	}
-
 	const artist = await Author.findById(artist_id);
 
 	if (!artist) {
-		fs.unlinkSync("uploads/" + title + "/" + req.file.filename);
+		fs.unlinkSync(
+			"uploads/mangas/" +
+				language +
+				"/" +
+				scan_id +
+				"/" +
+				title +
+				"/" +
+				req.file.filename
+		);
 		return res.jsonNotFound(null, getMessage("manga.error.artist"), null);
 	}
 
 	const writer = await Author.findById(writer_id);
 
 	if (!writer) {
-		fs.unlinkSync("uploads/" + title + "/" + req.file.filename);
+		fs.unlinkSync(
+			"uploads/mangas/" +
+				language +
+				"/" +
+				scan_id +
+				"/" +
+				title +
+				"/" +
+				req.file.filename
+		);
 		return res.jsonNotFound(null, getMessage("manga.error.writer"), null);
 	}
 
@@ -202,7 +239,16 @@ async function store(req, res) {
 		})
 		.catch((err) => {
 			console.log(err);
-			fs.unlinkSync("uploads/" + title + "/" + req.file.filename);
+			fs.unlinkSync(
+				"uploads/mangas/" +
+					language +
+					"/" +
+					scan_id +
+					"/" +
+					title +
+					"/" +
+					req.file.filename
+			);
 			return res.jsonServerError(null, null, err);
 		});
 }
