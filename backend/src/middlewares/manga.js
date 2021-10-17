@@ -224,10 +224,42 @@ async function valid_manga_remove(req, res, next) {
 	}
 }
 
+async function valid_review_store(req, res, next) {
+	const { manga_id } = req.body;
+	
+	let schema = yup.object().shape({
+		text: yup
+			.string("The text needs to be a String")
+			.strict()
+			.min(2, getMessage("manga.invalid.title.short"))
+			.max(180, getMessage("manga.invalid.title.long")),
+		rating: yup
+			.number("chapters must be a number.")
+			.min(0, "The avaliation must be between 0 and 5")
+			.max(5, "The avaliation must be between 0 and 5")
+			.required(),
+	});
+
+	schema
+		.validate(req.body)
+		.then(() => {
+			if (isValidMongoId(manga_id)) {
+				next();
+			} else {
+				return res.jsonBadRequest(null, null, null);
+			}
+		})
+		.catch(function (e) {
+			console.log(e);
+			return res.jsonBadRequest(null, null, e);
+		});
+}
+
 export default {
 	valid_manga_store,
 	valid_manga_read,
 	valid_manga_list,
 	valid_manga_update,
 	valid_manga_remove,
+	valid_review_store,
 };

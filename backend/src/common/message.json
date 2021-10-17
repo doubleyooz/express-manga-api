@@ -57,6 +57,7 @@
     "manga.notify.error": "Users weren't notified successfuly",
 
     "review.save.success": "Review added!",
+    "review.error.duplicate": "You've already reviewed this one!",
 
     "unauthorized.refresh.token.missing": "Lack credentials.",
 
