@@ -254,6 +254,29 @@ async function valid_review_store(req, res, next) {
 			return res.jsonBadRequest(null, null, e);
 		});
 }
+async function valid_review_list(req, res, next) {
+	const { manga_id } = req.query;
+	let schema = yup.object().shape({
+		manga_id: yup.string("must be a string").strict().required(),
+	});
+
+	try {
+		schema
+			.validate(req.query)
+			.then(() => {
+				if (isValidMongoId(manga_id)) {
+					next();
+				} else {
+					return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+				}
+			})
+			.catch((err) => {
+				return res.jsonBadRequest(null, null, err.message);
+			});
+	} catch (err) {
+		return res.jsonBadRequest(null,  getMessage("manga.invalid.id"), null);
+	}
+}
 
 export default {
 	valid_manga_store,
@@ -262,4 +285,5 @@ export default {
 	valid_manga_update,
 	valid_manga_remove,
 	valid_review_store,
+	valid_review_list,
 };

@@ -58,7 +58,7 @@ routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
 routes.put('/manga/pin', Authorize("User"), LikeController.pinManga);
 
 routes.post('/manga/review', Authorize("User"), MangaMiddleware.valid_review_store, MangaController.addReview);
-//routes.get('/manga/review',  easyAuth(), MangaMiddleware.valid_manga_list, MangaController.list);
+routes.get('/manga/review',  easyAuth(), MangaMiddleware.valid_review_list, MangaController.listReview);
 //routes.get('/manga/review',  easyAuth(), MangaMiddleware.valid_manga_read, MangaController.read);
 //routes.put('/manga/review', Authorize("User"), MangaMiddleware.valid_manga_update, MangaController.update);
 //routes.delete('/manga/review', Authorize("User"), MangaMiddleware.valid_manga_remove, MangaController.remove);

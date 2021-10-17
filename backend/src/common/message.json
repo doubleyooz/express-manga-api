@@ -58,6 +58,7 @@
 
     "review.save.success": "Review added!",
     "review.error.duplicate": "You've already reviewed this one!",
+    "review.list.success": "Review list retrieved.",
 
     "unauthorized.refresh.token.missing": "Lack credentials.",
 

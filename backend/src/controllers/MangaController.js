@@ -601,4 +601,25 @@ async function addReview(req, res) {
 		});
 }
 
-export default { store, read, list, update, remove, addReview };
+async function listReview(req, res) {
+	const { manga_id } = req.query;
+	const new_token = req.new_token ? req.new_token : null;
+	req.new_token = null;
+
+	
+	if (manga_id) {
+		const manga = await Manga.findById(manga_id)
+			.select({ reviews: 1 })
+			.exec();
+		
+		if(manga){
+			return res.jsonOK(manga, getMessage("manga.read.success"), new_token);
+		}	
+		return res.jsonNotFound(null, null, new_token);
+		
+	} else {
+		return res.jsonBadRequest(null, null, null);
+	}
+}
+
+export default { store, read, list, update, remove, addReview, listReview };
