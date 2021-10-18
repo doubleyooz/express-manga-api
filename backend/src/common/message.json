@@ -7,8 +7,10 @@
 
     "limiter.requests":"Too many requests, please try again later.",
 
+    "invalid.object.id" : "You need to provide a valid IdObject to continue this operation.",
+
     "chapter.error.duplicate": "This chapter already exists or the number is unavaliable.",
-    "chapter.invalid.id": "You need to provide a valid IdObject to continue this operation.",
+    
     "chapter.invalid.title.short": "Title is too short - it must be at least 2 characters long.",
     "chapter.invalid.title.long": "Title is too long - it must be a maximum of 40 characters.",
     "chapter.upload.success": "Upload Done!",
@@ -22,8 +24,7 @@
 
     "author.error.duplicate": "This author already exists or the number is unavaliable.",
     "author.error.overwrite": "You cant overwrite a existing author",
-    "author.invalid.biography.short": "Biography must be at least 15 characters long",    
-    "author.invalid.id": "You need to provide a valid IdObject to continue this operation.",    
+    "author.invalid.biography.short": "Biography must be at least 15 characters long",   
     "author.upload.success": "Upload Done!",
     "author.update.success": "Update Done!",
     "author.read.success": "author retrieved successfully!",
@@ -38,7 +39,6 @@
     "manga.error.scan_id": "Scan_id must be a valid id.",
     "manga.error.artist": "Must provide a valid artist id.",
     "manga.error.writer": "Must provide a valid writer id.",
-    "manga.invalid.id": "You need to provide a valid IdObject to continue this operation.",
     "manga.invalid.code": "Invalid code.",
     "manga.invalid.title.short": "Title is too short - it must be at least 2 characters long.",
     "manga.invalid.title.long": "Title is too long - it must be a maximum of 60 characters.",
@@ -58,12 +58,13 @@
 
     "review.save.success": "Review added!",
     "review.error.duplicate": "You've already reviewed this one!",
+    "review.invalid.text.short": "Text is too short - it must be at least 2 characters long.",
+    "review.invalid.text.long": "Text is too long - it must be a maximum of 500 characters.",
+    "review.read.success": "Selected review retrieved.",
     "review.list.success": "Review list retrieved.",
+    "review.notfound": "Review could not be found.",
 
     "unauthorized.refresh.token.missing": "Lack credentials.",
-
-    
-    "user.invalid.id": "You need to provide a valid IdObject to continue this operation.",
     "user.invalid.name.short": "Name is too short - it must be at least 3 characters long.",
     "user.invalid.password": "Invalid Password.",
     "user.invalid.password.short": "Password is too short -it must be at least 8 characters long.",

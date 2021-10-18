@@ -67,11 +67,9 @@ async function valid_manga_store(req, res, next) {
 	schema
 		.validate(req.body)
 		.then(() => {
-			let valid_language = true;
-
 			let valid_genre = true;
 
-			if (valid_language && valid_genre && req.file) {
+			if (valid_genre && req.file) {
 				if (isValidMongoId(writer_id)) {
 					if (isValidMongoId(artist_id)) {
 						req.nsfw = req.nsfw === "true";
@@ -226,7 +224,7 @@ async function valid_manga_remove(req, res, next) {
 
 async function valid_review_store(req, res, next) {
 	const { manga_id } = req.body;
-	
+
 	let schema = yup.object().shape({
 		text: yup
 			.string("The text needs to be a String")
@@ -274,7 +272,7 @@ async function valid_review_list(req, res, next) {
 				return res.jsonBadRequest(null, null, err.message);
 			});
 	} catch (err) {
-		return res.jsonBadRequest(null,  getMessage("manga.invalid.id"), null);
+		return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
 	}
 }
 

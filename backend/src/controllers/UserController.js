@@ -262,4 +262,26 @@ async function remove(req, res) {
 		});
 }
 
-export default { store, read, list, update, remove };
+
+async function listReview(req, res) {
+	const { user_id } = req.query;
+	const new_token = req.new_token ? req.new_token : null;
+	req.new_token = null;
+
+	
+	if (user_id) {
+		const user = await User.findById(user_id)
+			.select({ reviews: 1 })
+			.exec();
+		
+		if(user){
+			return res.jsonOK(user, getMessage("user.read.success"), new_token);
+		}	
+		return res.jsonNotFound(null, null, new_token);
+		
+	} else {
+		return res.jsonBadRequest(null, null, null);
+	}
+}
+
+export default { store, read, list, update, remove, listReview };

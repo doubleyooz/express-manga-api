@@ -233,7 +233,6 @@ async function store(req, res) {
 				})
 				.catch((err) => {
 					console.log(err);
-
 					return res.jsonServerError(null, null, err);
 				});
 		})
@@ -535,91 +534,4 @@ async function remove(req, res) {
 	return res.jsonBadRequest(null, getMessage("manga.notfound"), new_token);
 }
 
-async function addReview(req, res) {
-	const { manga_id, text, rating } = req.body;
-	const new_token = req.new_token ? req.new_token : null;
-	req.new_token = null;
-
-	const current_user = CryptoJs.AES.decrypt(
-		req.auth,
-		`${process.env.SHUFFLE_SECRET}`
-	).toString(CryptoJs.enc.Utf8);
-	req.auth = null;
-
-	const user = await User.findById(current_user);
-
-	if (!user) {
-		return res.jsonNotFound(null, getMessage("user.notfound"), new_token);
-	}
-
-	const jsonObject = {
-		text: text,
-		rating: rating,
-		user_id: current_user,
-	};
-
-	Manga.findById(manga_id)
-		.then((manga) => {
-			if (manga.reviews.some((e) => e.user_id === current_user))
-				return res.jsonBadRequest(
-					null,
-					getMessage("review.error.duplicate"),
-					new_token
-				);
-			else {
-				manga.reviews.push(jsonObject);
-				user.reviews.push(manga_id);
-				manga.updatedAt = Date.now();
-				user.updatedAt = Date.now();
-				console.log("else");
-				manga
-					.save()
-					.then(() => {
-						user
-							.save()
-							.then(() => {
-								return res.jsonOK(
-									null,
-									getMessage("review.save.success"),
-									new_token
-								);
-							})
-							.catch((err) => {
-								console.log(err);
-								return res.jsonServerError(null, null, err.toString());
-							});
-					})
-					.catch((err) => {
-						console.log(err);
-						return res.jsonServerError(err, null, new_token);
-					});
-			}
-		})
-		.catch((err) => {
-			console.log("catch");
-			return res.jsonNotFound(null, getMessage("manga.notfound"), new_token);
-		});
-}
-
-async function listReview(req, res) {
-	const { manga_id } = req.query;
-	const new_token = req.new_token ? req.new_token : null;
-	req.new_token = null;
-
-	
-	if (manga_id) {
-		const manga = await Manga.findById(manga_id)
-			.select({ reviews: 1 })
-			.exec();
-		
-		if(manga){
-			return res.jsonOK(manga, getMessage("manga.read.success"), new_token);
-		}	
-		return res.jsonNotFound(null, null, new_token);
-		
-	} else {
-		return res.jsonBadRequest(null, null, null);
-	}
-}
-
-export default { store, read, list, update, remove, addReview, listReview };
+export default { store, read, list, update, remove };

@@ -4,6 +4,7 @@ import express from 'express';
 import AuthorController from './controllers/AuthorController.js';
 import ChapterController from './controllers/ChapterController.js';
 import MangaController from './controllers/MangaController.js';
+import ReviewController from './controllers/ReviewController.js';
 import UserController from './controllers/UserController.js';
 
 import SessionController from './controllers/SessionController.js';
@@ -14,6 +15,7 @@ import NotifyController from './controllers/NotifyController.js';
 import AuthorMiddleware from './middlewares/Author.js';
 import ChapterMiddleware from './middlewares/Chapter.js';
 import MangaMiddleware from './middlewares/Manga.js';
+import ReviewMiddleware from './middlewares/Review.js';
 import UserMiddleware from './middlewares/User.js';
 
 import { auth as Authorize, easyAuth }  from './middlewares/auth.js';
@@ -46,6 +48,7 @@ routes.get('/user/list', easyAuth(),  UserMiddleware.valid_user_list,UserControl
 routes.put('/user', Authorize(["Scan", "User"]), UserMiddleware.valid_user_update, UserController.update)
 routes.delete('/user', Authorize(["Scan", "User"]), UserMiddleware.valid_user_remove, UserController.remove);
 routes.put('/user/like', Authorize("User"), LikeController.likeUser);
+//routes.get('/user/review',  easyAuth(), MangaMiddleware.valid_review_list, ReviewController.list);
 routes.get('/user/notify', Authorize("Scan"), NotifyController.notifyUsers)
 
 
@@ -57,11 +60,11 @@ routes.delete('/manga', Authorize("Scan"), MangaMiddleware.valid_manga_remove, M
 routes.put('/manga/like', Authorize("User"), LikeController.likeManga);
 routes.put('/manga/pin', Authorize("User"), LikeController.pinManga);
 
-routes.post('/manga/review', Authorize("User"), MangaMiddleware.valid_review_store, MangaController.addReview);
-routes.get('/manga/review',  easyAuth(), MangaMiddleware.valid_review_list, MangaController.listReview);
-//routes.get('/manga/review',  easyAuth(), MangaMiddleware.valid_manga_read, MangaController.read);
-//routes.put('/manga/review', Authorize("User"), MangaMiddleware.valid_manga_update, MangaController.update);
-//routes.delete('/manga/review', Authorize("User"), MangaMiddleware.valid_manga_remove, MangaController.remove);
+routes.post('/review', Authorize("User"), ReviewMiddleware.valid_store, ReviewController.store);
+routes.get('/review/list',  easyAuth(), ReviewMiddleware.valid_list, ReviewController.list);
+routes.get('/review/read',  easyAuth(), ReviewMiddleware.valid_read, ReviewController.read);
+//routes.put('/manga/review', Authorize("User"), ReviewMiddleware.valid_manga_update, ReviewController.update);
+//routes.delete('/manga/review', Authorize("User"), ReviewMiddleware.valid_manga_remove, ReviewController.remove);
 
 routes.post('/chapter', Authorize("Scan"), UploadMiddleware.upload_many_manga, ChapterMiddleware.valid_chapter_store, ChapterController.store);
 routes.get('/chapter/list', easyAuth(), ChapterMiddleware.valid_chapter_list, ChapterController.list);
