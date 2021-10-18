@@ -51,7 +51,7 @@
     "manga.pin.success": "Manga pinned successfuly",
     "manga.save.success": "Manga added!",
     "manga.update.success": "Manga updated!",
-    "manga.deleted": "",
+    "manga.deleted": "Manga deleted.",
     "manga.notfound": "Manga could not be found.",
     "manga.notify.success": "Users notified successfuly",
     "manga.notify.error": "Users weren't notified successfuly",
@@ -63,7 +63,8 @@
     "review.read.success": "Selected review retrieved.",
     "review.list.success": "Review list retrieved.",
     "review.update.success": "Review updated.",
-    
+    "review.deleted": "Review deleted.",
+
     "review.notfound": "Review could not be found.",
 
     "unauthorized.refresh.token.missing": "Lack credentials.",

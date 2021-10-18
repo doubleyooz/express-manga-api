@@ -142,10 +142,10 @@ async function valid_update(req, res, next) {
 }
 
 async function valid_remove(req, res, next) {
-	const { manga_id } = req.query;
+	const { review_id } = req.query;
 
-	if (mongoose.Types.ObjectId.isValid(manga_id)) {
-		if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {
+	if (mongoose.Types.ObjectId.isValid(review_id)) {
+		if (String(new mongoose.Types.ObjectId(review_id)) === review_id) {
 			next();
 		} else {
 			return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);

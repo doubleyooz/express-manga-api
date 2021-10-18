@@ -64,7 +64,7 @@ routes.post('/review', Authorize("User"), ReviewMiddleware.valid_store, ReviewCo
 routes.get('/review/list',  easyAuth(), ReviewMiddleware.valid_list, ReviewController.list);
 routes.get('/review/read',  easyAuth(), ReviewMiddleware.valid_read, ReviewController.read);
 routes.put('/review', Authorize("User"), ReviewMiddleware.valid_update, ReviewController.update);
-//routes.delete('/review', Authorize("User"), ReviewMiddleware.valid_remove, ReviewController.remove);
+routes.delete('/review', Authorize("User"), ReviewMiddleware.valid_remove, ReviewController.remove);
 
 routes.post('/chapter', Authorize("Scan"), UploadMiddleware.upload_many_manga, ChapterMiddleware.valid_store, ChapterController.store);
 routes.get('/chapter/list', easyAuth(), ChapterMiddleware.valid_list, ChapterController.list);
