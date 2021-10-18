@@ -78,7 +78,6 @@ const files = {
 				)
 			);
 
-			
 			let dir =
 				"./" +
 				folder +
@@ -152,10 +151,8 @@ const file = {
 				"/" +
 				req.body.title +
 				"/";
-				
-			if (!fs.existsSync(dir))
-				fs.mkdirSync(dir, { recursive: true });
-			
+
+			if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 		},
 		filename: (req, file, cb) => {
 			crypto.randomBytes(16, (err, hash) => {

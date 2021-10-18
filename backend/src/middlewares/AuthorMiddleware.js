@@ -85,7 +85,7 @@ async function valid_read(req, res, next) {
 					} else {
 						return res.jsonBadRequest(
 							null,
-							getMessage("manga.invalid.id"),
+							getMessage("invalid.object.id"),
 							null
 						);
 					}
@@ -171,7 +171,7 @@ async function valid_update(req, res, next) {
 					schema.cast(req.body, { stripUnknown: true });
 					next();
 				} else {
-					return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+					return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 				}
 			})
 			.catch((err) => {
@@ -188,7 +188,7 @@ async function valid_remove(req, res, next) {
 	if (isValidMongoId(manga_id)) {
 		next();
 	} else {
-		return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+		return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 	}
 }
 

@@ -58,12 +58,12 @@ async function valid_read(req, res, next) {
 				} else {
 					return res.jsonBadRequest(
 						null,
-						getMessage("chapter.invalid.id"),
+						getMessage("invalid.object.id"),
 						null
 					);
 				}
 			} else {
-				return res.jsonBadRequest(null, getMessage("chapter.invalid.id"), null);
+				return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 			}
 		})
 		.catch((err) => {
@@ -84,10 +84,10 @@ async function valid_list(req, res, next) {
 				if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {
 					next();
 				} else {
-					return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+					return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 				}
 			} else {
-				return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+				return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 			}
 		})
 		.catch((err) => {
@@ -133,7 +133,7 @@ async function valid_update(req, res, next) {
 				} else {
 					return res.jsonBadRequest(
 						null,
-						getMessage("chapter.invalid.id"),
+						getMessage("invalid.object.id"),
 						null
 					);
 				}
@@ -161,21 +161,21 @@ async function valid_remove(req, res, next) {
 					console.log("chapter id invalid string");
 					return res.jsonBadRequest(
 						null,
-						getMessage("chapter.invalid.id"),
+						getMessage("invalid.object.id"),
 						null
 					);
 				}
 			} else {
 				console.log("chapter id invalid object");
-				return res.jsonBadRequest(null, getMessage("chapter.invalid.id"), null);
+				return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 			}
 		} else {
 			console.log("manga id invalid string");
-			return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+			return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 		}
 	} else {
 		console.log("manga id invalid object");
-		return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+		return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 	}
 }
 

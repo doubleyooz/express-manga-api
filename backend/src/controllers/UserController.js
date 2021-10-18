@@ -80,14 +80,13 @@ async function store(req, res) {
 	User.find({ email: email })
 		.select({ _id: 1, email: 1, active: 1 })
 		.then((user) => {
-			
-			if (user[0].active) {				
+			if (user[0].active) {
 				return res.jsonBadRequest(
 					null,
 					getMessage("user.error.sign_up.duplicatekey"),
 					null
 				);
-			} else {			
+			} else {
 				const tkn = jwt.generateJwt(
 					{
 						id: CryptoJs.AES.encrypt(
@@ -112,7 +111,7 @@ async function store(req, res) {
 					});
 			}
 		})
-		.catch((err) => {				
+		.catch((err) => {
 			const p1 = new User({
 				email: email,
 				password: _hash,
@@ -163,7 +162,6 @@ async function store(req, res) {
 						return res.jsonBadRequest(null, null, { err });
 					}
 				});
-		
 		});
 }
 
@@ -262,23 +260,18 @@ async function remove(req, res) {
 		});
 }
 
-
 async function listReview(req, res) {
 	const { user_id } = req.query;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
-	
 	if (user_id) {
-		const user = await User.findById(user_id)
-			.select({ reviews: 1 })
-			.exec();
-		
-		if(user){
+		const user = await User.findById(user_id).select({ reviews: 1 }).exec();
+
+		if (user) {
 			return res.jsonOK(user, getMessage("user.read.success"), new_token);
-		}	
+		}
 		return res.jsonNotFound(null, null, new_token);
-		
 	} else {
 		return res.jsonBadRequest(null, null, null);
 	}

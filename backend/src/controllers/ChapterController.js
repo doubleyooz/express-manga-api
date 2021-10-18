@@ -308,7 +308,7 @@ async function list(req, res) {
 	console.log("Role: " + role);
 
 	let docs = [];
-    const doesMangaExist = await Manga.exists({ _id: manga_id });
+	const doesMangaExist = await Manga.exists({ _id: manga_id });
 	if (doesMangaExist) {
 		Chapter.find({ manga_id: manga_id })
 			.sort("updatedAt")
@@ -335,8 +335,8 @@ async function list(req, res) {
 				return res.jsonBadRequest(err, null, null);
 			});
 	} else {
-        return res.jsonNotFound(null, getMessage("manga.notfound"), null);
-    }
+		return res.jsonNotFound(null, getMessage("manga.notfound"), null);
+	}
 }
 
 async function remove(req, res) {

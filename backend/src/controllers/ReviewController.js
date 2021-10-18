@@ -165,22 +165,24 @@ async function remove(req, res) {
 
 			// `1` if MongoDB deleted a doc, `0` if no docs matched the filter `{ name: ... }`
 			if (response.n === 0)
-				return res.jsonNotFound(response, getMessage("review.notfound"), new_token);
+				return res.jsonNotFound(
+					response,
+					getMessage("review.notfound"),
+					new_token
+				);
 
 			const user = await User.findById(user_id);
 
 			user.reviews = user.reviews.filter(function (_id) {
 				return _id.toString() !== review_id.toString();
 			});
-			
-			
+
 			const manga = await Manga.findById(review.manga_id);
 
 			manga.reviews = manga.reviews.filter(function (_id) {
 				return _id.toString() !== review_id.toString();
 			});
 
-			
 			user.save(function (err) {
 				// yet another err object to deal with
 				if (err) {
@@ -196,9 +198,7 @@ async function remove(req, res) {
 			});
 
 			return res.jsonOK(null, getMessage("review.deleted"), new_token);
-		
-		} else
-			return res.jsonUnauthorized(null, null, null);
+		} else return res.jsonUnauthorized(null, null, null);
 	} else
 		return res.jsonNotFound(null, getMessage("review.notfound"), new_token);
 }

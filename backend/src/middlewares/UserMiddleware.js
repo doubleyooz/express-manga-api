@@ -138,7 +138,7 @@ async function valid_read(req, res, next){
             } else{
                 return res.jsonBadRequest(
                     null,
-                    getMessage("user.invalid.id"),
+                    getMessage("invalid.object.id"),
                     null);
             }
                

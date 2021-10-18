@@ -1,98 +1,100 @@
-import dotenv from 'dotenv';
-import bcrypt from 'bcrypt';
-import CryptoJs from 'crypto-js';
+import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+import CryptoJs from "crypto-js";
 
-import { OAuth2Client } from 'google-auth-library';
+import { OAuth2Client } from "google-auth-library";
 
-import User from '../models/User.js';
-import jwt from '../common/jwt.js';
+import User from "../models/User.js";
+import jwt from "../common/jwt.js";
 
-import { getMessage } from '../common/messages.js';
+import { getMessage } from "../common/messages.js";
 
-dotenv.config()
+dotenv.config();
 
-async function refreshAccessToken(req, res){
-      
-    const refreshToken = req.cookie.jid
-    if(!refreshToken){
-        return res.jsonUnauthorized(null, getMessage("unauthorized.refresh.token.missing"), null)
-        
-    }
-    console.log(refreshToken)
-    let payload = null;
-    try{
-        payload = jwt.verifyJwt(refreshToken, 2)
+async function refreshAccessToken(req, res) {
+	const refreshToken = req.cookie.jid;
+	if (!refreshToken) {
+		return res.jsonUnauthorized(
+			null,
+			getMessage("unauthorized.refresh.token.missing"),
+			null
+		);
+	}
+	console.log(refreshToken);
+	let payload = null;
+	try {
+		payload = jwt.verifyJwt(refreshToken, 2);
+	} catch (err) {
+		console.log(err);
+		return res.jsonUnauthorized(null, null, null);
+	}
+	User.findOne({ _id: payload.id, active: true })
+		.then((result) => {
+			if (result) {
+				try {
+					const accessToken = jwt.generateJwt(
+						{
+							id: result._id,
+							role: result.role,
+							token_version: result.token_version,
+						},
+						1
+					);
 
-    }catch(err){
-        console.log(err)
-        return res.jsonUnauthorized(null, null, null)
-        
-    }
-    User.findOne({_id: payload.id, active: true}).then(result => {
-        if (result){
-            try{
-                const accessToken = jwt.generateJwt({
-                    id: result._id,
-                    role: result.role,
-                    token_version: result.token_version}
-                , 1) 
-                                          
-                return res.jsonOK(null, {accessToken: accessToken}, null)
-                
-
-                
-            }   catch(err){
-                console.log(err)
-                return res.jsonUnauthorized(null, null, null)
-                
-            }           
-            
-        } else{ 
-            return res.jsonUnauthorized(null, null, null)
-            
-        }
-    }).catch(err =>{
-        return res.jsonUnauthorized(null, null, err)
-        
-    })
-
-
-
+					return res.jsonOK(null, { accessToken: accessToken }, null);
+				} catch (err) {
+					console.log(err);
+					return res.jsonUnauthorized(null, null, null);
+				}
+			} else {
+				return res.jsonUnauthorized(null, null, null);
+			}
+		})
+		.catch((err) => {
+			return res.jsonUnauthorized(null, null, err);
+		});
 }
 
-async function google_sign_in(req, res){
-   
-    const client = new OAuth2Client(process.env.CLIENT_ID)
-    
-    const { token }  = req.body
-    const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.CLIENT_ID
-    });
-    const { name, email, picture } = ticket.getPayload();
+async function google_sign_in(req, res) {
+	const client = new OAuth2Client(process.env.CLIENT_ID);
 
-    console.log(ticket.getPayload())
-    const user = await User.findOne({ email: email });; 
+	const { token } = req.body;
+	const ticket = await client.verifyIdToken({
+		idToken: token,
+		audience: process.env.CLIENT_ID,
+	});
+	const { name, email, picture } = ticket.getPayload();
 
-    if(user){
+	console.log(ticket.getPayload());
+	const user = await User.findOne({ email: email });
 
-        const token = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 1);
-        const refreshToken = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 2);
-        
-        //req.headers.authorization = `Bearer ${token}`           
-        res.cookie('jid', refreshToken, { httpOnly: true, path: "/refresh-token"})
-        
-        user.password = undefined;
-        return res.jsonOK(user, getMessage("user.valid.sign_in.success"), {token})
+	if (user) {
+		const token = jwt.generateJwt(
+			{ id: user._id, role: user.role, token_version: user.token_version },
+			1
+		);
+		const refreshToken = jwt.generateJwt(
+			{ id: user._id, role: user.role, token_version: user.token_version },
+			2
+		);
 
+		//req.headers.authorization = `Bearer ${token}`
+		res.cookie("jid", refreshToken, { httpOnly: true, path: "/refresh-token" });
 
-    } else {
+		user.password = undefined;
+		return res.jsonOK(user, getMessage("user.valid.sign_in.success"), {
+			token,
+		});
+	} else {
+		const activationToken = jwt.generateJwt({ email: email, name: name }, 3);
 
-        const activationToken = jwt.generateJwt({email: email, name: name}, 3);
+		return res.jsonOK(
+			null,
+			getMessage("user.sign_up.google.password.required"),
+			{ activationToken }
+		);
 
-        return res.jsonOK(null, getMessage("user.sign_up.google.password.required"), {activationToken})
-        
-        /*
+		/*
         const p1 = new User ({
             email: email,
             password: null,
@@ -191,207 +193,208 @@ async function google_sign_in(req, res){
                 return res.jsonBadRequest(null, null, {err});             
                                   
             }                           
-        });    */                
-    }
-    /*
+        });    */
+	}
+	/*
     const user = new User.upsert({ 
         where: { email: email },
         update: { name, picture },
         create: { name, email, picture }
     })*/
 
-
-    res.status(201)
-    res.json(user)
-   
+	res.status(201);
+	res.json(user);
 }
 
+async function sign_in(req, res) {
+	const [hashType, hash] = req.headers.authorization.split(" ");
 
-async function sign_in(req, res){        
-    const [hashType, hash] = req.headers.authorization.split(' ');
-   
-    if(hashType !== "Basic"){
-        return res.jsonUnauthorized(null, null, null)              
-         
-    }
-  
-    const [email, password] = Buffer.from(hash, "base64").toString().split(":");
+	if (hashType !== "Basic") {
+		return res.jsonUnauthorized(null, null, null);
+	}
 
-    const user = await User.findOne({ email: email, active: true }).select(['password', 'role', 'token_version'])
-    
+	const [email, password] = Buffer.from(hash, "base64").toString().split(":");
 
-    const match = user ? await bcrypt.compare(password, user.password) : null;
-    
-    if(!match){
-        return res.jsonBadRequest(null, null, null)
-        
-    } else{
-        
-        const token = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 1);
-        const refreshToken = jwt.generateJwt({id: user._id, role: user.role, token_version: user.token_version}, 2);
-        
-        req.headers.authorization = `Bearer ${token}`           
-        res.cookie('jid', refreshToken, { httpOnly: true, path: "/refresh-token"})
-        
-        user.password = undefined;
-        return res.jsonOK(user, getMessage("user.valid.sign_in.success"), {token})
-        
-    }
+	const user = await User.findOne({ email: email, active: true }).select([
+		"password",
+		"role",
+		"token_version",
+	]);
 
-    
+	const match = user ? await bcrypt.compare(password, user.password) : null;
 
-  
-    
+	if (!match) {
+		return res.jsonBadRequest(null, null, null);
+	} else {
+		const token = jwt.generateJwt(
+			{ id: user._id, role: user.role, token_version: user.token_version },
+			1
+		);
+		const refreshToken = jwt.generateJwt(
+			{ id: user._id, role: user.role, token_version: user.token_version },
+			2
+		);
+
+		req.headers.authorization = `Bearer ${token}`;
+		res.cookie("jid", refreshToken, { httpOnly: true, path: "/refresh-token" });
+
+		user.password = undefined;
+		return res.jsonOK(user, getMessage("user.valid.sign_in.success"), {
+			token,
+		});
+	}
 }
 
-async function activateAccount(req, res){
-
-    const token = req.params.tky;       
-    if(token){                      
-        try{
-            const decodedToken = jwt.verifyJwt(token, 3)
-            if(decodedToken){
-                console.log("DecodedToken: " + decodedToken.id)
-                const supposed_id = CryptoJs.AES.decrypt(decodedToken.id, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
-                User.findById(supposed_id).then(user => {
-                    if(user.active){
-                        console.log("user.active")
-                        return res.jsonBadRequest(
-                                null,
-                                getMessage("user.activation.error.already.activated"),
-                                null
-                            )
-                        
-                        
-                    }
-                    user.active = true;
-                    user.save().then(savedDoc => {
-                        if(savedDoc === user){
-                                                           
-                            return res.jsonOK(user, getMessage("user.valid.sign_up.success"), null)
-                            
-                        } else{
-                           
-                            return res.jsonServerError(user, null, null)
-                        
-                        }                                                 
-                    });                       
-                       
-                }).catch(err => {                        
-                    return res.jsonBadRequest(err, null, null)
-                    
-                });                          
-            } else{
-                return res.jsonBadRequest(null, null, null)
-                
-            }
-        
-        }catch(err){
-            return res.jsonUnauthorized(err, null, null)
-            
-        };
-      
-
-    } else{
-        return res.jsonBadRequest(null, null, null)
-        
-    }
+async function activateAccount(req, res) {
+	const token = req.params.tky;
+	if (token) {
+		try {
+			const decodedToken = jwt.verifyJwt(token, 3);
+			if (decodedToken) {
+				console.log("DecodedToken: " + decodedToken.id);
+				const supposed_id = CryptoJs.AES.decrypt(
+					decodedToken.id,
+					`${process.env.SHUFFLE_SECRET}`
+				).toString(CryptoJs.enc.Utf8);
+				User.findById(supposed_id)
+					.then((user) => {
+						if (user.active) {
+							console.log("user.active");
+							return res.jsonBadRequest(
+								null,
+								getMessage("user.activation.error.already.activated"),
+								null
+							);
+						}
+						user.active = true;
+						user.save().then((savedDoc) => {
+							if (savedDoc === user) {
+								return res.jsonOK(
+									user,
+									getMessage("user.valid.sign_up.success"),
+									null
+								);
+							} else {
+								return res.jsonServerError(user, null, null);
+							}
+						});
+					})
+					.catch((err) => {
+						return res.jsonBadRequest(err, null, null);
+					});
+			} else {
+				return res.jsonBadRequest(null, null, null);
+			}
+		} catch (err) {
+			return res.jsonUnauthorized(err, null, null);
+		}
+	} else {
+		return res.jsonBadRequest(null, null, null);
+	}
 }
 
-async function me (req, res){
-    const new_token = (req.new_token) ? req.new_token : null;
-    const session_id = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
-    
-    req.new_token = null    
-    req.auth = null
+async function me(req, res) {
+	const new_token = req.new_token ? req.new_token : null;
+	const session_id = CryptoJs.AES.decrypt(
+		req.auth,
+		`${process.env.SHUFFLE_SECRET}`
+	).toString(CryptoJs.enc.Utf8);
 
-    return res.jsonOK( session_id, null, new_token)
+	req.new_token = null;
+	req.auth = null;
+
+	return res.jsonOK(session_id, null, new_token);
 }
 //missing test
-async function changeEmail(req, res){
-    const token = req.params.tky;
-  
-    if(token){
-        const decodedToken = await jwt.verifyJwt(token, 5)
-    
-        if(decodedToken){
-           
-            const supposed_id = CryptoJs.AES.decrypt(decodedToken.id, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
-          
-            User.findById(supposed_id).then(user => {
-                const email = CryptoJs.AES.decrypt(decodedToken.email, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
-                if(email){
-                    user.email = email;
-                    user.save().then(savedDoc => {
-                        if(savedDoc === user){
-                            return res.jsonOK(user, getMessage("user.update.email.success"), null)
-                            
-                        } else{
-                            return res.jsonServerError(user, null, null)
-                        
-                        }                                              
-                    });
-                }
-                           
-                else{
-                    return res.jsonBadRequest(null, null, null)
-                    
-                }                                           
-            }).catch(err => {
-                return res.jsonBadRequest(err, null, null)
-                
-            });                          
-        } else{                
-            return res.jsonBadRequest(err, null, null)
-            
-        }           
-    }
+async function changeEmail(req, res) {
+	const token = req.params.tky;
+
+	if (token) {
+		const decodedToken = await jwt.verifyJwt(token, 5);
+
+		if (decodedToken) {
+			const supposed_id = CryptoJs.AES.decrypt(
+				decodedToken.id,
+				`${process.env.SHUFFLE_SECRET}`
+			).toString(CryptoJs.enc.Utf8);
+
+			User.findById(supposed_id)
+				.then((user) => {
+					const email = CryptoJs.AES.decrypt(
+						decodedToken.email,
+						`${process.env.SHUFFLE_SECRET}`
+					).toString(CryptoJs.enc.Utf8);
+					if (email) {
+						user.email = email;
+						user.save().then((savedDoc) => {
+							if (savedDoc === user) {
+								return res.jsonOK(
+									user,
+									getMessage("user.update.email.success"),
+									null
+								);
+							} else {
+								return res.jsonServerError(user, null, null);
+							}
+						});
+					} else {
+						return res.jsonBadRequest(null, null, null);
+					}
+				})
+				.catch((err) => {
+					return res.jsonBadRequest(err, null, null);
+				});
+		} else {
+			return res.jsonBadRequest(err, null, null);
+		}
+	}
 }
 
 //working on
-async function recoverPassword(req, res){
-    const token = req.params.tky;
-    
-    if(token){
-        console.log("token exists")
-        const decodedToken = await jwt.verifyJwt(token, 4)
-        
-            if(decodedToken){
-                console.log("DecodedToken: " + decodedToken.id)
-                const supposed_id = CryptoJs.AES.decrypt(decodedToken.id, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8));
-                User.findById(supposed_id).then(user => {
-                   
-                    user.save().then(savedDoc => {
-                        if(savedDoc === user){
-                            return res.jsonOK(user, getMessage("user.valid.sign_up.success"), null)
-                            
-                        } else{
-                            return res.jsonServerError(user, null, null)
-                        
-                        }                                                
-                      });                      
-                }).catch(err => {
-                    return res.jsonBadRequest(err, null, null)
-                    
-                });                          
-            } else{                    
-                return res.jsonBadRequest(null, null, null)
-                
-            }           
+async function recoverPassword(req, res) {
+	const token = req.params.tky;
 
-    } else{
-        return res.jsonBadRequest(null, null, null)
-        
-    }
+	if (token) {
+		console.log("token exists");
+		const decodedToken = await jwt.verifyJwt(token, 4);
 
+		if (decodedToken) {
+			console.log("DecodedToken: " + decodedToken.id);
+			const supposed_id = CryptoJs.AES.decrypt(
+				decodedToken.id,
+				`${process.env.SHUFFLE_SECRET}`
+			).toString(CryptoJs.enc.Utf8);
+			User.findById(supposed_id)
+				.then((user) => {
+					user.save().then((savedDoc) => {
+						if (savedDoc === user) {
+							return res.jsonOK(
+								user,
+								getMessage("user.valid.sign_up.success"),
+								null
+							);
+						} else {
+							return res.jsonServerError(user, null, null);
+						}
+					});
+				})
+				.catch((err) => {
+					return res.jsonBadRequest(err, null, null);
+				});
+		} else {
+			return res.jsonBadRequest(null, null, null);
+		}
+	} else {
+		return res.jsonBadRequest(null, null, null);
+	}
 }
 
 export default {
-    refreshAccessToken,
-    google_sign_in,
-    sign_in,
-    activateAccount,
-    me,
-    changeEmail,
-    recoverPassword
-}
+	refreshAccessToken,
+	google_sign_in,
+	sign_in,
+	activateAccount,
+	me,
+	changeEmail,
+	recoverPassword,
+};
