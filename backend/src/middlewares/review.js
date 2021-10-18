@@ -107,50 +107,30 @@ async function valid_list(req, res, next) {
 }
 
 async function valid_update(req, res, next) {
+	const { review_id } = req.body;
 	let schema = yup.object().shape({
-		title: yup
-			.string("title must be a string.")
+		text: yup
+			.string("text must be a string.")
 			.strict()
-			.min(2, getMessage("manga.invalid.title.short"))
-			.max(60, getMessage("manga.invalid.title.long")),
-		genre: yup.string("genre must be a string.").strict(),
-		writer_id: yup.string("must be a string").strict(),
-		artist_id: yup.string("must be a string").strict(),
-		synopsis: yup
-			.string("synopsis must be a string.")
-			.strict()
-			.min(10, getMessage("manga.invalid.synopsis.short"))
-			.max(400, getMessage("manga.invalid.synopsis.long")),
-		n_chapters: yup
-			.number("chapters must be a number.")
-			.min(1, "There must be at least one chapter."),
-		status: yup
-			.number("status must be a number.")
-			.min(1, getMessage("manga.invalid.code"))
-			.max(6, getMessage("manga.invalid.code")),
-		nsfw: yup
-			.string("nsfw must be a string.")
-			.strict()
-			.matches(/(true|false)/, null),
-		language: yup
-			.string("language must be a string.")
-			.strict()
-			.matches(
-				/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
-				null
-			)
-			.default({ language: "pt" }),
-		manga_id: yup.string("must be a string").strict().required(),
+			.min(2, getMessage("text.invalid.text.short"))
+			.max(500, getMessage("text.invalid.text.long"))
+			.required(),
+		review_id: yup.string("must be a string").strict().required(),
+		rating: yup
+			.number("rating must be a number.")
+			.min(0, "The minimum limit is 0.")
+			.max(5, "The maximum limit is 5.")
+			.required(),
 	});
 
 	try {
 		schema
 			.validate(req.body)
 			.then(() => {
-				if (isValidMongoId(manga_id)) {
+				if (isValidMongoId(review_id)) {
 					next();
 				} else {
-					return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+					return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 				}
 			})
 			.catch((err) => {
@@ -168,10 +148,10 @@ async function valid_remove(req, res, next) {
 		if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {
 			next();
 		} else {
-			return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+			return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 		}
 	} else {
-		return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
+		return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
 	}
 }
 

@@ -120,67 +120,31 @@ async function list(req, res) {
 }
 
 async function update(req, res) {
-	const { writer_id, artist_id, manga_id } = req.body;
+	const { review_id, text, rating } = req.body;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
 	req.body.updatedAt = Date.now();
-	let scan_id = CryptoJs.AES.decrypt(
+	let user_id = CryptoJs.AES.decrypt(
 		req.auth,
 		`${process.env.SHUFFLE_SECRET}`
 	).toString(CryptoJs.enc.Utf8);
-	Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body)
-		.then((manga) => {
-			if (writer_id) {
-				Author.findById(writer_id)
-					.then((writer) => {
-						cloneData = writer.works.filter(function (work_id) {
-							return manga_id.toString() !== work_id.toString();
-						});
-						//update writer document
-						writer.works = cloneData;
-						writer.updatedAt = Date.now();
-						writer
-							.save()
-							.then((answer) => {
-								console.log(answer);
-							})
-							.catch((err) => {
-								console.log(err);
-							});
-					})
-					.catch((err) => {
-						console.log(err);
-					});
-			}
 
-			if (artist_id) {
-				Author.findById(artist_id)
-					.then((artist) => {
-						cloneData = artist.works.filter(function (work_id) {
-							return manga_id.toString() !== work_id.toString();
-						});
-						//update artist document
-						artist.works = cloneData;
-						artist.updatedAt = Date.now();
-						artist
-							.save()
-							.then((answer) => {
-								console.log(answer);
-							})
-							.catch((err) => {
-								console.log(err);
-							});
-					})
-					.catch((err) => {
-						console.log(err);
-					});
-			}
-			return res.jsonOK(null, getMessage("manga.update.success"), new_token);
-		})
-		.catch((err) => {
-			return res.jsonServerError(null, null, err);
-		});
+	const doesUserExists = await User.exists({ _id: user_id });
+
+	if (doesUserExists) {
+		Review.updateOne({ _id: review_id }, { text: text, rating: rating })
+			.then((review) => {
+				return res.jsonOK(null, getMessage("review.update.success"), new_token);
+			})
+			.catch((err) => {
+				return res.jsonServerError(null, null, err);
+			});
+	} else {
+		return res.jsonBadRequest(null, null, new_token);
+	}
+
+	
 }
 
 async function remove(req, res) {

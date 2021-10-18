@@ -62,6 +62,8 @@
     "review.invalid.text.long": "Text is too long - it must be a maximum of 500 characters.",
     "review.read.success": "Selected review retrieved.",
     "review.list.success": "Review list retrieved.",
+    "review.update.success": "Review updated.",
+    
     "review.notfound": "Review could not be found.",
 
     "unauthorized.refresh.token.missing": "Lack credentials.",
