@@ -21,7 +21,7 @@ function isValidMongoId(object_id) {
 	}
 }
 
-async function valid_author_store(req, res, next) {
+async function valid_store(req, res, next) {
 	let currentDate = new Date();
 	currentDate.setFullYear(currentDate.getFullYear() - 10);
 
@@ -61,7 +61,7 @@ async function valid_author_store(req, res, next) {
 		});
 }
 
-async function valid_author_read(req, res, next) {
+async function valid_read(req, res, next) {
 	const { manga_id, title } = req.query;
 
 	let schema = yup.object().shape({
@@ -101,7 +101,7 @@ async function valid_author_read(req, res, next) {
 	}
 }
 
-async function valid_author_list(req, res, next) {
+async function valid_list(req, res, next) {
 	let schema = yup.object().shape({
 		title: yup.string("title must be a string.").strict(),
 		genre: yup.string("genre must be a string.").strict(),
@@ -123,7 +123,7 @@ async function valid_author_list(req, res, next) {
 	}
 }
 
-async function valid_author_update(req, res, next) {
+async function valid_update(req, res, next) {
 	let currentDate = new Date();
 	currentDate.setFullYear(currentDate.getFullYear() - 10);
 
@@ -182,7 +182,7 @@ async function valid_author_update(req, res, next) {
 	}
 }
 
-async function valid_author_remove(req, res, next) {
+async function valid_remove(req, res, next) {
 	const { manga_id } = req.query;
 
 	if (isValidMongoId(manga_id)) {
@@ -193,9 +193,9 @@ async function valid_author_remove(req, res, next) {
 }
 
 export default {
-	valid_author_store,
-	valid_author_read,
-	valid_author_list,
-	valid_author_update,
-	valid_author_remove,
+	valid_store,
+	valid_read,
+	valid_list,
+	valid_update,
+	valid_remove,
 };

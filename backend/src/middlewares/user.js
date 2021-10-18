@@ -122,7 +122,7 @@ async function valid_sign_in(req, res, next){
    
 }
 
-async function valid_user_read(req, res, next){
+async function valid_read(req, res, next){
     const { user_id } = req.query
 
     let schema = yup.object().shape({
@@ -155,7 +155,7 @@ async function valid_user_read(req, res, next){
    
 }
 
-async function valid_user_list(req, res, next){        
+async function valid_list(req, res, next){        
     let schema = yup.object().shape({
         email: yup.string().email()    
 
@@ -177,7 +177,7 @@ async function valid_user_list(req, res, next){
    
 }
 
-async function valid_user_update(req, res, next){    
+async function valid_update(req, res, next){    
     let schema = yup.object().shape({       
         name: yup.string("name must be a string.").required(),
        
@@ -192,7 +192,7 @@ async function valid_user_update(req, res, next){
     })      
 }  
 
-async function valid_user_remove(req, res, next){
+async function valid_remove(req, res, next){
     const { user_id } = req.query;
     if(user_id){
         let req_id = CryptoJs.AES.decrypt(req.auth, `${process.env.SHUFFLE_SECRET}`).toString((CryptoJs.enc.Utf8))
@@ -212,8 +212,8 @@ export default {
     valid_google_sign_up,
     valid_sign_up,
     valid_sign_in, 
-    valid_user_read,
-    valid_user_list,
-    valid_user_update,
-    valid_user_remove
+    valid_read,
+    valid_list,
+    valid_update,
+    valid_remove
 }

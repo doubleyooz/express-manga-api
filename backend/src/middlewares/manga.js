@@ -20,7 +20,7 @@ function isValidMongoId(object_id) {
 	}
 }
 
-async function valid_manga_store(req, res, next) {
+async function valid_store(req, res, next) {
 	const { writer_id, artist_id } = req.body;
 
 	let schema = yup.object().shape({
@@ -91,7 +91,7 @@ async function valid_manga_store(req, res, next) {
 		});
 }
 
-async function valid_manga_read(req, res, next) {
+async function valid_read(req, res, next) {
 	const { manga_id, title } = req.query;
 
 	let schema = yup.object().shape({
@@ -131,7 +131,7 @@ async function valid_manga_read(req, res, next) {
 	}
 }
 
-async function valid_manga_list(req, res, next) {
+async function valid_list(req, res, next) {
 	let schema = yup.object().shape({
 		title: yup.string("title must be a string.").strict(),
 		genre: yup.string("genre must be a string.").strict(),
@@ -153,7 +153,7 @@ async function valid_manga_list(req, res, next) {
 	}
 }
 
-async function valid_manga_update(req, res, next) {
+async function valid_update(req, res, next) {
 	let schema = yup.object().shape({
 		title: yup
 			.string("title must be a string.")
@@ -208,7 +208,7 @@ async function valid_manga_update(req, res, next) {
 	}
 }
 
-async function valid_manga_remove(req, res, next) {
+async function valid_remove(req, res, next) {
 	const { manga_id } = req.query;
 
 	if (mongoose.Types.ObjectId.isValid(manga_id)) {
@@ -222,66 +222,11 @@ async function valid_manga_remove(req, res, next) {
 	}
 }
 
-async function valid_review_store(req, res, next) {
-	const { manga_id } = req.body;
-
-	let schema = yup.object().shape({
-		text: yup
-			.string("The text needs to be a String")
-			.strict()
-			.min(2, getMessage("manga.invalid.title.short"))
-			.max(180, getMessage("manga.invalid.title.long")),
-		rating: yup
-			.number("chapters must be a number.")
-			.min(0, "The avaliation must be between 0 and 5")
-			.max(5, "The avaliation must be between 0 and 5")
-			.required(),
-	});
-
-	schema
-		.validate(req.body)
-		.then(() => {
-			if (isValidMongoId(manga_id)) {
-				next();
-			} else {
-				return res.jsonBadRequest(null, null, null);
-			}
-		})
-		.catch(function (e) {
-			console.log(e);
-			return res.jsonBadRequest(null, null, e);
-		});
-}
-async function valid_review_list(req, res, next) {
-	const { manga_id } = req.query;
-	let schema = yup.object().shape({
-		manga_id: yup.string("must be a string").strict().required(),
-	});
-
-	try {
-		schema
-			.validate(req.query)
-			.then(() => {
-				if (isValidMongoId(manga_id)) {
-					next();
-				} else {
-					return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
-				}
-			})
-			.catch((err) => {
-				return res.jsonBadRequest(null, null, err.message);
-			});
-	} catch (err) {
-		return res.jsonBadRequest(null, getMessage("manga.invalid.id"), null);
-	}
-}
 
 export default {
-	valid_manga_store,
-	valid_manga_read,
-	valid_manga_list,
-	valid_manga_update,
-	valid_manga_remove,
-	valid_review_store,
-	valid_review_list,
+	valid_store,
+	valid_read,
+	valid_list,
+	valid_update,
+	valid_remove
 };

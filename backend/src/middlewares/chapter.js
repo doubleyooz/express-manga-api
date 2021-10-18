@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 import { getMessage } from "../common/messages.js";
 
-async function valid_chapter_store(req, res, next) {
+async function valid_store(req, res, next) {
 	
 	let schema = yup.object().shape({
 		manga_title: yup
@@ -43,7 +43,7 @@ async function valid_chapter_store(req, res, next) {
 	}
 }
 
-async function valid_chapter_read(req, res, next) {
+async function valid_read(req, res, next) {
 	const { chapter_id } = req.query;
 
 	let schema = yup.object().shape({
@@ -71,7 +71,7 @@ async function valid_chapter_read(req, res, next) {
 		});
 }
 
-async function valid_chapter_list(req, res, next) {
+async function valid_list(req, res, next) {
 	const { manga_id } = req.query;
 
 	let schema = yup.object().shape({
@@ -95,7 +95,7 @@ async function valid_chapter_list(req, res, next) {
 		});
 }
 
-async function valid_chapter_update(req, res, next) {
+async function valid_update(req, res, next) {
 	let schema = yup.object().shape({
 		title: yup
 			.string("title must be a string.")
@@ -146,7 +146,7 @@ async function valid_chapter_update(req, res, next) {
 	}
 }
 
-async function valid_chapter_remove(req, res, next) {
+async function valid_remove(req, res, next) {
 	const { manga_id, chapter_id } = req.query;
 
 	console.log(manga_id);
@@ -180,9 +180,9 @@ async function valid_chapter_remove(req, res, next) {
 }
 
 export default {
-	valid_chapter_store,
-	valid_chapter_read,
-	valid_chapter_list,
-	valid_chapter_update,
-	valid_chapter_remove,
+	valid_store,
+	valid_read,
+	valid_list,
+	valid_update,
+	valid_remove,
 };
