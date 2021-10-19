@@ -7,10 +7,17 @@ import cookieParser from "cookie-parser";
 import http from "http";
 //import io from 'socket.io';
 
-import routes from "./routes.js";
 import { response } from "./middlewares/ResponseMiddleware.js";
+
 import corsOptionsDelegate from "./config/cors.js";
 import limiter from "./config/limiter.js";
+
+import authRoute from "./routes/Auth.js";
+import authorRoute from "./routes/Author.js";
+import chapterRoute from "./routes/Chapter.js";
+import mangaRoute from "./routes/Manga.js";
+import reviewRoute from "./routes/Review.js";
+import userRoute from "./routes/User.js";
 
 dotenv.config();
 
@@ -35,7 +42,13 @@ app.use(cors(corsOptionsDelegate));
 app.use(limiter); // limiting all requests
 app.use(response);
 
-app.use(routes);
+app.use(authRoute);
+app.use("/author", authorRoute);
+app.use("/chapter", chapterRoute);
+app.use("/manga", mangaRoute);
+app.use("/review", reviewRoute);
+app.use("/user", userRoute);
+
 server.listen(parseInt(`${process.env.PORT}`), () => {
 	console.log(`Listening on port ${process.env.PORT}`);
 });
