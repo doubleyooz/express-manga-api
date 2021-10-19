@@ -12,7 +12,7 @@ import { response } from "./middlewares/ResponseMiddleware.js";
 import corsOptionsDelegate from "./config/cors.js";
 import limiter from "./config/limiter.js";
 
-import authRoute from "./routes/Auth.js";
+import authRoute from "./routes/Authentication.js";
 import authorRoute from "./routes/Author.js";
 import chapterRoute from "./routes/Chapter.js";
 import mangaRoute from "./routes/Manga.js";
