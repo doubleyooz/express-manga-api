@@ -44,6 +44,7 @@ async function store(req, res) {
 
 	manga.reviews.push(review._id);
 	user.reviews.push(review._id);
+	manga.rating += rating;
 
 	manga.updatedAt = Date.now();
 	user.updatedAt = Date.now();
@@ -133,12 +134,40 @@ async function update(req, res) {
 	const doesUserExists = await User.exists({ _id: user_id });
 
 	if (doesUserExists) {
-		Review.updateOne({ _id: review_id }, { text: text, rating: rating })
+		Review.findById({ _id: review_id })
 			.then((review) => {
-				return res.jsonOK(null, getMessage("review.update.success"), new_token);
+				let temp = -review.rating + rating;
+				review.rating = rating;
+				review.text = text;
+
+				Manga.findById({ _id: review.manga_id })
+					.then((manga) => {
+						manga.rating += temp;
+						manga
+							.save()
+							.then(() => {
+								review.save().then(() => {
+									return res.jsonOK(
+										null,
+										getMessage("review.update.success"),
+										new_token
+									);
+								}).catch((err) => {
+									return res.jsonServerError(null, null, err);
+								})
+							
+							})
+							.catch((err) => {
+								return res.jsonServerError(null, null, err);
+							});
+					})
+					.catch((err) => {
+						return res.jsonServerError(null, null, err);
+					});
 			})
 			.catch((err) => {
-				return res.jsonServerError(null, null, err);
+				console.log(err)
+				return res.jsonNotFound(err, getMessage("review.notfound"), new_token);
 			});
 	} else {
 		return res.jsonBadRequest(null, null, new_token);
@@ -178,7 +207,7 @@ async function remove(req, res) {
 			});
 
 			const manga = await Manga.findById(review.manga_id);
-
+			manga.rating -= review.rating;
 			manga.reviews = manga.reviews.filter(function (_id) {
 				return _id.toString() !== review_id.toString();
 			});
