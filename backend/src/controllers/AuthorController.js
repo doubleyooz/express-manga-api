@@ -133,36 +133,20 @@ async function list(req, res) {
 
 	let docs = [];
 
-	if (type) {
-		if (name) {
-			(
-				await Author.find({
+	const search = type
+		? name
+			? {
 					name: { $regex: name, $options: "i" },
 					type: type,
-				}).sort("updatedAt")
-			).forEach(function (doc) {
-				docs.push(doc);
-			});
-		} else {
-			(await Author.find({ type: type }).sort("updatedAt")).forEach(function (
-				doc
-			) {
-				docs.push(doc);
-			});
-		}
-	} else if (name) {
-		(
-			await Author.find({ name: { $regex: name, $options: "i" } }).sort(
-				"updatedAt"
-			)
-		).forEach(function (doc) {
-			docs.push(doc);
-		});
-	} else {
-		(await Author.find().sort("updatedAt")).forEach(function (doc) {
-			docs.push(doc);
-		});
-	}
+			  }
+			: { type: type }
+		: name
+		? { name: { $regex: name, $options: "i" } }
+		: {};
+
+	(await Author.find(search).sort("updatedAt")).forEach(function (doc) {
+		docs.push(doc);
+	});
 
 	if (docs.length === 0) {
 		return res.jsonNotFound(docs, getMessage("author.list.empty"), new_token);
