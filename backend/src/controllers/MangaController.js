@@ -19,6 +19,7 @@ const list_projection = {
 		nsfw: 1,
 		rating: 1,
 		cover: 1,
+		type: 1,
 		likes: 1,
 		writer_id: 1,
 		artist_id: 1,
@@ -29,6 +30,8 @@ const list_projection = {
 		createdAt: 1,
 		title: 1,
 		genre: 1,
+
+		type: 1,
 		synopsis: 1,
 		n_chapters: 1,
 
@@ -52,6 +55,7 @@ const list_projection = {
 		rating: 1,
 		writer_id: 1,
 		artist_id: 1,
+		type: 1,
 		nsfw: 1,
 		status: 1,
 		likes: 1,
@@ -68,6 +72,7 @@ const read_projection = {
 		status: 1,
 		writer_id: 1,
 		artist_id: 1,
+		type: 1,
 		rating: 1,
 		nsfw: 1,
 		cover: 1,
@@ -76,6 +81,7 @@ const read_projection = {
 	1: {
 		updatedAt: 1,
 		createdAt: 1,
+		type: 1,
 		title: 1,
 		genre: 1,
 		synopsis: 1,
@@ -98,6 +104,7 @@ const read_projection = {
 		synopsis: 1,
 		n_chapters: 1,
 		chapters: 1,
+		type: 1,
 		cover: 1,
 		rating: 1,
 		writer_id: 1,
@@ -115,6 +122,7 @@ async function store(req, res) {
 		synopsis,
 		writer_id,
 		artist_id,
+		type,
 		n_chapters,
 		status,
 		language,
@@ -208,6 +216,7 @@ async function store(req, res) {
 		status: status,
 		language: language,
 		nsfw: nsfw,
+		type: type,
 		scan_id: scan_id,
 		writer_id: writer_id,
 		artist_id: artist_id,
@@ -291,7 +300,8 @@ async function read(req, res) {
 }
 
 async function list(req, res) {
-	const { genre, scan, title, writer_id, artist_id, recent } = req.query;
+	const { genre, scan_id, title, type, writer_id, artist_id, recent } =
+		req.query;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
@@ -308,55 +318,14 @@ async function list(req, res) {
 	}
 
 	let docs = [];
-
-	if (genre) {
-		(
-			await Manga.find({ genre: genre })
-				.sort("updatedAt")
-				.select(list_projection[role])
-		).forEach(function (doc) {
-			docs.push(doc);
-		});
-	} else if (scan) {
-		(
-			await User.find({ name: scan, role: "Scan" }).select(
-				list_projection[role]
-			)
-		).forEach(function (result) {
-			Manga.find({ scan_id: result._id })
-				.sort("updatedAt")
-				.then((doc) => {
-					docs.push(doc);
-				});
-		});
-	} else if (writer_id) {
-		(
-			await Manga.find({ writer_id: writer_id })
-				.sort("updatedAt")
-				.select(list_projection[role])
-		).forEach(function (doc) {
-			docs.push(doc);
-		});
-	} else if (artist_id) {
-		(
-			await Manga.find({ artist_id: artist_id })
-				.sort("updatedAt")
-				.select(list_projection[role])
-		).forEach(function (doc) {
-			docs.push(doc);
-		});
-	} else if (title) {
-		(
-			await Manga.find({ title: { $regex: title, $options: "i" } })
-				.sort("updatedAt")
-				.select(list_projection[role])
-		).forEach(function (doc) {
-			docs.push(doc);
-		});
-	} else if (recent) {
-		const mangas = await Manga.find()
-			.sort("updatedAt")
-			.select({ cover: 1, title: 1, updatedAt: 1 });
+	if (recent) {
+		const mangas = type
+			? await Manga.find({ type: type })
+					.sort("updatedAt")
+					.select({ cover: 1, title: 1, updatedAt: 1 })
+			: await Manga.find()
+					.sort("updatedAt")
+					.select({ cover: 1, title: 1, updatedAt: 1 });
 
 		for (let index = 0; index < mangas.length; index++) {
 			let temp = {
@@ -382,8 +351,21 @@ async function list(req, res) {
 
 		console.log(docs);
 	} else {
+		const search = genre
+			? { genre: genre }
+			: writer_id
+			? { writer_id: writer_id }
+			: type
+			? { type: type }
+			: artist_id
+			? { artist_id: artist_id }
+			: title
+			? { title: { $regex: title, $options: "i" } }
+			: scan_id
+			? { scan_id: scan_id }
+			: {};
 		(
-			await Manga.find().sort("updatedAt").select(list_projection[role])
+			await Manga.find(search).sort("updatedAt").select(list_projection[role])
 		).forEach(function (doc) {
 			docs.push(doc);
 		});
@@ -417,14 +399,14 @@ async function update(req, res) {
 		.then((manga) => {
 			if (writer_id) {
 				Author.findById(writer_id)
-					.then((writer) => {
-						cloneData = writer.works.filter(function (work_id) {
+					.then((author) => {
+						cloneData = author.works.filter(function (work_id) {
 							return manga_id.toString() !== work_id.toString();
 						});
-						//update writer document
-						writer.works = cloneData;
-						writer.updatedAt = Date.now();
-						writer
+						//update author document
+						author.works = cloneData;
+						author.updatedAt = Date.now();
+						author
 							.save()
 							.then((answer) => {
 								console.log(answer);
@@ -440,14 +422,14 @@ async function update(req, res) {
 
 			if (artist_id) {
 				Author.findById(artist_id)
-					.then((artist) => {
-						cloneData = artist.works.filter(function (work_id) {
+					.then((author) => {
+						cloneData = author.works.filter(function (work_id) {
 							return manga_id.toString() !== work_id.toString();
 						});
-						//update artist document
-						artist.works = cloneData;
-						artist.updatedAt = Date.now();
-						artist
+						//update author document
+						author.works = cloneData;
+						author.updatedAt = Date.now();
+						author
 							.save()
 							.then((answer) => {
 								console.log(answer);
@@ -460,6 +442,7 @@ async function update(req, res) {
 						console.log(err);
 					});
 			}
+
 			return res.jsonOK(null, getMessage("manga.update.success"), new_token);
 		})
 		.catch((err) => {

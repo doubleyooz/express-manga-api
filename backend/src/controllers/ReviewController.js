@@ -1,4 +1,3 @@
-import fs from "fs";
 import CryptoJs from "crypto-js";
 
 import Manga from "../models/Manga.js";

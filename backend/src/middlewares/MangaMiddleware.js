@@ -53,6 +53,12 @@ async function valid_store(req, res, next) {
 			.strict()
 			.matches(/(true|false)/, null)
 			.required(),
+		type: yup
+			.string("type must be a string.")
+			.strict()
+			.matches(/^manga$|^manhwa$|^manhua$/, null)
+			.default({ type: "manga" })
+			.required(),
 		language: yup
 			.string("language must be a string.")
 			.strict()
@@ -92,18 +98,21 @@ async function valid_store(req, res, next) {
 }
 
 async function valid_read(req, res, next) {
-	const { manga_id, title } = req.query;
+	const { manga_id } = req.query;
 
-	let schema = yup.object().shape({
-		title: yup.string("title must be a string.").when(["manga_id"], {
-			is: (manga_id) => !manga_id,
-			then: yup.string().required(),
-		}),
-		manga_id: yup.string("manga_id must be a string.").when(["title"], {
-			is: (title) => !title,
-			then: yup.string().required(),
-		}),
-	});
+	let schema = yup.object().shape(
+		{
+			title: yup.string("title must be a string.").when(["manga_id"], {
+				is: (manga_id) => !manga_id,
+				then: yup.string().required(),
+			}),
+			manga_id: yup.string("manga_id must be a string.").when(["title"], {
+				is: (title) => !title,
+				then: yup.string().required(),
+			}),
+		},
+		[["title", "manga_id"]]
+	);
 
 	try {
 		schema
@@ -132,10 +141,11 @@ async function valid_read(req, res, next) {
 }
 
 async function valid_list(req, res, next) {
+	const { scan_id } = req.body;
 	let schema = yup.object().shape({
 		title: yup.string("title must be a string.").strict(),
 		genre: yup.string("genre must be a string.").strict(),
-		scan: yup.string("scan must be a string.").strict(),
+		scan_id: yup.string("scan must be a string.").strict(),
 		recent: yup.boolean(),
 	});
 
@@ -143,6 +153,15 @@ async function valid_list(req, res, next) {
 		schema
 			.validate(req.query)
 			.then(() => {
+				if (scan_id) {
+					if (!isValidMongoId(scan_id)) {
+						return res.jsonBadRequest(
+							null,
+							getMessage("invalid.object.id"),
+							null
+						);
+					}
+				}
 				next();
 			})
 			.catch((err) => {
@@ -154,6 +173,7 @@ async function valid_list(req, res, next) {
 }
 
 async function valid_update(req, res, next) {
+	const { manga_id, writer_id, artist_id } = req.body;
 	let schema = yup.object().shape({
 		title: yup
 			.string("title must be a string.")
@@ -179,6 +199,11 @@ async function valid_update(req, res, next) {
 			.string("nsfw must be a string.")
 			.strict()
 			.matches(/(true|false)/, null),
+		type: yup
+			.string("type must be a string.")
+			.strict()
+			.matches(/^manga$|^manhwa$|^manhua$/, null)
+			.default({ type: "manga" }),
 		language: yup
 			.string("language must be a string.")
 			.strict()
@@ -195,9 +220,31 @@ async function valid_update(req, res, next) {
 			.validate(req.body)
 			.then(() => {
 				if (isValidMongoId(manga_id)) {
+					if (writer_id) {
+						if (!isValidMongoId(writer_id))
+							return res.jsonBadRequest(
+								null,
+								getMessage("invalid.object.id"),
+								null
+							);
+					}
+
+					if (artist_id) {
+						if (!isValidMongoId(artist_id))
+							return res.jsonBadRequest(
+								null,
+								getMessage("invalid.object.id"),
+								null
+							);
+					}
+
 					next();
 				} else {
-					return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
+					return res.jsonBadRequest(
+						null,
+						getMessage("invalid.object.id"),
+						null
+					);
 				}
 			})
 			.catch((err) => {
@@ -222,11 +269,10 @@ async function valid_remove(req, res, next) {
 	}
 }
 
-
 export default {
 	valid_store,
 	valid_read,
 	valid_list,
 	valid_update,
-	valid_remove
+	valid_remove,
 };

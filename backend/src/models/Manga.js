@@ -19,6 +19,7 @@ const MangaSchema = new mongoose.Schema({
 		ref: "Author",
 	},
 	genre: String,
+	type: String,
 	synopsis: String,
 	n_chapters: {
 		type: Number,
