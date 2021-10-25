@@ -319,35 +319,35 @@ async function list(req, res) {
 
 	let docs = [];
 	if (recent) {
-		const mangas = type
-			? await Manga.find({ type: type })
-					.sort("updatedAt")
-					.select({ cover: 1, title: 1, updatedAt: 1 })
-			: await Manga.find()
-					.sort("updatedAt")
-					.select({ cover: 1, title: 1, updatedAt: 1 });
-
-		for (let index = 0; index < mangas.length; index++) {
+		const search = type ? { type: type } : {};
+		(
+			await Manga.find(search)
+				.sort("updatedAt")
+				.select({ cover: 1, title: 1, updatedAt: 1 })
+		).forEach(function (doc) {
 			let temp = {
-				_id: mangas[index]._id,
-				cover: mangas[index].cover,
-				title: mangas[index].title,
-				updatedAt: mangas[index].updatedAt,
+				_id: doc._id,
+				cover: doc.cover,
+				title: doc.title,
+				updatedAt: doc.updatedAt,
 				chapters: [],
 			};
-
-			const chapters = await Chapter.find({ manga_id: mangas[index]._id })
+			console.log(doc);
+			Chapter.find({ manga_id: doc._id })
 				.sort("updatedAt")
-				.select({ number: 1, _id: 0 });
-
-			if (chapters.length !== 0) {
-				chapters.forEach(function (chap) {
-					temp.chapters.push({ number: chap.number });
+				.select({ number: 1, _id: 0 })
+				.then((chapters) => {
+					if (chapters.length !== 0) {
+						chapters.forEach(function (chap) {
+							temp.chapters.push({ number: chap.number });
+						});
+					}
+				})
+				.catch((err) => {
+					return res.jsonServerError(null, null, err);
 				});
-
-				docs.push(temp);
-			}
-		}
+			docs.push(temp);
+		});
 
 		console.log(docs);
 	} else {

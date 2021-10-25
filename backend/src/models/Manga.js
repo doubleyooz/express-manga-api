@@ -18,7 +18,12 @@ const MangaSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Author",
 	},
-	genre: String,
+	genres: [{
+		type: String
+	}],
+	themes: [{
+		type: String
+	}],
 	type: String,
 	synopsis: String,
 	n_chapters: {
