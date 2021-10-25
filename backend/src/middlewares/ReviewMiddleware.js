@@ -3,26 +3,7 @@ import mongoose from "mongoose";
 
 import { getMessage } from "../common/messages.js";
 
-function isValidMongoId(object_id) {
-	try {
-		if (mongoose.Types.ObjectId.isValid(object_id)) {
-			if (String(new mongoose.Types.ObjectId(object_id)) === object_id) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	} catch (err) {
-		console.log(err);
-		return false;
-	}
-}
-
 async function valid_store(req, res, next) {
-	const { manga_id } = req.body;
-
 	let schema = yup.object().shape({
 		text: yup
 			.string("text must be a string.")
@@ -30,7 +11,17 @@ async function valid_store(req, res, next) {
 			.min(2, getMessage("text.invalid.text.short"))
 			.max(500, getMessage("text.invalid.text.long"))
 			.required(),
-		manga_id: yup.string("must be a string").strict().required(),
+		manga_id: yup
+			.string("must be a string")
+			.strict()
+			.required()
+			.test(
+				"isValidMongoId",
+				getMessage("invalid.object.id"),
+				(value) =>
+					mongoose.Types.ObjectId.isValid(value) &&
+					String(new mongoose.Types.ObjectId(value)) === value
+			),
 		rating: yup
 			.number("rating must be a number.")
 			.min(0, "The minimum limit is 0.")
@@ -41,8 +32,7 @@ async function valid_store(req, res, next) {
 	schema
 		.validate(req.body)
 		.then(() => {
-			if (isValidMongoId(manga_id)) next();
-			else return res.jsonBadRequest(null, null, null);
+			next();
 		})
 		.catch(function (e) {
 			console.log(e);
@@ -51,25 +41,24 @@ async function valid_store(req, res, next) {
 }
 
 async function valid_read(req, res, next) {
-	const { review_id } = req.query;
-
 	let schema = yup.object().shape({
-		review_id: yup.string("review_id must be a string.").required(),
+		review_id: yup
+			.string("review_id must be a string.")
+			.required()
+			.test(
+				"isValidMongoId",
+				getMessage("invalid.object.id"),
+				(value) =>
+					mongoose.Types.ObjectId.isValid(value) &&
+					String(new mongoose.Types.ObjectId(value)) === value
+			),
 	});
 
 	try {
 		schema
 			.validate(req.query)
 			.then(() => {
-				if (isValidMongoId(review_id)) {
-					next();
-				} else {
-					return res.jsonBadRequest(
-						null,
-						getMessage("invalid.object.id"),
-						null
-					);
-				}
+				next();
 			})
 			.catch((err) => {
 				return res.jsonBadRequest(null, null, err.errors);
@@ -83,7 +72,19 @@ async function valid_list(req, res, next) {
 	let schema = yup
 		.object()
 		.shape({
-			manga_id: yup.string("manga_id must be a string.").strict(),
+			manga_id: yup.string("manga_id must be a string.").strict().test(
+				"isValidMongoId",
+				getMessage("invalid.object.id"),
+				function (value) {
+					if (!!value) {
+						return (
+							mongoose.Types.ObjectId.isValid(value) &&
+							String(new mongoose.Types.ObjectId(value)) === value
+						);
+					}
+					return true;
+				}
+			),
 			user_id: yup.string("user_id must be a string.").strict(),
 		})
 		.test(
@@ -130,7 +131,11 @@ async function valid_update(req, res, next) {
 				if (isValidMongoId(review_id)) {
 					next();
 				} else {
-					return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
+					return res.jsonBadRequest(
+						null,
+						getMessage("invalid.object.id"),
+						null
+					);
 				}
 			})
 			.catch((err) => {

@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 import { getMessage } from "../common/messages.js";
 
 async function valid_store(req, res, next) {
-	
 	let schema = yup.object().shape({
 		manga_title: yup
 			.string("manga title must be a string.")
@@ -47,24 +46,22 @@ async function valid_read(req, res, next) {
 	const { chapter_id } = req.query;
 
 	let schema = yup.object().shape({
-		chapter_id: yup.string("chapter_id must be a string.").strict().required(),
+		chapter_id: yup
+			.string("chapter_id must be a string.")
+			.strict()
+			.required()
+			.test(
+				"isValidMongoId",
+				getMessage("invalid.object.id"),
+				(value) =>
+					mongoose.Types.ObjectId.isValid(value) &&
+					String(new mongoose.Types.ObjectId(value)) === value
+			),
 	});
 	schema
 		.validate({ chapter_id })
 		.then(() => {
-			if (mongoose.Types.ObjectId.isValid(chapter_id)) {
-				if (String(new mongoose.Types.ObjectId(chapter_id)) === chapter_id) {
-					next();
-				} else {
-					return res.jsonBadRequest(
-						null,
-						getMessage("invalid.object.id"),
-						null
-					);
-				}
-			} else {
-				return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
-			}
+			next();
 		})
 		.catch((err) => {
 			return res.jsonBadRequest(null, null, err.errors);
@@ -72,23 +69,26 @@ async function valid_read(req, res, next) {
 }
 
 async function valid_list(req, res, next) {
-	const { manga_id } = req.query;
-
 	let schema = yup.object().shape({
-		manga_id: yup.string("manga_id must be a string.").strict(),
+		manga_id: yup
+			.string("manga_id must be a string.")
+			.strict()
+			.test(
+				"isValidMongoId",
+				getMessage("invalid.object.id"),
+				function (value) {
+					if (!!value) {
+						mongoose.Types.ObjectId.isValid(value) &&
+							String(new mongoose.Types.ObjectId(value)) === value;
+					}
+					return true;
+				}
+			),
 	});
 	schema
-		.validate({ manga_id })
+		.validate(req.query)
 		.then(() => {
-			if (mongoose.Types.ObjectId.isValid(manga_id)) {
-				if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {
-					next();
-				} else {
-					return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
-				}
-			} else {
-				return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
-			}
+			next();
 		})
 		.catch((err) => {
 			return res.jsonBadRequest(null, null, err.errors);
@@ -112,7 +112,17 @@ async function valid_update(req, res, next) {
 				is: (title) => !title,
 				then: yup.number().required(),
 			}),
-		chapter_id: yup.string("chapter_id must be a string.").strict().required(),
+		chapter_id: yup
+			.string("chapter_id must be a string.")
+			.strict()
+			.required()
+			.test(
+				"isValidMongoId",
+				getMessage("invalid.object.id"),
+				(value) =>
+					mongoose.Types.ObjectId.isValid(value) &&
+					String(new mongoose.Types.ObjectId(value)) === value
+			),
 		language: yup
 			.string("language must be a string.")
 			.strict()
@@ -128,15 +138,7 @@ async function valid_update(req, res, next) {
 		schema
 			.validate(req.body)
 			.then(() => {
-				if (isValidMongoId(chapter_id)) {
-					next();
-				} else {
-					return res.jsonBadRequest(
-						null,
-						getMessage("invalid.object.id"),
-						null
-					);
-				}
+				next();
 			})
 			.catch((err) => {
 				return res.jsonBadRequest(null, null, err.errors);
