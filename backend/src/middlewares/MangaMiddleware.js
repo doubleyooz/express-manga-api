@@ -106,11 +106,10 @@ async function valid_store(req, res, next) {
 				function (items) {
 					if (items) {
 						return items.every((item) => {
-						
 							return genres.includes(item.toLowerCase());
 						});
 					}
-					console.log("false");
+
 					return false;
 				}
 			),
@@ -125,9 +124,7 @@ async function valid_store(req, res, next) {
 				function (items) {
 					if (items) {
 						return items.every((item) => {
-							console.log(item.toLowerCase());
-							console.log(themes.includes(item.toLowerCase()));
-							return genres.includes(item.toLowerCase());
+							return themes.includes(item.toLowerCase());
 						});
 					}
 					return false;

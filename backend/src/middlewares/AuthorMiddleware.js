@@ -3,22 +3,19 @@ import mongoose from "mongoose";
 import { differenceInCalendarDays } from "date-fns";
 
 import { getMessage } from "../common/messages.js";
+function isValidMongoIdRequired(value) {
+	return (
+		mongoose.Types.ObjectId.isValid(value) &&
+		String(new mongoose.Types.ObjectId(value)) === value
+	);
+}
 
-function isValidMongoId(object_id) {
-	try {
-		if (mongoose.Types.ObjectId.isValid(object_id)) {
-			if (String(new mongoose.Types.ObjectId(object_id)) === object_id) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	} catch (err) {
-		console.log(err);
-		return false;
+function isValidMongoId(value) {
+	if (!!value) {
+		mongoose.Types.ObjectId.isValid(value) &&
+			String(new mongoose.Types.ObjectId(value)) === value;
 	}
+	return true;
 }
 
 async function valid_store(req, res, next) {
@@ -62,36 +59,27 @@ async function valid_store(req, res, next) {
 }
 
 async function valid_read(req, res, next) {
-	const { manga_id, title } = req.query;
-
 	let schema = yup.object().shape({
 		title: yup.string("title must be a string.").when(["manga_id"], {
 			is: (manga_id) => !manga_id,
 			then: yup.string().required(),
 		}),
-		manga_id: yup.string("manga_id must be a string.").when(["title"], {
-			is: (title) => !title,
-			then: yup.string().required(),
-		}),
+		manga_id: yup
+			.string("manga_id must be a string.")
+			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+				isValidMongoId(value)
+			)
+			.when(["title"], {
+				is: (title) => !title,
+				then: yup.string().required(),
+			}),
 	});
 
 	try {
 		schema
 			.validate(req.query)
 			.then(() => {
-				if (manga_id) {
-					if (isValidMongoId(manga_id)) {
-						next();
-					} else {
-						return res.jsonBadRequest(
-							null,
-							getMessage("invalid.object.id"),
-							null
-						);
-					}
-				} else {
-					next();
-				}
+				next();
 			})
 			.catch((err) => {
 				return res.jsonBadRequest(null, null, err.errors);
@@ -103,10 +91,8 @@ async function valid_read(req, res, next) {
 
 async function valid_list(req, res, next) {
 	let schema = yup.object().shape({
-		title: yup.string("title must be a string.").strict(),
-		genre: yup.string("genre must be a string.").strict(),
-		scan: yup.string("scan must be a string.").strict(),
-		recent: yup.boolean(),
+		type: yup.string("title must be a string.").strict(),
+		nake: yup.string("genre must be a string.").strict(),
 	});
 
 	try {
@@ -130,7 +116,13 @@ async function valid_update(req, res, next) {
 	const schema = yup
 		.object()
 		.shape({
-			author_id: yup.string("author_id must be a string.").strict(),
+			author_id: yup
+				.string("author_id must be a string.")
+				.strict()
+				.required()
+				.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+					isValidMongoIdRequired(value)
+				),
 			type: yup
 				.string("type must be a string.")
 				.strict()
@@ -161,18 +153,14 @@ async function valid_update(req, res, next) {
 					value.socialMedia ||
 					value.biography
 				)
-		)
-      
+		);
+
 	try {
 		schema
 			.validate(req.body)
 			.then(() => {
-				if (isValidMongoId(req.body.author_id)) {
-					schema.cast(req.body, { stripUnknown: true });
-					next();
-				} else {
-					return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
-				}
+				schema.cast(req.body, { stripUnknown: true });
+				next();
 			})
 			.catch((err) => {
 				return res.jsonBadRequest(null, null, err.errors);
@@ -183,12 +171,27 @@ async function valid_update(req, res, next) {
 }
 
 async function valid_remove(req, res, next) {
-	const { manga_id } = req.query;
+	let schema = yup.object().shape({
+		author_id: yup
+			.string()
+			.strict()
+			.required()
+			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+				isValidMongoIdRequired(value)
+			),
+	});
 
-	if (isValidMongoId(manga_id)) {
-		next();
-	} else {
-		return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
+	try {
+		schema
+			.validate(req.query)
+			.then(() => {
+				next();
+			})
+			.catch((err) => {
+				return res.jsonBadRequest(null, null, err.errors);
+			});
+	} catch (err) {
+		return res.jsonBadRequest(null, null, err.errors);
 	}
 }
 

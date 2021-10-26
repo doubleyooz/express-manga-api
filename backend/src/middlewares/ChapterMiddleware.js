@@ -3,6 +3,21 @@ import mongoose from "mongoose";
 
 import { getMessage } from "../common/messages.js";
 
+function isValidMongoIdRequired(value) {
+	return (
+		mongoose.Types.ObjectId.isValid(value) &&
+		String(new mongoose.Types.ObjectId(value)) === value
+	);
+}
+
+function isValidMongoId(value) {
+	if (!!value) {
+		mongoose.Types.ObjectId.isValid(value) &&
+			String(new mongoose.Types.ObjectId(value)) === value;
+	}
+	return true;
+}
+
 async function valid_store(req, res, next) {
 	let schema = yup.object().shape({
 		manga_title: yup
@@ -43,29 +58,28 @@ async function valid_store(req, res, next) {
 }
 
 async function valid_read(req, res, next) {
-	const { chapter_id } = req.query;
-
 	let schema = yup.object().shape({
-		chapter_id: yup
-			.string("chapter_id must be a string.")
+		chapter: yup
+			.string()
 			.strict()
 			.required()
-			.test(
-				"isValidMongoId",
-				getMessage("invalid.object.id"),
-				(value) =>
-					mongoose.Types.ObjectId.isValid(value) &&
-					String(new mongoose.Types.ObjectId(value)) === value
+			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+				isValidMongoIdRequired(value)
 			),
 	});
-	schema
-		.validate({ chapter_id })
-		.then(() => {
-			next();
-		})
-		.catch((err) => {
-			return res.jsonBadRequest(null, null, err.errors);
-		});
+
+	try {
+		schema
+			.validate(req.query)
+			.then(() => {
+				next();
+			})
+			.catch((err) => {
+				return res.jsonBadRequest(null, null, err.errors);
+			});
+	} catch (err) {
+		return res.jsonBadRequest(null, null, err.errors);
+	}
 }
 
 async function valid_list(req, res, next) {
@@ -73,16 +87,8 @@ async function valid_list(req, res, next) {
 		manga_id: yup
 			.string("manga_id must be a string.")
 			.strict()
-			.test(
-				"isValidMongoId",
-				getMessage("invalid.object.id"),
-				function (value) {
-					if (!!value) {
-						mongoose.Types.ObjectId.isValid(value) &&
-							String(new mongoose.Types.ObjectId(value)) === value;
-					}
-					return true;
-				}
+			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+				isValidMongoId(value)
 			),
 	});
 	schema
@@ -116,13 +122,10 @@ async function valid_update(req, res, next) {
 			.string("chapter_id must be a string.")
 			.strict()
 			.required()
-			.test(
-				"isValidMongoId",
-				getMessage("invalid.object.id"),
-				(value) =>
-					mongoose.Types.ObjectId.isValid(value) &&
-					String(new mongoose.Types.ObjectId(value)) === value
+			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+				isValidMongoIdRequired(value)
 			),
+
 		language: yup
 			.string("language must be a string.")
 			.strict()
@@ -151,33 +154,35 @@ async function valid_update(req, res, next) {
 async function valid_remove(req, res, next) {
 	const { manga_id, chapter_id } = req.query;
 
-	console.log(manga_id);
-	console.log(chapter_id);
+	let schema = yup.object().shape({
+		manga_id: yup
+			.string()
+			.strict()
+			.required()
+			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+				isValidMongoIdRequired(value)
+			),
 
-	if (mongoose.Types.ObjectId.isValid(manga_id)) {
-		if (String(new mongoose.Types.ObjectId(manga_id)) === manga_id) {
-			if (mongoose.Types.ObjectId.isValid(chapter_id)) {
-				if (String(new mongoose.Types.ObjectId(chapter_id)) === chapter_id) {
-					next();
-				} else {
-					console.log("chapter id invalid string");
-					return res.jsonBadRequest(
-						null,
-						getMessage("invalid.object.id"),
-						null
-					);
-				}
-			} else {
-				console.log("chapter id invalid object");
-				return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
-			}
-		} else {
-			console.log("manga id invalid string");
-			return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
-		}
-	} else {
-		console.log("manga id invalid object");
-		return res.jsonBadRequest(null, getMessage("invalid.object.id"), null);
+		chapter_id: yup
+			.string()
+			.strict()
+			.required()
+			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+				isValidMongoIdRequired(value)
+			),
+	});
+
+	try {
+		schema
+			.validate(req.query)
+			.then(() => {
+				next();
+			})
+			.catch((err) => {
+				return res.jsonBadRequest(null, null, err.errors);
+			});
+	} catch (err) {
+		return res.jsonBadRequest(null, null, err.errors);
 	}
 }
 
