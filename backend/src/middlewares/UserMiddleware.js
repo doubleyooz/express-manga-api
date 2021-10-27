@@ -91,7 +91,7 @@ async function valid_sign_up(req, res, next) {
 }
 
 async function valid_sign_in(req, res, next) {
-	const [hashType, hash] = req.headers.authorization.split(" ");
+	const [hashType, hash] =  req.headers.authorization ? req.headers.authorization.split(" ") : ["", ];
 
 	if (hashType !== "Basic") {
 		return res.jsonUnauthorized(null, null, null);

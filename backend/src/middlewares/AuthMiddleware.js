@@ -8,8 +8,8 @@ dotenv.config();
 
 function auth(roles = []) {
 	return async (req, res, next) => {
-		try {
-			const [, token] = req.headers.authorization.split(" ");
+		try {		
+			const [, token] = req.headers.authorization ? req.headers.authorization.split(" ") : [, ""];
 			if (typeof roles === "string") {
 				roles = [roles];
 			}
