@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import http from "http";
 //import io from 'socket.io';
 
-import app from "./config/express.js";
+import { app } from "./config/express.js";
 
 dotenv.config();
 
