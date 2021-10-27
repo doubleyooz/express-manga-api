@@ -8,9 +8,10 @@ import app from "./config/express.js";
 dotenv.config();
 
 const server = http.Server(app);
+const str = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-c09yq.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 mongoose.connect(
-	`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-c09yq.mongodb.net/MangaReader?retryWrites=true&w=majority`,
+	str,
 	{
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
