@@ -499,6 +499,37 @@ async function remove(req, res) {
                 })                      
             });
             */
+
+			const writer = await Author.findById(manga.writer_id);
+
+			writer.works = writer.works.filter(function (_id) {
+				return _id.toString() !== manga_id.toString();
+			});
+
+			
+			writer.save(function (err) {
+				// yet another err object to deal with
+				if (err) {
+					return res.jsonServerError(null, null, err);
+				}
+			});
+
+
+			const artist = await Author.findById(manga.artist_id);
+
+			artist.works = artist.works.filter(function (_id) {
+				return _id.toString() !== manga_id.toString();
+			});
+
+			
+			artist.save(function (err) {
+				// yet another err object to deal with
+				if (err) {
+					return res.jsonServerError(null, null, err);
+				}
+			});
+
+
 			const chapters = await Chapter.deleteMany({ manga_id: manga_id });
 
 			let dir = "uploads/" + manga.language + "/" + scan_id + "/" + manga.title;
