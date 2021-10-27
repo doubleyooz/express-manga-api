@@ -501,7 +501,7 @@ async function remove(req, res) {
             */
 			const chapters = await Chapter.deleteMany({ manga_id: manga_id });
 
-			let dir = "uploads/" + manga.title;
+			let dir = "uploads/" + manga.language + "/" + scan_id + "/" + manga.title;
 
 			fs.rmdir(dir, { recursive: true }, (err) => {
 				if (err) {
