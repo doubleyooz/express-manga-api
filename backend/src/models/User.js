@@ -1,72 +1,65 @@
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-	email: { type: String, required: true, unique: true },
-	password: { type: String, required: true, select: false },
+const UserSchema = new mongoose.Schema(
+	{
+		email: { type: String, required: true, unique: true },
+		password: { type: String, required: true, select: false },
 
-	role: {
-		type: String,
-		default: "User",
-	},
-
-	name: {
-		type: String,
-		required: true,
-	},
-
-	updatedAt: {
-		type: Date,
-		default: Date.now,
-	},
-
-	addedAt: {
-		type: Date,
-		default: Date.now,
-	},
-
-	mangas: [
-		{
-			//a array fill with the mangas ids
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Manga",
+		role: {
+			type: String,
+			default: "User",
 		},
-	],
 
-	manga_alert: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Manga",
+		name: {
+			type: String,
+			required: true,
 		},
-	],
 
-	likes: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "User",
+		mangas: [
+			{
+				//a array fill with the mangas ids
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Manga",
+			},
+		],
+
+		manga_alert: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Manga",
+			},
+		],
+
+		likes: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
+
+		reviews: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Manga",
+			},
+		],
+
+		token_version: {
+			type: Number,
+			default: 0,
 		},
-	],
 
-	reviews: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Manga",
+		active: {
+			type: Boolean,
+			default: false,
 		},
-	],
 
-	token_version: {
-		type: Number,
-		default: 0,
+		resetLink: {
+			type: String,
+			default: "",
+		},
 	},
-
-	active: {
-		type: Boolean,
-		default: false,
-	},
-
-	resetLink: {
-		type: String,
-		default: "",
-	},
-});
+	{ timestamps: true }
+);
 
 export default mongoose.model("User", UserSchema);
