@@ -3,6 +3,32 @@ import mongoose from "mongoose";
 
 import { getMessage } from "../common/messages.js";
 
+const rules = {
+	manga_title: yup
+		.string("manga title must be a string.")
+		.strict()
+		.max(60, getMessage("manga.invalid.title.long")),
+	chapter_title: yup
+		.string("title must be a string.")
+		.strict()
+		.max(40, getMessage("chapter.invalid.title.long")),
+	number: yup
+		.number("Must to be a valid number")
+		.min(1, "Must be a positive number"),
+	mongo_id_req: yup
+		.string()
+		.strict()
+		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+			isValidMongoIdRequired(value)
+		),
+	mongo_id: yup
+		.string()
+		.strict()
+		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+			isValidMongoId(value)
+		),
+};
+
 function isValidMongoIdRequired(value) {
 	return (
 		mongoose.Types.ObjectId.isValid(value) &&
@@ -20,27 +46,9 @@ function isValidMongoId(value) {
 
 async function valid_store(req, res, next) {
 	let schema = yup.object().shape({
-		manga_title: yup
-			.string("manga title must be a string.")
-			.strict()
-			.max(60, getMessage("manga.invalid.title.long")),
-		chapter_title: yup
-			.string("title must be a string.")
-			.strict()
-			.max(40, getMessage("chapter.invalid.title.long")),
-		number: yup
-			.number("Must to be a valid number")
-			.min(1, "Must be a positive number")
-			.required(),
-		language: yup
-			.string("language must be a string.")
-			.strict()
-			.matches(
-				/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
-				null
-			)
-			.default({ language: "pt" })
-			.required(),
+		manga_title: rules.manga_title.required(),
+		chapter_title: rules.chapter_title.required(),
+		number: rules.number.required(),
 	});
 	try {
 		await schema
@@ -59,13 +67,7 @@ async function valid_store(req, res, next) {
 
 async function valid_read(req, res, next) {
 	let schema = yup.object().shape({
-		chapter: yup
-			.string()
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
+		chapter_id: rules.mongo_id_req.required(),
 	});
 
 	try {
@@ -84,12 +86,7 @@ async function valid_read(req, res, next) {
 
 async function valid_list(req, res, next) {
 	let schema = yup.object().shape({
-		manga_id: yup
-			.string("manga_id must be a string.")
-			.strict()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoId(value)
-			),
+		manga_id: rules.mongo_id_req.required(),
 	});
 	schema
 		.validate(req.query)
@@ -103,38 +100,9 @@ async function valid_list(req, res, next) {
 
 async function valid_update(req, res, next) {
 	let schema = yup.object().shape({
-		title: yup
-			.string("title must be a string.")
-			.strict()
-			.max(40, getMessage("chapter.invalid.title.long"))
-			.when(["number"], {
-				is: (number) => !number,
-				then: yup.string().required(),
-			}),
-		number: yup
-			.number("Must to be a valid number")
-			.min(1, "Must be a positive number")
-			.when(["title"], {
-				is: (title) => !title,
-				then: yup.number().required(),
-			}),
-		chapter_id: yup
-			.string("chapter_id must be a string.")
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
-
-		language: yup
-			.string("language must be a string.")
-			.strict()
-			.matches(
-				/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
-				null
-			)
-			.default({ language: "pt" })
-			.required(),
+		chapter_title: rules.chapter_title,
+		number: rules.number,
+		chapter_id: rules.mongo_id_req.required(),
 	});
 
 	try {
@@ -152,24 +120,9 @@ async function valid_update(req, res, next) {
 }
 
 async function valid_remove(req, res, next) {
-	const { manga_id, chapter_id } = req.query;
-
 	let schema = yup.object().shape({
-		manga_id: yup
-			.string()
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
-
-		chapter_id: yup
-			.string()
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
+		chapter_id: rules.mongo_id_req.required(),
+		manga_id: rules.mongo_id_req.required(),
 	});
 
 	try {

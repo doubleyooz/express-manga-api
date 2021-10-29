@@ -3,6 +3,39 @@ import mongoose from "mongoose";
 import { differenceInCalendarDays } from "date-fns";
 
 import { getMessage } from "../common/messages.js";
+
+const rules = {
+	type: yup
+		.string("type must be a string.")
+		.strict()
+		.matches(/(writer|artist)/, null),
+	mongo_id_req: yup
+		.string()
+		.strict()
+		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+			isValidMongoIdRequired(value)
+		),
+	mongo_id: yup
+		.string()
+		.strict()
+		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+			isValidMongoId(value)
+		),
+	name: yup.string("name must be a string.").strict(),
+	birthDate: yup.date(),
+	deathDate: yup
+		.date()
+		.min(
+			yup.ref("birthDate") + 3650,
+			"death date must be at least 10 years longer than birthDate"
+		),
+	socialMedia: yup.string("socialMedia must be a string.").strict(),
+	biography: yup
+		.string("biography")
+		.strict()
+		.min(15, getMessage("author.invalid.biography.short")),
+};
+
 function isValidMongoIdRequired(value) {
 	return (
 		mongoose.Types.ObjectId.isValid(value) &&
@@ -23,28 +56,12 @@ async function valid_store(req, res, next) {
 	currentDate.setFullYear(currentDate.getFullYear() - 10);
 
 	const schema = yup.object().shape({
-		type: yup
-			.string("type must be a string.")
-			.strict()
-			.matches(/(writer|artist)/, null)
-			.required(),
-		name: yup.string("name must be a string.").strict().required(),
-		birthDate: yup.date().max(currentDate).required(),
-		deathDate: yup
-			.date()
-			.min(
-				yup.ref("birthDate") + 3650,
-				"death date must be at least 10 years longer than birthDate"
-			),
-		socialMedia: yup
-			.string("socialMedia must be a string.")
-			.strict()
-			.required(),
-		biography: yup
-			.string("biography")
-			.strict()
-			.min(15, getMessage("author.invalid.biography.short"))
-			.required(),
+		type: rules.type.required(),
+		name: rules.name.required(),
+		birthDate: rules.birthDate.max(currentDate).required(),
+		deathDate: rules.deathDate,
+		socialMedia: rules.socialMedia.required(),
+		biography: rules.biography.required(),
 	});
 
 	schema
@@ -60,19 +77,7 @@ async function valid_store(req, res, next) {
 
 async function valid_read(req, res, next) {
 	let schema = yup.object().shape({
-		title: yup.string("title must be a string.").when(["manga_id"], {
-			is: (manga_id) => !manga_id,
-			then: yup.string().required(),
-		}),
-		manga_id: yup
-			.string("manga_id must be a string.")
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoId(value)
-			)
-			.when(["title"], {
-				is: (title) => !title,
-				then: yup.string().required(),
-			}),
+		author_id: rules.mongo_id,
 	});
 
 	try {
@@ -91,8 +96,8 @@ async function valid_read(req, res, next) {
 
 async function valid_list(req, res, next) {
 	let schema = yup.object().shape({
-		type: yup.string("title must be a string.").strict(),
-		nake: yup.string("genre must be a string.").strict(),
+		type: rules.type,
+		name: rules.name,
 	});
 
 	try {
@@ -116,30 +121,13 @@ async function valid_update(req, res, next) {
 	const schema = yup
 		.object()
 		.shape({
-			author_id: yup
-				.string("author_id must be a string.")
-				.strict()
-				.required()
-				.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-					isValidMongoIdRequired(value)
-				),
-			type: yup
-				.string("type must be a string.")
-				.strict()
-				.matches(/(writer|artist)/, null),
-			name: yup.string("name must be a string.").strict(),
-			birthDate: yup.date().max(currentDate),
-			deathDate: yup
-				.date()
-				.min(
-					yup.ref("birthDate") + 10,
-					"death date must be at least 10 years longer than birthDate"
-				),
-			socialMedia: yup.string("socialMedia must be a string.").strict(),
-			biography: yup
-				.string("biography")
-				.strict()
-				.min(15, getMessage("author.invalid.biography.short")),
+			author_id: mongo_id_req.required(),
+			type: rules.type,
+			name: rules.name,
+			birthDate: rules.birthDate.max(currentDate),
+			deathDate: rules.deathDate,
+			socialMedia: rules.socialMedia,
+			biography: rules.biography,
 		})
 		.test(
 			"at-least-one-field",
@@ -172,13 +160,7 @@ async function valid_update(req, res, next) {
 
 async function valid_remove(req, res, next) {
 	let schema = yup.object().shape({
-		author_id: yup
-			.string()
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
+		author_id: mongo_id_req.required(),
 	});
 
 	try {

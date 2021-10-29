@@ -152,7 +152,7 @@ async function valid_list(req, res, next) {
 
 async function valid_update(req, res, next) {
 	let schema = yup.object().shape({
-		name: yup.string("name must be a string.").required(),
+		name: rules.name,
 	});
 
 	schema

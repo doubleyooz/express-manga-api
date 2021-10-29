@@ -3,6 +3,30 @@ import mongoose from "mongoose";
 
 import { getMessage } from "../common/messages.js";
 
+const rules = {
+	text: yup
+		.string("text must be a string.")
+		.strict()
+		.min(2, getMessage("text.invalid.text.short"))
+		.max(500, getMessage("text.invalid.text.long")),
+	mongo_id_req: yup
+		.string()
+		.strict()
+		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+			isValidMongoIdRequired(value)
+		),
+	mongo_id: yup
+		.string()
+		.strict()
+		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+			isValidMongoId(value)
+		),
+	rating: yup
+		.number("rating must be a number.")
+		.min(0, "The minimum limit is 0.")
+		.max(5, "The maximum limit is 5."),
+};
+
 function isValidMongoIdRequired(value) {
 	return (
 		mongoose.Types.ObjectId.isValid(value) &&
@@ -20,23 +44,10 @@ function isValidMongoId(value) {
 
 async function valid_store(req, res, next) {
 	let schema = yup.object().shape({
-		text: yup
-			.string("text must be a string.")
-			.strict()
-			.min(2, getMessage("text.invalid.text.short"))
-			.max(500, getMessage("text.invalid.text.long"))
+		text: rules.text
 			.required(),
-		manga_id: yup
-			.string("must be a string")
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
-		rating: yup
-			.number("rating must be a number.")
-			.min(0, "The minimum limit is 0.")
-			.max(5, "The maximum limit is 5.")
+		manga_id: rules.mongo_id_req.required(),
+		rating: rules.rating
 			.required(),
 	});
 
@@ -53,12 +64,7 @@ async function valid_store(req, res, next) {
 
 async function valid_read(req, res, next) {
 	let schema = yup.object().shape({
-		review_id: yup
-			.string("review_id must be a string.")
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
+		review_id: rules.mongo_id_req.required()
 	});
 
 	try {
@@ -79,18 +85,8 @@ async function valid_list(req, res, next) {
 	let schema = yup
 		.object()
 		.shape({
-			manga_id: yup
-				.string("manga_id must be a string.")
-				.strict()
-				.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-					isValidMongoId(value)
-				),
-			user_id: yup
-				.string("user_id must be a string.")
-				.strict()
-				.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-					isValidMongoId(value)
-				),
+			manga_id: rules.mongo_id,
+			user_id: rules.mongo_id,
 		})
 		.test(
 			"at-least-one-field",
@@ -114,24 +110,9 @@ async function valid_list(req, res, next) {
 
 async function valid_update(req, res, next) {
 	let schema = yup.object().shape({
-		text: yup
-			.string("text must be a string.")
-			.strict()
-			.min(2, getMessage("text.invalid.text.short"))
-			.max(500, getMessage("text.invalid.text.long"))
-			.required(),
-		review_id: yup
-			.string("must be a string")
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
-		rating: yup
-			.number("rating must be a number.")
-			.min(0, "The minimum limit is 0.")
-			.max(5, "The maximum limit is 5.")
-			.required(),
+		text: rules.text,
+		review_id: rules.mongo_id_req.required(),
+		rating: rules.rating
 	});
 
 	try {
@@ -150,13 +131,7 @@ async function valid_update(req, res, next) {
 
 async function valid_remove(req, res, next) {
 	let schema = yup.object().shape({
-		review_id: yup
-			.string()
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
+		review_id: rules.mongo_id_req.required(),
 	});
 
 	try {

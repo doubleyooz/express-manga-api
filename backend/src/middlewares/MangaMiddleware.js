@@ -71,6 +71,89 @@ const themes = [
 	"zombies",
 ];
 
+const rules = {
+	title: yup
+		.string("title must be a string.")
+		.strict()
+		.min(2, getMessage("manga.invalid.title.short"))
+		.max(60, getMessage("manga.invalid.title.long")),
+	genres: yup
+		.array(yup.string())
+		.min(3, "")
+		.max(5, "")
+		.test(
+			"Valid genres",
+			"Not all given ${path} are valid options",
+			function (items) {
+				if (items) {
+					return items.every((item) => {
+						return genres.includes(item.toLowerCase());
+					});
+				}
+
+				return false;
+			}
+		),
+	themes: yup
+		.array(yup.string())
+		.min(3, "")
+		.max(5, "")
+		.test(
+			"Valid themes",
+			"Not all given ${path} are valid options",
+			function (items) {
+				if (items) {
+					return items.every((item) => {
+						return themes.includes(item.toLowerCase());
+					});
+				}
+				return false;
+			}
+		),
+
+	mongo_id_req: yup
+		.string()
+		.strict()
+		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+			isValidMongoIdRequired(value)
+		),
+	mongo_id: yup
+		.string()
+		.strict()
+		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
+			isValidMongoId(value)
+		),
+	synopsis: yup
+		.string("synopsis must be a string.")
+		.strict()
+		.min(10, getMessage("manga.invalid.synopsis.short"))
+		.max(400, getMessage("manga.invalid.synopsis.long")),
+	n_chapters: yup
+		.number("chapters must be a number.")
+		.min(1, "There must be at least one chapter."),
+	status: yup
+		.number("status must be a number.")
+		.min(1, getMessage("manga.invalid.code"))
+		.max(6, getMessage("manga.invalid.code")),
+	nsfw: yup
+		.string("nsfw must be a string.")
+		.strict()
+		.matches(/(true|false)/, null),
+	type: yup
+		.string("type must be a string.")
+		.strict()
+		.matches(/^manga$|^manhwa$|^manhua$/, null)
+		.default({ type: "manga" }),
+	language: yup
+		.string("language must be a string.")
+		.strict()
+		.matches(
+			/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
+			null
+		)
+		.default({ language: "pt" }),
+};
+
 function isValidMongoIdRequired(value) {
 	return (
 		mongoose.Types.ObjectId.isValid(value) &&
@@ -88,102 +171,18 @@ function isValidMongoId(value) {
 
 async function valid_store(req, res, next) {
 	let schema = yup.object().shape({
-		title: yup
-			.string("title must be a string.")
-			.strict()
-			.min(2, getMessage("manga.invalid.title.short"))
-			.max(60, getMessage("manga.invalid.title.long"))
-			.required(),
+		title: rules.title.required(),
+		genres: rules.genres.required(),
+		themes: rules.themes.required(),
 
-		genres: yup
-			.array(yup.string())
-			.min(3, "")
-			.max(5, "")
-			.required()
-			.test(
-				"Valid genres",
-				"Not all given ${path} are valid options",
-				function (items) {
-					if (items) {
-						return items.every((item) => {
-							return genres.includes(item.toLowerCase());
-						});
-					}
-
-					return false;
-				}
-			),
-		themes: yup
-			.array(yup.string())
-			.min(3, "")
-			.max(5, "")
-			.required()
-			.test(
-				"Valid themes",
-				"Not all given ${path} are valid options",
-				function (items) {
-					if (items) {
-						return items.every((item) => {
-							return themes.includes(item.toLowerCase());
-						});
-					}
-					return false;
-				}
-			),
-
-		writer_id: yup
-			.string()
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
-		artist_id: yup
-			.string()
-			.strict()
-			.required()
-			.test(
-				"isValidMongoId",
-				getMessage("invalid.object.id"),
-				(value) =>
-					mongoose.Types.ObjectId.isValid(value) &&
-					String(new mongoose.Types.ObjectId(value)) === value
-			),
-		synopsis: yup
-			.string("synopsis must be a string.")
-			.strict()
-			.min(10, getMessage("manga.invalid.synopsis.short"))
-			.max(400, getMessage("manga.invalid.synopsis.long"))
-			.required(),
-		n_chapters: yup
-			.number("chapters must be a number.")
-			.min(1, "There must be at least one chapter.")
-			.required(),
-		status: yup
-			.number("status must be a number.")
-			.min(1, getMessage("manga.invalid.code"))
-			.max(6, getMessage("manga.invalid.code"))
-			.required(),
-		nsfw: yup
-			.string("nsfw must be a string.")
-			.strict()
-			.matches(/(true|false)/, null)
-			.required(),
-		type: yup
-			.string("type must be a string.")
-			.strict()
-			.matches(/^manga$|^manhwa$|^manhua$/, null)
-			.default({ type: "manga" })
-			.required(),
-		language: yup
-			.string("language must be a string.")
-			.strict()
-			.matches(
-				/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
-				null
-			)
-			.default({ language: "pt" })
-			.required(),
+		writer_id: rules.mongo_id_req.required(),
+		artist_id: rules.mongo_id_req.required(),
+		synopsis: rules.synopsis.required(),
+		n_chapters: rules.n_chapters.required(),
+		status: rules.status.required(),
+		nsfw: rules.nsfw.required(),
+		type: rules.type.required(),
+		language: rules.language.required(),
 	});
 
 	schema
@@ -205,15 +204,11 @@ async function valid_store(req, res, next) {
 async function valid_read(req, res, next) {
 	let schema = yup.object().shape(
 		{
-			title: yup.string("title must be a string.").when(["manga_id"], {
+			title: rules.title.when(["manga_id"], {
 				is: (manga_id) => !manga_id,
 				then: yup.required(),
 			}),
-			manga_id: yup
-				.string()
-				.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-					isValidMongoId(value)
-				)
+			manga_id: rules.mongo_id
 				.when(["title"], {
 					is: (title) => !title,
 					then: yup.required(),
@@ -238,13 +233,9 @@ async function valid_read(req, res, next) {
 
 async function valid_list(req, res, next) {
 	let schema = yup.object().shape({
-		title: yup.string("title must be a string.").strict(),
-		genre: yup.string("genre must be a string.").strict(),
-		scan_id: yup
-			.string()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoId(value)
-			),
+		title: rules.title,
+		genre: rules.genre,
+		scan_id: rules.mongo_id,
 		recent: yup.boolean(),
 	});
 
@@ -264,89 +255,18 @@ async function valid_list(req, res, next) {
 
 async function valid_update(req, res, next) {
 	let schema = yup.object().shape({
-		title: yup
-			.string("title must be a string.")
-			.strict()
-			.min(2, getMessage("manga.invalid.title.short"))
-			.max(60, getMessage("manga.invalid.title.long")),
-		genres: yup
-			.array(yup.string())
-			.min(3, "")
-			.max(5, "")
-			.test(
-				"Valid genres",
-				"Not all given ${path} are valid options",
-				function (items) {
-					if (!!items) {
-						items.every((item) => {
-							return genres.includes(item.toLowerCase());
-						});
-					}
-					return true;
-				}
-			),
-		themes: yup
-			.array(yup.string())
-			.min(3, "")
-			.max(5, "")
-			.test(
-				"Valid themes",
-				"Not all given ${path} are valid options",
-				function (items) {
-					if (!!items) {
-						items.every((item) => {
-							return themes.includes(item.toLowerCase());
-						});
-					}
-					return true;
-				}
-			),
-		writer_id: yup
-			.string()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
-		artist_id: yup
-			.string()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
-		synopsis: yup
-			.string("synopsis must be a string.")
-			.strict()
-			.min(10, getMessage("manga.invalid.synopsis.short"))
-			.max(400, getMessage("manga.invalid.synopsis.long")),
-		n_chapters: yup
-			.number("chapters must be a number.")
-			.min(1, "There must be at least one chapter."),
-		status: yup
-			.number("status must be a number.")
-			.min(1, getMessage("manga.invalid.code"))
-			.max(6, getMessage("manga.invalid.code")),
-		nsfw: yup
-			.string("nsfw must be a string.")
-			.strict()
-			.matches(/(true|false)/, null),
-		type: yup
-			.string("type must be a string.")
-			.strict()
-			.matches(/^manga$|^manhwa$|^manhua$/, null)
-			.default({ type: "manga" }),
-		language: yup
-			.string("language must be a string.")
-			.strict()
-			.matches(
-				/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
-				null
-			)
-			.default({ language: "pt" }),
-		manga_id: yup
-			.string()
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
+		title: rules.tile,
+		genres: rules.genres,
+		themes: rules.themes,
+		writer_id: rules.mongo_id,
+		artist_id: rules.mongo_id,
+		synopsis: rules.synopsis,
+		n_chapters: rules.n_chapters,
+		status: rules.status,
+		nsfw: rules.nsfw,
+		type: rules.type,
+		language: rules.language,
+		manga_id: rules.mongo_id_req,
 	});
 
 	try {
@@ -365,13 +285,7 @@ async function valid_update(req, res, next) {
 
 async function valid_remove(req, res, next) {
 	let schema = yup.object().shape({
-		manga_id: yup
-			.string()
-			.strict()
-			.required()
-			.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-				isValidMongoIdRequired(value)
-			),
+		manga_id: rules.mongo_id_req,
 	});
 
 	try {
