@@ -270,12 +270,12 @@ async function activateAccount(req, res) {
 						user.save().then((savedDoc) => {
 							if (savedDoc === user) {
 								return res.jsonOK(
-									user,
+									null,
 									getMessage("user.valid.sign_up.success"),
 									null
 								);
 							} else {
-								return res.jsonServerError(user, null, null);
+								return res.jsonServerError(null, null, null);
 							}
 						});
 					})
