@@ -99,7 +99,6 @@ async function store(req, res) {
 
 				sendEmail(email, tkn)
 					.then((info) => {
-						console.log(getMessage("user.activation.account.activate"));
 						return res.jsonOK(
 							null,
 							getMessage("user.activation.account.activate"),
@@ -186,19 +185,28 @@ async function list(req, res) {
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
+	let role = req.role
+		? CryptoJs.AES.decrypt(req.role, `${process.env.SHUFFLE_SECRET}`).toString(
+				CryptoJs.enc.Utf8
+		  )
+		: 0;
+
+	req.role = null;
+
+	let search =
+		role == 1
+			? email
+				? { email: { $regex: email, $options: "i" } }
+				: {}
+			: email
+			? { email: { $regex: email, $options: "i" }, active: true }
+			: { active: true };
+
 	let docs = [];
 
-	if (email) {
-		(await User.find({ email: { $regex: email, $options: "i" } })).forEach(
-			function (doc) {
-				docs.push(doc);
-			}
-		);
-	} else {
-		(await User.find()).forEach(function (doc) {
-			docs.push(doc);
-		});
-	}
+	(await User.find(search)).forEach(function (doc) {
+		docs.push(doc);
+	});
 
 	res.jsonOK(docs, getMessage("user.list.success") + docs.length, new_token);
 }
@@ -259,6 +267,5 @@ async function remove(req, res) {
 			);
 		});
 }
-
 
 export default { store, read, list, update, remove };
