@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 
 import { MongoMemoryServer } from "mongodb-memory-server";
 
-
 mongoose.set("useCreateIndex", true);
 mongoose.promise = global.Promise;
 
@@ -50,7 +49,7 @@ export default function setupDB(databaseName) {
 
     // Cleans up database between each test
     afterEach(async () => {
-        await removeAllCollections();
+        //await removeAllCollections();
     });
 
     // Disconnect Mongoose
