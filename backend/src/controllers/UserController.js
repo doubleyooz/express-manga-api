@@ -204,6 +204,8 @@ async function list(req, res) {
 
 	let docs = [];
 
+	//search = {};
+
 	(await User.find(search)).forEach(function (doc) {
 		docs.push(doc);
 	});
