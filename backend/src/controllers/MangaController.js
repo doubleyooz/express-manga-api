@@ -145,15 +145,16 @@ async function store(req, res) {
 
 	if (!scan) {
 		fs.unlinkSync(
-			"uploads/" +
+			"uploads/mangas/" +
 				language +
 				"/" +
-				email +
+				scan_id +
 				"/" +
 				title +
 				"/" +
 				req.file.filename
 		);
+
 		return res.jsonNotFound(null, getMessage("manga.error.scan_id"), null);
 	}
 
@@ -179,7 +180,7 @@ async function store(req, res) {
 
 	const artist = await Author.findById(artist_id);
 
-	if (!artist) {
+	if (!artist || artist.role !== 'artist') {
 		fs.unlinkSync(
 			"uploads/mangas/" +
 				language +
@@ -195,7 +196,7 @@ async function store(req, res) {
 
 	const writer = await Author.findById(writer_id);
 
-	if (!writer) {
+	if (!writer || writer.role !== 'writer') {
 		fs.unlinkSync(
 			"uploads/mangas/" +
 				language +
@@ -506,7 +507,6 @@ async function remove(req, res) {
 				return _id.toString() !== manga_id.toString();
 			});
 
-			
 			writer.save(function (err) {
 				// yet another err object to deal with
 				if (err) {
@@ -514,14 +514,12 @@ async function remove(req, res) {
 				}
 			});
 
-
 			const artist = await Author.findById(manga.artist_id);
 
 			artist.works = artist.works.filter(function (_id) {
 				return _id.toString() !== manga_id.toString();
 			});
 
-			
 			artist.save(function (err) {
 				// yet another err object to deal with
 				if (err) {
@@ -529,10 +527,10 @@ async function remove(req, res) {
 				}
 			});
 
-
 			const chapters = await Chapter.deleteMany({ manga_id: manga_id });
 
-			let dir = "uploads/" + manga.language + "/" + scan_id + "/" + manga.title;
+			let dir =
+				"uploads/mangas/" + manga.language + "/" + scan_id + "/" + manga.title;
 
 			fs.rmdir(dir, { recursive: true }, (err) => {
 				if (err) {
