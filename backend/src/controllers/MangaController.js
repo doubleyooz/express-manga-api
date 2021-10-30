@@ -139,21 +139,22 @@ async function store(req, res) {
 		`${process.env.SHUFFLE_SECRET}`
 	).toString(CryptoJs.enc.Utf8);
 
+	const filesPath =
+		"uploads/mangas/" +
+		language +
+		"/" +
+		scan_id +
+		"/" +
+		title +
+		"/" +
+		req.file.filename;
+
 	req.auth = null;
 
 	const scan = await User.findById(scan_id);
 
 	if (!scan) {
-		fs.unlinkSync(
-			"uploads/mangas/" +
-				language +
-				"/" +
-				scan_id +
-				"/" +
-				title +
-				"/" +
-				req.file.filename
-		);
+		fs.unlinkSync(filesPath);
 
 		return res.jsonNotFound(null, getMessage("manga.error.scan_id"), null);
 	}
@@ -161,16 +162,7 @@ async function store(req, res) {
 	const doesMangaExist = await Manga.exists({ title: title });
 
 	if (doesMangaExist) {
-		fs.unlinkSync(
-			"uploads/mangas/" +
-				language +
-				"/" +
-				scan_id +
-				"/" +
-				title +
-				"/" +
-				req.file.filename
-		);
+		fs.unlinkSync(filesPath);
 		return res.jsonBadRequest(
 			null,
 			getMessage("manga.error.duplicate"),
@@ -180,33 +172,15 @@ async function store(req, res) {
 
 	const artist = await Author.findById(artist_id);
 
-	if (!artist || artist.role !== 'artist') {
-		fs.unlinkSync(
-			"uploads/mangas/" +
-				language +
-				"/" +
-				scan_id +
-				"/" +
-				title +
-				"/" +
-				req.file.filename
-		);
+	if (!artist || artist.role !== "artist") {
+		fs.unlinkSync(filesPath);
 		return res.jsonNotFound(null, getMessage("manga.error.artist"), null);
 	}
 
 	const writer = await Author.findById(writer_id);
 
-	if (!writer || writer.role !== 'writer') {
-		fs.unlinkSync(
-			"uploads/mangas/" +
-				language +
-				"/" +
-				scan_id +
-				"/" +
-				title +
-				"/" +
-				req.file.filename
-		);
+	if (!writer || writer.role !== "writer") {
+		fs.unlinkSync(filesPath);
 		return res.jsonNotFound(null, getMessage("manga.error.writer"), null);
 	}
 
@@ -258,16 +232,7 @@ async function store(req, res) {
 		})
 		.catch((err) => {
 			console.log(err);
-			fs.unlinkSync(
-				"uploads/mangas/" +
-					language +
-					"/" +
-					scan_id +
-					"/" +
-					title +
-					"/" +
-					req.file.filename
-			);
+			fs.unlinkSync(filesPath);
 			return res.jsonServerError(null, null, err);
 		});
 }
@@ -395,53 +360,54 @@ async function update(req, res) {
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
-	req.body.updatedAt = Date.now();
 	let scan_id = CryptoJs.AES.decrypt(
 		req.auth,
 		`${process.env.SHUFFLE_SECRET}`
 	).toString(CryptoJs.enc.Utf8);
+
+	if (artist_id) {
+		const artist = await Author.findById(artist_id);
+
+		if (!artist || artist.role !== "artist")
+			return res.jsonBadRequest(null, getMessage("manga.error.artist"), null);
+	}
+
+	if (writer_id) {
+		const writer = await Author.findById(writer_id);
+
+		if (!writer || writer.role !== "writer")
+			return res.jsonBadRequest(null, getMessage("manga.error.writer"), null);
+	}
+
 	Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body)
 		.then((manga) => {
-			if (writer_id) {
-				Author.findById(writer_id)
-					.then((author) => {
-						cloneData = author.works.filter(function (work_id) {
-							return manga_id.toString() !== work_id.toString();
-						});
-						//update author document
-						author.works = cloneData;
-						author.updatedAt = Date.now();
-						author
-							.save()
-							.then((answer) => {
-								console.log(answer);
-							})
-							.catch((err) => {
-								console.log(err);
-							});
+			if (artist) {
+				cloneData = artist.works.filter(function (work_id) {
+					return manga_id.toString() !== work_id.toString();
+				});
+				//update artist document
+				artist.works = cloneData;
+				artist
+					.save()
+					.then((answer) => {
+						console.log(answer);
 					})
 					.catch((err) => {
 						console.log(err);
 					});
 			}
 
-			if (artist_id) {
-				Author.findById(artist_id)
-					.then((author) => {
-						cloneData = author.works.filter(function (work_id) {
-							return manga_id.toString() !== work_id.toString();
-						});
-						//update author document
-						author.works = cloneData;
-						author.updatedAt = Date.now();
-						author
-							.save()
-							.then((answer) => {
-								console.log(answer);
-							})
-							.catch((err) => {
-								console.log(err);
-							});
+			if (writer) {
+				cloneData = writer.works.filter(function (work_id) {
+					return manga_id.toString() !== work_id.toString();
+				});
+				//update writer document
+				writer.works = cloneData;
+				writer.updatedAt = Date.now();
+				writer
+					.save()
+					.then((answer) => {
+						console.log(answer);
 					})
 					.catch((err) => {
 						console.log(err);
