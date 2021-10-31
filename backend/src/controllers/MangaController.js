@@ -117,8 +117,7 @@ const read_projection = {
 
 async function store(req, res) {
 	const {
-		title,
-		genre,
+		title,		
 		synopsis,
 		writer_id,
 		artist_id,
@@ -186,8 +185,7 @@ async function store(req, res) {
 
 	const manga = new Manga({
 		cover: req.file.filename,
-		title: title,
-		genre: genre,
+		title: title,		
 		synopsis: synopsis,
 		n_chapters: n_chapters,
 		status: status,
