@@ -12,7 +12,8 @@
   },
   "scripts": {
     "dev": "nodemon src/index.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll"
+    "test-unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll ./test/unit",
+    "test-e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand ./test/e2e"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
