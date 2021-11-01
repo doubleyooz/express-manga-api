@@ -27,10 +27,10 @@
     "author.invalid.biography.short": "Biography must be at least 15 characters long",   
     "author.upload.success": "Upload Done!",
     "author.update.success": "Update Done!",
-    "author.read.success": "author retrieved successfully!",
-    "author.list.success": "author list retrieved successfully!",
+    "author.read.success": "Author retrieved successfully!",
+    "author.list.success": "Author list retrieved successfully",
     "author.list.empty": "No authors matched",
-    "author.delete.success": "author deleted.",
+    "author.delete.success": "Author deleted.",
     "author.delete.error": "The author pages could not be found",
     "author.notfound": "The author could not be found.",
 
