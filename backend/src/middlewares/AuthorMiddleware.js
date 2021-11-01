@@ -29,7 +29,10 @@ const rules = {
 			yup.ref("birthDate") + 3650,
 			"death date must be at least 10 years longer than birthDate"
 		),
-	socialMedia: yup.string("socialMedia must be a string.").strict(),
+	socialMedia: yup
+		.array(yup.string("socialMedia must be a string."))
+		.min(1, "")
+		.max(5, ""),
 	biography: yup
 		.string("biography")
 		.strict()
