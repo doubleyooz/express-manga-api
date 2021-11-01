@@ -182,7 +182,7 @@ export const sessionTests = () => {
 				});
 
 				global.navigator = {
-					onLine: response.body.metadata.token,
+					token: response.body.metadata.token,
 				};
 			});
 	});

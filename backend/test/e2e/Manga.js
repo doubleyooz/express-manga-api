@@ -12,17 +12,42 @@ const payload = {
 	n_chapters: 354,
 	status: 2,
 	language: "en",
-	nsfw: "yes",
+	nsfw: "true",
 };
 
 export const mangaTests = () => {
+	it("GET /user/list", async () => {
+		await supertest(app)
+			.get("/user/list")
+			.send({})
+			.expect(200)
+			.then((response) => {
+				// Check type and length
+				expect(
+					typeof response.body === "object" &&
+						!Array.isArray(response.body) &&
+						response.body !== null
+				).toBeTruthy();
+
+				expect(
+					response.body.message.startsWith(
+						"User list retrieved successfully! Users found:"
+					)
+				).toBeTruthy();
+				expect(response.body.status).toEqual(200);
+				console.log(response.body)
+			});
+	});
+
 
 	it("POST /manga", async () => {
 		console.log(global.navigator)
 		await supertest(app)
 			.post("/manga")
-			.send(payload)
-			.set("Authorization", "Bearer " + global.navigator.online)
+			.field(payload)
+			.set("Authorization", "Bearer " + global.navigator.token)
+
+			.attach('cover', 'C:/Users/Waifu/Downloads/Memes/__tiger_the_great.jpg')
 			.expect(200)
 			.then((response) => {
 				// Check type and length
