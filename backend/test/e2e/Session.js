@@ -183,6 +183,7 @@ export const sessionTests = () => {
 
 				global.navigator = {
 					token: response.body.metadata.token,
+					scan_id: payload._id
 				};
 			});
 	});
