@@ -9,7 +9,7 @@
 .pnp.js
 .vscode/
 uploads/
-src/common/blacklist.json
+uploads2/
 
 !.vscode/settings.json
 !.vscode/tasks.json

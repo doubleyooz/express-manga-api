@@ -5,7 +5,7 @@ import Chapter from "../models/Chapter.js";
 import Manga from "../models/Manga.js";
 
 import { getMessage } from "../common/messages.js";
-import { folderName } from "../config/multer.js";
+import folderName from "../config/multer.js";
 
 const dir = folderName + "mangas/";
 

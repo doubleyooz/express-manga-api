@@ -5,7 +5,7 @@ import Author from "../models/Author.js";
 import Manga from "../models/Manga.js";
 
 import { getMessage } from "../common/messages.js";
-import { folderName } from "../config/multer.js";
+import folderName from "../config/multer.js";
 
 async function store(req, res) {
 	const { type, name, birthDate, socialMedia, deathDate, biography } = req.body;

@@ -29,7 +29,7 @@ const authorFiles = {
 			let dir = "./" + folderName + "authors/" + req.body.type + "/";
 
 			if (!fs.existsSync(dir + req.body.name))
-				fs.mkdirSync(dir + req.body.name);
+				fs.mkdirSync(dir + req.body.name, { recursive: true });
 		},
 		filename: (req, file, cb) => {
 			crypto.randomBytes(16, (err, hash) => {
@@ -93,7 +93,7 @@ const files = {
 			//fs.mkdirSync(dir);
 
 			if (!fs.existsSync(dir + req.body.number))
-				fs.mkdirSync(dir + req.body.number);
+				fs.mkdirSync(dir + req.body.number, { recursive: true });
 		},
 		filename: (req, file, cb) => {
 			crypto.randomBytes(16, (err, hash) => {
@@ -182,5 +182,5 @@ export default {
 	file,
 	files,
 	authorFiles,
-	folderName
+	folderName,
 };
