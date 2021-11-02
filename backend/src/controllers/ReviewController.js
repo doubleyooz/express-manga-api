@@ -79,7 +79,7 @@ async function store(req, res) {
 		});
 }
 
-async function read(req, res) {
+async function findOne(req, res) {
 	const { review_id } = req.query;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
@@ -231,4 +231,4 @@ async function remove(req, res) {
 		return res.jsonNotFound(null, getMessage("review.notfound"), new_token);
 }
 
-export default { store, read, list, update, remove };
+export default { store, findOne, list, update, remove };

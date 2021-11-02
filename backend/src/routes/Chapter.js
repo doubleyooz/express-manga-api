@@ -25,8 +25,8 @@ router.get(
 router.get(
 	"/findOne",
 	easyAuth(),
-	ChapterMiddleware.valid_read,
-	ChapterController.read
+	ChapterMiddleware.valid_findOne,
+	ChapterController.findOne
 );
 router.put(
 	"/",

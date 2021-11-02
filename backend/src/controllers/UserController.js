@@ -165,7 +165,7 @@ async function store(req, res) {
 		});
 }
 
-async function read(req, res) {
+async function findOne(req, res) {
 	const { user_id } = req.query;
 
 	const new_token = req.new_token ? req.new_token : null;
@@ -173,7 +173,7 @@ async function read(req, res) {
 
 	User.findById(user_id)
 		.then((doc) => {
-			return res.jsonOK(doc, getMessage("user.read.success"), new_token);
+			return res.jsonOK(doc, getMessage("user.findone.success"), new_token);
 		})
 		.catch((err) => {
 			return res.jsonServerError(null, null, null);
@@ -271,4 +271,4 @@ async function remove(req, res) {
 		});
 }
 
-export default { store, read, list, update, remove };
+export default { store, findOne, list, update, remove };

@@ -201,7 +201,7 @@ async function valid_store(req, res, next) {
 		});
 }
 
-async function valid_read(req, res, next) {
+async function valid_findOne(req, res, next) {
 	let schema = yup.object().shape(
 		{
 			title: rules.title.when(["manga_id"], {
@@ -304,7 +304,7 @@ async function valid_remove(req, res, next) {
 
 export default {
 	valid_store,
-	valid_read,
+	valid_findOne,
 	valid_list,
 	valid_update,
 	valid_remove,

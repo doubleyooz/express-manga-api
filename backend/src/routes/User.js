@@ -12,7 +12,7 @@ const router = express.Router();
 
 
 
-router.get("/findOne", easyAuth(), UserMiddleware.valid_read, UserController.read);
+router.get("/findOne", easyAuth(), UserMiddleware.valid_findOne, UserController.findOne);
 router.get("/", easyAuth(), UserMiddleware.valid_list, UserController.list);
 router.put(
 	"/",

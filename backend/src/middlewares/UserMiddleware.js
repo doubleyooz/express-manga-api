@@ -106,7 +106,7 @@ async function valid_sign_in(req, res, next) {
 		});
 }
 
-async function valid_read(req, res, next) {
+async function valid_findOne(req, res, next) {
 	let schema = yup.object().shape({
 		user_id: yup
 			.string("user_id must be a string.")
@@ -203,7 +203,7 @@ export default {
 	valid_google_sign_up,
 	valid_sign_up,
 	valid_sign_in,
-	valid_read,
+	valid_findOne,
 	valid_list,
 	valid_update,
 	valid_remove,

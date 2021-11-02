@@ -26,8 +26,8 @@ router.get(
 router.get(
 	"/findOne",
 	easyAuth(),
-	MangaMiddleware.valid_read,
-	MangaController.read
+	MangaMiddleware.valid_findOne,
+	MangaController.findOne
 );
 router.put(
 	"/",

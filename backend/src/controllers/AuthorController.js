@@ -97,7 +97,7 @@ async function store(req, res) {
 	}
 }
 
-async function read(req, res) {
+async function findOne(req, res) {
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
@@ -106,7 +106,7 @@ async function read(req, res) {
 	if (author === null) {
 		return res.jsonNotFound(author, getMessage("author.notfound", new_token));
 	}
-	return res.jsonOK(author, getMessage("author.read.success"), new_token);
+	return res.jsonOK(author, getMessage("author.findone.success"), new_token);
 }
 
 async function list(req, res) {
@@ -246,4 +246,4 @@ async function remove(req, res) {
 	}
 }
 
-export default { store, read, list, update, remove };
+export default { store, findOne, list, update, remove };

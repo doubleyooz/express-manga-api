@@ -23,8 +23,8 @@ router.get(
 router.get(
 	"/findOne",
 	easyAuth(),
-	ReviewMiddleware.valid_read,
-	ReviewController.read
+	ReviewMiddleware.valid_findOne,
+	ReviewController.findOne
 );
 router.put(
 	"/",

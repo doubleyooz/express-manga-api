@@ -78,7 +78,7 @@ async function valid_store(req, res, next) {
 		});
 }
 
-async function valid_read(req, res, next) {
+async function valid_findOne(req, res, next) {
 	let schema = yup.object().shape({
 		author_id: rules.mongo_id_req,
 	});
@@ -182,7 +182,7 @@ async function valid_remove(req, res, next) {
 
 export default {
 	valid_store,
-	valid_read,
+	valid_findOne,
 	valid_list,
 	valid_update,
 	valid_remove,

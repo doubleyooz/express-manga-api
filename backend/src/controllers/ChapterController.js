@@ -251,7 +251,7 @@ async function update(req, res) {
 	}
 }
 
-async function read(req, res) {
+async function findOne(req, res) {
 	const { chapter_id } = req.query;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
@@ -276,11 +276,11 @@ async function read(req, res) {
 			doc
 				.save()
 				.then(() => {
-					return res.jsonOK(doc, getMessage("chapter.read.success"), new_token);
+					return res.jsonOK(doc, getMessage("chapter.findone.success"), new_token);
 				})
 				.catch((err) => {
 					console.log(err);
-					return res.jsonOK(doc, getMessage("chapter.read.success"), new_token);
+					return res.jsonOK(doc, getMessage("chapter.findone.success"), new_token);
 				});
 		})
 		.catch((err) => {
@@ -420,4 +420,4 @@ async function remove(req, res) {
 			return res.jsonBadRequest(err, null, null);
 		});
 }
-export default { store, read, list, update, remove };
+export default { store, findOne, list, update, remove };

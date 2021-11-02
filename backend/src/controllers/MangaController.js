@@ -237,7 +237,7 @@ async function store(req, res) {
 		});
 }
 
-async function read(req, res) {
+async function findOne(req, res) {
 	const { title, manga_id } = req.query;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
@@ -258,12 +258,12 @@ async function read(req, res) {
 		const manga = await Manga.findById(manga_id)
 			.select(read_projection[role])
 			.exec();
-		return res.jsonOK(manga, getMessage("manga.read.success"), new_token);
+		return res.jsonOK(manga, getMessage("manga.findone.success"), new_token);
 	} else if (title) {
 		const manga = await Manga.find({ title: { $regex: title, $options: "i" } })
 			.select(read_projection[role])
 			.exec();
-		return res.jsonOK(manga, getMessage("manga.read.success"), new_token);
+		return res.jsonOK(manga, getMessage("manga.findone.success"), new_token);
 	} else {
 		return res.jsonBadRequest(null, null, null);
 	}
@@ -522,4 +522,4 @@ async function remove(req, res) {
 	return res.jsonBadRequest(null, getMessage("manga.notfound"), new_token);
 }
 
-export default { store, read, list, update, remove };
+export default { store, findOne, list, update, remove };
