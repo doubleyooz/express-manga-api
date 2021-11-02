@@ -255,7 +255,7 @@ async function valid_list(req, res, next) {
 
 async function valid_update(req, res, next) {
 	let schema = yup.object().shape({
-		title: rules.tile,
+		title: rules.title,
 		genres: rules.genres,
 		themes: rules.themes,
 		writer_id: rules.mongo_id,
