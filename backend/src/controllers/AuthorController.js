@@ -5,7 +5,7 @@ import Author from "../models/Author.js";
 import Manga from "../models/Manga.js";
 
 import { getMessage } from "../common/messages.js";
-import folderName from "../config/multer.js";
+import { folderName } from "../config/multer.js";
 
 async function store(req, res) {
 	const { type, name, birthDate, socialMedia, deathDate, biography } = req.body;
@@ -154,7 +154,7 @@ async function update(req, res) {
 			new_token
 		);
 
-	Author.findByIdAndUpdate(req.body.author_id, req.body)
+	Author.findByIdAndUpdate(req.body.author_id, req.body, { new: true })
 		.select({ type: 1, name: 1 })
 		.then((doc) => {
 			if (!doc) {
@@ -163,8 +163,10 @@ async function update(req, res) {
 				let temp = req.body.type ? req.body.type : doc.type;
 
 				if (req.body.name) {
-					const currPath = `./${folderName}authors/${doc.type}/${doc.name}`;
-					const newPath = `./${folderName}authors/${temp}/${req.body.name}`;
+					const currPath =
+						"./" + folderName + `/authors/${doc.type}/${doc.name}`;
+					const newPath =
+						"./" + folderName + `/authors/${temp}/${req.body.name}`;
 
 					fs.rename(currPath, newPath, function (err) {
 						if (err) {
@@ -179,6 +181,7 @@ async function update(req, res) {
 			}
 		})
 		.catch((err) => {
+			console.log(err);
 			return res.jsonServerError(err, null, new_token);
 		});
 }
