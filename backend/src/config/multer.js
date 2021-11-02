@@ -3,10 +3,9 @@ import multer from "multer";
 import crypto from "crypto";
 import fs from "fs";
 import CryptoJs from "crypto-js";
-import { dirname } from "path";
 import { fileURLToPath } from "url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const folderName = "uploads2/";
 
