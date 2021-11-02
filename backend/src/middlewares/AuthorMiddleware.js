@@ -124,7 +124,7 @@ async function valid_update(req, res, next) {
 	const schema = yup
 		.object()
 		.shape({
-			author_id: mongo_id_req.required(),
+			author_id: rules.mongo_id_req,
 			type: rules.type,
 			name: rules.name,
 			birthDate: rules.birthDate.max(currentDate),
