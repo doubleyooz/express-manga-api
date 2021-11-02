@@ -113,17 +113,14 @@ async function read(req, res) {
 	const { author_id } = req.query;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
+	
+	const author = await Author.findById(author_id).exec();
 
-	if (author_id) {
-		const author = await Author.findById(author_id).exec();
-
-		if (author === null) {
-			return res.jsonNotFound(author, getMessage("author.notfound", new_token));
-		}
-		return res.jsonOK(author, getMessage("author.read.success"), new_token);
-	} else {
-		return res.jsonBadRequest(null, null, null);
+	if (author === null) {
+		return res.jsonNotFound(author, getMessage("author.notfound", new_token));
 	}
+	return res.jsonOK(author, getMessage("author.read.success"), new_token);
+
 }
 
 async function list(req, res) {

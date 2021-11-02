@@ -170,16 +170,18 @@ async function store(req, res) {
 	}
 
 	const artist = await Author.findById(artist_id);
-
-	if (!artist || artist.role !== "artist") {
+	
+	if (!artist || !artist.type.includes("artist")) {
 		fs.unlinkSync(filesPath);
+		console.log(getMessage("manga.error.artist"))
 		return res.jsonNotFound(null, getMessage("manga.error.artist"), null);
 	}
 
 	const writer = await Author.findById(writer_id);
 
-	if (!writer || writer.role !== "writer") {
+	if (!writer || !writer.type.includes("writer")) {
 		fs.unlinkSync(filesPath);
+		console.log(getMessage("manga.error.writer"))
 		return res.jsonNotFound(null, getMessage("manga.error.writer"), null);
 	}
 

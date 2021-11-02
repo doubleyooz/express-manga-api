@@ -35,7 +35,7 @@
     "author.notfound": "The author could not be found.",
 
     "manga.error.duplicate": "This manga already exists or the title is unavaliable.",
-    "manga.error.manga_id": "manga_id undefined.",
+    "manga.error.manga_id": "Manga_id undefined.",
     "manga.error.scan_id": "Scan_id must be a valid id.",
     "manga.error.artist": "Must provide a valid artist id.",
     "manga.error.writer": "Must provide a valid writer id.",

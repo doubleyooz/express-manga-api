@@ -66,8 +66,9 @@ async function sendEmail(email, activationToken) {
 
 		transporter.sendMail(mailOptions, (err, info) => {
 			if (err) console.log(err);
-			else console.log(info);
+			//else console.log(info);
 		});
+		transporter.close();
 	}
 }
 
