@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const folderName = "uploads2/";
+export const folderName = "uploads2/";
 
 const authorFiles = {
 	storage: multer.diskStorage({
@@ -180,6 +180,5 @@ const file = {
 export default {
 	file,
 	files,
-	authorFiles,
-	folderName,
+	authorFiles,	
 };
