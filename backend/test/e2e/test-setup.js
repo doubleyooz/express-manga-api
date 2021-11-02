@@ -1,5 +1,8 @@
 // test-setup.js
 import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
+
 
 import { MongoMemoryServer } from "mongodb-memory-server";
 
@@ -33,29 +36,31 @@ async function dropAllCollections() {
 }
 
 export default function setupDB(databaseName) {
-    // Connect to Mongoose
-    beforeAll(async () => {
-        const mongoms = await MongoMemoryServer.create();
-        const uri = mongoms.getUri();
+	// Connect to Mongoose
+	beforeAll(async () => {
+		const mongoms = await MongoMemoryServer.create();
+		const uri = mongoms.getUri();
 
-        const options = 	{
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useFindAndModify: false,
-        }
+		const options = {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+			useFindAndModify: false,
+		};
 
-        await mongoose.connect(uri, options);
-    });
+		await mongoose.connect(uri, options);
+	});
 
-    // Cleans up database between each test
-    afterEach(async () => {
-        //await removeAllCollections();
-    });
+	// Cleans up database between each test
+	afterEach(async () => {
+		//await removeAllCollections();
+	});
 
-    // Disconnect Mongoose
-    afterAll(async () => {
-        await dropAllCollections();
-        await mongoose.connection.close();
-    });
+	// Disconnect Mongoose
+	afterAll(async () => {
+		await dropAllCollections();
+		await mongoose.connection.close();
+       
+        let reqPath = path.resolve(path.dirname(''), "uploads2");       
+		fs.rmdirSync(reqPath, { recursive: true });
+	});
 }
-

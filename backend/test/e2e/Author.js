@@ -20,7 +20,7 @@ const payload2 = {
 export const authorTests = () => {
 	it("POST /authors", async () => {
 		await supertest(app)
-			.post("/author")
+			.post("/authors")
 			.field(payload)
 			.set("Authorization", "Bearer " + global.navigator.token)
 
@@ -70,7 +70,7 @@ export const authorTests = () => {
 
 	it("POST /authors", async () => {
 		await supertest(app)
-			.post("/author")
+			.post("/authors")
 			.field(payload2)
 			.set("Authorization", "Bearer " + global.navigator.token)
 
@@ -120,7 +120,7 @@ export const authorTests = () => {
 
 	it("GET /authors", async () => {
 		await supertest(app)
-			.get("/author/list")
+			.get("/authors")
 			.send({})
 			.expect(200)
 			.then((response) => {
@@ -182,7 +182,7 @@ export const authorTests = () => {
 
 	it("GET /authors/findOne", async () => {
 		await supertest(app)
-			.get(`/author/read?author_id=${global.navigator.writer}`)			
+			.get(`/authors/findOne?author_id=${global.navigator.writer}`)			
 			.expect(200)
 			.then((response) => {
 				// Check type and length
@@ -226,8 +226,10 @@ export const authorTests = () => {
 	});
 
 	it("PUT /authors", async () => {
+		payload2.name = "Iito Tachibana"
 		await supertest(app)
-			.get(`/author/read?author_id=${global.navigator.writer}`)			
+			.put(`/authors/?author_id=${global.navigator.writer}`)			
+			.field(payload2)
 			.expect(200)
 			.then((response) => {
 				// Check type and length
@@ -237,15 +239,12 @@ export const authorTests = () => {
 						response.body !== null
 				).toBeTruthy();
 				console.log(response.body);
-				expect(
-					response.body.message.startsWith("Author retrieved successfully")
-				).toBeTruthy();
-				expect(response.body.status).toEqual(200);
+				
+			
 				expect(response.body)
 					.toMatchObject({
-						message: "Author retrieved successfully!",
-						data: {
-							
+						message: "Update Done!",
+						data: {							
 							type: ["writer"],
 							photos: [
 								{
@@ -255,7 +254,7 @@ export const authorTests = () => {
 							],
 							works: [],
 							socialMedia: ["reddit", "twitter"],
-							name: "Abe Yamamoto",
+							name: "Iito Tachibana",
 							birthDate: "1990-08-02T03:00:00.000Z",
 							deathDate: null,
 							biography: "A tough and gloom person",

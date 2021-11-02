@@ -22,7 +22,7 @@ export const mangaTests = () => {
 		payload.artist_id = global.navigator.artist;
 
 		await supertest(app)
-			.post("/manga")
+			.post("/mangas")
 			.field(payload)
 			.set("Authorization", "Bearer " + global.navigator.token)
 

@@ -105,7 +105,7 @@ export const sessionTests = () => {
 
 	it("GET /users", async () => {
 		await supertest(app)
-			.get("/user/list")
+			.get("/users")
 			.send({})
 			.expect(200)
 			.then((response) => {
