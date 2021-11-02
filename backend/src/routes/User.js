@@ -6,7 +6,7 @@ import UserController from "../controllers/UserController.js";
 
 import UserMiddleware from "../middlewares/UserMiddleware.js";
 
-import { auth as Authorize, easyAuth } from "../middlewares/AuthMiddleware.js";
+import { auth as Authorize, easyAuth } from "../middlewares/AuthenticationMiddleware.js";
 
 const router = express.Router();
 

@@ -5,7 +5,7 @@ import AuthorController from "../controllers/AuthorController.js";
 import AuthorMiddleware from "../middlewares/AuthorMiddleware.js";
 import UploadMiddleware from "../middlewares/UploadMiddleware.js";
 
-import { auth as Authorize, easyAuth } from "../middlewares/AuthMiddleware.js";
+import { auth as Authorize, easyAuth } from "../middlewares/AuthenticationMiddleware.js";
 
 const router = express.Router();
 
