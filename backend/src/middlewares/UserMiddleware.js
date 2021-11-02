@@ -138,7 +138,7 @@ async function valid_list(req, res, next) {
 
 	try {
 		schema
-			.validate(req.query)
+			.validate(req.body)
 			.then(() => {
 				next();
 			})
@@ -156,7 +156,7 @@ async function valid_update(req, res, next) {
 	});
 
 	schema
-		.validate(req.query)
+		.validate(req.body)
 		.then(() => {
 			next();
 		})

@@ -215,7 +215,7 @@ async function list(req, res) {
 }
 
 async function update(req, res) {
-	const { name } = req.query;
+	const { name } = req.body;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
