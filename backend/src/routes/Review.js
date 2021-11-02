@@ -15,13 +15,13 @@ router.post(
 	ReviewController.store
 );
 router.get(
-	"/list",
+	"/",
 	easyAuth(),
 	ReviewMiddleware.valid_list,
 	ReviewController.list
 );
 router.get(
-	"/read",
+	"/findOne",
 	easyAuth(),
 	ReviewMiddleware.valid_read,
 	ReviewController.read

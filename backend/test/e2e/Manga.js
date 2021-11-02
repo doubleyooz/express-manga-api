@@ -15,7 +15,7 @@ const payload = {
 };
 
 export const mangaTests = () => {
-	it("POST /manga", async () => {
+	it("POST /mangas", async () => {
 		console.log(global.navigator);
 		payload.scan_id = global.navigator.scan_id;
 		payload.writer_id = global.navigator.writer;

@@ -22,8 +22,8 @@ router.put(
 	Authorize("Scan"),
 	AuthorController.update
 );
-router.get("/list", easyAuth(), AuthorController.list);
-router.get("/read", easyAuth(), AuthorController.read);
+router.get("/", easyAuth(), AuthorController.list);
+router.get("/findOne", easyAuth(), AuthorController.read);
 router.delete("/", Authorize("Scan"), AuthorController.remove);
 
 export default router;

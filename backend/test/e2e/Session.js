@@ -103,7 +103,7 @@ export const sessionTests = () => {
 			});
 	});
 
-	it("GET /user/list", async () => {
+	it("GET /users", async () => {
 		await supertest(app)
 			.get("/user/list")
 			.send({})

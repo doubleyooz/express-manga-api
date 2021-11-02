@@ -12,8 +12,8 @@ const router = express.Router();
 
 
 
-router.get("/read", easyAuth(), UserMiddleware.valid_read, UserController.read);
-router.get("/list", easyAuth(), UserMiddleware.valid_list, UserController.list);
+router.get("/findOne", easyAuth(), UserMiddleware.valid_read, UserController.read);
+router.get("/", easyAuth(), UserMiddleware.valid_list, UserController.list);
 router.put(
 	"/",
 	Authorize(["Scan", "User"]),

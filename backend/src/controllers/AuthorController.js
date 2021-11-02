@@ -14,12 +14,12 @@ async function store(req, res) {
 	const storedAuthor = await Author.findOne({ name: name });
 
 	if (storedAuthor !== null) {
+		const path = "uploads/authors/" + type + "/" + name + "/";
+
 		if (storedAuthor.type.includes(type)) {
 			Object.keys(req.files).forEach((i) => {
 				let file = req.files[i];
-				fs.unlinkSync(
-					"uploads/" + "authors/" + type + "/" + name + "/" + file.filename
-				);
+				fs.unlinkSync(path + file.filename);
 			});
 
 			return res.jsonBadRequest(
@@ -34,9 +34,7 @@ async function store(req, res) {
 				.then((result) => {
 					Object.keys(req.files).forEach((i) => {
 						let file = req.files[i];
-						fs.unlinkSync(
-							"uploads/" + "authors/" + type + "/" + name + "/" + file.filename
-						);
+						fs.unlinkSync(path + file.filename);
 					});
 					return res.jsonOK(
 						result,
@@ -48,15 +46,7 @@ async function store(req, res) {
 					console.log(err);
 					Object.keys(req.files).forEach((i) => {
 						let file = req.files[i];
-						fs.unlinkSync(
-							"uploads/" +
-								"authors/" +
-								storedAuthor.type +
-								"/" +
-								name +
-								"/" +
-								file.filename
-						);
+						fs.unlinkSync(path + file.filename);
 					});
 					return res.jsonServerError(null, null, err);
 				});
@@ -100,9 +90,7 @@ async function store(req, res) {
 				console.log(err);
 				Object.keys(req.files).forEach((i) => {
 					let file = req.files[i];
-					fs.unlinkSync(
-						"uploads/" + "authors/" + type + "/" + name + "/" + file.filename
-					);
+					fs.unlinkSync(path + file.filename);
 				});
 				return res.jsonServerError(null, null, err);
 			});
@@ -110,17 +98,15 @@ async function store(req, res) {
 }
 
 async function read(req, res) {
-	const { author_id } = req.query;
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
-	
-	const author = await Author.findById(author_id).exec();
+
+	const author = await Author.findById(req.query.author_id).exec();
 
 	if (author === null) {
 		return res.jsonNotFound(author, getMessage("author.notfound", new_token));
 	}
 	return res.jsonOK(author, getMessage("author.read.success"), new_token);
-
 }
 
 async function list(req, res) {

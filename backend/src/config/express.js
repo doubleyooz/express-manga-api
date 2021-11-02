@@ -26,10 +26,10 @@ app.use(limiter); // limiting all requests
 app.use(response);
 
 app.use(authRoute);
-app.use("/author", authorRoute);
-app.use("/chapter", chapterRoute);
-app.use("/manga", mangaRoute);
-app.use("/review", reviewRoute);
-app.use("/user", userRoute);
+app.use("/authors", authorRoute);
+app.use("/chapters", chapterRoute);
+app.use("/mangas", mangaRoute);
+app.use("/reviews", reviewRoute);
+app.use("/users", userRoute);
 
 export { app };

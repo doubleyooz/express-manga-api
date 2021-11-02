@@ -17,13 +17,13 @@ router.post(
 	ChapterController.store
 );
 router.get(
-	"/list",
+	"/",
 	easyAuth(),
 	ChapterMiddleware.valid_list,
 	ChapterController.list
 );
 router.get(
-	"/read",
+	"/findOne",
 	easyAuth(),
 	ChapterMiddleware.valid_read,
 	ChapterController.read

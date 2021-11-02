@@ -18,7 +18,7 @@ const payload2 = {
 };
 
 export const authorTests = () => {
-	it("POST /author", async () => {
+	it("POST /authors", async () => {
 		await supertest(app)
 			.post("/author")
 			.field(payload)
@@ -68,7 +68,7 @@ export const authorTests = () => {
 			});
 	});
 
-	it("POST /author", async () => {
+	it("POST /authors", async () => {
 		await supertest(app)
 			.post("/author")
 			.field(payload2)
@@ -118,7 +118,7 @@ export const authorTests = () => {
 			});
 	});
 
-	it("GET /author/list", async () => {
+	it("GET /authors", async () => {
 		await supertest(app)
 			.get("/author/list")
 			.send({})
@@ -180,7 +180,52 @@ export const authorTests = () => {
 			});
 	});
 
-	it("GET /author/read", async () => {
+	it("GET /authors/findOne", async () => {
+		await supertest(app)
+			.get(`/author/read?author_id=${global.navigator.writer}`)			
+			.expect(200)
+			.then((response) => {
+				// Check type and length
+				expect(
+					typeof response.body === "object" &&
+						!Array.isArray(response.body) &&
+						response.body !== null
+				).toBeTruthy();
+				console.log(response.body);
+				expect(
+					response.body.message.startsWith("Author retrieved successfully")
+				).toBeTruthy();
+				expect(response.body.status).toEqual(200);
+				expect(response.body)
+					.toMatchObject({
+						message: "Author retrieved successfully!",
+						data: {
+							
+							type: ["writer"],
+							photos: [
+								{
+									originalname: "__tiger_the_great.jpg",
+									size: 103280,
+								},
+							],
+							works: [],
+							socialMedia: ["reddit", "twitter"],
+							name: "Abe Yamamoto",
+							birthDate: "1990-08-02T03:00:00.000Z",
+							deathDate: null,
+							biography: "A tough and gloom person",
+
+							__v: 0,
+						},
+
+						metadata: {},
+						status: 200,
+					})
+					
+			});
+	});
+
+	it("PUT /authors", async () => {
 		await supertest(app)
 			.get(`/author/read?author_id=${global.navigator.writer}`)			
 			.expect(200)

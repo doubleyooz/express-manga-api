@@ -18,13 +18,13 @@ router.post(
 	MangaController.store
 );
 router.get(
-	"/list",
+	"/",
 	easyAuth(),
 	MangaMiddleware.valid_list,
 	MangaController.list
 );
 router.get(
-	"/read",
+	"/findOne",
 	easyAuth(),
 	MangaMiddleware.valid_read,
 	MangaController.read
