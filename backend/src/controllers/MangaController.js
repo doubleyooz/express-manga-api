@@ -7,6 +7,7 @@ import Manga from "../models/Manga.js";
 import User from "../models/User.js";
 
 import { getMessage } from "../common/messages.js";
+import { folderName } from "../config/multer.js";
 import { writer } from "repl";
 
 const list_projection = {
@@ -139,7 +140,8 @@ async function store(req, res) {
 	).toString(CryptoJs.enc.Utf8);
 
 	const filesPath =
-		"uploads/mangas/" +
+		folderName +
+		"mangas/" + 
 		language +
 		"/" +
 		scan_id +
@@ -496,7 +498,7 @@ async function remove(req, res) {
 			const chapters = await Chapter.deleteMany({ manga_id: manga_id });
 
 			let dir =
-				"uploads/mangas/" + manga.language + "/" + scan_id + "/" + manga.title;
+				folderName + "mangas/" + manga.language + "/" + scan_id + "/" + manga.title;
 
 			fs.rmdir(dir, { recursive: true }, (err) => {
 				if (err) {

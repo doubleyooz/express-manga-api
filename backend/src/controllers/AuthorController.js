@@ -5,6 +5,7 @@ import Author from "../models/Author.js";
 import Manga from "../models/Manga.js";
 
 import { getMessage } from "../common/messages.js";
+import { folderName } from "../config/multer.js";
 
 async function store(req, res) {
 	const { type, name, birthDate, socialMedia, deathDate, biography } = req.body;
@@ -14,7 +15,7 @@ async function store(req, res) {
 	const storedAuthor = await Author.findOne({ name: name });
 
 	if (storedAuthor !== null) {
-		const path = "uploads/authors/" + type + "/" + name + "/";
+		const path = folderName + "authors/" + type + "/" + name + "/";
 
 		if (storedAuthor.type.includes(type)) {
 			Object.keys(req.files).forEach((i) => {
@@ -145,7 +146,6 @@ async function list(req, res) {
 async function update(req, res) {
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
-	req.body.updatedAt = Date.now();
 
 	if (await Author.exists({ name: req.body.name }))
 		return res.jsonBadRequest(
@@ -163,8 +163,8 @@ async function update(req, res) {
 				let temp = req.body.type ? req.body.type : doc.type;
 
 				if (req.body.name) {
-					const currPath = `./uploads/authors/${doc.type}/${doc.name}`;
-					const newPath = `./uploads/authors/${temp}/${req.body.name}`;
+					const currPath = `./${folderName}authors/${doc.type}/${doc.name}`;
+					const newPath = `./${folderName}authors/${temp}/${req.body.name}`;
 
 					fs.rename(currPath, newPath, function (err) {
 						if (err) {
@@ -195,7 +195,7 @@ async function remove(req, res) {
 			.then((answer) => {
 				let mangas = [];
 				let dir =
-					"uploads/" + "authors/" + author.type + "/" + author.name + "/";
+					folderName + "authors/" + author.type + "/" + author.name + "/";
 
 				author.photos.forEach((file) => {
 					fs.unlinkSync(dir + file.filename);

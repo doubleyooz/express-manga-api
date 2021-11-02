@@ -8,7 +8,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const folder = "uploads/";
+const folderName = "uploads2/";
 
 const authorFiles = {
 	storage: multer.diskStorage({
@@ -19,14 +19,14 @@ const authorFiles = {
 					__dirname,
 					"..",
 					"..",
-					folder,
+					folderName,
 					"authors/",
 					req.body.type,
 					req.body.name
 				)
 			);
 
-			let dir = "./" + folder + "authors/" + req.body.type + "/";
+			let dir = "./" + folderName + "authors/" + req.body.type + "/";
 
 			if (!fs.existsSync(dir + req.body.name))
 				fs.mkdirSync(dir + req.body.name);
@@ -69,7 +69,7 @@ const files = {
 					__dirname,
 					"..",
 					"..",
-					folder,
+					folderName,
 					"mangas/",
 					req.body.language + "/",
 					scan_id + "/",
@@ -80,7 +80,7 @@ const files = {
 
 			let dir =
 				"./" +
-				folder +
+				folderName +
 				"mangas/" +
 				req.body.language +
 				"/" +
@@ -133,7 +133,7 @@ const file = {
 					__dirname,
 					"..",
 					"..",
-					folder,
+					folderName,
 					"mangas/",
 					req.body.language + "/",
 					scan_id + "/",
@@ -143,7 +143,7 @@ const file = {
 
 			let dir =
 				"./" +
-				folder +
+				folderName +
 				"mangas/" +
 				req.body.language +
 				"/" +
@@ -182,4 +182,5 @@ export default {
 	file,
 	files,
 	authorFiles,
+	folderName
 };

@@ -5,8 +5,9 @@ import Chapter from "../models/Chapter.js";
 import Manga from "../models/Manga.js";
 
 import { getMessage } from "../common/messages.js";
+import { folderName } from "../config/multer.js";
 
-const dir = "uploads/mangas/";
+const dir = folderName + "mangas/";
 
 const read_projection = {
 	0: {
