@@ -4,7 +4,7 @@ import ReviewController from "../controllers/ReviewController.js";
 
 import ReviewMiddleware from "../middlewares/ReviewMiddleware.js";
 
-import { auth as Authorize, easyAuth } from "../middlewares/AuthenticationMiddleware.js";
+import { auth as Authorize, easyAuth } from "../middlewares/SessionMiddleware.js";
 
 const router = express.Router();
 

@@ -6,7 +6,7 @@ import MangaController from "../controllers/MangaController.js";
 import MangaMiddleware from "../middlewares/MangaMiddleware.js";
 import UploadMiddleware from "../middlewares/UploadMiddleware.js";
 
-import { auth as Authorize, easyAuth } from "../middlewares/AuthenticationMiddleware.js";
+import { auth as Authorize, easyAuth } from "../middlewares/SessionMiddleware.js";
 
 const router = express.Router();
 
