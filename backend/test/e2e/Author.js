@@ -130,7 +130,7 @@ export const authorTests = () => {
 						!Array.isArray(response.body) &&
 						response.body !== null
 				).toBeTruthy();
-				console.log(response.body);
+				
 				expect(
 					response.body.message.startsWith("Author list retrieved successfully")
 				).toBeTruthy();
@@ -182,9 +182,8 @@ export const authorTests = () => {
 
 	it("GET /author/read", async () => {
 		await supertest(app)
-			.get("/author/read")
-			.send({ author_id: global.navigator.writer })
-			.expect(400)
+			.get(`/author/read?author_id=${global.navigator.writer}`)			
+			.expect(200)
 			.then((response) => {
 				// Check type and length
 				expect(
@@ -194,34 +193,35 @@ export const authorTests = () => {
 				).toBeTruthy();
 				console.log(response.body);
 				expect(
-					response.body.message.startsWith("Author list retrieved successfully")
+					response.body.message.startsWith("Author retrieved successfully")
 				).toBeTruthy();
 				expect(response.body.status).toEqual(200);
-				expect(response.body).toMatchObject({
-					message: "Author retrieved successfully!",
-					data: {
-						type: ["writer"],
-						photos: [
-							{
-								originalname: "__tiger_the_great.jpg",
-								size: 103280,
-							},
-						],
-						works: [],
-						socialMedia: ["reddit", "twitter"],
-						name: "Abe Yamamoto",
-						birthDate: "1990-08-02T03:00:00.000Z",
-						deathDate: null,
-						biography: "A tough and gloom person",
+				expect(response.body)
+					.toMatchObject({
+						message: "Author retrieved successfully!",
+						data: {
+							
+							type: ["writer"],
+							photos: [
+								{
+									originalname: "__tiger_the_great.jpg",
+									size: 103280,
+								},
+							],
+							works: [],
+							socialMedia: ["reddit", "twitter"],
+							name: "Abe Yamamoto",
+							birthDate: "1990-08-02T03:00:00.000Z",
+							deathDate: null,
+							biography: "A tough and gloom person",
 
-						__v: 0,
-					},
+							__v: 0,
+						},
 
-					metadata: {},
-					status: 200,
-				}).catch (e => {
-					console.log(e)
-				});
+						metadata: {},
+						status: 200,
+					})
+					
 			});
 	});
 };
