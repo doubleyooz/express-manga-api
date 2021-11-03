@@ -120,7 +120,7 @@ async function valid_list(req, res, next) {
 async function valid_update(req, res, next) {
 	let currentDate = new Date();
 	currentDate.setFullYear(currentDate.getFullYear() - 10);
-
+	
 	const schema = yup
 		.object()
 		.shape({
@@ -163,7 +163,7 @@ async function valid_update(req, res, next) {
 
 async function valid_remove(req, res, next) {
 	let schema = yup.object().shape({
-		author_id: mongo_id_req.required(),
+		author_id: rules.mongo_id_req.required(),
 	});
 
 	try {
