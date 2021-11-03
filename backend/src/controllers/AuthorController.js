@@ -147,7 +147,7 @@ async function update(req, res) {
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
-	if (await Author.exists({ name: req.body.name }))
+	if (await Author.exists({ name: req.body.name, _id:  { "$ne": req.body.author_id } }))
 		return res.jsonBadRequest(
 			null,
 			getMessage("author.error.overwrite"),
