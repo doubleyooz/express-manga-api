@@ -291,7 +291,7 @@ export const authorTests = () => {
 				});
 			});
 	});
-}; /*
+
 	it("PUT /authors type", async () => {
 		payload2.type = "artist";
 		payload2.author_id = global.navigator.writer;
@@ -312,10 +312,47 @@ export const authorTests = () => {
 
 				expect(response.body).toMatchObject({
 					message: "Update Done!",
+					data: null,
+
+					metadata: {},
+					status: 200,
+				});
+			});
+	});
+
+	it("GET /authors/findOne", async () => {
+		await supertest(app)
+			.get(`/authors/findOne?author_id=${global.navigator.writer}`)
+			.expect(200)
+			.then((response) => {
+				// Check type and length
+				expect(
+					typeof response.body === "object" &&
+						!Array.isArray(response.body) &&
+						response.body !== null
+				).toBeTruthy();
+
+				expect(
+					response.body.data.birthDate.startsWith(payload2.birthDate)
+				).toBeTruthy();
+
+				expect(response.body).toMatchObject({
+					message: "Author retrieved successfully!",
 					data: {
-						type: ["artist"],				
-						
-				
+						type: ["artist"],
+						photos: [
+							{
+								originalname: "__tiger_the_great.jpg",
+								size: 103280,
+							},
+						],
+						works: [],
+						socialMedia: ["reddit", "twitter"],
+						name: "Iito Tachibana",
+						deathDate: null,
+						biography: "A tough and gloom person",
+
+						__v: 0,
 					},
 
 					metadata: {},
@@ -324,15 +361,12 @@ export const authorTests = () => {
 			});
 	});
 
-
-
-
 	it("DELETE /authors", async () => {
 		payload2.type = "writer";
-	
+
 		await supertest(app)
 			.delete(`/authors?author_id=${payload2.author_id}`)
-			
+
 			.set("Authorization", "Bearer " + global.navigator.token)
 			.expect(200)
 			.then((response) => {
@@ -342,17 +376,15 @@ export const authorTests = () => {
 						!Array.isArray(response.body) &&
 						response.body !== null
 				).toBeTruthy();
-				console.log(response.body);
-
-				expect(response.body.data.data.mangas).toBeDefined();
-				expect(response.body.data.data.removed).toBeTruthy();
+				
+				expect(response.body.data.mangas).toBeDefined();
+				expect(response.body.data.removed).toBeTruthy();
 				expect(
 					response.body.message.startsWith("Author deleted.")
 				).toBeTruthy();
-				
 			});
 	});
-	
+
 	it("GET /authors 1 documents", async () => {
 		await supertest(app)
 			.get("/authors")
@@ -391,7 +423,6 @@ export const authorTests = () => {
 
 							__v: 0,
 						},
-						
 					],
 					metadata: {},
 					status: 200,
@@ -449,8 +480,3 @@ export const authorTests = () => {
 			});
 	});
 };
-
-
-
-
-*/
