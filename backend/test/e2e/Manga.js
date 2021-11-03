@@ -36,7 +36,6 @@ export const mangaTests = () => {
 						!Array.isArray(response.body) &&
 						response.body !== null
 				).toBeTruthy();
-				console.log(response.body);
 				expect(response.body).toMatchObject({
 					data: {
 						__v: 0,

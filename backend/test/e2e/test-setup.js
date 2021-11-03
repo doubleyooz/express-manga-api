@@ -35,6 +35,11 @@ async function dropAllCollections() {
 	}
 }
 
+async function dropTestUploadFolder() {
+	let reqPath = path.resolve(path.dirname(''), "uploads2");       
+	fs.rmdirSync(reqPath, { recursive: true });
+}
+
 export default function setupDB(databaseName) {
 	// Connect to Mongoose
 	beforeAll(async () => {
@@ -58,9 +63,9 @@ export default function setupDB(databaseName) {
 	// Disconnect Mongoose
 	afterAll(async () => {
 		await dropAllCollections();
+		//await dropTestUploadFolder();
 		await mongoose.connection.close();
        
-        let reqPath = path.resolve(path.dirname(''), "uploads2");       
-		fs.rmdirSync(reqPath, { recursive: true });
+       
 	});
 }
