@@ -147,14 +147,19 @@ async function update(req, res) {
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
-	if (await Author.exists({ name: req.body.name, _id:  { "$ne": req.body.author_id } }))
+	if (
+		await Author.exists({
+			name: req.body.name,
+			_id: { $ne: req.body.author_id },
+		})
+	)
 		return res.jsonBadRequest(
 			null,
 			getMessage("author.error.overwrite"),
 			new_token
 		);
 
-	Author.findByIdAndUpdate(req.body.author_id, req.body, { new: true })
+	Author.findByIdAndUpdate(req.body.author_id, req.body)
 		.select({ type: 1, name: 1 })
 		.then((doc) => {
 			if (!doc) {
@@ -170,14 +175,23 @@ async function update(req, res) {
 
 					fs.rename(currPath, newPath, function (err) {
 						if (err) {
+							fs.rmdirSync(newPath, { recursive: true });
 							console.log(err);
+							fs.rename(currPath, newPath, function (err) {
+								if (err) {
+									fs.rmdirSync(newPath, { recursive: true });
+									console.log(err);
+								} else {
+									console.log("Successfully renamed the directory.");
+								}
+							});
 						} else {
 							console.log("Successfully renamed the directory.");
 						}
 					});
 				}
 
-				return res.jsonOK(doc, getMessage("author.update.success"), new_token);
+				return res.jsonOK(null, getMessage("author.update.success"), new_token);
 			}
 		})
 		.catch((err) => {
@@ -238,6 +252,7 @@ async function remove(req, res) {
 				);
 			})
 			.catch((err) => {
+				console.log(err);
 				return res.jsonBadRequest(
 					null,
 					getMessage("author.notfound"),
@@ -245,7 +260,7 @@ async function remove(req, res) {
 				);
 			});
 	} else {
-		return res.jsonServerError(null, null, new_token);
+		return res.jsonNotFound(null, null, new_token);
 	}
 }
 
