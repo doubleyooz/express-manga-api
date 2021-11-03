@@ -7,7 +7,7 @@ import Manga from "../models/Manga.js";
 import User from "../models/User.js";
 
 import { getMessage } from "../common/messages.js";
-import folderName from "../config/multer.js";
+import { folderName } from "../config/multer.js";
 import { writer } from "repl";
 
 const list_projection = {
