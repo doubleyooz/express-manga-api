@@ -1,5 +1,6 @@
 import supertest from "supertest";
 import { app } from "../../src/config/express.js";
+import { getMessage } from "../../src/common/messages.js";
 
 const payload = {
 	name: "Kentarou Kishima",
@@ -37,14 +38,14 @@ export const authorTests = () => {
 						response.body !== null
 				).toBeTruthy();
 
-				expect(response.body.message).toEqual("Successful request.");
+				
 				expect(response.body.data).toBeDefined();
 				expect(response.body.metadata).toBeDefined();
 				expect(response.body.status).toEqual(200);
 
 				global.navigator.artist = response.body.data._id;
 				expect(response.body).toMatchObject({
-					message: "Successful request.",
+					message: getMessage("author.save.success"),
 					data: {
 						type: ["artist"],
 						photos: [
@@ -87,14 +88,13 @@ export const authorTests = () => {
 						response.body !== null
 				).toBeTruthy();
 
-				expect(response.body.message).toEqual("Successful request.");
 				expect(response.body.data).toBeDefined();
 				expect(response.body.metadata).toBeDefined();
 				expect(response.body.status).toEqual(200);
 
 				global.navigator.writer = response.body.data._id;
 				expect(response.body).toMatchObject({
-					message: "Successful request.",
+					message: getMessage("author.save.success"),
 					data: {
 						type: ["writer"],
 						photos: [
@@ -243,7 +243,7 @@ export const authorTests = () => {
 				console.log(response.body);
 
 				expect(response.body).toMatchObject({
-					message: "Update Done!",
+					message: getMessage("author.update.success"),
 					data: null,
 					metadata: {},
 					status: 200,
@@ -429,7 +429,7 @@ export const authorTests = () => {
 				});
 			});
 	});
-
+	
 	it("POST /authors", async () => {
 		await supertest(app)
 			.post("/authors")
@@ -447,14 +447,14 @@ export const authorTests = () => {
 						response.body !== null
 				).toBeTruthy();
 
-				expect(response.body.message).toEqual("Successful request.");
+				
 				expect(response.body.data).toBeDefined();
 				expect(response.body.metadata).toBeDefined();
 				expect(response.body.status).toEqual(200);
 
 				global.navigator.writer = response.body.data._id;
 				expect(response.body).toMatchObject({
-					message: "Successful request.",
+					message: getMessage("author.save.success"),
 					data: {
 						type: ["writer"],
 						photos: [
