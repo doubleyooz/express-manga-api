@@ -52,7 +52,11 @@ const MangaSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
-		language: String,
+		languages: [
+			{
+				type: String,
+			},
+		],
 		chapters: [
 			{
 				//a array fill with the data links

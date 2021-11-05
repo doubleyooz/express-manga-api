@@ -71,6 +71,23 @@ const themes = [
 	"zombies",
 ];
 
+const languages = [
+	"da",
+	"nl",
+	"en",
+	"fi",
+	"fr",
+	"de",
+	"hu",
+	"it",
+	"nb",
+	"pt",
+	"ro",
+	"ru",
+	"tr",
+	"es"
+]
+
 const rules = {
 	title: yup
 		.string("title must be a string.")
@@ -144,14 +161,24 @@ const rules = {
 		.strict()
 		.matches(/^manga$|^manhwa$|^manhua$/, null)
 		.default({ type: "manga" }),
-	language: yup
-		.string("language must be a string.")
-		.strict()
-		.matches(
-			/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
-			null
-		)
-		.default({ language: "pt" }),
+	languages: yup
+	.array(yup.string())
+	.min(1, "")
+	.max(languages.length(), "")
+	.default({ languages: ["pt"] })
+	.test(
+		"Valid languages",
+		"Not all given ${path} are valid options",
+		function (items) {
+			if (items) {
+				return items.every((item) => {
+					return themes.includes(item.toLowerCase());
+				});
+			}
+			return false;
+		}
+	),
+		
 };
 
 function isValidMongoIdRequired(value) {
@@ -182,7 +209,7 @@ async function valid_store(req, res, next) {
 		status: rules.status.required(),
 		nsfw: rules.nsfw.required(),
 		type: rules.type.required(),
-		language: rules.language.required(),
+		languages: rules.languages.required(),
 	});
 
 	schema
@@ -265,7 +292,7 @@ async function valid_update(req, res, next) {
 		status: rules.status,
 		nsfw: rules.nsfw,
 		type: rules.type,
-		language: rules.language,
+		languages: rules.languages,
 		manga_id: rules.mongo_id_req,
 	});
 

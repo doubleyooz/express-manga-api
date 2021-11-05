@@ -22,6 +22,7 @@
     "chapter.delete.error": "The chapter pages could not be found",
     "chapter.notfound": "The Chapter could not be found.",
 
+    "author.save.success": "Author added!",
     "author.error.duplicate": "This author already exists or the number is unavaliable.",
     "author.error.overwrite": "You cant overwrite a existing author",
     "author.invalid.biography.short": "Biography must be at least 15 characters long",   
