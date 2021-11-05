@@ -22,6 +22,8 @@ const list_projection = {
 		cover: 1,
 		type: 1,
 		likes: 1,
+		themes: 1,
+		genres: 1,
 		writer_id: 1,
 		artist_id: 1,
 		_id: 0,
@@ -36,13 +38,15 @@ const list_projection = {
 		synopsis: 1,
 		n_chapters: 1,
 
-		language: 1,
+		languages: 1,
 		nsfw: 1,
 		status: 1,
 		writer_id: 1,
 		artist_id: 1,
 		scan_id: 1,
 		rating: 1,
+		themes: 1,
+		genres: 1,
 		likes: 1,
 		__v: 1,
 		cover: 1,
@@ -57,8 +61,11 @@ const list_projection = {
 		writer_id: 1,
 		artist_id: 1,
 		type: 1,
+		themes: 1,
+		genres: 1,
 		nsfw: 1,
 		status: 1,
+		languages: 1,
 		likes: 1,
 	},
 };
@@ -75,6 +82,8 @@ const read_projection = {
 		artist_id: 1,
 		type: 1,
 		rating: 1,
+		themes: 1,
+		genres: 1,
 		nsfw: 1,
 		cover: 1,
 		likes: 1,
@@ -96,6 +105,8 @@ const read_projection = {
 		rating: 1,
 		scan_id: 1,
 		likes: 1,
+		themes: 1,
+		genres: 1,
 		__v: 1,
 		cover: 1,
 	},
@@ -112,6 +123,8 @@ const read_projection = {
 		artist_id: 1,
 		nsfw: 1,
 		status: 1,
+		themes: 1,
+		genres: 1,
 		likes: 1,
 	},
 };
@@ -127,7 +140,7 @@ async function store(req, res) {
 		themes,
 		n_chapters,
 		status,
-		language,
+		languages,
 		nsfw,
 	} = req.body;
 
@@ -141,11 +154,7 @@ async function store(req, res) {
 
 	const filesPath =
 		folderName +
-		"mangas/" + 
-		language +
-		"/" +
-		scan_id +
-		"/" +
+		"mangas/" + 		
 		title +
 		"/" +
 		req.file.filename;
@@ -193,7 +202,7 @@ async function store(req, res) {
 		synopsis: synopsis,
 		n_chapters: n_chapters,
 		status: status,
-		language: language,
+		languages: languages,
 		genres: genres,
 		themes: themes,
 		nsfw: nsfw,
@@ -498,7 +507,7 @@ async function remove(req, res) {
 			const chapters = await Chapter.deleteMany({ manga_id: manga_id });
 
 			let dir =
-				folderName + "mangas/" + manga.language + "/" + scan_id + "/" + manga.title;
+				folderName + "mangas/" + manga.title;
 
 			fs.rmdir(dir, { recursive: true }, (err) => {
 				if (err) {

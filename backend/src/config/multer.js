@@ -70,10 +70,10 @@ const files = {
 					"..",
 					folderName,
 					"mangas/",
-					req.body.language + "/",
-					scan_id + "/",
 					req.body.manga_title + "/",
-					req.body.number
+					req.body.number + "/",
+					req.body.language + "/",
+					scan_id
 				)
 			);
 
@@ -81,13 +81,10 @@ const files = {
 				"./" +
 				folderName +
 				"mangas/" +
-				req.body.language +
-				"/" +
-				scan_id +
-				"/" +
 				req.body.manga_title +
+				"/" +
+				req.body.number +
 				"/";
-
 			if (!fs.existsSync(dir)) return false;
 			//fs.mkdirSync(dir);
 
@@ -134,22 +131,11 @@ const file = {
 					"..",
 					folderName,
 					"mangas/",
-					req.body.language + "/",
-					scan_id + "/",
 					req.body.title + "/"
 				)
 			);
 
-			let dir =
-				"./" +
-				folderName +
-				"mangas/" +
-				req.body.language +
-				"/" +
-				scan_id +
-				"/" +
-				req.body.title +
-				"/";
+			let dir = "./" + folderName + "mangas/" + req.body.title + "/";
 
 			if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 		},
@@ -180,5 +166,5 @@ const file = {
 export default {
 	file,
 	files,
-	authorFiles,	
+	authorFiles,
 };
