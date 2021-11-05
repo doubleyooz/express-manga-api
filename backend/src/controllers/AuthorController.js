@@ -175,12 +175,11 @@ async function update(req, res) {
 
 					fs.rename(currPath, newPath, function (err) {
 						if (err) {
-							fs.rmdirSync(newPath, { recursive: true });
-							console.log(err);
-							fs.rename(currPath, newPath, function (err) {
-								if (err) {
+							fs.rmdirSync(newPath, { recursive: true });							
+							fs.rename(currPath, newPath, function (e) {
+								if (e) {
 									fs.rmdirSync(newPath, { recursive: true });
-									console.log(err);
+									console.log(e);
 								} else {
 									console.log("Successfully renamed the directory.");
 								}

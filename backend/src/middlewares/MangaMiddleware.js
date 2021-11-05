@@ -85,8 +85,8 @@ const languages = [
 	"ro",
 	"ru",
 	"tr",
-	"es"
-]
+	"es",
+];
 
 const rules = {
 	title: yup
@@ -162,23 +162,22 @@ const rules = {
 		.matches(/^manga$|^manhwa$|^manhua$/, null)
 		.default({ type: "manga" }),
 	languages: yup
-	.array(yup.string())
-	.min(1, "")
-	.max(languages.length(), "")
-	.default({ languages: ["pt"] })
-	.test(
-		"Valid languages",
-		"Not all given ${path} are valid options",
-		function (items) {
-			if (items) {
-				return items.every((item) => {
-					return themes.includes(item.toLowerCase());
-				});
+		.array(yup.string())
+		.min(1, "")
+		.max(languages.length, "")
+		.default(["pt"])
+		.test(
+			"Valid languages",
+			"Not all given ${path} are valid options",
+			function (items) {
+				if (items) {
+					return items.every((item) => {
+						return languages.includes(item.toLowerCase());
+					});
+				}
+				return false;
 			}
-			return false;
-		}
-	),
-		
+		),
 };
 
 function isValidMongoIdRequired(value) {
@@ -235,11 +234,10 @@ async function valid_findOne(req, res, next) {
 				is: (manga_id) => !manga_id,
 				then: yup.required(),
 			}),
-			manga_id: rules.mongo_id
-				.when(["title"], {
-					is: (title) => !title,
-					then: yup.required(),
-				}),
+			manga_id: rules.mongo_id.when(["title"], {
+				is: (title) => !title,
+				then: yup.required(),
+			}),
 		},
 		[["title", "manga_id"]]
 	);
@@ -295,7 +293,7 @@ async function valid_update(req, res, next) {
 		languages: rules.languages,
 		manga_id: rules.mongo_id_req,
 	});
-
+	console.log(req.body)
 	try {
 		schema
 			.validate(req.body)
