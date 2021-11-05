@@ -117,12 +117,7 @@ const files = {
 
 const file = {
 	storage: multer.diskStorage({
-		destination: (req, files, cb) => {
-			let scan_id = CryptoJs.AES.decrypt(
-				req.auth,
-				`${process.env.SHUFFLE_SECRET}`
-			).toString(CryptoJs.enc.Utf8);
-
+		destination: (req, files, cb) => {		
 			cb(
 				null,
 				path.resolve(

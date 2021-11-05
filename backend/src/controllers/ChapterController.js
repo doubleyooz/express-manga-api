@@ -40,12 +40,14 @@ const list_projection = {
 		number: 1,
 		views: 1,
 		updatedAt: 1,
+		language: 1,
 	},
 	1: {
 		updatedAt: 1,
 		createdAt: 1,
 		title: 1,
 		number: 1,
+		language: 1,
 		visualizations: 1,
 		__v: 1,
 		views: 1,
@@ -53,43 +55,39 @@ const list_projection = {
 	2: {
 		title: 1,
 		number: 1,
+		language: 1,
 		views: 1,
 		updatedAt: 1,
 	},
 };
 
 async function store(req, res) {
-	const { manga_title, number, chapter_title } = req.body;
+	const { manga_title, number, chapter_title, language } = req.body;
 
 	const new_token = req.new_token ? req.new_token : null;
 	req.new_token = null;
 
 	Manga.findOne({ title: manga_title }, function (err, manga) {
 		if (manga) {
-			Chapter.exists({ manga_id: manga._id, number: number }).then((exists) => {
+			const filesPath =
+				dir +
+				manga_title +
+				"/" +
+				number +
+				"/" +
+				language +
+				"/" +
+				manga.scan_id +
+				"/";
+
+			Chapter.exists({
+				manga_id: manga._id,
+				number: number,
+				language: language,
+			}).then((exists) => {
 				if (exists) {
 					Object.keys(req.files).forEach((i) => {
-						let file = req.files[i];
-						dir +
-							manga.language +
-							"/" +
-							manga.scan_id +
-							"/" +
-							title +
-							"/" +
-							req.file.filename;
-						fs.unlinkSync(
-							dir +
-								manga.language +
-								"/" +
-								manga.scan_id +
-								"/" +
-								title +
-								"/" +
-								number +
-								"/" +
-								file.filename
-						);
+						fs.unlinkSync(filesPath + req.files[i].filename);
 					});
 					return res.jsonBadRequest(
 						null,
@@ -115,6 +113,7 @@ async function store(req, res) {
 						manga_id: manga._id,
 						number: number,
 						title: chapter_title,
+						langauge: language,
 						imgCollection: [],
 					});
 
@@ -136,19 +135,7 @@ async function store(req, res) {
 								.catch((err) => {
 									Chapter.deleteOne({ _id: result._id });
 									Object.keys(req.files).forEach((i) => {
-										let file = req.files[i];
-										fs.unlinkSync(
-											dir +
-												manga.language +
-												"/" +
-												manga.scan_id +
-												"/" +
-												title +
-												"/" +
-												number +
-												"/" +
-												file.filename
-										);
+										fs.unlinkSync(filesPath + req.files[i].filename);
 									});
 									console.log(err);
 
@@ -157,19 +144,7 @@ async function store(req, res) {
 						})
 						.catch((err) => {
 							Object.keys(req.files).forEach((i) => {
-								let file = req.files[i];
-								fs.unlinkSync(
-									dir +
-										manga.language +
-										"/" +
-										manga.scan_id +
-										"/" +
-										title +
-										"/" +
-										number +
-										"/" +
-										file.filename
-								);
+								fs.unlinkSync(filesPath + req.files[i].filename);
 							});
 							console.log(err);
 							return res.jsonServerError(null, null, err);
@@ -177,32 +152,16 @@ async function store(req, res) {
 				}
 			});
 		} else {
-			let dir = "uploads/" + manga_title;
+			let dir2 = dir + manga_title;
 
-			fs.rmdir(dir, { recursive: true }, (err) => {
+			fs.rmdir(dir2, { recursive: true }, (err) => {
 				if (err) {
 					console.log(err);
 				}
 			});
 
-			fs.rmdirSync(dir, { recursive: true });
+			fs.rmdirSync(dir2, { recursive: true });
 
-			/*Object.keys(req.files).forEach((i) => {
-                let file = req.files[i];
-                fs.unlinkSync(
-							dir +
-							manga.language +
-								"/" +
-								manga.scan_id +
-								"/" +
-								title +
-								"/" +
-								number +
-								"/" +
-								file.filename
-						);
-                
-            });*/
 			return res.jsonNotFound(null, getMessage("manga.notfound"), new_token);
 		}
 	});
@@ -225,8 +184,6 @@ async function update(req, res) {
 		)
 	) {
 		manga = null;
-
-		req.body.updatedAt = Date.now();
 
 		Chapter.findOneAndUpdate(
 			req.body,
@@ -277,11 +234,19 @@ async function findOne(req, res) {
 			doc
 				.save()
 				.then(() => {
-					return res.jsonOK(doc, getMessage("chapter.findone.success"), new_token);
+					return res.jsonOK(
+						doc,
+						getMessage("chapter.findone.success"),
+						new_token
+					);
 				})
 				.catch((err) => {
 					console.log(err);
-					return res.jsonOK(doc, getMessage("chapter.findone.success"), new_token);
+					return res.jsonOK(
+						doc,
+						getMessage("chapter.findone.success"),
+						new_token
+					);
 				});
 		})
 		.catch((err) => {
@@ -354,7 +319,16 @@ async function remove(req, res) {
 					cloneData = manga.chapters.filter(function (chap_id) {
 						return chap_id.toString() !== chapter_id.toString();
 					});
-
+					const filesPath =
+						dir +
+						manga_title +
+						"/" +
+						number +
+						"/" +
+						language +
+						"/" +
+						manga.scan_id +
+						"/";
 					Chapter.deleteMany({ manga_id: manga_id, _id: chapter_id })
 						.then((chapters) => {
 							console.log(chapters);
@@ -372,18 +346,7 @@ async function remove(req, res) {
 									.then((result) => {
 										try {
 											chapter.imgCollection.forEach(function (file) {
-												fs.unlinkSync(
-													dir +
-														manga.language +
-														"/" +
-														manga.scan_id +
-														"/" +
-														title +
-														"/" +
-														number +
-														"/" +
-														file.filename
-												);
+												fs.unlinkSync(filesPath + file.filename);
 											});
 										} catch (err) {
 											return res.jsonServerError(

@@ -29,6 +29,10 @@ const ChapterSchema = new mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		language: {
+			type: String,
+			
+		}
 	},
 	{ timestamps: true }
 );

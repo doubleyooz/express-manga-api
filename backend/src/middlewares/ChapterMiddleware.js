@@ -27,6 +27,14 @@ const rules = {
 		.test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
 			isValidMongoId(value)
 		),
+	language: yup
+		.string("language must be a string.")
+		.strict()
+		.matches(
+			/^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
+			null
+		)
+		.default({ language: "pt" }),
 };
 
 function isValidMongoIdRequired(value) {
@@ -49,6 +57,7 @@ async function valid_store(req, res, next) {
 		manga_title: rules.manga_title.required(),
 		chapter_title: rules.chapter_title.required(),
 		number: rules.number.required(),
+		language: rules.language.required()
 	});
 	try {
 		await schema
@@ -103,6 +112,7 @@ async function valid_update(req, res, next) {
 		chapter_title: rules.chapter_title,
 		number: rules.number,
 		chapter_id: rules.mongo_id_req.required(),
+		language: rules.language
 	});
 
 	try {
