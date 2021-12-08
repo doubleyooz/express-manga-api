@@ -11,7 +11,6 @@ import { auth as Authorize, easyAuth } from "../middlewares/SessionMiddleware.js
 const router = express.Router();
 
 
-
 router.get("/findOne", easyAuth(), UserMiddleware.valid_findOne, UserController.findOne);
 router.get("/", easyAuth(), UserMiddleware.valid_list, UserController.list);
 router.put(

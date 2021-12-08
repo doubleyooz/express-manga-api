@@ -1,14 +1,11 @@
-import dotenv from "dotenv";
 import CryptoJs from "crypto-js";
 
 import User from "../models/User.js";
 import jwt from "../common/jwt.js";
 
-dotenv.config();
-
 function auth(roles = []) {
 	return async (req, res, next) => {
-		try {		
+		try {
 			const [, token] = req.headers.authorization ? req.headers.authorization.split(" ") : [, ""];
 			if (typeof roles === "string") {
 				roles = [roles];

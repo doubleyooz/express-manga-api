@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 import ProtonMail from "protonmail-api";
 
@@ -7,8 +6,6 @@ import Chapter from "../models/Chapter.js";
 import Manga from "../models/Manga.js";
 
 import { getMessage } from "../common/messages.js";
-
-dotenv.config();
 
 const Protonmail = false;
 
@@ -62,24 +59,23 @@ async function notifyUsers(req, res) {
 
                           
                             ${chapters.forEach((chapter, index) => {
-															return ` <a href="${
-																process.env.CLIENT_URL
-															}/${index}">
+								return ` <a href="${process.env.CLIENT_URL
+									}/${index}">
                                     ${getMessage(
-																			"user.email.notification.manga.text.url"
-																		)}                               
+										"user.email.notification.manga.text.url"
+									)}                               
                                 <a/>`;
-														})}
+							})}
                             
                             <div>
                                 <h4>${getMessage(
-																	"user.email.notification.manga.text.warning"
-																)}</h4>
+								"user.email.notification.manga.text.warning"
+							)}</h4>
                                 
                                 <a href="${process.env.CLIENT_URL}">
                                     ${getMessage(
-																			"user.email.notification.manga.text.warning.url"
-																		)}                               
+								"user.email.notification.manga.text.warning.url"
+							)}                               
                                 <a/>
                             </div>
 
@@ -113,25 +109,24 @@ async function notifyUsers(req, res) {
 
                             
                             ${chapters.forEach((chapter, index) => {
-															return ` <a href="${
-																process.env.CLIENT_URL
-															}/${index}/${chapter.title}">
+								return ` <a href="${process.env.CLIENT_URL
+									}/${index}/${chapter.title}">
                                     ${getMessage(
-																			"user.email.notification.manga.text.url"
-																		)}                               
+										"user.email.notification.manga.text.url"
+									)}                               
                                 <a/>`;
-														})}
+							})}
                            
                             
                             <div>
                                 <h4>${getMessage(
-																	"user.email.notification.manga.text.warning"
-																)}</h4>
+								"user.email.notification.manga.text.warning"
+							)}</h4>
                                 
                                 <a href="${process.env.CLIENT_URL}">
                                     ${getMessage(
-																			"user.email.notification.manga.text.warning.url"
-																		)}                               
+								"user.email.notification.manga.text.warning.url"
+							)}                               
                                 <a/>
                             </div>
                         

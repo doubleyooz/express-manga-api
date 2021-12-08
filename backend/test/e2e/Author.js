@@ -31,7 +31,7 @@ export const authorTests = () => {
 			.expect(200)
 			.then((response) => {
 				// Check type and length
-
+				console.log(response)
 				expect(
 					typeof response.body === "object" &&
 						!Array.isArray(response.body) &&

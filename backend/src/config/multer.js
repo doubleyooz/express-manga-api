@@ -117,7 +117,7 @@ const files = {
 
 const file = {
 	storage: multer.diskStorage({
-		destination: (req, files, cb) => {		
+		destination: (req, files, cb) => {
 			cb(
 				null,
 				path.resolve(

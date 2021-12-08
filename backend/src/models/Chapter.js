@@ -31,7 +31,7 @@ const ChapterSchema = new mongoose.Schema(
 		},
 		language: {
 			type: String,
-			
+
 		}
 	},
 	{ timestamps: true }

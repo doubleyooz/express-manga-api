@@ -154,7 +154,7 @@ async function update(req, res) {
 								}).catch((err) => {
 									return res.jsonServerError(null, null, err);
 								})
-							
+
 							})
 							.catch((err) => {
 								return res.jsonServerError(null, null, err);

@@ -1,12 +1,9 @@
-import dotenv from "dotenv";
 import CryptoJs from "crypto-js";
 
 import Manga from "../models/Manga.js";
 import User from "../models/User.js";
 
 import { getMessage } from "../common/messages.js";
-
-dotenv.config();
 
 async function likeUser(req, res) {
 	const { scan_id } = req.query;
@@ -31,8 +28,8 @@ async function likeUser(req, res) {
 
 	scan.likes.includes(current_user)
 		? (scan.likes = scan.likes.filter(function (_id) {
-				return _id.toString() !== current_user.toString();
-		  }))
+			return _id.toString() !== current_user.toString();
+		}))
 		: scan.likes.push(current_user);
 
 	scan.updatedAt = Date.now();
@@ -46,8 +43,8 @@ async function likeUser(req, res) {
 				.then((user) => {
 					user.likes.includes(scan_id)
 						? (user.likes = user.likes.filter(function (_id) {
-								return _id.toString() !== scan_id.toString();
-						  }))
+							return _id.toString() !== scan_id.toString();
+						}))
 						: user.likes.push(scan_id);
 
 					user
@@ -102,16 +99,16 @@ async function likeManga(req, res) {
 
 	manga.likes.includes(current_user)
 		? (manga.likes = manga.likes.filter(function (_id) {
-				return _id.toString() !== current_user.toString();
-		  }))
+			return _id.toString() !== current_user.toString();
+		}))
 		: manga.likes.push(current_user);
 
 	manga.updatedAt = Date.now();
 
 	user.mangas.includes(manga_id)
 		? (user.mangas = user.mangas.filter(function (_id) {
-				return _id.toString() !== manga_id.toString();
-		  }))
+			return _id.toString() !== manga_id.toString();
+		}))
 		: user.mangas.push(manga_id);
 
 	let changes = user.getChanges();
@@ -165,16 +162,16 @@ async function pinManga(req, res) {
 
 	manga.user_alert.includes(current_user)
 		? (manga.user_alert = manga.user_alert.filter(function (_id) {
-				return _id.toString() !== current_user.toString();
-		  }))
+			return _id.toString() !== current_user.toString();
+		}))
 		: manga.user_alert.push(current_user);
 
 	manga.updatedAt = Date.now();
 
 	user.manga_alert.includes(manga_id)
 		? (user.manga_alert = user.manga_alert.filter(function (_id) {
-				return _id.toString() !== manga_id.toString();
-		  }))
+			return _id.toString() !== manga_id.toString();
+		}))
 		: user.manga_alert.push(manga_id);
 
 	let changes = user.getChanges();

@@ -7,13 +7,15 @@
   "license": "MIT",
   "jest": {
     "transform": {},
-    
+    "setupFiles": ["dotenv/config"],
     "verbose": true
   },
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "test-unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll ./test/unit",
-    "test-e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles ./test/e2e"
+   
+    "start:dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
+    "start:test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles ./test",
+    "start:test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles ./test/e2e",
+    "start:test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles ./test/unit"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",

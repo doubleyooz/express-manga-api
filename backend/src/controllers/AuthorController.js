@@ -120,13 +120,13 @@ async function list(req, res) {
 	const search = type
 		? name
 			? {
-					name: { $regex: name, $options: "i" },
-					type: type,
-			  }
+				name: { $regex: name, $options: "i" },
+				type: type,
+			}
 			: { type: type }
 		: name
-		? { name: { $regex: name, $options: "i" } }
-		: {};
+			? { name: { $regex: name, $options: "i" } }
+			: {};
 
 	(await Author.find(search).sort("updatedAt")).forEach(function (doc) {
 		docs.push(doc);
@@ -175,7 +175,7 @@ async function update(req, res) {
 
 					fs.rename(currPath, newPath, function (err) {
 						if (err) {
-							fs.rmdirSync(newPath, { recursive: true });							
+							fs.rmdirSync(newPath, { recursive: true });
 							fs.rename(currPath, newPath, function (e) {
 								if (e) {
 									fs.rmdirSync(newPath, { recursive: true });

@@ -35,8 +35,8 @@ export const mangaTests = () => {
 
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 				expect(response.body).toMatchObject({
 					data: {
@@ -70,8 +70,8 @@ export const mangaTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(
@@ -102,7 +102,7 @@ export const mangaTests = () => {
 	});
 
 	it("PUT /manga title", async () => {
-		payload.title = "Sentouin Hakenshimasu";	
+		payload.title = "Sentouin Hakenshimasu";
 		await supertest(app)
 			.put("/mangas")
 			.send(payload)
@@ -112,8 +112,8 @@ export const mangaTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 				console.log(response.body);
 

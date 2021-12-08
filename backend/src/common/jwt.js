@@ -1,7 +1,4 @@
-import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-
-dotenv.config();
 
 const tokenPrivateKey = `${process.env.JWT_ID}`;
 const refreshTokenPrivateKey = `${process.env.JWT_REFRESH_ID}`;
@@ -10,10 +7,10 @@ const accActivatePrivateKey = `${process.env.JWT_ACTIVATE_ACCESS}`;
 const recoverPassPrivateKey = `${process.env.JWT_RECOVER_ACCESS}`;
 const updateEmailPrivateKey = `${process.env.JWT_UPDATE_ACCESS}`;
 
-const options = { expiresIn: "10 minutes" };
-const refreshOptions = { expiresIn: "12 hours" };
+const options = { expiresIn: `${process.env.JWT_ACCESS_EXPIRATION}` };
+const refreshOptions = { expiresIn: `${process.env.JWT_REFRESH_EXPIRATION}` };
 
-function generateJwt(payload, num) {
+function generateJwt(payload, num) {	
 	switch (num) {
 		case 1:
 			return jwt.sign(payload, tokenPrivateKey, options);

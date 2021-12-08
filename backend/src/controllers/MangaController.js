@@ -134,7 +134,7 @@ const read_projection = {
 
 async function store(req, res) {
 	const {
-		title,		
+		title,
 		synopsis,
 		writer_id,
 		artist_id,
@@ -157,7 +157,7 @@ async function store(req, res) {
 
 	const filesPath =
 		folderName +
-		"mangas/" + 		
+		"mangas/" +
 		title +
 		"/" +
 		req.file.filename;
@@ -184,7 +184,7 @@ async function store(req, res) {
 	}
 
 	const artist = await Author.findById(artist_id);
-	
+
 	if (!artist || !artist.type.includes("artist")) {
 		fs.unlinkSync(filesPath);
 		console.log(getMessage("manga.error.artist"))
@@ -201,7 +201,7 @@ async function store(req, res) {
 
 	const manga = new Manga({
 		cover: req.file.filename,
-		title: title,		
+		title: title,
 		synopsis: synopsis,
 		n_chapters: n_chapters,
 		status: status,
@@ -224,12 +224,12 @@ async function store(req, res) {
 			writer.works.push(manga._id);
 			artist
 				.save()
-				.then(() => {})
-				.catch((err) => {});
+				.then(() => { })
+				.catch((err) => { });
 			writer
 				.save()
-				.then(() => {})
-				.catch((err) => {});
+				.then(() => { })
+				.catch((err) => { });
 			scan
 				.save()
 				.then(() => {
@@ -338,16 +338,16 @@ async function list(req, res) {
 		const search = genre
 			? { genre: genre }
 			: writer_id
-			? { writer_id: writer_id }
-			: type
-			? { type: type }
-			: artist_id
-			? { artist_id: artist_id }
-			: title
-			? { title: { $regex: title, $options: "i" } }
-			: scan_id
-			? { scan_id: scan_id }
-			: {};
+				? { writer_id: writer_id }
+				: type
+					? { type: type }
+					: artist_id
+						? { artist_id: artist_id }
+						: title
+							? { title: { $regex: title, $options: "i" } }
+							: scan_id
+								? { scan_id: scan_id }
+								: {};
 		(
 			await Manga.find(search).sort("updatedAt").select(list_projection[role])
 		).forEach(function (doc) {
@@ -475,11 +475,11 @@ async function remove(req, res) {
 			});
 
 			/*(await Chapter.find({manga_id: manga_id})).forEach(function (doc){
-                doc.imgCollection.forEach(function (page){                            
-                    fs.unlinkSync('uploads/' + manga.title + "/"+ page.filename)  
-                })                      
-            });
-            */
+				doc.imgCollection.forEach(function (page){                            
+					fs.unlinkSync('uploads/' + manga.title + "/"+ page.filename)  
+				})                      
+			});
+			*/
 
 			const writer = await Author.findById(manga.writer_id);
 

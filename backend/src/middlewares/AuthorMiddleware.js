@@ -120,7 +120,7 @@ async function valid_list(req, res, next) {
 async function valid_update(req, res, next) {
 	let currentDate = new Date();
 	currentDate.setFullYear(currentDate.getFullYear() - 10);
-	
+
 	const schema = yup
 		.object()
 		.shape({
@@ -153,7 +153,7 @@ async function valid_update(req, res, next) {
 				schema.cast(req.body, { stripUnknown: true });
 				next();
 			})
-			.catch((err) => {				
+			.catch((err) => {
 				return res.jsonBadRequest(null, null, err.errors);
 			});
 	} catch (err) {

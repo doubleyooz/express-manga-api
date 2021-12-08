@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import CryptoJs from "crypto-js";
 
@@ -8,8 +7,6 @@ import User from "../models/User.js";
 import jwt from "../common/jwt.js";
 
 import { getMessage } from "../common/messages.js";
-
-dotenv.config();
 
 async function refreshAccessToken(req, res) {
 	const refreshToken = req.cookie.jid;
@@ -95,112 +92,112 @@ async function google_sign_in(req, res) {
 		);
 
 		/*
-        const p1 = new User ({
-            email: email,
-            password: null,
-            name: name,
-            role: "User"
-            
-        });
+		const p1 = new User ({
+			email: email,
+			password: null,
+			name: name,
+			role: "User"
+		    
+		});
 
-        p1.save().then(result => {    
-            result.password = undefined   
-             
-            const activationToken = jwt.generateJwt({id: CryptoJs.AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString()}, 3);
-                   
-            // async..await is not allowed in global scope, must use a wrapper
-            // Generate test SMTP service account from ethereal.email
-         
+		p1.save().then(result => {    
+			result.password = undefined   
+			 
+			const activationToken = jwt.generateJwt({id: CryptoJs.AES.encrypt(p1._id.toString(), `${process.env.SHUFFLE_SECRET}`).toString()}, 3);
+				   
+			// async..await is not allowed in global scope, must use a wrapper
+			// Generate test SMTP service account from ethereal.email
+		 
 
-            (async () => {
+			(async () => {
 
-              if(Protonmail){
-                
-                const pm = await ProtonMail.connect({
-                  username: `${process.env.EMAIL_USER}`,
-                  password: `${process.env.EMAIL_PASSWORD}`
-                })
-               
-                await pm.sendEmail({
-                  to: email,
-                  subject: getMessage("user.activation.account.subject"),
-                  body: `
-                      <h2>${getMessage("user.activation.account.text")}</h2>
-                      <p>${process.env.CLIENT_URL}/activateaccount/${activationToken}</p>
-                      
-                  `
-                })
-                
-                pm.close()
-              } else{
-                
-                // create reusable transporter object using the default SMTP transport
-                let transporter = nodemailer.createTransport({
-                  service: "gmail",                     
-                  auth: {
-                    user:  `${process.env.GMAIL_USER}`, // generated ethereal user
-                    pass: `${process.env.GMAIL_PASSWORD}` // generated ethereal password
-                  },
-                                       
-               
-                  tls: {
-                    rejectUnauthorized: false
-                  }
-            
-                });
-              
-                const mailOptions = {
-                    from: `${process.env.GMAIL_USER}`, // sender address
-                    to: email, // receiver (use array of string for a list)
-                    subject: getMessage("user.activation.account.subject"), // Subject line
-                    html: `
-                        <h2>${getMessage("user.activation.account.text")}</h2>
-                        <a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
-                        ${getMessage("user.activation.account.text.subtitle")}                               
-                        <a/>
-                       
-                    `// plain text body
-                  };
-                
-                transporter.sendMail(mailOptions, (err, info) => {
-                if(err)
-                    console.log(err)
-                else
-                    console.log(info);
-                });               
-              
-              }                
-              
-            })().then(info => {
-                console.log(getMessage("user.activation.account.activate"))
-                return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
-                                   
-            }).catch(err => {
-                return res.jsonBadRequest(null, null, {err});              
-                
-            })           
-                        
+			  if(Protonmail){
+			    
+				const pm = await ProtonMail.connect({
+				  username: `${process.env.EMAIL_USER}`,
+				  password: `${process.env.EMAIL_PASSWORD}`
+				})
+			   
+				await pm.sendEmail({
+				  to: email,
+				  subject: getMessage("user.activation.account.subject"),
+				  body: `
+					  <h2>${getMessage("user.activation.account.text")}</h2>
+					  <p>${process.env.CLIENT_URL}/activateaccount/${activationToken}</p>
+					  
+				  `
+				})
+			    
+				pm.close()
+			  } else{
+			    
+				// create reusable transporter object using the default SMTP transport
+				let transporter = nodemailer.createTransport({
+				  service: "gmail",                     
+				  auth: {
+					user:  `${process.env.GMAIL_USER}`, // generated ethereal user
+					pass: `${process.env.GMAIL_PASSWORD}` // generated ethereal password
+				  },
+									   
+			   
+				  tls: {
+					rejectUnauthorized: false
+				  }
+		    
+				});
+			  
+				const mailOptions = {
+					from: `${process.env.GMAIL_USER}`, // sender address
+					to: email, // receiver (use array of string for a list)
+					subject: getMessage("user.activation.account.subject"), // Subject line
+					html: `
+						<h2>${getMessage("user.activation.account.text")}</h2>
+						<a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
+						${getMessage("user.activation.account.text.subtitle")}                               
+						<a/>
+					   
+					`// plain text body
+				  };
+			    
+				transporter.sendMail(mailOptions, (err, info) => {
+				if(err)
+					console.log(err)
+				else
+					console.log(info);
+				});               
+			  
+			  }                
+			  
+			})().then(info => {
+				console.log(getMessage("user.activation.account.activate"))
+				return res.jsonOK(result, getMessage("user.activation.account.activate"), null)              
+								   
+			}).catch(err => {
+				return res.jsonBadRequest(null, null, {err});              
+			    
+			})           
+					    
 
-        }).catch(err => {
-            
-            console.log(err)
-            if (err.name === 'MongoError' && err.code === 11000) {
-                //next(new Error('There was a duplicate key error'));
-                return res.jsonBadRequest(null, getMessage("user.error.sign_up.duplicatekey"), {err})              
-                
-            
-            } else {
-                return res.jsonBadRequest(null, null, {err});             
-                                  
-            }                           
-        });    */
+		}).catch(err => {
+		    
+			console.log(err)
+			if (err.name === 'MongoError' && err.code === 11000) {
+				//next(new Error('There was a duplicate key error'));
+				return res.jsonBadRequest(null, getMessage("user.error.sign_up.duplicatekey"), {err})              
+			    
+		    
+			} else {
+				return res.jsonBadRequest(null, null, {err});             
+								  
+			}                           
+		});    */
 	}
 	/*
-    const user = new User.upsert({ 
-        where: { email: email },
-        update: { name, picture },
-        create: { name, email, picture }
-    })*/
+	const user = new User.upsert({ 
+		where: { email: email },
+		update: { name, picture },
+		create: { name, email, picture }
+	})*/
 
 	res.status(201);
 	res.json(user);

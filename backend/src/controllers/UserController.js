@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import CryptoJs from "crypto-js";
 import nodemailer from "nodemailer";
@@ -10,13 +9,10 @@ import jwt from "../common/jwt.js";
 
 import { getMessage } from "../common/messages.js";
 
-dotenv.config();
-
 const Protonmail = false;
-const testing = true;
 
 async function sendEmail(email, activationToken) {
-	if (!testing) {
+	if (!`${process.env.ENV}` === "TEST") {
 		if (Protonmail) {
 			console.log("aqui - 0");
 			const pm = await ProtonMail.connect({
@@ -57,8 +53,8 @@ async function sendEmail(email, activationToken) {
 					<h2>${getMessage("user.activation.account.text")}</h2>
 					<a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
 					${getMessage(
-						"user.activation.account.text.subtitle"
-					)}                               
+					"user.activation.account.text.subtitle"
+				)}                               
 					<a/>
 					
 				`, // plain text body
@@ -71,12 +67,13 @@ async function sendEmail(email, activationToken) {
 			transporter.close();
 		}
 	}
+	return true;
 }
 
 async function store(req, res) {
 	const { email, password, name, role } = req.body;
 
-	const salt = bcrypt.genSaltSync(10);
+	const salt = bcrypt.genSaltSync(parseInt(`${process.env.BCRYPT_SALT}`));
 	const _hash = bcrypt.hashSync(password, salt);
 
 	User.find({ email: email })
@@ -139,7 +136,7 @@ async function store(req, res) {
 
 					sendEmail(email, activationToken)
 						.then((info) => {
-							console.log(getMessage("user.activation.account.activate"));
+							//console.log(getMessage("user.activation.account.activate"));
 							return res.jsonOK(
 								null,
 								getMessage("user.activation.account.activate"),
@@ -189,8 +186,8 @@ async function list(req, res) {
 
 	let role = req.role
 		? CryptoJs.AES.decrypt(req.role, `${process.env.SHUFFLE_SECRET}`).toString(
-				CryptoJs.enc.Utf8
-		  )
+			CryptoJs.enc.Utf8
+		)
 		: 0;
 
 	req.role = null;
@@ -201,8 +198,8 @@ async function list(req, res) {
 				? { email: { $regex: email, $options: "i" } }
 				: {}
 			: email
-			? { email: { $regex: email, $options: "i" }, active: true }
-			: { active: true };
+				? { email: { $regex: email, $options: "i" }, active: true }
+				: { active: true };
 
 	let docs = [];
 

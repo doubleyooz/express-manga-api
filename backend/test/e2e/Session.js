@@ -1,15 +1,17 @@
+import dotenv from "dotenv";
 import supertest from "supertest";
 import jwt from "../../src/common/jwt.js";
 import CryptoJs from "crypto-js";
 
-
 import { app } from "../../src/config/express.js";
+
+dotenv.config({path:'.env.test'});
 
 const payload = {
 	email_true: `${process.env.TEST_GMAIL}`,
 	email_false: `25 + ${process.env.TEST_GMAIL}`,
-	password_true: `${process.env.TEST_GMAIL_PASS_2}`,
-	password_false: `${process.env.TEST_GMAIL_PASS}`,
+	password_true: `${process.env.TEST_GMAIL_PASS}`,
+	password_false: `${process.env.TEST_GMAIL_PASS_2}`,
 	name: "Jojo",
 	role_scan: "Scan",
 	role_user: "User",
@@ -29,8 +31,8 @@ export const sessionTests = () => {
 
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(response.body).toEqual({
@@ -54,8 +56,8 @@ export const sessionTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(response.body).toEqual({
@@ -75,15 +77,14 @@ export const sessionTests = () => {
 				password: payload.password_true,
 				name: payload.name,
 				role: payload.role_scan,
-			})
-			.expect(200)
+			})			
 			.then((response) => {
 				// Check type and length
-
+				console.log(response.text)
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 				/*
 			expect(
@@ -100,7 +101,7 @@ export const sessionTests = () => {
 					metadata: {},
 					status: 200,
 				});
-			});
+			})
 	});
 
 	it("GET /users", async () => {
@@ -112,8 +113,8 @@ export const sessionTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(
@@ -143,8 +144,8 @@ export const sessionTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(response.body).toEqual({
@@ -166,8 +167,8 @@ export const sessionTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(response.body.message).toEqual("Successful login.");
