@@ -34,7 +34,7 @@ const list_projection = {
 		createdAt: 1,
 		title: 1,
 		genre: 1,
-
+		
 		type: 1,
 		synopsis: 1,
 		n_chapters: 1,
@@ -67,7 +67,8 @@ const list_projection = {
 		nsfw: 1,
 		status: 1,
 		languages: 1,
-		likes: 1,
+		likes: 1
+		
 	},
 };
 
@@ -91,6 +92,7 @@ const read_projection = {
 		likes: 1,
 	},
 	1: {
+		_id: 1,
 		updatedAt: 1,
 		createdAt: 1,
 		type: 1,

@@ -1,20 +1,9 @@
 import supertest from "supertest";
 import { app } from "../../src/config/express.js";
 import { getMessage } from "../../src/common/messages.js";
+import { payload, photo } from "./mocks/Manga.js";
+import { manga } from "./schemas/Manga.js";
 
-const payload = {
-	title: "Berserk",
-	genres: ["action", "horror", "fantasy", "psychological"],
-	synopsis: "A sad manga following a story of guy seeking revenge",
-
-	type: "manga",
-	themes: ["demons", "ghosts", "magic", "supernatural"],
-	n_chapters: 354,
-	status: 2,
-	languages: ['en', 'pt'],
-	nsfw: "true",
-	manga_id: ""
-};
 
 export const mangaTests = () => {
 	it("POST /mangas", async () => {
@@ -28,7 +17,7 @@ export const mangaTests = () => {
 			.field(payload)
 			.set("Authorization", "Bearer " + global.navigator.token)
 
-			.attach("cover", "C:/Users/Waifu/Downloads/Memes/__tiger_the_great.jpg")
+			.attach("cover", photo.dir + photo.name)
 			.expect(200)
 			.then((response) => {
 				// Check type and length
@@ -39,21 +28,7 @@ export const mangaTests = () => {
 					response.body !== null
 				).toBeTruthy();
 				expect(response.body).toMatchObject({
-					data: {
-						__v: 0,
-
-						genres: ["action", "horror", "fantasy", "psychological"],
-						languages: ['en', 'pt'],
-						n_chapters: 354,
-						nsfw: true,
-						rating: 0,
-
-						status: 2,
-						synopsis: "A sad manga following a story of guy seeking revenge",
-						themes: ["demons", "ghosts", "magic", "supernatural"],
-						title: "Berserk",
-						type: "manga",
-					},
+					data: manga(payload),
 					message: getMessage("manga.save.success"),
 					metadata: {},
 					status: 200,
@@ -65,6 +40,7 @@ export const mangaTests = () => {
 		await supertest(app)
 			.get("/mangas")
 			.send({})
+			.set("Authorization", "Bearer " + global.navigator.token)
 			.expect(200)
 			.then((response) => {
 				// Check type and length
@@ -72,42 +48,31 @@ export const mangaTests = () => {
 					typeof response.body === "object" &&
 					!Array.isArray(response.body) &&
 					response.body !== null
-				).toBeTruthy();
-
+				).toBeTruthy();				
 				expect(
 					response.body.message.startsWith(getMessage("manga.list.success"))
 				).toBeTruthy();
-
+				
 				expect(response.body).toMatchObject({
 					message: getMessage("manga.list.success") + "1",
 					data: [
-						{
-							genres: ["action", "horror", "fantasy", "psychological"],
-							languages: ['en', 'pt'],
-							n_chapters: 354,
-							nsfw: true,
-							rating: 0,
-							status: 2,
-							synopsis: "A sad manga following a story of guy seeking revenge",
-							themes: ["demons", "ghosts", "magic", "supernatural"],
-							title: "Berserk",
-							type: "manga",
-						},
+						manga(payload),
 					],
 					metadata: {},
 					status: 200,
 				});
-				payload.manga_id = response.body.data[0]._id
+				payload.manga_id = response.body.data[0]._id				
 			});
 	});
 
 	it("PUT /manga title", async () => {
-		payload.title = "Sentouin Hakenshimasu";
+		payload.title = "Gantz";
+		console.log(payload)
 		await supertest(app)
 			.put("/mangas")
 			.send(payload)
 			.set("Authorization", "Bearer " + global.navigator.token)
-			.expect(200)
+			.expect(400)
 			.then((response) => {
 				// Check type and length
 				expect(
