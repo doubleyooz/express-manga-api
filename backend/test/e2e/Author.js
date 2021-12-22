@@ -20,6 +20,18 @@ const payload2 = {
 	author_id: "",
 };
 
+const imageDir = {
+	dir: "/home/waifu/Downloads/",
+	name: "abc.jpg"
+}
+
+const imageReturn = {
+	
+	originalname: imageDir.name,
+	size: 75428,
+	
+}
+
 export const authorTests = () => {
 	it("POST /authors", async () => {
 		await supertest(app)
@@ -27,18 +39,18 @@ export const authorTests = () => {
 			.field(payload)
 			.set("Authorization", "Bearer " + global.navigator.token)
 
-			.attach("photos", "C:/Users/Waifu/Downloads/Memes/__tiger_the_great.jpg")
+			.attach("photos", imageDir.dir + imageDir.name)
 			.expect(200)
 			.then((response) => {
 				// Check type and length
-				console.log(response)
+
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
-				
+
 				expect(response.body.data).toBeDefined();
 				expect(response.body.metadata).toBeDefined();
 				expect(response.body.status).toEqual(200);
@@ -47,20 +59,17 @@ export const authorTests = () => {
 				expect(response.body).toMatchObject({
 					message: getMessage("author.save.success"),
 					data: {
-						type: ["artist"],
+						type: [payload.type],
 						photos: [
-							{
-								originalname: "__tiger_the_great.jpg",
-								size: 103280,
-							},
+							imageReturn,
 						],
 						works: [],
-						socialMedia: ["orkut", "twitter"],
+						socialMedia: payload.socialMedia,
 						//_id: '617f58e87ab874251ce7cd58',
-						name: "Kentarou Kishima",
+						name: payload.name,
 						birthDate: "2008-05-22T03:00:00.000Z",
 						deathDate: null,
-						biography: "A nice and sexy person",
+						biography: payload.biography,
 						//createdAt: '2021-11-01T03:03:04.290Z',
 						//updatedAt: '2021-11-01T03:03:04.290Z',
 						__v: 0,
@@ -77,15 +86,15 @@ export const authorTests = () => {
 			.field(payload2)
 			.set("Authorization", "Bearer " + global.navigator.token)
 
-			.attach("photos", "C:/Users/Waifu/Downloads/Memes/__tiger_the_great.jpg")
+			.attach("photos", imageDir.dir + imageDir.name)
 			.expect(200)
 			.then((response) => {
 				// Check type and length
 
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(response.body.data).toBeDefined();
@@ -96,20 +105,17 @@ export const authorTests = () => {
 				expect(response.body).toMatchObject({
 					message: getMessage("author.save.success"),
 					data: {
-						type: ["writer"],
+						type: [payload2.type],
 						photos: [
-							{
-								originalname: "__tiger_the_great.jpg",
-								size: 103280,
-							},
+							imageReturn,
 						],
 						works: [],
-						socialMedia: ["reddit", "twitter"],
+						socialMedia: payload2.socialMedia,
 						//_id: '617f58e87ab874251ce7cd5c',
-						name: "Abe Yamamoto",
+						name: payload2.name,
 						birthDate: "1990-08-02T03:00:00.000Z",
 						deathDate: null,
-						biography: "A tough and gloom person",
+						biography: payload2.biography,
 						//createdAt: '2021-11-01T03:03:04.482Z',
 						//updatedAt: '2021-11-01T03:03:04.482Z',
 						__v: 0,
@@ -129,8 +135,8 @@ export const authorTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(
@@ -141,37 +147,31 @@ export const authorTests = () => {
 					message: "Author list retrieved successfully: 2",
 					data: [
 						{
-							type: ["artist"],
+							type: [payload.type],
 							photos: [
-								{
-									originalname: "__tiger_the_great.jpg",
-									size: 103280,
-								},
+								imageReturn,
 							],
 							works: [],
-							socialMedia: ["orkut", "twitter"],
+							socialMedia: payload.socialMedia,
 
-							name: "Kentarou Kishima",
+							name: payload.name,
 							birthDate: "2008-05-22T03:00:00.000Z",
 							deathDate: null,
-							biography: "A nice and sexy person",
+							biography: payload.biography,
 
 							__v: 0,
 						},
 						{
-							type: ["writer"],
+							type: [payload2.type],
 							photos: [
-								{
-									originalname: "__tiger_the_great.jpg",
-									size: 103280,
-								},
+								imageReturn,
 							],
 							works: [],
-							socialMedia: ["reddit", "twitter"],
-							name: "Abe Yamamoto",
+							socialMedia: payload2.socialMedia,
+							name: payload2.name,
 							birthDate: "1990-08-02T03:00:00.000Z",
 							deathDate: null,
-							biography: "A tough and gloom person",
+							biography: payload2.biography,
 
 							__v: 0,
 						},
@@ -190,8 +190,8 @@ export const authorTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(
@@ -201,19 +201,16 @@ export const authorTests = () => {
 				expect(response.body).toMatchObject({
 					message: "Author retrieved successfully!",
 					data: {
-						type: ["writer"],
+						type: [payload2.type],
 						photos: [
-							{
-								originalname: "__tiger_the_great.jpg",
-								size: 103280,
-							},
+							imageReturn,
 						],
 						works: [],
-						socialMedia: ["reddit", "twitter"],
-						name: "Abe Yamamoto",
+						socialMedia: payload2.socialMedia,
+						name: payload2.name,
 
 						deathDate: null,
-						biography: "A tough and gloom person",
+						biography: payload2.biography,
 
 						__v: 0,
 					},
@@ -237,8 +234,8 @@ export const authorTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 				console.log(response.body);
 
@@ -259,8 +256,8 @@ export const authorTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(
@@ -270,18 +267,15 @@ export const authorTests = () => {
 				expect(response.body).toMatchObject({
 					message: "Author retrieved successfully!",
 					data: {
-						type: ["writer"],
+						type: [payload2.type],
 						photos: [
-							{
-								originalname: "__tiger_the_great.jpg",
-								size: 103280,
-							},
+							imageReturn,
 						],
 						works: [],
-						socialMedia: ["reddit", "twitter"],
-						name: "Iito Tachibana",
+						socialMedia: payload2.socialMedia,
+						name: payload2.name,
 						deathDate: null,
-						biography: "A tough and gloom person",
+						biography: payload2.biography,
 
 						__v: 0,
 					},
@@ -305,8 +299,8 @@ export const authorTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 				console.log(response.body);
 
@@ -328,8 +322,8 @@ export const authorTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(
@@ -339,18 +333,15 @@ export const authorTests = () => {
 				expect(response.body).toMatchObject({
 					message: "Author retrieved successfully!",
 					data: {
-						type: ["artist"],
+						type: [payload2.type],
 						photos: [
-							{
-								originalname: "__tiger_the_great.jpg",
-								size: 103280,
-							},
+							imageReturn,
 						],
 						works: [],
-						socialMedia: ["reddit", "twitter"],
-						name: "Iito Tachibana",
+						socialMedia: payload2.socialMedia,
+						name: payload2.name,
 						deathDate: null,
-						biography: "A tough and gloom person",
+						biography: payload2.biography,
 
 						__v: 0,
 					},
@@ -373,10 +364,10 @@ export const authorTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
-				
+
 				expect(response.body.data.mangas).toBeDefined();
 				expect(response.body.data.removed).toBeTruthy();
 				expect(
@@ -394,8 +385,8 @@ export const authorTests = () => {
 				// Check type and length
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
 				expect(
@@ -406,20 +397,17 @@ export const authorTests = () => {
 					message: "Author list retrieved successfully: 1",
 					data: [
 						{
-							type: ["artist"],
+							type: [payload.type],
 							photos: [
-								{
-									originalname: "__tiger_the_great.jpg",
-									size: 103280,
-								},
+								imageReturn,
 							],
 							works: [],
-							socialMedia: ["orkut", "twitter"],
+							socialMedia: payload.socialMedia,
 
-							name: "Kentarou Kishima",
+							name: payload.name,
 							birthDate: "2008-05-22T03:00:00.000Z",
 							deathDate: null,
-							biography: "A nice and sexy person",
+							biography: payload.biography,
 
 							__v: 0,
 						},
@@ -429,25 +417,25 @@ export const authorTests = () => {
 				});
 			});
 	});
-	
+
 	it("POST /authors", async () => {
 		await supertest(app)
 			.post("/authors")
 			.field(payload2)
 			.set("Authorization", "Bearer " + global.navigator.token)
 
-			.attach("photos", "C:/Users/Waifu/Downloads/Memes/__tiger_the_great.jpg")
+			.attach("photos", imageDir.dir + imageDir.name)
 			.expect(200)
 			.then((response) => {
 				// Check type and length
 
 				expect(
 					typeof response.body === "object" &&
-						!Array.isArray(response.body) &&
-						response.body !== null
+					!Array.isArray(response.body) &&
+					response.body !== null
 				).toBeTruthy();
 
-				
+
 				expect(response.body.data).toBeDefined();
 				expect(response.body.metadata).toBeDefined();
 				expect(response.body.status).toEqual(200);
@@ -456,20 +444,17 @@ export const authorTests = () => {
 				expect(response.body).toMatchObject({
 					message: getMessage("author.save.success"),
 					data: {
-						type: ["writer"],
+						type: [payload2.type],
 						photos: [
-							{
-								originalname: "__tiger_the_great.jpg",
-								size: 103280,
-							},
+							imageReturn,
 						],
 						works: [],
-						socialMedia: ["reddit", "twitter"],
+						socialMedia: payload2.socialMedia,
 						//_id: '617f58e87ab874251ce7cd5c',
-						name: "Iito Tachibana",
+						name: payload2.name,
 						birthDate: "1990-08-02T03:00:00.000Z",
 						deathDate: null,
-						biography: "A tough and gloom person",
+						biography: payload2.biography,
 						//createdAt: '2021-11-01T03:03:04.482Z',
 						//updatedAt: '2021-11-01T03:03:04.482Z',
 						__v: 0,

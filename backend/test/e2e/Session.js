@@ -44,7 +44,7 @@ export const sessionTests = () => {
 			});
 	});
 
-	it("GET /sign-in", async () => {
+	it("GET /sign-in False", async () => {
 		await supertest(app)
 			.get("/sign-in")
 			.send({
@@ -69,7 +69,7 @@ export const sessionTests = () => {
 			});
 	});
 
-	it("POST /sign-up", async () => {
+	it("POST /sign-up Scan", async () => {
 		await supertest(app)
 			.post("/sign-up")
 			.send({
