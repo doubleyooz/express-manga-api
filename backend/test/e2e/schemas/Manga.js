@@ -1,4 +1,4 @@
-const manga = (payload) => {
+const schema = (payload) => {
     return {        
         genres: payload.genres,
         languages: payload.languages,
@@ -13,4 +13,4 @@ const manga = (payload) => {
     }
 }
 
-export { manga }
+export { schema }

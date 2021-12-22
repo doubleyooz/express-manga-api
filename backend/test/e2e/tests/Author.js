@@ -1,8 +1,8 @@
 import supertest from "supertest";
-import { app } from "../../src/config/express.js";
-import { getMessage } from "../../src/common/messages.js";
-import { payload, payload2, photo } from "./mocks/Author.js";
-import { author } from "./schemas/Author.js"
+import { app } from "../../../src/config/express.js";
+import { getMessage } from "../../../src/common/messages.js";
+import { payload, payload2, photo } from "../mocks/Author.js";
+import { schema } from "../schemas/Author.js"
 
 export const authorTests = () => {
 	it("POST /authors", async () => {
@@ -21,7 +21,7 @@ export const authorTests = () => {
 					!Array.isArray(response.body) &&
 					response.body !== null
 				).toBeTruthy();
-				
+
 				expect(response.body.data).toBeDefined();
 				expect(response.body.metadata).toBeDefined();
 				expect(response.body.status).toEqual(200);
@@ -29,7 +29,7 @@ export const authorTests = () => {
 				global.navigator.artist = response.body.data._id;
 				expect(response.body).toMatchObject({
 					message: getMessage("author.save.success"),
-					data: author(payload, photo),
+					data: schema(payload, photo),
 					metadata: {},
 					status: 200,
 				});
@@ -60,7 +60,7 @@ export const authorTests = () => {
 				global.navigator.writer = response.body.data._id;
 				expect(response.body).toMatchObject({
 					message: getMessage("author.save.success"),
-					data: author(payload2, photo),
+					data: schema(payload2, photo),
 					metadata: {},
 					status: 200,
 				});
@@ -87,8 +87,8 @@ export const authorTests = () => {
 				expect(response.body).toMatchObject({
 					message: "Author list retrieved successfully: 2",
 					data: [
-						author(payload, photo),
-						author(payload2, photo),
+						schema(payload, photo),
+						schema(payload2, photo),
 					],
 					metadata: {},
 					status: 200,
@@ -114,7 +114,7 @@ export const authorTests = () => {
 
 				expect(response.body).toMatchObject({
 					message: getMessage("author.findone.success"),
-					data: author(payload2, photo),
+					data: schema(payload2, photo),
 					metadata: {},
 					status: 200,
 				});
@@ -124,7 +124,6 @@ export const authorTests = () => {
 	it("PUT /authors name", async () => {
 		payload2.name = "Iito Tachibana";
 		payload2.author_id = global.navigator.writer;
-		console.log(payload2);
 		await supertest(app)
 			.put("/authors")
 			.send(payload2)
@@ -137,7 +136,7 @@ export const authorTests = () => {
 					!Array.isArray(response.body) &&
 					response.body !== null
 				).toBeTruthy();
-				console.log(response.body);
+
 
 				expect(response.body).toMatchObject({
 					message: getMessage("author.update.success"),
@@ -166,7 +165,7 @@ export const authorTests = () => {
 
 				expect(response.body).toMatchObject({
 					message: getMessage("author.findone.success"),
-					data: author(payload2, photo),
+					data: schema(payload2, photo),
 					metadata: {},
 					status: 200,
 				});
@@ -189,7 +188,6 @@ export const authorTests = () => {
 					!Array.isArray(response.body) &&
 					response.body !== null
 				).toBeTruthy();
-				console.log(response.body);
 
 				expect(response.body).toMatchObject({
 					message: getMessage("author.update.success"),
@@ -218,7 +216,7 @@ export const authorTests = () => {
 
 				expect(response.body).toMatchObject({
 					message: getMessage("author.findone.success"),
-					data: author(payload2, photo),
+					data: schema(payload2, photo),
 					metadata: {},
 					status: 200,
 				});
@@ -269,7 +267,7 @@ export const authorTests = () => {
 				expect(response.body).toMatchObject({
 					message: "Author list retrieved successfully: 1",
 					data: [
-						author(payload, photo),
+						schema(payload, photo),
 					],
 					metadata: {},
 					status: 200,
@@ -302,7 +300,7 @@ export const authorTests = () => {
 				global.navigator.writer = response.body.data._id;
 				expect(response.body).toMatchObject({
 					message: getMessage("author.save.success"),
-					data: author(payload2, photo),
+					data: schema(payload2, photo),
 					metadata: {},
 					status: 200,
 				});

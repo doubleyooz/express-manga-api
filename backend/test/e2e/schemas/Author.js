@@ -1,5 +1,5 @@
 
-const author = (payload, photo) => {
+const schema = (payload, photo) => {
     return {
         type: [payload.type],
         photos: [
@@ -14,12 +14,10 @@ const author = (payload, photo) => {
         name: payload.name,
         birthDate: payload.birthDate,
         deathDate: null,
-        biography: payload.biography,
-        //createdAt: '2021-11-01T03:03:04.290Z',
-        //updatedAt: '2021-11-01T03:03:04.290Z',
+        biography: payload.biography,        
         __v: 0,
     }
 
 }
 
-export { author }
+export { schema }

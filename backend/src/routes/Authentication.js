@@ -6,11 +6,12 @@ import SessionController from "../controllers/SessionController.js";
 import UserMiddleware from "../middlewares/UserMiddleware.js";
 
 import { auth as Authorize, easyAuth } from "../middlewares/SessionMiddleware.js";
+import { getMessage } from "../common/messages.js";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-	return res.jsonOK(null, "Hello World", null);
+	return res.jsonOK(null, getMessage("default.return"), null);
 });
 
 router.get("/me", Authorize(), SessionController.me);

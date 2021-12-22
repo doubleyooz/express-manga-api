@@ -1,8 +1,8 @@
 import supertest from "supertest";
-import { app } from "../../src/config/express.js";
-import { getMessage } from "../../src/common/messages.js";
-import { payload, photo } from "./mocks/Manga.js";
-import { manga } from "./schemas/Manga.js";
+import { app } from "../../../src/config/express.js";
+import { getMessage } from "../../../src/common/messages.js";
+import { payload, photo } from "../mocks/Manga.js";
+import { schema } from "../schemas/Manga.js";
 
 
 export const mangaTests = () => {
@@ -28,7 +28,7 @@ export const mangaTests = () => {
 					response.body !== null
 				).toBeTruthy();
 				expect(response.body).toMatchObject({
-					data: manga(payload),
+					data: schema(payload),
 					message: getMessage("manga.save.success"),
 					metadata: {},
 					status: 200,
@@ -56,7 +56,7 @@ export const mangaTests = () => {
 				expect(response.body).toMatchObject({
 					message: getMessage("manga.list.success") + "1",
 					data: [
-						manga(payload),
+						schema(payload),
 					],
 					metadata: {},
 					status: 200,
@@ -66,8 +66,7 @@ export const mangaTests = () => {
 	});
 
 	it("PUT /manga title", async () => {
-		payload.title = "Gantz";
-		console.log(payload)
+		payload.title = "Gantz";		
 		await supertest(app)
 			.put("/mangas")
 			.send(payload)
@@ -80,8 +79,7 @@ export const mangaTests = () => {
 					!Array.isArray(response.body) &&
 					response.body !== null
 				).toBeTruthy();
-				console.log(response.body);
-
+				
 				expect(response.body).toMatchObject({
 					message: getMessage("manga.update.success"),
 					data: null,

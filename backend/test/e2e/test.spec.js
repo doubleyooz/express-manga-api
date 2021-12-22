@@ -1,6 +1,6 @@
-import { authorTests } from "./Author.js";
-import { mangaTests } from "./Manga.js";
-import { sessionTests } from "./Session.js";
+import { authorTests } from "./tests/Author.js";
+import { mangaTests } from "./tests/Manga.js";
+import { sessionTests } from "./tests/Session.js";
 
 import setupDB from "./test-setup.js";
 
