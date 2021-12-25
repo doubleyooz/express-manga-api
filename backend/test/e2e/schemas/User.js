@@ -1,4 +1,4 @@
-const schema = (payload) => {
+const schema = payload => {
     return {
         role: payload.role,
         mangas: [],
@@ -11,16 +11,16 @@ const schema = (payload) => {
         email: payload.email,
         name: payload.name,
 
-        __v: 0
-    }
-}
+        __v: 0,
+    };
+};
 
-const sign_in = (payload) => {
+const sign_in = payload => {
     return {
         role: payload.role,
         token_version: 0,
         _id: payload._id,
-    }
-}
+    };
+};
 
-export { schema, sign_in }
+export { schema, sign_in };

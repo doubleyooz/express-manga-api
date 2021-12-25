@@ -4,7 +4,7 @@ const schema = (payload, photo) => {
         photos: [
             {
                 originalname: photo.name,
-                size: photo.size
+                size: photo.size,
             },
         ],
         works: [],
@@ -13,10 +13,9 @@ const schema = (payload, photo) => {
         name: payload.name,
         birthDate: payload.birthDate,
         deathDate: null,
-        biography: payload.biography,        
+        biography: payload.biography,
         __v: 0,
-    }
+    };
+};
 
-}
-
-export { schema }
+export { schema };

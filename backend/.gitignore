@@ -7,7 +7,6 @@
 /node_modules
 /.pnp
 
-.prettierrc
 .pnp.js
 .vscode/
 uploads/

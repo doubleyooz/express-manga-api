@@ -7,12 +7,20 @@
   "license": "MIT",
   "jest": {
     "transform": {},
-    "testRunner": "jasmine2",
-    "setupFiles": ["dotenv/config"],
-    "setupFilesAfterEnv": ["./test/e2e/test-setup.js"],   
+    "globals": {
+      "__DEV__": true,
+      "__RCTProfileIsProfiling": false
+    },
+    "testSequencer": "./test/e2e/config/test.sequencer.js",
+    "setupFiles": [
+      "dotenv/config"
+    ],
+    "setupFilesAfterEnv": [
+      "./test/e2e/config/test.setup.js"
+    ],
     "verbose": true
   },
-  "scripts": {   
+  "scripts": {
     "start:dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
     "start:test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test",
     "start:test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test/e2e",
