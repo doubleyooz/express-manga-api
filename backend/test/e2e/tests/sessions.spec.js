@@ -5,8 +5,7 @@ import CryptoJs from "crypto-js";
 
 import { app } from "../../../src/config/express.js";
 import { user, scan, fake_user } from "../mocks/User.js";
-import { schema, sign_in } from "../schemas/User.js"
-import { wrapper } from "../helpers/Wrapper.js"
+import { schema, sign_in } from "../schemas/User.js";
 import { getMessage } from "../../../src/common/messages.js";
 
 dotenv.config({ path: '.env.test' });
@@ -14,8 +13,9 @@ dotenv.config({ path: '.env.test' });
 
 const itif = (condition) => condition ? it : it.skip;
 
-export const sessionTests = () => {
-	itif(wrapper.runAll)("GET /", async () => {
+describe("Session", () => {
+	let state = true;
+	it("GET /", async () => {
 		await supertest(app)
 			.get("/")
 			.expect(200)
@@ -30,18 +30,19 @@ export const sessionTests = () => {
 
 				expect(response.body).toEqual({
 					message: getMessage("default.return"),
-					data: null,
+					data: 2,
 					metadata: {},
 					status: 200,
 				});
 			}).catch(err => {
-				wrapper.status = false;
-				throw new Error(err);
-			});
-	}
-	)
+				state = false;
+				throw new Error(err)
+			})
+	})
 
-	itif(wrapper.status)("GET /sign-in Must Fail", async () => {
+	console.log(state)
+
+	itif(state)("GET /sign-in Must Fail", async () => {
 		await supertest(app)
 			.get("/sign-in")
 			.send({
@@ -63,46 +64,33 @@ export const sessionTests = () => {
 					metadata: {},
 					status: 401,
 				});
-			}).catch(err => {
-				wrapper.status = false;
-				throw new Error(err);
-			});;
+			})
 	});
 
-	itif(wrapper.status)("POST /sign-up Scan", async () => {
-		const response =
-			await supertest(app)
-				.post("/sign-up")
-				.send(scan);
+	itif(state)("POST /sign-up Scan", async () => {
 
-		try {
-			// Check type and length				
-			expect(
-				typeof response.body === "object" &&
-				!Array.isArray(response.body) &&
-				response.body !== null
-			).toBeTruthy();
+		await supertest(app)
+			.post("/sign-up")
+			.send(scan)
+			.expect(200)
+			.then((response) => {
+				expect(
+					typeof response.body === "object" &&
+					!Array.isArray(response.body) &&
+					response.body !== null
+				).toBeTruthy();
 
-			expect(response.body).toEqual({
-				message: getMessage("user.activation.account.activate"),
-				data: 2,
-				metadata: {},
-				status: 200,
-			});
-		} catch(err) {			
-			wrapper.status = false;
-			throw new Error(err);
-		};
-		
-		console.log("here")
-		
-		
-		
-
+				expect(response.body).toEqual({
+					message: getMessage("user.activation.account.activate"),
+					data: 2,
+					metadata: {},
+					status: 200,
+				});
+			})
 	});
 
 
-	itif(wrapper.status)("GET /users", async () => {
+	itif(state)("GET /users", async () => {
 
 		await supertest(app)
 			.get("/users")
@@ -131,16 +119,12 @@ export const sessionTests = () => {
 					status: 200,
 				});
 				scan._id = response.body.data[0]._id;
-			}).catch(err => {
-				wrapper.status = false;
-				throw new Error(err);
-			});
-		
-		console.log(wrapper.status)
+			})
+
 
 	});
 
-	itif(wrapper.status)("POST /authentication/activate/:tky", async () => {
+	itif(state)("POST /authentication/activate/:tky", async () => {
 		console.log(`${process.env.SHUFFLE_SECRET}`)
 		const tkn = jwt.generateJwt(
 			{
@@ -168,13 +152,10 @@ export const sessionTests = () => {
 					metadata: {},
 					status: 200,
 				});
-			}).catch(err => {
-				wrapper.status = false;
-				throw new Error(err);
-			});;
+			})
 	});
 
-	itif(wrapper.status)("GET /sign-in", async () => {
+	itif(state)("GET /sign-in", async () => {
 		await supertest(app)
 			.get("/sign-in")
 			.auth(scan.email, scan.password)
@@ -198,9 +179,7 @@ export const sessionTests = () => {
 					token: response.body.metadata.token,
 					scan_id: scan._id
 				};
-			}).catch(err => {
-				wrapper.status = false;
-				throw new Error(err);
-			});;
+			})
 	});
-};
+
+});

@@ -3,8 +3,9 @@ import { app } from "../../../src/config/express.js";
 import { getMessage } from "../../../src/common/messages.js";
 import { payload, payload2, photo } from "../mocks/Author.js";
 import { schema } from "../schemas/Author.js"
+const describeif = (condition) => condition ? describe : describe.skip;
 
-export const authorTests = () => {
+describeif (false)("Author", () => {
 	it("POST /authors", async () => {
 		await supertest(app)
 			.post("/authors")
@@ -306,4 +307,4 @@ export const authorTests = () => {
 				});
 			});
 	});
-};
+})

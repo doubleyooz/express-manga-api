@@ -1,4 +1,3 @@
-
 const schema = (payload, photo) => {
     return {
         type: [payload.type],

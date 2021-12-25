@@ -4,8 +4,9 @@ import { getMessage } from "../../../src/common/messages.js";
 import { payload, photo } from "../mocks/Manga.js";
 import { schema } from "../schemas/Manga.js";
 
+const describeif = (condition) => condition ? describe : describe.skip;
 
-export const mangaTests = () => {
+describeif (false)("Manga", () => {
 	it("POST /mangas", async () => {
 		console.log(global.navigator);
 		payload.scan_id = global.navigator.scan_id;
@@ -48,11 +49,11 @@ export const mangaTests = () => {
 					typeof response.body === "object" &&
 					!Array.isArray(response.body) &&
 					response.body !== null
-				).toBeTruthy();				
+				).toBeTruthy();
 				expect(
 					response.body.message.startsWith(getMessage("manga.list.success"))
 				).toBeTruthy();
-				
+
 				expect(response.body).toMatchObject({
 					message: getMessage("manga.list.success") + "1",
 					data: [
@@ -61,12 +62,12 @@ export const mangaTests = () => {
 					metadata: {},
 					status: 200,
 				});
-				payload.manga_id = response.body.data[0]._id				
+				payload.manga_id = response.body.data[0]._id
 			});
 	});
 
 	it("PUT /manga title", async () => {
-		payload.title = "Gantz";		
+		payload.title = "Gantz";
 		await supertest(app)
 			.put("/mangas")
 			.send(payload)
@@ -79,7 +80,7 @@ export const mangaTests = () => {
 					!Array.isArray(response.body) &&
 					response.body !== null
 				).toBeTruthy();
-				
+
 				expect(response.body).toMatchObject({
 					message: getMessage("manga.update.success"),
 					data: null,
@@ -88,4 +89,4 @@ export const mangaTests = () => {
 				});
 			});
 	});
-};
+})

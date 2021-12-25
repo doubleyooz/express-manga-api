@@ -1,5 +1,3 @@
-
-
 const scan = {
 
     email: `${process.env.TEST_GMAIL}`,
@@ -10,7 +8,6 @@ const scan = {
     token: "",
 
 }
-
 const user = {
 
     email: `${process.env.TEST_GMAIL}`,
