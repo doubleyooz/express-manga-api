@@ -1,4 +1,3 @@
-// testSequencer.js
 import Sequencer from '@jest/test-sequencer';
 
 export default class CustomSequencer extends Sequencer.default {

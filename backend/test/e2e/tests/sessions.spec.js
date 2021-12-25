@@ -1,14 +1,14 @@
 import dotenv from 'dotenv';
 import supertest from 'supertest';
-import jwt from '../../../src/common/jwt.js';
 import CryptoJs from 'crypto-js';
 import fs from 'fs';
 import path from 'path';
 
-import { app } from '../../../src/config/express.js';
-import { user, scan, fake_user } from '../mocks/User.js';
-import { schema, sign_in } from '../schemas/User.js';
-import { getMessage } from '../../../src/common/messages.js';
+import { app } from '../../../src/config/express.config.js';
+import { user, scan, fake_user } from '../mocks/user.mock.js';
+import jwt from '../../../src/utils/jwt.util.js';
+import { schema, sign_in } from '../schemas/user.schema.js';
+import { getMessage } from '../../../src/utils/message.util.js';
 
 dotenv.config({ path: '.env.test' });
 

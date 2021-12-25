@@ -2,10 +2,10 @@ import supertest from 'supertest';
 import fs from 'fs';
 import path from 'path';
 
-import { app } from '../../../src/config/express.js';
-import { getMessage } from '../../../src/common/messages.js';
-import { payload, payload2, photo } from '../mocks/Author.js';
-import { schema } from '../schemas/Author.js';
+import { app } from '../../../src/config/express.config.js';
+import { getMessage } from '../../../src/utils/message.util.js';
+import { payload, payload2, photo } from '../mocks/author.mock.js';
+import { schema } from '../schemas/author.schema.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
 const temp = JSON.parse(
