@@ -1,56 +1,6 @@
 import yup from 'yup';
-import mongoose from 'mongoose';
 
-import { getMessage } from '../utils/message.util.js';
-
-const rules = {
-    manga_title: yup
-        .string('manga title must be a string.')
-        .strict()
-        .max(60, getMessage('manga.invalid.title.long')),
-    chapter_title: yup
-        .string('title must be a string.')
-        .strict()
-        .max(40, getMessage('chapter.invalid.title.long')),
-    number: yup
-        .number('Must to be a valid number')
-        .min(1, 'Must be a positive number'),
-    mongo_id_req: yup
-        .string()
-        .strict()
-        .test('isValidMongoId', getMessage('invalid.object.id'), value =>
-            isValidMongoIdRequired(value),
-        ),
-    mongo_id: yup
-        .string()
-        .strict()
-        .test('isValidMongoId', getMessage('invalid.object.id'), value =>
-            isValidMongoId(value),
-        ),
-    language: yup
-        .string('language must be a string.')
-        .strict()
-        .matches(
-            /^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
-            null,
-        )
-        .default({ language: 'pt' }),
-};
-
-function isValidMongoIdRequired(value) {
-    return (
-        mongoose.Types.ObjectId.isValid(value) &&
-        String(new mongoose.Types.ObjectId(value)) === value
-    );
-}
-
-function isValidMongoId(value) {
-    if (!!value) {
-        mongoose.Types.ObjectId.isValid(value) &&
-            String(new mongoose.Types.ObjectId(value)) === value;
-    }
-    return true;
-}
+import { rules } from '../utils/yup.utils.js';
 
 async function valid_store(req, res, next) {
     let schema = yup.object().shape({

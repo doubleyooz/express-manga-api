@@ -1,66 +1,15 @@
 import yup from 'yup';
-import mongoose from 'mongoose';
 import { differenceInCalendarDays } from 'date-fns';
 
-import { getMessage } from '../utils/message.util.js';
-
-const rules = {
-    type: yup
-        .string('type must be a string.')
-        .strict()
-        .matches(/(writer|artist)/, null),
-    mongo_id_req: yup
-        .string()
-        .strict()
-        .test('isValidMongoId', getMessage('invalid.object.id'), value =>
-            isValidMongoIdRequired(value),
-        ),
-    mongo_id: yup
-        .string()
-        .strict()
-        .test('isValidMongoId', getMessage('invalid.object.id'), value =>
-            isValidMongoId(value),
-        ),
-    name: yup.string('name must be a string.').strict(),
-    birthDate: yup.date(),
-    deathDate: yup
-        .date()
-        .min(
-            yup.ref('birthDate') + 3650,
-            'death date must be at least 10 years longer than birthDate',
-        ),
-    socialMedia: yup
-        .array(yup.string('socialMedia must be a string.'))
-        .min(1, '')
-        .max(5, ''),
-    biography: yup
-        .string('biography')
-        .strict()
-        .min(15, getMessage('author.invalid.biography.short')),
-};
-
-function isValidMongoIdRequired(value) {
-    return (
-        mongoose.Types.ObjectId.isValid(value) &&
-        String(new mongoose.Types.ObjectId(value)) === value
-    );
-}
-
-function isValidMongoId(value) {
-    if (!!value) {
-        mongoose.Types.ObjectId.isValid(value) &&
-            String(new mongoose.Types.ObjectId(value)) === value;
-    }
-    return true;
-}
+import { rules } from '../utils/yup.utils.js';
 
 async function valid_store(req, res, next) {
     let currentDate = new Date();
     currentDate.setFullYear(currentDate.getFullYear() - 10);
 
     const schema = yup.object().shape({
-        type: rules.type.required(),
-        name: rules.name.required(),
+        type: rules.type_author.required(),
+        name: rules.authorname.required(),
         birthDate: rules.birthDate.max(currentDate).required(),
         deathDate: rules.deathDate,
         socialMedia: rules.socialMedia.required(),
@@ -100,7 +49,7 @@ async function valid_findOne(req, res, next) {
 async function valid_list(req, res, next) {
     let schema = yup.object().shape({
         type: rules.type,
-        name: rules.name,
+        name: rules.authorname,
     });
 
     try {
@@ -126,7 +75,7 @@ async function valid_update(req, res, next) {
         .shape({
             author_id: rules.mongo_id_req,
             type: rules.type,
-            name: rules.name,
+            name: rules.authorname,
             birthDate: rules.birthDate.max(currentDate),
             deathDate: rules.deathDate,
             socialMedia: rules.socialMedia,

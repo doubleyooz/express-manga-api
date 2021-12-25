@@ -1,35 +1,8 @@
 import yup from 'yup';
 import CryptoJs from 'crypto-js';
-import mongoose from 'mongoose';
 
 import jwt from '../utils/jwt.util.js';
-
-import { getMessage } from '../utils/message.util.js';
-
-const rules = {
-    email: yup.string().email().required(),
-    password: yup
-        .string()
-        .min(8, getMessage('user.invalid.password.short'))
-        .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-            getMessage('user.invalid.password.weak'),
-        )
-        .required(),
-    name: yup.string().min(3, getMessage('user.invalid.name.short')).required(),
-    role: yup.string().matches(/(Scan|User)/, null),
-    sign_in_password: yup
-        .string()
-        .min(8, getMessage('user.invalid.password.short'))
-        .required(),
-};
-
-function isValidMongoIdRequired(value) {
-    return (
-        mongoose.Types.ObjectId.isValid(value) &&
-        String(new mongoose.Types.ObjectId(value)) === value
-    );
-}
+import { rules } from '../utils/yup.utils.js';
 
 async function valid_google_sign_up(req, res, next) {
     const { token, password } = req.body;
@@ -46,7 +19,7 @@ async function valid_google_sign_up(req, res, next) {
     const yupObject = yup.object().shape({
         email: rules.email,
         password: rules.password,
-        name: rules.name,
+        name: rules.username,
         role: rules.role,
     });
     console.log(req.body);
@@ -74,7 +47,7 @@ async function valid_sign_up(req, res, next) {
     const yupObject = yup.object().shape({
         email: rules.email,
         password: rules.password,
-        name: rules.name,
+        name: rules.username,
         role: rules.role,
     });
 
@@ -156,7 +129,7 @@ async function valid_list(req, res, next) {
 
 async function valid_update(req, res, next) {
     let schema = yup.object().shape({
-        name: rules.name,
+        name: rules.username,
     });
 
     schema
