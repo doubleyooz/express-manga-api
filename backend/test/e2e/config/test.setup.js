@@ -44,27 +44,7 @@ async function dropTestUploadFolder() {
     fs.rmdirSync(reqPath, { recursive: true });
 }
 
-async function dropTempJson() {
-    fs.unlinkSync('./test/e2e/tests/temp.json');
-}
-
 function setupDB(databaseName) {
-    // Set variables
-    beforeAll(async () => {
-        let dict = {
-            token: '',
-            scan_id: '',
-        };
-
-        await fs.writeFile(
-            './test/e2e/tests/temp.json',
-            JSON.stringify(dict),
-            function (err, result) {
-                if (err) console.log('error', err);
-            },
-        );
-    });
-
     // Connect to Mongoose
     beforeAll(async () => {
         const mongoms = await MongoMemoryServer.create();
@@ -87,7 +67,6 @@ function setupDB(databaseName) {
     // Disconnect Mongoose
     afterAll(async () => {
         await dropAllCollections();
-        await dropTempJson();
         //await dropTestUploadFolder();
         await mongoose.connection.close();
     });

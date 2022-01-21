@@ -1,4 +1,3 @@
-
 import supertest from 'supertest';
 import CryptoJs from 'crypto-js';
 import fs from 'fs';
@@ -9,8 +8,6 @@ import { user, scan, fake_user } from '../mocks/user.mock.js';
 import jwt from '../../../src/utils/jwt.util.js';
 import { schema, sign_in } from '../schemas/user.schema.js';
 import { getMessage } from '../../../src/utils/message.util.js';
-
-
 
 const itif = condition => (condition ? it : it.skip);
 
@@ -62,7 +59,7 @@ describe('Session', () => {
                 });
             });
     });
-    
+
     itif(state)('POST /sign-up Scan', async () => {
         await supertest(app)
             .post('/sign-up')
@@ -114,7 +111,6 @@ describe('Session', () => {
     });
 
     itif(state)('POST /authentication/activate/:tky', async () => {
-        console.log(`${process.env.SHUFFLE_SECRET}`);
         const tkn = jwt.generateJwt(
             {
                 id: CryptoJs.AES.encrypt(
@@ -163,17 +159,13 @@ describe('Session', () => {
                     metadata: {},
                     status: 200,
                 });
-                fs.readFile(
-                    path.resolve() + '/test/e2e/tests/temp.json',
-                    function (err, data) {
-                        console.log(data);
-                        var json = JSON.parse(data);
-                        json.push('token: ' + response.body.metadata.token);
-                        json.push('scan_id: ' + scan._id);
+                let dict = {
+                    token: response.body.metadata.token,
+                    scan_id: scan._id,
+                };
 
-                        fs.writeFile('temp.json', JSON.stringify(json));
-                    },
-                );
+                let data = JSON.stringify(dict);
+                fs.writeFileSync('test/e2e/tests/temp.json', data);
             });
     });
 });

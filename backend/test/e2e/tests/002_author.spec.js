@@ -1,6 +1,5 @@
 import supertest from 'supertest';
 import fs from 'fs';
-import path from 'path';
 
 import { app } from '../../../src/config/express.config.js';
 import { getMessage } from '../../../src/utils/message.util.js';
@@ -8,9 +7,7 @@ import { payload, payload2, photo } from '../mocks/author.mock.js';
 import { schema } from '../schemas/author.schema.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
-const temp = JSON.parse(
-    fs.readFileSync(path.resolve() + '/test/e2e/tests/temp.json'),
-);
+const temp = JSON.parse(fs.readFileSync('test/e2e/tests/temp.json'));
 
 describe('Author', () => {
     it('POST /authors', async () => {
