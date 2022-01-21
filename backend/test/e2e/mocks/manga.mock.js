@@ -16,9 +16,9 @@ const payload = {
 };
 
 const photo = {
-    dir: '/home/waifu/Downloads/',
+    dir: `${process.env.DIR_PATH}`,
     name: 'abc.jpg',
-    size: 75428,
+    size: 63595,
 };
 
 export { payload, photo };

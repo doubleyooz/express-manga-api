@@ -10,6 +10,7 @@ const describeif = condition => (condition ? describe : describe.skip);
 const temp = JSON.parse(fs.readFileSync('test/e2e/tests/temp.json'));
 
 describe('Author', () => {
+    console.log(temp)
     it('POST /authors', async () => {
         await supertest(app)
             .post('/authors')
