@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+
 import supertest from 'supertest';
 import CryptoJs from 'crypto-js';
 import fs from 'fs';
@@ -10,7 +10,7 @@ import jwt from '../../../src/utils/jwt.util.js';
 import { schema, sign_in } from '../schemas/user.schema.js';
 import { getMessage } from '../../../src/utils/message.util.js';
 
-dotenv.config({ path: '.env.test' });
+
 
 const itif = condition => (condition ? it : it.skip);
 
@@ -62,7 +62,7 @@ describe('Session', () => {
                 });
             });
     });
-
+    
     itif(state)('POST /sign-up Scan', async () => {
         await supertest(app)
             .post('/sign-up')

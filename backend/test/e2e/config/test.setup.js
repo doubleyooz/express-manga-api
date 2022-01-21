@@ -2,9 +2,10 @@
 import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
-
+import dotenv from 'dotenv';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
+dotenv.config({ path: '.env.test' });
 mongoose.set('useCreateIndex', true);
 mongoose.promise = global.Promise;
 
