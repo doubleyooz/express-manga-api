@@ -24,7 +24,7 @@ function auth(roles = []) {
             if (roles.length && !roles.includes(payload.role)) {
                 //Invalid roles
                 return res.jsonUnauthorized(null, null, null);
-            } else {
+            } else {                
                 User.exists({
                     _id: payload.id,
                     active: true,
@@ -65,6 +65,7 @@ function auth(roles = []) {
                                 return res.jsonServerError(null, null, null);
                             }
                         } else {
+                            console.log('here');
                             return res.jsonUnauthorized(null, null, null);
                         }
                     })
