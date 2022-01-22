@@ -6,8 +6,7 @@ import CryptoJs from 'crypto-js';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export const folderName = 'uploads2/';
+export const folderName = process.env.NODE_ENV === 'dev' ? 'uploads/' : 'uploads2/';
 
 const authorFiles = {
     storage: multer.diskStorage({

@@ -1,7 +1,7 @@
 import multer from 'multer';
 import fs from 'fs';
 
-import multerConfig from '../config/multer.config.js';
+import multerConfig, { folderName } from '../config/multer.config.js';
 
 const upload1 = multer(multerConfig.file).single('cover');
 const upload2 = multer(multerConfig.files).array('imgCollection');
@@ -36,7 +36,7 @@ function upload_many_manga(req, res, next) {
 }
 
 function upload_many_author(req, res, next) {
-    let dir = './' + 'uploads/' + 'authors/';
+    let dir = './' + folderName + 'authors/';
 
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
@@ -47,6 +47,7 @@ function upload_many_author(req, res, next) {
         fs.mkdirSync(dir + 'writer' + '/');
 
     upload3(req, res, function (err) {
+        console.log('upload3')
         if (err instanceof multer.MulterError) {
             // A Multer error occurred when uploading.
             console.log('if');
