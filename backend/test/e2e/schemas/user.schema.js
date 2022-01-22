@@ -99,14 +99,14 @@ const createScan = () => {
                     typeof response.body === 'object' &&
                         !Array.isArray(response.body) &&
                         response.body !== null,
-                ).toBeTruthy();
-
+                ).toBeTruthy();                
                 expect(response.body).toMatchObject({
                     message: getMessage('user.valid.sign_in.success'),
                     data: sign_in(scan),
                     metadata: {},
                     status: 200,
                 });
+                scan.token = response.body.metadata.token;
             });
     });
 };

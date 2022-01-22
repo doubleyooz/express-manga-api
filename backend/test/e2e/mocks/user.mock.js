@@ -4,7 +4,8 @@ const scan = {
     active: false,
     name: 'Jojo',
     role: 'Scan',
-    _id: ''
+    _id: '',
+    token: ''
 };
 const user = {
     email: `${process.env.TEST_GMAIL}`,
@@ -12,7 +13,8 @@ const user = {
     active: false,
     name: 'Seth',
     role: 'User',
-    _id: ''
+    _id: '',
+    token: ''
 };
 
 const fake_user = {

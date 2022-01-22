@@ -57,10 +57,6 @@ describe('Session', () => {
                 });
             });
     });
-    
-    createScan();
- 
 
-   
- 
+    createScan();
 });

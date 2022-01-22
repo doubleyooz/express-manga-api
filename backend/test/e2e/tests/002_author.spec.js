@@ -4,22 +4,23 @@ import fs from 'fs';
 import { app } from '../../../src/config/express.config.js';
 import { getMessage } from '../../../src/utils/message.util.js';
 import { payload, payload2, photo } from '../mocks/author.mock.js';
+import { user, scan } from '../mocks/user.mock.js';
 import { createScan } from '../schemas/user.schema.js';
 import { schema } from '../schemas/author.schema.js';
 
 
-const temp = JSON.parse(fs.readFileSync('test/e2e/tests/temp.json'));
-
-describe('Author', () => {      
+describe('Author', () => {
     createScan();
+   
     it('POST /authors', async () => {
+        console.log(scan)
         await supertest(app)
             .post('/authors')
             .field(payload)
-            .set('Authorization', 'Bearer ' + temp.token)
+            .set('Authorization', 'Bearer ' + scan.token)
 
             .attach('photos', photo.dir + photo.name)
-            .expect(401)
+            .expect(200)
             .then(response => {
                 // Check type and length
                 expect(
@@ -50,7 +51,7 @@ describe('Author', () => {
         await supertest(app)
             .post('/authors')
             .field(payload2)
-            .set('Authorization', 'Bearer ' + temp.token)
+            .set('Authorization', 'Bearer ' + scan.token)
 
             .attach('photos', photo.dir + photo.name)
             .expect(200)
@@ -136,7 +137,7 @@ describe('Author', () => {
         await supertest(app)
             .put('/authors')
             .send(payload2)
-            .set('Authorization', 'Bearer ' + temp.token)
+            .set('Authorization', 'Bearer ' + scan.token)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -187,7 +188,7 @@ describe('Author', () => {
         await supertest(app)
             .put('/authors')
             .send(payload2)
-            .set('Authorization', 'Bearer ' + temp.token)
+            .set('Authorization', 'Bearer ' + scan.token)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -237,7 +238,7 @@ describe('Author', () => {
         await supertest(app)
             .delete(`/authors?author_id=${payload2.author_id}`)
 
-            .set('Authorization', 'Bearer ' + temp.token)
+            .set('Authorization', 'Bearer ' + scan.token)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -289,7 +290,7 @@ describe('Author', () => {
         await supertest(app)
             .post('/authors')
             .field(payload2)
-            .set('Authorization', 'Bearer ' + temp.token)
+            .set('Authorization', 'Bearer ' + scan.token)
 
             .attach('photos', photo.dir + photo.name)
             .expect(200)
