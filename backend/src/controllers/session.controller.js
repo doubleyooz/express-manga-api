@@ -268,52 +268,43 @@ async function sign_in(req, res) {
 }
 
 async function activateAccount(req, res) {
-    const token = req.params.tky;
-    if (token) {
-        try {
-            const decodedToken = jwt.verifyJwt(token, 3);
-            if (decodedToken) {
-                console.log('DecodedToken: ' + decodedToken.id);
-                const supposed_id = CryptoJs.AES.decrypt(
-                    decodedToken.id,
-                    `${process.env.SHUFFLE_SECRET}`,
-                ).toString(CryptoJs.enc.Utf8);
-                User.findById(supposed_id)
-                    .then(user => {
-                        if (user.active) {
-                            console.log('user.active');
-                            return res.jsonBadRequest(
-                                null,
-                                getMessage(
-                                    'user.activation.error.already.activated',
-                                ),
-                                null,
-                            );
-                        }
-                        user.active = true;
-                        user.save().then(savedDoc => {
-                            if (savedDoc === user) {
-                                return res.jsonOK(
-                                    null,
-                                    getMessage('user.valid.sign_up.success'),
-                                    null,
-                                );
-                            } else {
-                                return res.jsonServerError(null, null, null);
-                            }
-                        });
-                    })
-                    .catch(err => {
-                        return res.jsonBadRequest(err, null, null);
-                    });
-            } else {
-                return res.jsonBadRequest(null, null, null);
-            }
-        } catch (err) {
-            return res.jsonUnauthorized(err, null, null);
-        }
-    } else {
-        return res.jsonBadRequest(null, null, null);
+    try {
+        const token = req.params.tky ? req.params.tky : () => {throw "token missing"};
+        const decodedToken = jwt.verifyJwt(token, 3);
+        
+        const supposed_id = CryptoJs.AES.decrypt(
+            decodedToken.id,
+            `${process.env.SHUFFLE_SECRET}`,
+        ).toString(CryptoJs.enc.Utf8);
+
+        User.findById(supposed_id)
+            .then(user => {
+                if (user.active) {
+                    console.log('user.active');
+                    return res.jsonBadRequest(
+                        null,
+                        getMessage('user.activation.error.already.activated'),
+                        null,
+                    );
+                }
+                user.active = true;
+                user.save().then(savedDoc => {
+                    if (savedDoc === user) {
+                        return res.jsonOK(
+                            null,
+                            getMessage('user.valid.sign_up.success'),
+                            null,
+                        );
+                    } else {
+                        return res.jsonServerError(null, null, null);
+                    }
+                });
+            })
+            .catch(err => {
+                return res.jsonBadRequest(err, null, null);
+            });
+    } catch (err) {
+        return res.jsonUnauthorized(err, null, null);
     }
 }
 
@@ -332,46 +323,41 @@ async function me(req, res) {
 //missing test
 async function changeEmail(req, res) {
     const token = req.params.tky;
+    const decodedToken = token ? await jwt.verifyJwt(token, 5) : null;
 
-    if (token) {
-        const decodedToken = await jwt.verifyJwt(token, 5);
+    if (!decodedToken) return res.jsonBadRequest(null, null, null);
 
-        if (decodedToken) {
-            const supposed_id = CryptoJs.AES.decrypt(
-                decodedToken.id,
+    const supposed_id = CryptoJs.AES.decrypt(
+        decodedToken.id,
+        `${process.env.SHUFFLE_SECRET}`,
+    ).toString(CryptoJs.enc.Utf8);
+
+    User.findById(supposed_id)
+        .then(user => {
+            const email = CryptoJs.AES.decrypt(
+                decodedToken.email,
                 `${process.env.SHUFFLE_SECRET}`,
             ).toString(CryptoJs.enc.Utf8);
-
-            User.findById(supposed_id)
-                .then(user => {
-                    const email = CryptoJs.AES.decrypt(
-                        decodedToken.email,
-                        `${process.env.SHUFFLE_SECRET}`,
-                    ).toString(CryptoJs.enc.Utf8);
-                    if (email) {
-                        user.email = email;
-                        user.save().then(savedDoc => {
-                            if (savedDoc === user) {
-                                return res.jsonOK(
-                                    user,
-                                    getMessage('user.update.email.success'),
-                                    null,
-                                );
-                            } else {
-                                return res.jsonServerError(user, null, null);
-                            }
-                        });
+            if (email) {
+                user.email = email;
+                user.save().then(savedDoc => {
+                    if (savedDoc === user) {
+                        return res.jsonOK(
+                            user,
+                            getMessage('user.update.email.success'),
+                            null,
+                        );
                     } else {
-                        return res.jsonBadRequest(null, null, null);
+                        return res.jsonServerError(user, null, null);
                     }
-                })
-                .catch(err => {
-                    return res.jsonBadRequest(err, null, null);
                 });
-        } else {
+            } else {
+                return res.jsonBadRequest(null, null, null);
+            }
+        })
+        .catch(err => {
             return res.jsonBadRequest(err, null, null);
-        }
-    }
+        });
 }
 
 //working on
