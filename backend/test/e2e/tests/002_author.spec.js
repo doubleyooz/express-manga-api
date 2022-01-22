@@ -4,13 +4,14 @@ import fs from 'fs';
 import { app } from '../../../src/config/express.config.js';
 import { getMessage } from '../../../src/utils/message.util.js';
 import { payload, payload2, photo } from '../mocks/author.mock.js';
+import { createScan } from '../schemas/user.schema.js';
 import { schema } from '../schemas/author.schema.js';
 
-const describeif = condition => (condition ? describe : describe.skip);
+
 const temp = JSON.parse(fs.readFileSync('test/e2e/tests/temp.json'));
 
-describe('Author', () => {
-    console.log(temp)
+describe('Author', () => {      
+    createScan();
     it('POST /authors', async () => {
         await supertest(app)
             .post('/authors')
@@ -18,7 +19,7 @@ describe('Author', () => {
             .set('Authorization', 'Bearer ' + temp.token)
 
             .attach('photos', photo.dir + photo.name)
-            .expect(200)
+            .expect(401)
             .then(response => {
                 // Check type and length
                 expect(
@@ -29,15 +30,19 @@ describe('Author', () => {
 
                 expect(response.body.data).toBeDefined();
                 expect(response.body.metadata).toBeDefined();
-                expect(response.body.status).toEqual(200);
+                //expect(response.body.status).toEqual(200);
 
-                global.navigator.artist = response.body.data._id;
                 expect(response.body).toMatchObject({
                     message: getMessage('author.save.success'),
                     data: schema(payload, photo),
                     metadata: {},
                     status: 200,
                 });
+
+                let data = JSON.stringify({
+                    artist_id: response.body.data._id,
+                });
+                fs.writeFileSync('test/e2e/tests/temp.json', data);
             });
     });
 
