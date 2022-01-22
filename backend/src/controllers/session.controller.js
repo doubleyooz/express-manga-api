@@ -269,9 +269,13 @@ async function sign_in(req, res) {
 
 async function activateAccount(req, res) {
     try {
-        const token = req.params.tky ? req.params.tky : () => {throw "token missing"};
+        const token = req.params.tky
+            ? req.params.tky
+            : () => {
+                  throw 'token missing';
+              };
         const decodedToken = jwt.verifyJwt(token, 3);
-        
+
         const supposed_id = CryptoJs.AES.decrypt(
             decodedToken.id,
             `${process.env.SHUFFLE_SECRET}`,
