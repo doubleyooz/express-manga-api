@@ -390,32 +390,21 @@ async function update(req, res) {
         `${process.env.SHUFFLE_SECRET}`,
     ).toString(CryptoJs.enc.Utf8);
 
-    if (artist_id) {
-        const artist = await Author.findById(artist_id);
+    const artist = artist_id ? await Author.findById(artist_id) : null;
 
-        if (!artist || artist.role !== 'artist')
-            return res.jsonBadRequest(
-                null,
-                getMessage('manga.error.artist'),
-                null,
-            );
-    }
+    if (!artist || !artist.type.includes('artist'))
+        return res.jsonBadRequest(null, getMessage('manga.error.artist'), null);
 
-    if (writer_id) {
-        const writer = await Author.findById(writer_id);
+    const writer = writer_id ? await Author.findById(writer_id) : null;
 
-        if (!writer || writer.role !== 'writer')
-            return res.jsonBadRequest(
-                null,
-                getMessage('manga.error.writer'),
-                null,
-            );
-    }
+    if (!writer || !writer.type.includes('writer'))
+        return res.jsonBadRequest(null, getMessage('manga.error.writer'), null);
 
     Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body)
         .then(manga => {
-            if (artist) {
-                cloneData = artist.works.filter(function (work_id) {
+            if (artist_id !== manga.artist_id) {
+                console.log('artist');
+                let cloneData = artist.works.filter(function (work_id) {
                     return manga_id.toString() !== work_id.toString();
                 });
                 //update artist document
@@ -430,8 +419,9 @@ async function update(req, res) {
                     });
             }
 
-            if (writer) {
-                cloneData = writer.works.filter(function (work_id) {
+            if (writer_id !== manga.writer_id) {
+                console.log('writer');
+                let cloneData = writer.works.filter(function (work_id) {
                     return manga_id.toString() !== work_id.toString();
                 });
                 //update writer document
@@ -454,6 +444,7 @@ async function update(req, res) {
             );
         })
         .catch(err => {
+            console.log(err);
             return res.jsonServerError(null, null, err);
         });
 }

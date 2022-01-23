@@ -14,7 +14,7 @@ async function valid_store(req, res, next) {
         n_chapters: rules.n_chapters.required(),
         status: rules.status.required(),
         nsfw: rules.nsfw.required(),
-        type: rules.type.required(),
+        type: rules.type_manga.required(),
         languages: rules.languages.required(),
     });
 
@@ -104,7 +104,7 @@ async function valid_update(req, res, next) {
         languages: rules.languages,
         manga_id: rules.mongo_id_req,
     });
-    console.log(req.body);
+
     try {
         schema
             .validate(req.body)
