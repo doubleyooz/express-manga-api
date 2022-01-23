@@ -1,4 +1,4 @@
-const payload = {
+const manga = {
     title: 'Berserk',
     genres: ['action', 'horror', 'fantasy', 'psychological'],
     synopsis: 'A sad manga following a story of guy seeking revenge',
@@ -21,4 +21,4 @@ const photo = {
     size: 63595,
 };
 
-export { payload, photo };
+export { manga, photo };

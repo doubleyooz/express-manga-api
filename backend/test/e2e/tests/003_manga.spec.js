@@ -1,24 +1,31 @@
 import supertest from 'supertest';
-import fs from 'fs';
 
 import { app } from '../../../src/config/express.config.js';
 import { getMessage } from '../../../src/utils/message.util.js';
-import { payload, photo } from '../mocks/manga.mock.js';
+import { artist, writer } from '../mocks/author.mock.js';
+import { manga, photo } from '../mocks/manga.mock.js';
+import { user, scan } from '../mocks/user.mock.js';
 import { schema } from '../schemas/manga.schema.js';
+import { createAuthor } from '../schemas/author.schema.js';
+import { createScan } from '../schemas/user.schema.js';
 
-const describeif = condition => (condition ? describe : describe.skip);
-const temp = JSON.parse(fs.readFileSync('test/e2e/tests/temp.json'));
+
 
 describe('Manga', () => {
+    createScan();
+
+    createAuthor(artist);
+    createAuthor(writer);
+
     it('POST /mangas', async () => {
-        payload.scan_id = global.navigator.scan_id;
-        payload.writer_id = global.navigator.writer;
-        payload.artist_id = global.navigator.artist;
+        manga.scan_id = scan._id;
+        manga.writer_id = writer._id;
+        manga.artist_id = artist._id;
 
         await supertest(app)
             .post('/mangas')
-            .field(payload)
-            .set('Authorization', 'Bearer ' + temp.token)
+            .field(manga)
+            .set('Authorization', 'Bearer ' + scan.token)
 
             .attach('cover', photo.dir + photo.name)
             .expect(200)
@@ -31,7 +38,7 @@ describe('Manga', () => {
                         response.body !== null,
                 ).toBeTruthy();
                 expect(response.body).toMatchObject({
-                    data: schema(payload),
+                    data: schema(manga),
                     message: getMessage('manga.save.success'),
                     metadata: {},
                     status: 200,
@@ -43,7 +50,7 @@ describe('Manga', () => {
         await supertest(app)
             .get('/mangas')
             .send({})
-            .set('Authorization', 'Bearer ' + temp.token)
+            .set('Authorization', 'Bearer ' + scan.token)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -60,21 +67,22 @@ describe('Manga', () => {
 
                 expect(response.body).toMatchObject({
                     message: getMessage('manga.list.success') + '1',
-                    data: [schema(payload)],
+                    data: [schema(manga)],
                     metadata: {},
                     status: 200,
                 });
-                payload.manga_id = response.body.data[0]._id;
+                manga.manga_id = response.body.data[0]._id;
             });
     });
 
     it('PUT /manga title', async () => {
-        payload.title = 'Gantz';
+        manga.title = 'Gantz';
+        console.log(manga)
         await supertest(app)
             .put('/mangas')
-            .send(payload)
-            .set('Authorization', 'Bearer ' + temp.token)
-            .expect(400)
+            .send(manga)
+            .set('Authorization', 'Bearer ' + scan.token)
+            .expect(200)
             .then(response => {
                 // Check type and length
                 expect(
@@ -82,7 +90,7 @@ describe('Manga', () => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-
+                console.log(response.body.metadata)
                 expect(response.body).toMatchObject({
                     message: getMessage('manga.update.success'),
                     data: null,
@@ -93,4 +101,4 @@ describe('Manga', () => {
     });
 });
 
-//fs.unlinkSync('./test/e2e/tests/temp.json');
+//fs.unlinkSync('./test/e2e/tests/scan.json');
