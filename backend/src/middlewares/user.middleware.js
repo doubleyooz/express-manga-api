@@ -2,7 +2,7 @@ import yup from 'yup';
 import CryptoJs from 'crypto-js';
 
 import jwt from '../utils/jwt.util.js';
-import { rules } from '../utils/yup.utils.js';
+import { rules } from '../utils/yup.util.js';
 
 async function valid_google_sign_up(req, res, next) {
     const { token, password } = req.body;
