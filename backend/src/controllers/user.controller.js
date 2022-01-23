@@ -12,7 +12,7 @@ import { getMessage } from '../utils/message.util.js';
 const Protonmail = false;
 
 async function sendEmail(email, activationToken) {
-    if (!`${process.env.ENV}` === 'TEST') {
+    if (!`${process.env.ENV}` === 'test') {
         if (Protonmail) {
             console.log('aqui - 0');
             const pm = await ProtonMail.connect({
@@ -101,10 +101,11 @@ async function store(req, res) {
                         return res.jsonOK(
                             null,
                             getMessage('user.activation.account.activate'),
-                            null,
+                            process.env.NODE_ENV === 'test' ? tkn : null,
                         );
                     })
                     .catch(err => {
+                        console.log(err);
                         return res.jsonBadRequest(null, null, { err });
                     });
             }
@@ -140,11 +141,14 @@ async function store(req, res) {
                             return res.jsonOK(
                                 null,
                                 getMessage('user.activation.account.activate'),
-                                null,
+                                process.env.NODE_ENV === 'test'
+                                    ? activationToken
+                                    : null,
                             );
                         })
                         .catch(err => {
-                            return res.jsonBadRequest(null, null, { err });
+                            console.log(err);
+                            return res.jsonBadRequest(null, null, err);
                         });
                 })
                 .catch(err => {
@@ -183,7 +187,7 @@ async function findOne(req, res) {
 }
 
 async function list(req, res) {
-    const { email } = req.query;
+    const { name } = req.query;
 
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
@@ -198,17 +202,15 @@ async function list(req, res) {
     req.role = null;
 
     let search =
-        role == 1
-            ? email
-                ? { email: { $regex: email, $options: 'i' } }
+        role === 1
+            ? name
+                ? { name: { $regex: '^' + name, $options: 'i' } }
                 : {}
-            : email
-            ? { email: { $regex: email, $options: 'i' }, active: true }
+            : name
+            ? { name: { $regex: '^' + name, $options: 'i' }, active: true }
             : { active: true };
 
     let docs = [];
-
-    search = {};
 
     (await User.find(search)).forEach(function (doc) {
         docs.push(doc);

@@ -8,7 +8,7 @@ const scan = {
     token: ''
 };
 const user = {
-    email: `${process.env.TEST_GMAIL}`,
+    email: "as" + `${process.env.TEST_GMAIL}`,
     password: `${process.env.TEST_GMAIL_PASS}`,
     active: false,
     name: 'Seth',

@@ -85,13 +85,7 @@ async function valid_sign_in(req, res, next) {
 
 async function valid_findOne(req, res, next) {
     let schema = yup.object().shape({
-        user_id: yup
-            .string('user_id must be a string.')
-            .strict()
-            .required()
-            .test('isValidMongoId', getMessage('invalid.object.id'), value =>
-                isValidMongoIdRequired(value),
-            ),
+        user_id: rules.mongo_id_req,
     });
 
     try {
@@ -101,6 +95,7 @@ async function valid_findOne(req, res, next) {
                 next();
             })
             .catch(err => {
+                console.log(err);
                 return res.jsonBadRequest(null, null, err.errors);
             });
     } catch (err) {
@@ -110,12 +105,12 @@ async function valid_findOne(req, res, next) {
 
 async function valid_list(req, res, next) {
     let schema = yup.object().shape({
-        email: yup.string().email(),
+        name: rules.username,
     });
 
     try {
         schema
-            .validate(req.body)
+            .validate(req.query)
             .then(() => {
                 next();
             })
@@ -144,13 +139,7 @@ async function valid_update(req, res, next) {
 
 async function valid_remove(req, res, next) {
     let schema = yup.object().shape({
-        user_id: yup
-            .string()
-            .strict()
-            .required()
-            .test('isValidMongoId', getMessage('invalid.object.id'), value =>
-                isValidMongoIdRequired(value),
-            ),
+        user_id: rules.mongo_id_req,
     });
 
     try {
@@ -166,7 +155,7 @@ async function valid_remove(req, res, next) {
                     next();
                 }
 
-                return res.jsonBadRequest(null, null, err.errors);
+                return res.jsonBadRequest(null, null, null);
             })
             .catch(err => {
                 return res.jsonBadRequest(null, null, err.errors);

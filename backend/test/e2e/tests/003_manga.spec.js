@@ -7,12 +7,12 @@ import { manga, photo } from '../mocks/manga.mock.js';
 import { user, scan } from '../mocks/user.mock.js';
 import { schema } from '../schemas/manga.schema.js';
 import { createAuthor } from '../schemas/author.schema.js';
-import { createScan } from '../schemas/user.schema.js';
+import { createUser } from '../schemas/user.schema.js';
 
 
 
 describe('Manga', () => {
-    createScan();
+    createUser(scan);
 
     createAuthor(artist);
     createAuthor(writer);
@@ -76,8 +76,7 @@ describe('Manga', () => {
     });
 
     it('PUT /manga title', async () => {
-        manga.title = 'Gantz';
-        console.log(manga)
+        manga.title = 'Gantz';        
         await supertest(app)
             .put('/mangas')
             .send(manga)

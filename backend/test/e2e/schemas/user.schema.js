@@ -1,17 +1,18 @@
 import CryptoJs from 'crypto-js';
 import supertest from 'supertest';
 
-
 import { app } from '../../../src/config/express.config.js';
 import { getMessage } from '../../../src/utils/message.util.js';
 import jwt from '../../../src/utils/jwt.util.js';
 import { user, scan, fake_user } from '../mocks/user.mock.js';
 
-const createScan = () => {
-    it('POST /sign-up Scan', async () => {
+let activationToken;
+
+const createUser = payload => {
+    it('POST /sign-up', async () => {
         await supertest(app)
             .post('/sign-up')
-            .send(scan)
+            .send(payload)
             .expect(200)
             .then(response => {
                 expect(
@@ -20,55 +21,19 @@ const createScan = () => {
                         response.body !== null,
                 ).toBeTruthy();
 
+                activationToken = response.body.metadata;
                 expect(response.body).toEqual({
                     message: getMessage('user.activation.account.activate'),
                     data: null,
-                    metadata: {},
+                    metadata: expect.any(String),
                     status: 200,
                 });
             });
     });
 
-    it('GET /users', async () => {
+    it('POST /authentication/activate/:tky', async () => {
         await supertest(app)
-            .get('/users')
-            .send({})
-            .expect(200)
-            .then(response => {
-                // Check type and length
-                expect(
-                    typeof response.body === 'object' &&
-                        !Array.isArray(response.body) &&
-                        response.body !== null,
-                ).toBeTruthy();            
-                expect(
-                    response.body.message.startsWith(
-                        getMessage('user.list.success'),
-                    ),
-                ).toBeTruthy();
-                
-                expect(response.body).toMatchObject({
-                    message: getMessage('user.list.success') + '1',
-                    data: [schema(scan)],
-                    metadata: {},
-                    status: 200,
-                });
-                scan._id = response.body.data[0]._id;
-            });
-    });
-
-    it('POST /authentication/activate/:tky', async () => {       
-        const tkn = jwt.generateJwt(
-            {   
-                id: CryptoJs.AES.encrypt(
-                    scan._id,
-                    `${process.env.SHUFFLE_SECRET}`,
-                ).toString(),
-            },
-            3,
-        );
-        await supertest(app)
-            .post('/authentication/activate/' + tkn)
+            .post('/authentication/activate/' + activationToken)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -85,13 +50,14 @@ const createScan = () => {
                     status: 200,
                 });
             });
-        scan.active = true;
+        if (payload.role === 'User') user.active = true;
+        else scan.active = true;
     });
 
     it('GET /sign-in', async () => {
         await supertest(app)
             .get('/sign-in')
-            .auth(scan.email, scan.password)
+            .auth(payload.email, payload.password)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -99,14 +65,44 @@ const createScan = () => {
                     typeof response.body === 'object' &&
                         !Array.isArray(response.body) &&
                         response.body !== null,
-                ).toBeTruthy();                
+                ).toBeTruthy();
+
+                if (payload.role === 'User') {
+                    user.token = response.body.metadata.token;
+                    user._id = response.body.data._id;
+                } else {
+                    scan.token = response.body.metadata.token;
+                    scan._id = response.body.data._id;
+                }
+
                 expect(response.body).toMatchObject({
                     message: getMessage('user.valid.sign_in.success'),
-                    data: sign_in(scan),
+                    data: sign_in(payload),
                     metadata: {},
                     status: 200,
                 });
-                scan.token = response.body.metadata.token;
+            });
+    });
+
+    it('GET /users/findOne', async () => {
+        await supertest(app)
+            .get(`/users/findOne?user_id=${payload._id}`)
+            .send({})
+            .expect(200)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                expect(response.body).toMatchObject({
+                    message: getMessage('user.findone.success'),
+                    data: schema(payload),
+                    metadata: {},
+                    status: 200,
+                });
             });
     });
 };
@@ -136,4 +132,4 @@ const sign_in = payload => {
     };
 };
 
-export { createScan, schema, sign_in };
+export { createUser, schema, sign_in };
