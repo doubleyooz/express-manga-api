@@ -3,10 +3,10 @@ import supertest from 'supertest';
 import { app } from '../../../src/config/express.config.js';
 import { getMessage } from '../../../src/utils/message.util.js';
 import { artist, writer, photo } from '../mocks/author.mock.js';
+import { user, scan } from '../mocks/user.mock.js';
 
-const createAuthor = (payload) => {
+const createAuthor = payload => {
     it('POST /authors', async () => {
-        console.log(scan);
         await supertest(app)
             .post('/authors')
             .field(payload)
@@ -32,10 +32,13 @@ const createAuthor = (payload) => {
                     metadata: {},
                     status: 200,
                 });
+                
+                if (payload.type === 'writer') writer._id = response.body.data._id;
+                else artist._id = response.body.data._id;
             });
     });
 
-    it('GET /authors/findOne', async () => {
+    it('GET /authors/findOne', async () => {        
         await supertest(app)
             .get(`/authors/findOne?author_id=${payload._id}`)
             .expect(200)
@@ -59,7 +62,7 @@ const createAuthor = (payload) => {
                 });
             });
     });
-}
+};
 
 const schema = (payload, photo) => {
     return {
