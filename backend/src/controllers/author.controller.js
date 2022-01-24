@@ -185,13 +185,16 @@ async function update(req, res) {
 
                 if (req.body.name) {
                     const currPath =
-                        './' + folderName + `/authors/${doc.type}/${doc.name}`;
+                        './' + folderName + `authors/${doc.type}/${doc.name}`;
                     const newPath =
-                        './' + folderName + `/authors/${temp}/${req.body.name}`;
+                        './' + folderName + `authors/${temp}/${req.body.name}`;
 
                     fs.rename(currPath, newPath, function (err) {
                         if (err) {
-                            fs.rmdirSync(newPath, { recursive: true });
+                            if (fs.existsSync(newPath)){
+                                fs.rmdirSync(newPath, { recursive: true });
+                            }
+                           
                             fs.rename(currPath, newPath, function (e) {
                                 if (e) {
                                     fs.rmdirSync(newPath, { recursive: true });

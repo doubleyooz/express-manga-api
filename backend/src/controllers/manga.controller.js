@@ -191,7 +191,6 @@ async function store(req, res) {
 
     if (!writer || !writer.type.includes('writer')) {
         fs.unlinkSync(filesPath);
-        console.log(getMessage('manga.error.writer'));
         return res.jsonNotFound(null, getMessage('manga.error.writer'), null);
     }
 
@@ -321,7 +320,6 @@ async function list(req, res) {
                 updatedAt: doc.updatedAt,
                 chapters: [],
             };
-            console.log(doc);
             Chapter.find({ manga_id: doc._id })
                 .sort('updatedAt')
                 .select({ number: 1, _id: 0 })
@@ -337,8 +335,6 @@ async function list(req, res) {
                 });
             docs.push(temp);
         });
-
-        console.log(docs);
     } else {
         const search = genre
             ? { genre: genre }
@@ -403,7 +399,6 @@ async function update(req, res) {
     Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body)
         .then(manga => {
             if (artist_id !== manga.artist_id) {
-                console.log('artist');
                 let cloneData = artist.works.filter(function (work_id) {
                     return manga_id.toString() !== work_id.toString();
                 });
@@ -411,16 +406,13 @@ async function update(req, res) {
                 artist.works = cloneData;
                 artist
                     .save()
-                    .then(answer => {
-                        console.log(answer);
-                    })
+                    .then(answer => {})
                     .catch(err => {
                         console.log(err);
                     });
             }
 
             if (writer_id !== manga.writer_id) {
-                console.log('writer');
                 let cloneData = writer.works.filter(function (work_id) {
                     return manga_id.toString() !== work_id.toString();
                 });
@@ -429,9 +421,7 @@ async function update(req, res) {
                 writer.updatedAt = Date.now();
                 writer
                     .save()
-                    .then(answer => {
-                        console.log(answer);
-                    })
+                    .then(answer => {})
                     .catch(err => {
                         console.log(err);
                     });
