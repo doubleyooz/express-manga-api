@@ -18,7 +18,7 @@ const writer = {
 const photo = {
     dir: `${process.env.DIR_PATH}`,
     name: 'abc.jpg',
-    size: 63595,
+    size: 9534,
 };
 
 export { artist, writer, photo };

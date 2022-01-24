@@ -40,8 +40,9 @@ async function dropAllCollections() {
 }
 
 async function dropTestUploadFolder() {
-    let reqPath = path.resolve(path.dirname(''), 'uploads2');
+    let reqPath = path.resolve(path.dirname(''), 'uploads2');   
     fs.rmdirSync(reqPath, { recursive: true });
+   
 }
 
 function setupDB(databaseName) {
@@ -59,6 +60,13 @@ function setupDB(databaseName) {
         await mongoose.connect(uri, options);
     });
 
+    beforeAll(async () => {
+        let dir = path.resolve(path.dirname(''), 'uploads2');   
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        }
+    })
+
     // Cleans up database between each test
     afterEach(async () => {
         //await removeAllCollections();
@@ -67,7 +75,7 @@ function setupDB(databaseName) {
     // Disconnect Mongoose
     afterAll(async () => {
         await dropAllCollections();
-        //await dropTestUploadFolder();
+        await dropTestUploadFolder();
         await mongoose.connection.close();
     });
 }
