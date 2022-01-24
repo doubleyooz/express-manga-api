@@ -106,22 +106,23 @@ function isValidMongoId(value) {
 const rules = {
     type_author: yup
         .string('type must be a string.')
-        .strict()
         .matches(/(writer|artist)/, null),
     mongo_id_req: yup
         .string()
-        .strict()
         .test('isValidMongoId', getMessage('invalid.object.id'), value =>
             isValidMongoIdRequired(value),
         ),
     mongo_id: yup
         .string()
-        .strict()
         .test('isValidMongoId', getMessage('invalid.object.id'), value =>
             isValidMongoId(value),
-        ),  
-    username: yup.string('name must be a string.').min(3, getMessage('user.invalid.name.short')),
-    authorname: yup.string('name must be a string.').min(3, getMessage('author.invalid.name.short')),
+        ),
+    username: yup
+        .string('name must be a string.')
+        .min(3, getMessage('user.invalid.name.short')),
+    authorname: yup
+        .string('name must be a string.')
+        .min(3, getMessage('author.invalid.name.short')),
     birthDate: yup.date(),
     deathDate: yup
         .date()
@@ -135,15 +136,12 @@ const rules = {
         .max(5, ''),
     biography: yup
         .string('biography')
-        .strict()
         .min(15, getMessage('author.invalid.biography.short')),
     manga_title: yup
         .string('manga title must be a string.')
-        .strict()
         .max(60, getMessage('manga.invalid.title.long')),
     chapter_title: yup
         .string('title must be a string.')
-        .strict()
         .max(40, getMessage('chapter.invalid.title.long')),
     number: yup
         .number('Must to be a valid number')
@@ -151,7 +149,6 @@ const rules = {
 
     language: yup
         .string('language must be a string.')
-        .strict()
         .matches(
             /^da$|^nl$|^en$|^fi$|^fr$|^de$|^hu$|^it$|^nb$|^pt$|^ro$|^ru$|^tr$|^es$/,
             null,
@@ -160,7 +157,6 @@ const rules = {
 
     title: yup
         .string('title must be a string.')
-        .strict()
         .min(2, getMessage('manga.invalid.title.short'))
         .max(60, getMessage('manga.invalid.title.long')),
     genres: yup
@@ -199,7 +195,6 @@ const rules = {
 
     synopsis: yup
         .string('synopsis must be a string.')
-        .strict()
         .min(10, getMessage('manga.invalid.synopsis.short'))
         .max(400, getMessage('manga.invalid.synopsis.long')),
     n_chapters: yup
@@ -209,13 +204,9 @@ const rules = {
         .number('status must be a number.')
         .min(1, getMessage('manga.invalid.code'))
         .max(6, getMessage('manga.invalid.code')),
-    nsfw: yup
-        .string('nsfw must be a string.')
-        .strict()
-        .matches(/(true|false)/, null),
+    nsfw: yup.string('nsfw must be a string.').matches(/(true|false)/, null),
     type_manga: yup
         .string('type must be a string.')
-        .strict()
         .matches(/^manga$|^manhwa$|^manhua$/, null)
         .default({ type: 'manga' }),
     languages: yup
@@ -237,7 +228,6 @@ const rules = {
         ),
     text: yup
         .string('text must be a string.')
-        .strict()
         .min(2, getMessage('text.invalid.text.short'))
         .max(500, getMessage('text.invalid.text.long')),
 
@@ -255,7 +245,7 @@ const rules = {
             getMessage('user.invalid.password.weak'),
         )
         .required(),
-    
+
     role: yup.string().matches(/(Scan|User)/, null),
     sign_in_password: yup
         .string()

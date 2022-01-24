@@ -73,8 +73,8 @@ async function valid_update(req, res, next) {
     const schema = yup
         .object()
         .shape({
-            author_id: rules.mongo_id_req,
-            type: rules.type,
+            _id: rules.mongo_id_req,
+            type: rules.type_author,
             name: rules.authorname,
             birthDate: rules.birthDate.max(currentDate),
             deathDate: rules.deathDate,
@@ -99,7 +99,7 @@ async function valid_update(req, res, next) {
         schema
             .validate(req.body)
             .then(() => {
-                schema.cast(req.body, { stripUnknown: true });
+                req.body = schema.cast(req.body, {stripUnknown: true});  
                 next();
             })
             .catch(err => {
