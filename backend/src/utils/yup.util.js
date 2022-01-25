@@ -113,16 +113,20 @@ function isValidMongoId(value) {
 }
 
 const rules = {
-    type_author: yup
+    types: yup
         .array('types must be an array.')
         .of(
             yup
                 .string('the array must contains only strings.')
-                .matches(/(^writer$|^artist$)/),
-        )
-        .ensure()
+                .lowercase()
+                .matches(/(^writer$|^artist$)/)
+               
+                
+        )       
+        .ensure()       
         .min(1, 'Need to provide at least one type')
         .max(2, 'Can not provide more than two types'),
+       
     mongo_id_req: yup
         .string()
         .test('isValidMongoId', getMessage('invalid.object.id'), value =>
@@ -133,12 +137,10 @@ const rules = {
         .test('isValidMongoId', getMessage('invalid.object.id'), value =>
             isValidMongoId(value),
         ),
-    username: yup
+    name: yup
         .string('name must be a string.')
-        .min(3, getMessage('user.invalid.name.short')),
-    authorname: yup
-        .string('name must be a string.')
-        .min(3, getMessage('author.invalid.name.short')),
+        .min(3, getMessage('yup.invalid.name.short')),
+    
     birthDate: yup
         .date()
         .transform(parseDateString)

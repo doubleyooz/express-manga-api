@@ -27,7 +27,7 @@
     "author.error.duplicate": "This author already exists or the number is unavaliable.",
     "author.error.overwrite": "You cant overwrite a existing author",
     "author.invalid.biography.short": "Biography must be at least 15 characters long",
-    "author.invalid.name.short": "Author name must be at least 3 characters long",     
+    
     "author.upload.success": "Upload Done!",
     "author.update.success": "Update Done!",
     "author.findone.success": "Author retrieved successfully!",
@@ -70,8 +70,7 @@
 
     "review.notfound": "Review could not be found.",
 
-    "unauthorized.refresh.token.missing": "Lack credentials.",
-    "user.invalid.name.short": "Name is too short - it must be at least 3 characters long.",
+    "unauthorized.refresh.token.missing": "Lack credentials.",    
     "user.invalid.password": "Invalid Password.",
     "user.invalid.password.short": "Password is too short -it must be at least 8 characters long.",
     "user.invalid.password.weak": "the password must contain at least 1 number, at least 1 lower case letter, at least 1 upper case and at least 1 special character.",
@@ -102,8 +101,8 @@
     "user.email.notification.manga.text": "Just added new chapters.\n",
     "user.email.notification.manga.text.url": "Read now!!\n",
     "user.email.notification.manga.text.warning": "You choose being notified by email, if you want to turn it off click in this link\n",
-    "user.email.notification.manga.text.warning.url": "Click here!!\n"
+    "user.email.notification.manga.text.warning.url": "Click here!!\n",
     
-
+    "yup.invalid.name.short": "Name must be at least 3 characters long" 
 
 }

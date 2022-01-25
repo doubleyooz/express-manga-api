@@ -14,6 +14,7 @@ async function store(req, res) {
     req.new_token = null;
     const storedAuthor = await Author.findOne({ name: name });
     const path = folderName + 'authors/' + name + '/';
+    
     if (storedAuthor !== null) {
         if (storedAuthor.type.includes(type)) {
             Object.keys(req.files).forEach(i => {
@@ -154,7 +155,7 @@ async function list(req, res) {
 
 async function update(req, res) {
     const new_token = req.new_token ? req.new_token : null;
-    req.new_token = null;
+    req.new_token = null;  
     if (
         await Author.exists({
             name: req.body.name,
@@ -166,7 +167,7 @@ async function update(req, res) {
             getMessage('author.error.overwrite'),
             new_token,
         );
-
+    console.log(req.body)
     Author.findByIdAndUpdate(req.body._id, req.body)
         .select({ type: 1, name: 1 })
         .then(doc => {

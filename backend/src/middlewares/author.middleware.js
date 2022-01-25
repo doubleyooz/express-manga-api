@@ -1,5 +1,4 @@
 import yup from 'yup';
-import { differenceInCalendarDays } from 'date-fns';
 
 import { rules } from '../utils/yup.util.js';
 
@@ -8,8 +7,8 @@ async function valid_store(req, res, next) {
     currentDate.setFullYear(currentDate.getFullYear() - 10);
 
     const schema = yup.object().shape({
-        types: rules.type_author.required(),
-        name: rules.authorname.required(),
+        types: rules.types.required(),
+        name: rules.name.required(),
         birthDate: rules.birthDate.required(),
         deathDate: rules.deathDate,
         socialMedia: rules.socialMedia.required(),
@@ -50,8 +49,8 @@ async function valid_findOne(req, res, next) {
 
 async function valid_list(req, res, next) {
     let schema = yup.object().shape({
-        types: rules.authorname,
-        name: rules.authorname,
+        types: rules.name,
+        name: rules.name,
     });
 
     try {
@@ -71,18 +70,15 @@ async function valid_list(req, res, next) {
 async function valid_update(req, res, next) {
     let currentDate = new Date();
     currentDate.setFullYear(currentDate.getFullYear() - 10);
-
+    var obj = {};
+    Object.keys(req.body).forEach(function (value) {
+        if (value !== '_id') obj[value] = rules[value];
+    });
+    obj._id = rules.mongo_id_req;
+    console.log(obj);
     const schema = yup
         .object()
-        .shape({
-            _id: rules.mongo_id_req,
-            types: rules.type_author,
-            name: rules.authorname,
-            birthDate: rules.birthDate.max(currentDate),
-            deathDate: rules.deathDate,
-            socialMedia: rules.socialMedia,
-            biography: rules.biography,
-        })
+        .shape(obj)
         .test(
             'at-least-one-field',
             'you must provide at least one field',
@@ -96,12 +92,12 @@ async function valid_update(req, res, next) {
                     value.biography
                 ),
         );
-
+    console.log(req.body);
     try {
         schema
-            .validate(req.body)
-            .then(() => {
-                req.body = schema.cast(req.body, { stripUnknown: true });
+            .validate(req.body, { stripUnknown: true })
+            .then(result => {
+                req.body = result;
                 next();
             })
             .catch(err => {

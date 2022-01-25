@@ -19,7 +19,7 @@ async function valid_google_sign_up(req, res, next) {
     const yupObject = yup.object().shape({
         email: rules.email,
         password: rules.password,
-        name: rules.username,
+        name: rules.name,
         role: rules.role,
     });
     console.log(req.body);
@@ -47,7 +47,7 @@ async function valid_sign_up(req, res, next) {
     const yupObject = yup.object().shape({
         email: rules.email,
         password: rules.password,
-        name: rules.username,
+        name: rules.name,
         role: rules.role,
     });
 
@@ -105,7 +105,7 @@ async function valid_findOne(req, res, next) {
 
 async function valid_list(req, res, next) {
     let schema = yup.object().shape({
-        name: rules.username,
+        name: rules.name,
     });
 
     try {
@@ -124,7 +124,7 @@ async function valid_list(req, res, next) {
 
 async function valid_update(req, res, next) {
     let schema = yup.object().shape({
-        name: rules.username,
+        name: rules.name,
     });
 
     schema
