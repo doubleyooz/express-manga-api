@@ -8,17 +8,19 @@ async function valid_store(req, res, next) {
     currentDate.setFullYear(currentDate.getFullYear() - 10);
 
     const schema = yup.object().shape({
-        type: rules.type_author.required(),
+        types: rules.type_author.required(),
         name: rules.authorname.required(),
-        birthDate: rules.birthDate.max(currentDate).required(),
+        birthDate: rules.birthDate.required(),
         deathDate: rules.deathDate,
         socialMedia: rules.socialMedia.required(),
         biography: rules.biography.required(),
     });
 
     schema
-        .validate(req.body)
-        .then(() => {
+        .validate(req.body, { stripUnknown: true })
+        .then(result => {
+            req.body = result;
+
             next();
         })
         .catch(function (e) {
@@ -48,7 +50,7 @@ async function valid_findOne(req, res, next) {
 
 async function valid_list(req, res, next) {
     let schema = yup.object().shape({
-        type: rules.type,
+        types: rules.authorname,
         name: rules.authorname,
     });
 
@@ -74,7 +76,7 @@ async function valid_update(req, res, next) {
         .object()
         .shape({
             _id: rules.mongo_id_req,
-            type: rules.type_author,
+            types: rules.type_author,
             name: rules.authorname,
             birthDate: rules.birthDate.max(currentDate),
             deathDate: rules.deathDate,
@@ -86,7 +88,7 @@ async function valid_update(req, res, next) {
             'you must provide at least one field',
             value =>
                 !!(
-                    value.type ||
+                    value.types ||
                     value.name ||
                     value.birthDate ||
                     value.deathDate ||
@@ -99,7 +101,7 @@ async function valid_update(req, res, next) {
         schema
             .validate(req.body)
             .then(() => {
-                req.body = schema.cast(req.body, {stripUnknown: true});  
+                req.body = schema.cast(req.body, { stripUnknown: true });
                 next();
             })
             .catch(err => {

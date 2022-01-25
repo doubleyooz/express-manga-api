@@ -10,7 +10,7 @@ export const folderName = process.env.NODE_ENV === 'dev' ? 'uploads/' : 'uploads
 
 const authorFiles = {
     storage: multer.diskStorage({
-        destination: (req, files, cb) => {
+        destination: (req, files, cb) => {            
             cb(
                 null,
                 path.resolve(
@@ -18,16 +18,15 @@ const authorFiles = {
                     '..',
                     '..',
                     folderName,
-                    'authors/',
-                    req.body.type,
+                    'authors/',                   
                     req.body.name,
                 ),
             );
-
-            let dir = './' + folderName + 'authors/' + req.body.type + '/';
+            
+            let dir = './' + folderName + 'authors/';
 
             if (!fs.existsSync(dir + req.body.name))
-                fs.mkdirSync(dir + req.body.name, { recursive: true });
+                fs.mkdirSync(dir + req.body.name);
         },
         filename: (req, file, cb) => {
             crypto.randomBytes(16, (err, hash) => {

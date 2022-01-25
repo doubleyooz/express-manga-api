@@ -8,16 +8,13 @@ import { getMessage } from '../utils/message.util.js';
 import { folderName } from '../config/multer.config.js';
 
 async function store(req, res) {
-    const { type, name, birthDate, socialMedia, deathDate, biography } =
+    const { types, name, birthDate, socialMedia, deathDate, biography } =
         req.body;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
-
     const storedAuthor = await Author.findOne({ name: name });
-
+    const path = folderName + 'authors/' + name + '/';
     if (storedAuthor !== null) {
-        const path = folderName + 'authors/' + type + '/' + name + '/';
-
         if (storedAuthor.type.includes(type)) {
             Object.keys(req.files).forEach(i => {
                 let file = req.files[i];
@@ -72,10 +69,10 @@ async function store(req, res) {
 
         const author = new Author({
             photos: [],
-            type: [type],
+            types: types,
             name: name,
-            birthDate: parseISO(birthDate),
-            deathDate: deathDate ? parseISO(deathDate) : null,
+            birthDate: birthDate,
+            deathDate: deathDate ? deathDate : null,
             socialMedia: socialMedia,
             biography: biography,
 
@@ -157,7 +154,7 @@ async function list(req, res) {
 
 async function update(req, res) {
     const new_token = req.new_token ? req.new_token : null;
-    req.new_token = null;    
+    req.new_token = null;
     if (
         await Author.exists({
             name: req.body.name,
@@ -180,20 +177,17 @@ async function update(req, res) {
                     new_token,
                 );
             } else {
-                let temp = req.body.type ? req.body.type : doc.type;
-
                 if (req.body.name) {
-                    const currPath =
-                        './' + folderName + `authors/${doc.type}/${doc.name}`;
+                    const currPath = './' + folderName + `authors/${doc.name}`;
                     const newPath =
-                        './' + folderName + `authors/${temp}/${req.body.name}`;
+                        './' + folderName + `authors/${req.body.name}`;
 
                     fs.rename(currPath, newPath, function (err) {
                         if (err) {
-                            if (fs.existsSync(newPath)){
+                            if (fs.existsSync(newPath)) {
                                 fs.rmdirSync(newPath, { recursive: true });
                             }
-                           
+
                             fs.rename(currPath, newPath, function (e) {
                                 if (e) {
                                     fs.rmdirSync(newPath, { recursive: true });
@@ -234,13 +228,7 @@ async function remove(req, res) {
         Author.deleteOne({ _id: author_id })
             .then(answer => {
                 let mangas = [];
-                let dir =
-                    folderName +
-                    'authors/' +
-                    author.type +
-                    '/' +
-                    author.name +
-                    '/';
+                let dir = folderName + 'authors/' + author.name + '/';
 
                 author.photos.forEach(file => {
                     fs.unlinkSync(dir + file.filename);

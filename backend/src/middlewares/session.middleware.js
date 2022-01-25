@@ -11,8 +11,7 @@ function auth(roles = []) {
                 : [, ''];
             if (typeof roles === 'string') {
                 roles = [roles];
-            }
-
+            }            
             let payload = null;
             try {
                 payload = jwt.verifyJwt(token, 1);
@@ -25,7 +24,7 @@ function auth(roles = []) {
                 //Invalid roles
                 return res.jsonUnauthorized(null, null, null);
             } else {
-                if (process.env.NODE_ENV === 'test') {
+                if (process.env.NODE_ENV === 'test') {                    
                     req.auth = CryptoJs.AES.encrypt(
                         payload.id,
                         `${process.env.SHUFFLE_SECRET}`,

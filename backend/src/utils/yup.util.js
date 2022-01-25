@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import yup from 'yup';
+import { parseISO, isDate, addYears, subYears } from 'date-fns';
 
 import { getMessage } from '../utils/message.util.js';
 
@@ -88,6 +89,14 @@ const languages = [
     'es',
 ];
 
+function parseDateString(value, originalValue) {
+    const parsedDate = isDate(originalValue)
+        ? new Date(originalValue)
+        : parseISO(originalValue, 'yyyy-MM-dd', new Date());
+
+    return parsedDate;
+}
+
 function isValidMongoIdRequired(value) {
     return (
         mongoose.Types.ObjectId.isValid(value) &&
@@ -105,8 +114,15 @@ function isValidMongoId(value) {
 
 const rules = {
     type_author: yup
-        .string('type must be a string.')
-        .matches(/(writer|artist)/, null),
+        .array('types must be an array.')
+        .of(
+            yup
+                .string('the array must contains only strings.')
+                .matches(/(^writer$|^artist$)/),
+        )
+        .ensure()
+        .min(1, 'Need to provide at least one type')
+        .max(2, 'Can not provide more than two types'),
     mongo_id_req: yup
         .string()
         .test('isValidMongoId', getMessage('invalid.object.id'), value =>
@@ -123,12 +139,21 @@ const rules = {
     authorname: yup
         .string('name must be a string.')
         .min(3, getMessage('author.invalid.name.short')),
-    birthDate: yup.date(),
+    birthDate: yup
+        .date()
+        .transform(parseDateString)
+        .max(subYears(new Date(), 5)),
     deathDate: yup
         .date()
-        .min(
-            yup.ref('birthDate') + 3650,
-            'death date must be at least 10 years longer than birthDate',
+        .transform(parseDateString)
+        .when(
+            'birthDate',
+            (birthDate, yup) =>
+                birthDate &&
+                yup.min(
+                    addYears(birthDate, 10),
+                    'death date must be at least 10 years longer than birthDate',
+                ),
         ),
     socialMedia: yup
         .array(yup.string('socialMedia must be a string.'))

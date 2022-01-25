@@ -40,17 +40,10 @@ function upload_many_author(req, res, next) {
 
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
-    if (!fs.existsSync(dir + 'artist' + '/'))
-        fs.mkdirSync(dir + 'artist' + '/');
-
-    if (!fs.existsSync(dir + 'writer' + '/'))
-        fs.mkdirSync(dir + 'writer' + '/');
-
     upload3(req, res, function (err) {
-        console.log('upload3')
         if (err instanceof multer.MulterError) {
             // A Multer error occurred when uploading.
-            console.log('if');
+            console.log(err);
             return res.jsonBadRequest(null, null, err);
         } else if (err) {
             // An unknown error occurred when uploading.
