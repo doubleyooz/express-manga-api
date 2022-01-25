@@ -1,13 +1,13 @@
 import supertest from 'supertest';
 
-import { app } from '../../../src/config/express.config.js';
-import { getMessage } from '../../../src/utils/message.util.js';
-import { artist, writer } from '../mocks/author.mock.js';
-import { manga, photo } from '../mocks/manga.mock.js';
-import { user, scan } from '../mocks/user.mock.js';
-import { schema } from '../schemas/manga.schema.js';
-import { createAuthor } from '../schemas/author.schema.js';
-import { createUser } from '../schemas/user.schema.js';
+import { app } from '../../../../src/config/express.config.js';
+import { getMessage } from '../../../../src/utils/message.util.js';
+import { artist, writer } from '../../mocks/author.mock.js';
+import { manga, photo } from '../../mocks/manga.mock.js';
+import { user, scan } from '../../mocks/user.mock.js';
+import { schema } from '../../schemas/manga.schema.js';
+import { createAuthor } from '../../schemas/author.schema.js';
+import { createUser } from '../../schemas/user.schema.js';
 
 
 

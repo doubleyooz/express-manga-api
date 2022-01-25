@@ -6,16 +6,17 @@ import { artist, writer, photo } from '../mocks/author.mock.js';
 import { user, scan } from '../mocks/user.mock.js';
 
 const itif = condition => (condition ? it : it.skip);
-const createAuthor = payload => {
+const createAuthor = (payload, token) => {
     it('POST /authors', async () => {
         await supertest(app)
             .post('/authors')
             .field(payload)
-            .set('Authorization', 'Bearer ' + scan.token)
+            .set('Authorization', 'Bearer ' + token)
 
             .attach('photos', photo.dir + photo.name)
             .expect(200)
             .then(response => {
+                //console.log(response.body);
                 // Check type and length
                 expect(
                     typeof response.body === 'object' &&
@@ -25,7 +26,10 @@ const createAuthor = payload => {
 
                 expect(response.body.data).toBeDefined();
                 expect(response.body.metadata).toBeDefined();
-                //expect(response.body.status).toEqual(200);
+
+                expect(
+                    response.body.data.birthDate.startsWith(payload.birthDate),
+                ).toBeTruthy();
 
                 expect(response.body).toMatchObject({
                     message: getMessage('author.save.success'),
@@ -34,7 +38,10 @@ const createAuthor = payload => {
                     status: 200,
                 });
 
-                if (payload.type === 'writer')
+                if (
+                    payload.types.includes('writer') ||
+                    payload.types === 'writer'
+                )
                     writer._id = response.body.data._id;
                 else artist._id = response.body.data._id;
             });
@@ -52,10 +59,6 @@ const createAuthor = payload => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                expect(
-                    response.body.data.birthDate.startsWith(payload.birthDate),
-                ).toBeTruthy();
-
                 expect(response.body).toMatchObject({
                     message: getMessage('author.findone.success'),
                     data: schema(payload, photo),
@@ -66,14 +69,13 @@ const createAuthor = payload => {
     });
 };
 
-const updateAuthor = async (payload, message) => {
-
-    payload.author_id = payload.author_id === 1 ? writer._id : artist._id;
-    it(`PUT /authors ${message}`, async () => {
+const deleteAuthor = (payload, token) => {
+    it('DELETE /authors', async () => {
+        payload.author_id = payload.author_id === 1 ? writer._id : artist._id;
         await supertest(app)
-            .put('/authors')
-            .send(payload)
-            .set('Authorization', 'Bearer ' + scan.token)
+            .delete(`/authors?author_id=${payload.author_id}`)
+
+            .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -82,7 +84,57 @@ const updateAuthor = async (payload, message) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
+
+                expect(response.body.data.mangas).toBeDefined();
+                expect(response.body.data.removed).toBeTruthy();
+                expect(
+                    response.body.message.startsWith(
+                        getMessage('author.delete.success'),
+                    ),
+                ).toBeTruthy();
+            });
+    });
+
+    it('GET /authors/findOne', async () => {
+        await supertest(app)
+            .get(`/authors/findOne?author_id=${payload.author_id}`)
+            .expect(404)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                expect(response.body).toMatchObject({
+                    message: getMessage('author.notfound'),
+                    data: null,
+                    metadata: {},
+                    status: 404,
+                });
+            });
+    });
+};
+
+const updateAuthor = (payload, token, message) => {
+    it(`PUT /authors ${message}`, async () => {
+        payload._id = payload._id === 1 ? writer._id : artist._id;
+      
+        await supertest(app)
+            .put('/authors')
+            .send(payload)
+            .set('Authorization', 'Bearer ' + token)
+            .expect(200)
+            .then(response => {
                 console.log(response.body);
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
                 expect(response.body).toMatchObject({
                     message: getMessage('author.update.success'),
                     data: null,
@@ -94,7 +146,7 @@ const updateAuthor = async (payload, message) => {
 
     it('GET check previous PUT operation', async () => {
         await supertest(app)
-            .get(`/authors/findOne?author_id=${payload.author_id}`)
+            .get(`/authors/findOne?author_id=${payload._id}`)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -103,7 +155,7 @@ const updateAuthor = async (payload, message) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-
+               
                 expect(response.body).toMatchObject({
                     message: getMessage('author.findone.success'),
                     data: payload,
@@ -116,7 +168,10 @@ const updateAuthor = async (payload, message) => {
 
 const schema = (payload, photo) => {
     return {
-        type: [payload.type],
+        types:
+            typeof payload.types === 'string' || payload.types instanceof String
+                ? [payload.types]
+                : payload.types,
         photos: [
             {
                 originalname: photo.name,
@@ -127,8 +182,6 @@ const schema = (payload, photo) => {
         socialMedia: payload.socialMedia,
         //_id: '617f58e87ab874251ce7cd58',
         name: payload.name,
-        birthDate: payload.birthDate,
-        deathDate: null,
         biography: payload.biography,
         __v: 0,
     };
@@ -142,4 +195,4 @@ const updateSchema = payload => {
     };
 };
 
-export { createAuthor, updateAuthor, updateSchema, schema };
+export { createAuthor, updateAuthor, deleteAuthor, updateSchema, schema };
