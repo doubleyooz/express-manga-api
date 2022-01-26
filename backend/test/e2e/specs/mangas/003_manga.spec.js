@@ -1,31 +1,32 @@
 import supertest from 'supertest';
+import mongoose from 'mongoose';
 
 import { app } from '../../../../src/config/express.config.js';
 import { getMessage } from '../../../../src/utils/message.util.js';
-import { artist, writer } from '../../mocks/author.mock.js';
 import { manga, photo } from '../../mocks/manga.mock.js';
 import { user, scan } from '../../mocks/user.mock.js';
-import { schema } from '../../schemas/manga.schema.js';
-import { createAuthor } from '../../schemas/author.schema.js';
-import { createUser } from '../../schemas/user.schema.js';
-
-
+import { schema } from '../../tests/manga.test.js';
+import jwt from '../../../../src/utils/jwt.util.js';
 
 describe('Manga', () => {
-    createUser(scan);
+    manga.scan_id = mongoose.Types.ObjectId();
+    manga.writer_id = mongoose.Types.ObjectId();
+    manga.artist_id = mongoose.Types.ObjectId();
+    let mockToken = jwt.generateJwt(
+        {
+            id: manga.scan_id,
+            role: 'Scan',
+            token_version: 0,
+        },
+        1,
+    );
 
-    createAuthor(artist);
-    createAuthor(writer);
-
-    it('POST /mangas', async () => {
-        manga.scan_id = scan._id;
-        manga.writer_id = writer._id;
-        manga.artist_id = artist._id;
-
+    it('POST /mangas', async () => {     
+        console.log(manga)
         await supertest(app)
             .post('/mangas')
             .field(manga)
-            .set('Authorization', 'Bearer ' + scan.token)
+            .set('Authorization', 'Bearer ' + mockToken)
 
             .attach('cover', photo.dir + photo.name)
             .expect(200)
@@ -50,7 +51,7 @@ describe('Manga', () => {
         await supertest(app)
             .get('/mangas')
             .send({})
-            .set('Authorization', 'Bearer ' + scan.token)
+            .set('Authorization', 'Bearer ' + mockToken)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -76,11 +77,11 @@ describe('Manga', () => {
     });
 
     it('PUT /manga title', async () => {
-        manga.title = 'Gantz';        
+        manga.title = 'Gantz';
         await supertest(app)
             .put('/mangas')
             .send(manga)
-            .set('Authorization', 'Bearer ' + scan.token)
+            .set('Authorization', 'Bearer ' + mockToken)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -89,7 +90,7 @@ describe('Manga', () => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-                console.log(response.body.metadata)
+                console.log(response.body.metadata);
                 expect(response.body).toMatchObject({
                     message: getMessage('manga.update.success'),
                     data: null,

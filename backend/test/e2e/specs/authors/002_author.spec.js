@@ -5,14 +5,14 @@ import { app } from '../../../../src/config/express.config.js';
 import { getMessage } from '../../../../src/utils/message.util.js';
 import { artist, writer, photo } from '../../mocks/author.mock.js';
 import { user, scan } from '../../mocks/user.mock.js';
-import { createUser } from '../../schemas/user.schema.js';
+import { createUser } from '../../tests/user.test.js';
 import {
     createAuthor,
     updateAuthor,
     deleteAuthor,
     schema,
     updateSchema,
-} from '../../schemas/author.schema.js';
+} from '../../tests/author.test.js';
 import jwt from '../../../../src/utils/jwt.util.js';
 
 describe('Author', () => {

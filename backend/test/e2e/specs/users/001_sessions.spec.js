@@ -2,7 +2,7 @@ import supertest from 'supertest';
 
 import { app } from '../../../../src/config/express.config.js';
 import { user, scan, fake_user } from '../../mocks/user.mock.js';
-import { createUser, schema, sign_in } from '../../schemas/user.schema.js';
+import { createUser, schema, sign_in } from '../../tests/user.test.js';
 import { getMessage } from '../../../../src/utils/message.util.js';
 
 const itif = condition => (condition ? it : it.skip);
