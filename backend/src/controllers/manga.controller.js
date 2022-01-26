@@ -159,41 +159,6 @@ async function store(req, res) {
     const filesPath = folderName + 'mangas/' + title + '/' + req.file.filename;
 
     req.auth = null;
-
-    const scan = await User.findById(scan_id);
-
-    if (!scan) {
-        fs.unlinkSync(filesPath);
-
-        return res.jsonNotFound(null, getMessage('manga.error.scan_id'), null);
-    }
-
-    const doesMangaExist = await Manga.exists({ title: title });
-
-    if (doesMangaExist) {
-        fs.unlinkSync(filesPath);
-        return res.jsonBadRequest(
-            null,
-            getMessage('manga.error.duplicate'),
-            new_token,
-        );
-    }
-
-    const artist = await Author.findById(artist_id);
-
-    if (!artist || !artist.type.includes('artist')) {
-        fs.unlinkSync(filesPath);
-        console.log(getMessage('manga.error.artist'));
-        return res.jsonNotFound(null, getMessage('manga.error.artist'), null);
-    }
-
-    const writer = await Author.findById(writer_id);
-
-    if (!writer || !writer.type.includes('writer')) {
-        fs.unlinkSync(filesPath);
-        return res.jsonNotFound(null, getMessage('manga.error.writer'), null);
-    }
-
     const manga = new Manga({
         cover: req.file.filename,
         title: title,
@@ -210,39 +175,101 @@ async function store(req, res) {
         artist_id: artist_id,
         //comments?
     });
+    if (process.env.NODE_ENV !== 'test') {
+        const scan = await User.findById(scan_id);
 
-    manga
-        .save()
-        .then(result => {
-            scan.mangas.push(manga._id);
-            artist.works.push(manga._id);
-            writer.works.push(manga._id);
-            artist
-                .save()
-                .then(() => {})
-                .catch(err => {});
-            writer
-                .save()
-                .then(() => {})
-                .catch(err => {});
-            scan.save()
-                .then(() => {
-                    return res.jsonOK(
-                        result,
-                        getMessage('manga.save.success'),
-                        new_token,
-                    );
-                })
-                .catch(err => {
-                    console.log(err);
-                    return res.jsonServerError(null, null, err);
-                });
-        })
-        .catch(err => {
-            console.log(err);
+        if (!scan) {
             fs.unlinkSync(filesPath);
-            return res.jsonServerError(null, null, err);
-        });
+
+            return res.jsonNotFound(
+                null,
+                getMessage('manga.error.scan_id'),
+                null,
+            );
+        }
+
+        const doesMangaExist = await Manga.exists({ title: title });
+
+        if (doesMangaExist) {
+            fs.unlinkSync(filesPath);
+            return res.jsonBadRequest(
+                null,
+                getMessage('manga.error.duplicate'),
+                new_token,
+            );
+        }
+
+        const artist = await Author.findById(artist_id);
+
+        if (!artist || !artist.types.includes('artist')) {
+            fs.unlinkSync(filesPath);
+            console.log(getMessage('manga.error.artist'));
+            return res.jsonNotFound(
+                null,
+                getMessage('manga.error.artist'),
+                null,
+            );
+        }
+
+        const writer = await Author.findById(writer_id);
+
+        if (!writer || !writer.types.includes('writer')) {
+            fs.unlinkSync(filesPath);
+            return res.jsonNotFound(
+                null,
+                getMessage('manga.error.writer'),
+                null,
+            );
+        }
+
+        manga
+            .save()
+            .then(result => {
+                scan.mangas.push(manga._id);
+                artist.works.push(manga._id);
+                writer.works.push(manga._id);
+                artist
+                    .save()
+                    .then(() => {})
+                    .catch(err => {});
+                writer
+                    .save()
+                    .then(() => {})
+                    .catch(err => {});
+                scan.save()
+                    .then(() => {
+                        return res.jsonOK(
+                            result,
+                            getMessage('manga.save.success'),
+                            new_token,
+                        );
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        return res.jsonServerError(null, null, err);
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+                fs.unlinkSync(filesPath);
+                return res.jsonServerError(null, null, err);
+            });
+    } else {
+        manga
+            .save()
+            .then(result => {
+                return res.jsonOK(
+                    result,
+                    getMessage('manga.save.success'),
+                    new_token,
+                );
+            })
+            .catch(err => {
+                console.log(err);
+                fs.unlinkSync(filesPath);
+                return res.jsonServerError(null, null, err);
+            });
+    }
 }
 
 async function findOne(req, res) {
@@ -388,12 +415,12 @@ async function update(req, res) {
 
     const artist = artist_id ? await Author.findById(artist_id) : null;
 
-    if (!artist || !artist.type.includes('artist'))
+    if (!artist || !artist.types.includes('artist'))
         return res.jsonBadRequest(null, getMessage('manga.error.artist'), null);
 
     const writer = writer_id ? await Author.findById(writer_id) : null;
 
-    if (!writer || !writer.type.includes('writer'))
+    if (!writer || !writer.types.includes('writer'))
         return res.jsonBadRequest(null, getMessage('manga.error.writer'), null);
 
     Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body)

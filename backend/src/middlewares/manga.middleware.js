@@ -14,7 +14,7 @@ async function valid_store(req, res, next) {
         n_chapters: rules.n_chapters.required(),
         status: rules.status.required(),
         nsfw: rules.nsfw.required(),
-        type: rules.type_manga.required(),
+        type: rules.type.required(),
         languages: rules.languages.required(),
     });
 
@@ -90,20 +90,20 @@ async function valid_list(req, res, next) {
 }
 
 async function valid_update(req, res, next) {
-    let schema = yup.object().shape({
-        title: rules.title,
-        genres: rules.genres,
-        themes: rules.themes,
-        writer_id: rules.mongo_id,
-        artist_id: rules.mongo_id,
-        synopsis: rules.synopsis,
-        n_chapters: rules.n_chapters,
-        status: rules.status,
-        nsfw: rules.nsfw,
-        type: rules.type_manga,
-        languages: rules.languages,
-        manga_id: rules.mongo_id_req,
+    var obj = {};
+    Object.keys(req.body).forEach(function (value) {
+        if (
+            value !== 'manga_id' ||
+            value !== 'artist_id' ||
+            value !== 'writer_id'
+        )
+            obj[value] = rules[value];
     });
+    obj.manga_id = rules.mongo_id_req;
+    obj.artist_id = rules.mongo_id;
+    obj.writer_id = rules.mongo_id;
+
+    let schema = yup.object().shape(obj);
 
     try {
         schema

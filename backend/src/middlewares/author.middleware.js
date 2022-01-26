@@ -75,7 +75,7 @@ async function valid_update(req, res, next) {
         if (value !== '_id') obj[value] = rules[value];
     });
     obj._id = rules.mongo_id_req;
-    console.log(obj);
+    
     const schema = yup
         .object()
         .shape(obj)

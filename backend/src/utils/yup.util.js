@@ -232,7 +232,7 @@ const rules = {
         .min(1, getMessage('manga.invalid.code'))
         .max(6, getMessage('manga.invalid.code')),
     nsfw: yup.string('nsfw must be a string.').matches(/(true|false)/, null),
-    type_manga: yup
+    type: yup
         .string('type must be a string.')
         .matches(/^manga$|^manhwa$|^manhua$/, null)
         .default({ type: 'manga' }),
