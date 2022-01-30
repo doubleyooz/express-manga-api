@@ -1,6 +1,6 @@
 import yup from 'yup';
 
-import { rules } from '../utils/yup.util.js';
+import { chapter_rules as rules } from '../utils/yup.util.js';
 
 async function valid_store(req, res, next) {
     let schema = yup.object().shape({
@@ -26,7 +26,7 @@ async function valid_store(req, res, next) {
 
 async function valid_findOne(req, res, next) {
     let schema = yup.object().shape({
-        chapter_id: rules.mongo_id_req.required(),
+        chapter_id: rules._id.required(),
     });
 
     try {
@@ -45,7 +45,7 @@ async function valid_findOne(req, res, next) {
 
 async function valid_list(req, res, next) {
     let schema = yup.object().shape({
-        manga_id: rules.mongo_id_req.required(),
+        manga_id: rules._id.required(),
     });
     schema
         .validate(req.query)
@@ -61,7 +61,7 @@ async function valid_update(req, res, next) {
     let schema = yup.object().shape({
         chapter_title: rules.chapter_title,
         number: rules.number,
-        chapter_id: rules.mongo_id_req.required(),
+        _id: rules._id.required(),
         language: rules.language,
     });
 
@@ -81,8 +81,8 @@ async function valid_update(req, res, next) {
 
 async function valid_remove(req, res, next) {
     let schema = yup.object().shape({
-        chapter_id: rules.mongo_id_req.required(),
-        manga_id: rules.mongo_id_req.required(),
+        _id: rules._id.required(),
+        manga_id: rules._id.required(),
     });
 
     try {

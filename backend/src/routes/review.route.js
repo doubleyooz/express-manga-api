@@ -14,26 +14,26 @@ const router = express.Router();
 router.post(
     '/',
     Authorize('User'),
-    ReviewMiddleware.valid_store,
+    ReviewMiddleware.store,
     ReviewController.store,
 );
-router.get('/', easyAuth(), ReviewMiddleware.valid_list, ReviewController.list);
+router.get('/', easyAuth(), ReviewMiddleware.list, ReviewController.list);
 router.get(
     '/findOne',
     easyAuth(),
-    ReviewMiddleware.valid_findOne,
+    ReviewMiddleware.findById,
     ReviewController.findOne,
 );
 router.put(
     '/',
     Authorize('User'),
-    ReviewMiddleware.valid_update,
+    ReviewMiddleware.update,
     ReviewController.update,
 );
 router.delete(
     '/',
     Authorize('User'),
-    ReviewMiddleware.valid_remove,
+    ReviewMiddleware.findById,
     ReviewController.remove,
 );
 

@@ -17,26 +17,26 @@ router.post(
     '/',
     Authorize('Scan'),
     UploadMiddleware.upload_single,
-    MangaMiddleware.valid_store,
+    MangaMiddleware.store,
     MangaController.store,
 );
-router.get('/', easyAuth(), MangaMiddleware.valid_list, MangaController.list);
+router.get('/', easyAuth(), MangaMiddleware.list, MangaController.list);
 router.get(
     '/findOne',
     easyAuth(),
-    MangaMiddleware.valid_findOne,
+    MangaMiddleware.findOne,
     MangaController.findOne,
 );
 router.put(
     '/',
     Authorize('Scan'),
-    MangaMiddleware.valid_update,
+    MangaMiddleware.update,
     MangaController.update,
 );
 router.delete(
     '/',
     Authorize('Scan'),
-    MangaMiddleware.valid_remove,
+    MangaMiddleware.remove,
     MangaController.remove,
 );
 router.put('/like', Authorize('User'), LikeController.likeManga);

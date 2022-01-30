@@ -2,9 +2,9 @@ import yup from 'yup';
 import CryptoJs from 'crypto-js';
 
 import jwt from '../utils/jwt.util.js';
-import { rules } from '../utils/yup.util.js';
+import { user_rules as rules } from '../utils/yup.util.js';
 
-async function valid_google_sign_up(req, res, next) {
+async function google_sign_up(req, res, next) {
     const { token, password } = req.body;
 
     let payload = null;
@@ -43,7 +43,7 @@ async function valid_google_sign_up(req, res, next) {
         });
 }
 
-async function valid_sign_up(req, res, next) {
+async function sign_up(req, res, next) {
     const yupObject = yup.object().shape({
         email: rules.email,
         password: rules.password,
@@ -59,7 +59,7 @@ async function valid_sign_up(req, res, next) {
         });
 }
 
-async function valid_sign_in(req, res, next) {
+async function sign_in(req, res, next) {
     const [hashType, hash] = req.headers.authorization
         ? req.headers.authorization.split(' ')
         : [''];
@@ -83,9 +83,9 @@ async function valid_sign_in(req, res, next) {
         });
 }
 
-async function valid_findOne(req, res, next) {
+async function findOne(req, res, next) {
     let schema = yup.object().shape({
-        user_id: rules.mongo_id_req,
+        user_id: rules._id,
     });
 
     try {
@@ -103,7 +103,7 @@ async function valid_findOne(req, res, next) {
     }
 }
 
-async function valid_list(req, res, next) {
+async function list(req, res, next) {
     let schema = yup.object().shape({
         name: rules.name,
     });
@@ -122,7 +122,7 @@ async function valid_list(req, res, next) {
     }
 }
 
-async function valid_update(req, res, next) {
+async function update(req, res, next) {
     let schema = yup.object().shape({
         name: rules.name,
     });
@@ -137,9 +137,9 @@ async function valid_update(req, res, next) {
         });
 }
 
-async function valid_remove(req, res, next) {
+async function remove(req, res, next) {
     let schema = yup.object().shape({
-        user_id: rules.mongo_id_req,
+        user_id: rules._id,
     });
 
     try {
@@ -166,11 +166,11 @@ async function valid_remove(req, res, next) {
 }
 
 export default {
-    valid_google_sign_up,
-    valid_sign_up,
-    valid_sign_in,
-    valid_findOne,
-    valid_list,
-    valid_update,
-    valid_remove,
+    google_sign_up,
+    sign_up,
+    sign_in,
+    findOne,
+    list,
+    update,
+    remove,
 };

@@ -1,15 +1,15 @@
 import yup from 'yup';
 
-import { rules } from '../utils/yup.util.js';
+import { manga_rules as rules } from '../utils/yup.util.js';
 
-async function valid_store(req, res, next) {
+async function store(req, res, next) {
     let schema = yup.object().shape({
         title: rules.title.required(),
         genres: rules.genres.required(),
         themes: rules.themes.required(),
 
-        writer_id: rules.mongo_id_req.required(),
-        artist_id: rules.mongo_id_req.required(),
+        writer_id: rules.writer_id.required(),
+        artist_id: rules.artist_id.required(),
         synopsis: rules.synopsis.required(),
         n_chapters: rules.n_chapters.required(),
         status: rules.status.required(),
@@ -34,19 +34,19 @@ async function valid_store(req, res, next) {
         });
 }
 
-async function valid_findOne(req, res, next) {
+async function findOne(req, res, next) {
     let schema = yup.object().shape(
         {
-            title: rules.title.when(['manga_id'], {
-                is: manga_id => !manga_id,
+            title: rules.title.when(['_id'], {
+                is: _id => !_id,
                 then: yup.required(),
             }),
-            manga_id: rules.mongo_id.when(['title'], {
+            _id: rules.mongo_id.when(['title'], {
                 is: title => !title,
                 then: yup.required(),
             }),
         },
-        [['title', 'manga_id']],
+        [['title', '_id']],
     );
 
     try {
@@ -63,7 +63,7 @@ async function valid_findOne(req, res, next) {
     }
 }
 
-async function valid_list(req, res, next) {
+async function list(req, res, next) {
     let schema = yup.object().shape({
         title: rules.title,
         genre: rules.genre,
@@ -89,21 +89,15 @@ async function valid_list(req, res, next) {
     }
 }
 
-async function valid_update(req, res, next) {
+async function update(req, res, next) {
     var obj = {};
     Object.keys(req.body).forEach(function (value) {
-        if (
-            value !== 'manga_id' ||
-            value !== 'artist_id' ||
-            value !== 'writer_id'
-        )
-            obj[value] = rules[value];
+        obj[value] = rules[value];
     });
-    obj.manga_id = rules.mongo_id_req;
-    obj.artist_id = rules.mongo_id;
-    obj.writer_id = rules.mongo_id;
+    obj.artist_id = rules.id_not_required;
+    obj.writer_id = rules.id_not_required;
 
-    let schema = yup.object().shape(obj);
+    let schema = yup.object().shape(obj).test();
 
     try {
         schema
@@ -119,7 +113,7 @@ async function valid_update(req, res, next) {
     }
 }
 
-async function valid_remove(req, res, next) {
+async function remove(req, res, next) {
     let schema = yup.object().shape({
         manga_id: rules.mongo_id_req,
     });
@@ -139,9 +133,9 @@ async function valid_remove(req, res, next) {
 }
 
 export default {
-    valid_store,
-    valid_findOne,
-    valid_list,
-    valid_update,
-    valid_remove,
+    store,
+    findOne,
+    list,
+    update,
+    remove,
 };

@@ -8,8 +8,6 @@ import User from '../models/user.model.js';
 
 import { getMessage } from '../utils/message.util.js';
 import { folderName } from '../config/multer.config.js';
-import { writer } from 'repl';
-
 const list_projection = {
     0: {
         title: 1,

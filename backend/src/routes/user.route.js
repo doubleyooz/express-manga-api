@@ -16,24 +16,24 @@ const router = express.Router();
 router.get(
     '/findOne',
     easyAuth(),
-    UserMiddleware.valid_findOne,
+    UserMiddleware.findOne,
     UserController.findOne,
 );
-router.get('/', easyAuth(), UserMiddleware.valid_list, UserController.list);
+router.get('/', easyAuth(), UserMiddleware.list, UserController.list);
 router.put(
     '/',
     Authorize(['Scan', 'User']),
-    UserMiddleware.valid_update,
+    UserMiddleware.update,
     UserController.update,
 );
 router.delete(
     '/',
     Authorize(['Scan', 'User']),
-    UserMiddleware.valid_remove,
+    UserMiddleware.remove,
     UserController.remove,
 );
 router.put('/like', Authorize('User'), LikeController.likeUser);
-//router.get('//review',  easyAuth(), MangaMiddleware.valid_review_list, ReviewController.list);
+//router.get('//review',  easyAuth(), MangaMiddleware.review_list, ReviewController.list);
 router.get('/notify', Authorize('Scan'), NotifyController.notifyUsers);
 
 export default router;

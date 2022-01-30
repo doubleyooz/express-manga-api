@@ -1,6 +1,6 @@
 import yup from 'yup';
 
-import { rules } from '../utils/yup.util.js';
+import { author_rules as rules } from '../utils/yup.util.js';
 
 async function store(req, res, next) {
     let currentDate = new Date();
@@ -30,7 +30,7 @@ async function store(req, res, next) {
 
 async function findById(req, res, next) {
     let schema = yup.object().shape({
-        _id: rules.mongo_id_req,
+        _id: rules._id,
     });
 
     try {
@@ -49,7 +49,7 @@ async function findById(req, res, next) {
 
 async function list(req, res, next) {
     let schema = yup.object().shape({
-        types: rules.name,
+        types: rules.type,
         name: rules.name,
     });
 
@@ -72,9 +72,8 @@ async function update(req, res, next) {
     currentDate.setFullYear(currentDate.getFullYear() - 10);
     var obj = {};
     Object.keys(req.body).forEach(function (value) {
-        if (value !== '_id') obj[value] = rules[value];
+        obj[value] = rules[value];
     });
-    obj._id = rules.mongo_id_req;
 
     const schema = yup
         .object()

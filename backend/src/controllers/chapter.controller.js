@@ -176,7 +176,7 @@ async function store(req, res) {
 }
 
 async function update(req, res) {
-    const { chapter_id } = req.body;
+    const { _id } = req.body;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
@@ -196,7 +196,7 @@ async function update(req, res) {
 
         Chapter.findOneAndUpdate(
             req.body,
-            { $set: { _id: chapter_id } },
+            { $set: { _id: _id } },
             function (err, doc) {
                 if (err) {
                     return res.jsonNotFound(
@@ -219,7 +219,7 @@ async function update(req, res) {
 }
 
 async function findOne(req, res) {
-    const { chapter_id } = req.query;
+    const { _id } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
@@ -235,7 +235,7 @@ async function findOne(req, res) {
         role = 0;
     }
 
-    Chapter.findById(chapter_id)
+    Chapter.findById(_id)
         .select(read_projection[role])
         .then(doc => {
             console.log(doc.views);
@@ -314,18 +314,18 @@ async function list(req, res) {
 }
 
 async function remove(req, res) {
-    const { manga_id, chapter_id } = req.query;
+    const { manga_id, _id } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    Chapter.findById(chapter_id)
+    Chapter.findById(_id)
         .then(chapter => {
             cloneData = [];
             //get the deleted chapter read in order to exclude it from chapters array inside manga object
             Manga.findOne({ _id: manga_id }, function (err, manga) {
                 if (manga) {
                     cloneData = manga.chapters.filter(function (chap_id) {
-                        return chap_id.toString() !== chapter_id.toString();
+                        return chap_id.toString() !== _id.toString();
                     });
                     const filesPath =
                         dir +
@@ -337,7 +337,7 @@ async function remove(req, res) {
                         '/' +
                         manga.scan_id +
                         '/';
-                    Chapter.deleteMany({ manga_id: manga_id, _id: chapter_id })
+                    Chapter.deleteMany({ manga_id: manga_id, _id: _id })
                         .then(chapters => {
                             console.log(chapters);
                             if (chapters.n === 0) {

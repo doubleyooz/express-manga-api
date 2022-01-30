@@ -83,11 +83,11 @@ async function store(req, res) {
 }
 
 async function findOne(req, res) {
-    const { review_id } = req.query;
+    const { _id } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    Review.findById(review_id)
+    Review.findById(_id)
         .then(review => {
             if (review)
                 return res.jsonOK(
@@ -147,7 +147,7 @@ async function list(req, res) {
 }
 
 async function update(req, res) {
-    const { review_id, text, rating } = req.body;
+    const { _id, text, rating } = req.body;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
@@ -160,7 +160,7 @@ async function update(req, res) {
     const doesUserExists = await User.exists({ _id: user_id });
 
     if (doesUserExists) {
-        Review.findById({ _id: review_id })
+        Review.findById({ _id: _id })
             .then(review => {
                 let temp = -review.rating + rating;
                 review.rating = rating;
@@ -211,8 +211,8 @@ async function update(req, res) {
 }
 
 async function remove(req, res) {
-    const { review_id } = req.query;
-    const review = await Review.findById(review_id);
+    const { _id } = req.query;
+    const review = await Review.findById(_id);
 
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
@@ -226,7 +226,7 @@ async function remove(req, res) {
 
     if (review) {
         if (review.user_id.toString() === user_id) {
-            const response = await Review.deleteOne({ _id: review_id });
+            const response = await Review.deleteOne({ _id: _id });
 
             // `1` if MongoDB deleted a doc, `0` if no docs matched the filter `{ name: ... }`
             if (response.n === 0)
@@ -239,13 +239,13 @@ async function remove(req, res) {
             const user = await User.findById(user_id);
 
             user.reviews = user.reviews.filter(function (_id) {
-                return _id.toString() !== review_id.toString();
+                return _id.toString() !== _id.toString();
             });
 
             const manga = await Manga.findById(review.manga_id);
             manga.rating -= review.rating;
             manga.reviews = manga.reviews.filter(function (_id) {
-                return _id.toString() !== review_id.toString();
+                return _id.toString() !== _id.toString();
             });
 
             user.save(function (err) {

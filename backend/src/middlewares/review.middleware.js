@@ -1,11 +1,11 @@
 import yup from 'yup';
 
-import { rules } from '../utils/yup.util.js';
+import { review_rules as rules } from '../utils/yup.util.js';
 
-async function valid_store(req, res, next) {
+async function store(req, res, next) {
     let schema = yup.object().shape({
         text: rules.text.required(),
-        manga_id: rules.mongo_id_req.required(),
+        manga_id: rules._id.required(),
         rating: rules.rating.required(),
     });
 
@@ -20,9 +20,9 @@ async function valid_store(req, res, next) {
         });
 }
 
-async function valid_findOne(req, res, next) {
+async function findById(req, res, next) {
     let schema = yup.object().shape({
-        review_id: rules.mongo_id_req.required(),
+        _id: rules._id.required(),
     });
 
     try {
@@ -39,12 +39,12 @@ async function valid_findOne(req, res, next) {
     }
 }
 
-async function valid_list(req, res, next) {
+async function list(req, res, next) {
     let schema = yup
         .object()
         .shape({
-            manga_id: rules.mongo_id,
-            user_id: rules.mongo_id,
+            manga_id: rules.id_not_required,
+            user_id: rules.id_not_required,
         })
         .test(
             'at-least-one-field',
@@ -66,10 +66,10 @@ async function valid_list(req, res, next) {
     }
 }
 
-async function valid_update(req, res, next) {
+async function update(req, res, next) {
     let schema = yup.object().shape({
         text: rules.text,
-        review_id: rules.mongo_id_req.required(),
+        _id: rules._id.required(),
         rating: rules.rating,
     });
 
@@ -87,29 +87,9 @@ async function valid_update(req, res, next) {
     }
 }
 
-async function valid_remove(req, res, next) {
-    let schema = yup.object().shape({
-        review_id: rules.mongo_id_req.required(),
-    });
-
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
-}
-
 export default {
-    valid_store,
-    valid_findOne,
-    valid_list,
-    valid_update,
-    valid_remove,
+    store,
+    findById,
+    list,
+    update,
 };

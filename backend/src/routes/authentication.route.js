@@ -24,12 +24,12 @@ router.put('/authentication/recover/:tky', SessionController.recoverPassword); /
 
 router.post(
     '/google-sign-up',
-    UserMiddleware.valid_google_sign_up,
+    UserMiddleware.google_sign_up,
     UserController.store,
 );
-router.post('/sign-up', UserMiddleware.valid_sign_up, UserController.store);
+router.post('/sign-up', UserMiddleware.sign_up, UserController.store);
 
-router.get('/sign-in', UserMiddleware.valid_sign_in, SessionController.sign_in);
+router.get('/sign-in', UserMiddleware.sign_in, SessionController.sign_in);
 router.post('/google-sign-in', SessionController.google_sign_in);
 
 router.get('/refresh-token', SessionController.refreshAccessToken);
