@@ -105,7 +105,7 @@ async function findOne(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    const author = await Author.findById(req.query.author_id).exec();
+    const author = await Author.findById(req.query._id).exec();
 
     if (author === null) {
         return res.jsonNotFound(
@@ -219,14 +219,14 @@ async function update(req, res) {
 }
 
 async function remove(req, res) {
-    const { author_id } = req.query;
-    const author = await Author.findById(author_id);
+    const { _id } = req.query;
+    const author = await Author.findById(_id);
 
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
     if (author) {
-        Author.deleteOne({ _id: author_id })
+        Author.deleteOne({ _id: _id })
             .then(answer => {
                 let mangas = [];
                 let dir = folderName + 'authors/' + author.name + '/';
@@ -250,7 +250,7 @@ async function remove(req, res) {
                                 function (crt_id) {
                                     return (
                                         crt_id.toString() !==
-                                        author_id.toString()
+                                        _id.toString()
                                     );
                                 },
                             );

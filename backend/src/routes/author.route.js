@@ -16,26 +16,26 @@ router.post(
     '/',
     Authorize('Scan'),
     UploadMiddleware.upload_many_author,
-    AuthorMiddleware.valid_store,
+    AuthorMiddleware.store,
     AuthorController.store,
 );
 router.put(
     '/',
-    AuthorMiddleware.valid_update,
+    AuthorMiddleware.update,
     Authorize('Scan'),
     AuthorController.update,
 );
-router.get('/', easyAuth(), AuthorMiddleware.valid_list, AuthorController.list);
+router.get('/', easyAuth(), AuthorMiddleware.list, AuthorController.list);
 router.get(
     '/findOne',
     easyAuth(),
-    AuthorMiddleware.valid_findOne,
+    AuthorMiddleware.findById,
     AuthorController.findOne,
 );
 router.delete(
     '/',
     Authorize('Scan'),
-    AuthorMiddleware.valid_remove,
+    AuthorMiddleware.findById,
     AuthorController.remove,
 );
 

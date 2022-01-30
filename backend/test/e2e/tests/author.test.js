@@ -49,7 +49,7 @@ const createAuthor = (payload, token) => {
 
     it('GET /authors/findOne', async () => {
         await supertest(app)
-            .get(`/authors/findOne?author_id=${payload._id}`)
+            .get(`/authors/findOne?_id=${payload._id}`)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -71,9 +71,9 @@ const createAuthor = (payload, token) => {
 
 const deleteAuthor = (payload, token) => {
     it('DELETE /authors', async () => {
-        payload.author_id = payload.author_id === 1 ? writer._id : artist._id;
+        payload._id = payload._id === 1 ? writer._id : artist._id;
         await supertest(app)
-            .delete(`/authors?author_id=${payload.author_id}`)
+            .delete(`/authors?_id=${payload._id}`)
 
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
@@ -97,7 +97,7 @@ const deleteAuthor = (payload, token) => {
 
     it('GET /authors/findOne', async () => {
         await supertest(app)
-            .get(`/authors/findOne?author_id=${payload.author_id}`)
+            .get(`/authors/findOne?_id=${payload._id}`)
             .expect(404)
             .then(response => {
                 // Check type and length
@@ -120,7 +120,7 @@ const deleteAuthor = (payload, token) => {
 const updateAuthor = (payload, token, message) => {
     it(`PUT /authors ${message}`, async () => {
         payload._id = payload._id === 1 ? writer._id : artist._id;
-      
+
         await supertest(app)
             .put('/authors')
             .send(payload)
@@ -146,7 +146,7 @@ const updateAuthor = (payload, token, message) => {
 
     it('GET check previous PUT operation', async () => {
         await supertest(app)
-            .get(`/authors/findOne?author_id=${payload._id}`)
+            .get(`/authors/findOne?_id=${payload._id}`)
             .expect(200)
             .then(response => {
                 // Check type and length
@@ -155,7 +155,7 @@ const updateAuthor = (payload, token, message) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-               
+
                 expect(response.body).toMatchObject({
                     message: getMessage('author.findone.success'),
                     data: payload,

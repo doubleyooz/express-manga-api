@@ -58,7 +58,7 @@ describe('Author', () => {
 
     it('GET /authors/findOne', async () => {
         await supertest(app)
-            .get(`/authors/findOne?author_id=${writer._id}`)
+            .get(`/authors/findOne?_id=${writer._id}`)
             .expect(200)
             .then(response => {
                 // Check type and length
