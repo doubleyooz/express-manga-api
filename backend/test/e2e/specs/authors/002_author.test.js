@@ -3,16 +3,16 @@ import mongoose from 'mongoose';
 
 import { app } from '../../../../src/config/express.config.js';
 import { getMessage } from '../../../../src/utils/message.util.js';
-import { artist, writer, photo } from '../../mocks/author.mock.js';
-import { user, scan } from '../../mocks/user.mock.js';
-import { createUser } from '../../tests/user.test.js';
+import { artist, writer, photo } from '../../../mocks/author.mock.js';
+import { user, scan } from '../../../mocks/user.mock.js';
+import { createUser } from '../../../helpers/user.helper.js';
 import {
     createAuthor,
     updateAuthor,
     deleteAuthor,
     schema,
     updateSchema,
-} from '../../tests/author.test.js';
+} from '../../../helpers/author.helper.js';
 import jwt from '../../../../src/utils/jwt.util.js';
 
 describe('Author', () => {

@@ -1,9 +1,9 @@
 import CryptoJs from 'crypto-js';
 import supertest from 'supertest';
 
-import { app } from '../../../src/config/express.config.js';
-import { getMessage } from '../../../src/utils/message.util.js';
-import jwt from '../../../src/utils/jwt.util.js';
+import { app } from '../../src/config/express.config.js';
+import { getMessage } from '../../src/utils/message.util.js';
+import jwt from '../../src/utils/jwt.util.js';
 import { user, scan, fake_user } from '../mocks/user.mock.js';
 
 let activationToken;

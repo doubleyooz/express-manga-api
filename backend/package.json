@@ -15,7 +15,7 @@
       "dotenv/config"
     ],
     "setupFilesAfterEnv": [
-      "./test/e2e/config/test.setup.js"
+      "./test/config/test.setup.js"
     ],
     "verbose": true
   },

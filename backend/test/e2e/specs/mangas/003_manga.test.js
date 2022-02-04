@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 
 import { app } from '../../../../src/config/express.config.js';
 import { getMessage } from '../../../../src/utils/message.util.js';
-import { manga, photo } from '../../mocks/manga.mock.js';
-import { user, scan } from '../../mocks/user.mock.js';
-import { schema } from '../../tests/manga.test.js';
+import { manga, photo } from '../../../mocks/manga.mock.js';
+import { user, scan } from '../../../mocks/user.mock.js';
+import { schema } from '../../../helpers/manga.helper.js';
 import jwt from '../../../../src/utils/jwt.util.js';
 
 describe('Manga', () => {
