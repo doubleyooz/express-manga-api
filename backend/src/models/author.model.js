@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import ImageSchema from './image.model';
 
 const AuthorSchema = new mongoose.Schema(
     {
@@ -8,20 +9,9 @@ const AuthorSchema = new mongoose.Schema(
             },
         ],
 
-        photos: [
+        imgCollection: [
             {
-                type: Object,
-                size: Number,
-                filename: String,
-                originalname: String,
-
-                default: [
-                    {
-                        originalname: 'none',
-                        size: 0,
-                        filename: 'none',
-                    },
-                ],
+                type: [ImageSchema],
             },
         ],
 

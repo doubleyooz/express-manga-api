@@ -1,40 +1,29 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import ImageSchema from './image.model';
 
 const ChapterSchema = new mongoose.Schema(
-	{
-		manga_id: String,
-		number: Number,
-		title: {
-			type: String,
-			default: "none",
-		},
-		//pages: Number,
-		imgCollection: [
-			{
-				type: Object,
-				size: Number,
-				filename: String,
-				originalname: String,
-
-				default: [
-					{
-						originalname: "none",
-						size: 0,
-						filename: "none",
-					},
-				],
-			},
-		],
-		views: {
-			type: Number,
-			default: 0,
-		},
-		language: {
-			type: String,
-
-		}
-	},
-	{ timestamps: true }
+    {
+        manga_id: String,
+        number: Number,
+        title: {
+            type: String,
+            default: 'none',
+        },
+        //pages: Number,
+        imgCollection: [
+            {
+                type: [ImageSchema],
+            },
+        ],
+        views: {
+            type: Number,
+            default: 0,
+        },
+        language: {
+            type: String,
+        },
+    },
+    { timestamps: true },
 );
 
-export default mongoose.model("Chapter", ChapterSchema);
+export default mongoose.model('Chapter', ChapterSchema);

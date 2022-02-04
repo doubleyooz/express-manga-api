@@ -69,7 +69,7 @@ async function store(req, res) {
         });
 
         const author = new Author({
-            photos: [],
+            imgCollection: [],
             types: types,
             name: name,
             birthDate: birthDate,
@@ -79,7 +79,7 @@ async function store(req, res) {
 
             //comments?
         });
-        author.photos = jsonString;
+        author.imgCollection = jsonString;
 
         author
             .save()
@@ -231,7 +231,7 @@ async function remove(req, res) {
                 let mangas = [];
                 let dir = folderName + 'authors/' + author.name + '/';
 
-                author.photos.forEach(file => {
+                author.imgCollection.forEach(file => {
                     fs.unlinkSync(dir + file.filename);
                 });
 

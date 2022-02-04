@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
+import ImageSchema from './image.model';
 
 const MangaSchema = new mongoose.Schema(
     {
-        cover: {
-            type: String,
-            unique: true,
-            default: '',
-        },
+        imgCollection: [
+            {
+                type: [ImageSchema],
+            },
+        ],
         title: {
             type: String,
             unique: true,

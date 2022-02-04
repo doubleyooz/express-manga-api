@@ -17,7 +17,7 @@ const list_projection = {
         status: 1,
         nsfw: 1,
         rating: 1,
-        cover: 1,
+        imgCollection: 1,
         type: 1,
         likes: 1,
         themes: 1,
@@ -48,14 +48,14 @@ const list_projection = {
         genres: 1,
         likes: 1,
         __v: 1,
-        cover: 1,
+        imgCollection: 1,
     },
     2: {
         title: 1,
         genre: 1,
         synopsis: 1,
         n_chapters: 1,
-        cover: 1,
+        imgCollection: 1,
         rating: 1,
         writer_id: 1,
         artist_id: 1,
@@ -85,7 +85,7 @@ const read_projection = {
         languages: 1,
         genres: 1,
         nsfw: 1,
-        cover: 1,
+        imgCollection: 1,
         likes: 1,
     },
     1: {
@@ -109,7 +109,7 @@ const read_projection = {
         themes: 1,
         genres: 1,
         __v: 1,
-        cover: 1,
+        imgCollection: 1,
     },
     2: {
         title: 1,
@@ -118,7 +118,7 @@ const read_projection = {
         n_chapters: 1,
         chapters: 1,
         type: 1,
-        cover: 1,
+        imgCollection: 1,
         rating: 1,
         writer_id: 1,
         artist_id: 1,
@@ -158,7 +158,7 @@ async function store(req, res) {
 
     req.auth = null;
     const manga = new Manga({
-        cover: req.file.filename,
+        imgCollection: req.file.filename,
         title: title,
         synopsis: synopsis,
         n_chapters: n_chapters,
@@ -336,11 +336,11 @@ async function list(req, res) {
         (
             await Manga.find(search)
                 .sort('updatedAt')
-                .select({ cover: 1, title: 1, updatedAt: 1 })
+                .select({ imgCollection: 1, title: 1, updatedAt: 1 })
         ).forEach(function (doc) {
             let temp = {
                 _id: doc._id,
-                cover: doc.cover,
+                imgCollection: doc.imgCollection,
                 title: doc.title,
                 updatedAt: doc.updatedAt,
                 chapters: [],
