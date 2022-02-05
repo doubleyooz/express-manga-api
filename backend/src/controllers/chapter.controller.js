@@ -1,9 +1,9 @@
 import fs from 'fs';
-import CryptoJs from 'crypto-js';
 
 import Chapter from '../models/chapter.model.js';
 import Manga from '../models/manga.model.js';
 
+import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 import folderName from '../config/multer.config.js';
 
@@ -186,11 +186,7 @@ async function update(req, res) {
     }
 
     if (
-        manga.scan_id.toString() ===
-        CryptoJs.AES.decrypt(
-            req.auth,
-            `${process.env.SHUFFLE_SECRET}`,
-        ).toString(CryptoJs.enc.Utf8)
+        manga.scan_id.toString() === decrypt(req.auth)
     ) {
         manga = null;
 
@@ -223,17 +219,9 @@ async function findOne(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    let role;
-
-    if (req.role) {
-        role = CryptoJs.AES.decrypt(
-            req.role,
-            `${process.env.SHUFFLE_SECRET}`,
-        ).toString(CryptoJs.enc.Utf8);
-        req.role = null;
-    } else {
-        role = 0;
-    }
+    
+    const role = req.role ? decrypt(req.role) : 0
+    req.role = null;
 
     Chapter.findById(_id)
         .select(read_projection[role])
@@ -269,17 +257,8 @@ async function list(req, res) {
 
     let role;
 
-    if (req.role) {
-        role = CryptoJs.AES.decrypt(
-            req.role,
-            `${process.env.SHUFFLE_SECRET}`,
-        ).toString(CryptoJs.enc.Utf8);
-        req.role = null;
-    } else {
-        role = 0;
-    }
-
-    console.log('Role: ' + role);
+    role = req.role ? decrypt(req.role) : 0
+    req.role = null;  
 
     let docs = [];
     const doesMangaExist = await Manga.exists({ _id: manga_id });

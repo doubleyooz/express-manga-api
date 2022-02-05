@@ -23,7 +23,7 @@ const createAuthor = (payload, token) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-                    console.log(response.body.data)
+                  
                 expect(response.body.data).toBeDefined();
                 expect(response.body.metadata).toBeDefined();
 

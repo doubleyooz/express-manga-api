@@ -1,12 +1,10 @@
-import bcrypt from 'bcrypt';
-import CryptoJs from 'crypto-js';
 import nodemailer from 'nodemailer';
 import ProtonMail from 'protonmail-api';
 //import smtpTransport from 'nodemailer-smtp-transport';
 
 import User from '../models/user.model.js';
 import jwt from '../utils/jwt.util.js';
-
+import { encrypt, decrypt, hashPassword } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
 const Protonmail = false;
@@ -73,9 +71,6 @@ async function sendEmail(email, activationToken) {
 async function store(req, res) {
     const { email, password, name, role } = req.body;
 
-    const salt = bcrypt.genSaltSync(parseInt(`${process.env.BCRYPT_SALT}`));
-    const _hash = bcrypt.hashSync(password, salt);
-
     User.find({ email: email })
         .select({ _id: 1, email: 1, active: 1 })
         .then(user => {
@@ -88,10 +83,7 @@ async function store(req, res) {
             } else {
                 const tkn = jwt.generateJwt(
                     {
-                        id: CryptoJs.AES.encrypt(
-                            user[0]._id.toString(),
-                            `${process.env.SHUFFLE_SECRET}`,
-                        ).toString(),
+                        id: encrypt(user[0]._id.toString()),
                     },
                     3,
                 );
@@ -113,7 +105,7 @@ async function store(req, res) {
         .catch(err => {
             const p1 = new User({
                 email: email,
-                password: _hash,
+                password: async () => await hashPassword(password),
                 name: name,
                 role: role ? role : 'User',
             });
@@ -123,12 +115,7 @@ async function store(req, res) {
                     result.password = undefined;
 
                     const activationToken = jwt.generateJwt(
-                        {
-                            id: CryptoJs.AES.encrypt(
-                                p1._id.toString(),
-                                `${process.env.SHUFFLE_SECRET}`,
-                            ).toString(),
-                        },
+                        { id: encrypt(p1._id.toString()) },
                         3,
                     );
 
@@ -192,12 +179,7 @@ async function list(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    let role = req.role
-        ? CryptoJs.AES.decrypt(
-              req.role,
-              `${process.env.SHUFFLE_SECRET}`,
-          ).toString(CryptoJs.enc.Utf8)
-        : 0;
+    let role = req.role ? decrypt(req.role) : 0;
 
     req.role = null;
 
@@ -225,10 +207,7 @@ async function update(req, res) {
     req.new_token = null;
 
     User.findOne({
-        _id: CryptoJs.AES.decrypt(
-            req.auth,
-            `${process.env.SHUFFLE_SECRET}`,
-        ).toString(CryptoJs.enc.Utf8),
+        _id: decrypt(req.auth),
         active: true,
     }).then(user => {
         user.name = name;

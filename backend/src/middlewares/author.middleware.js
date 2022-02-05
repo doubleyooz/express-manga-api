@@ -5,7 +5,7 @@ import { author_rules as rules } from '../utils/yup.util.js';
 async function store(req, res, next) {
     let currentDate = new Date();
     currentDate.setFullYear(currentDate.getFullYear() - 10);
-
+  
     const schema = yup.object().shape({
         types: rules.types.required(),
         name: rules.name.required(),

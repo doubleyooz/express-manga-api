@@ -18,7 +18,7 @@ import jwt from '../../../../src/utils/jwt.util.js';
 describe('Author', () => {
     let mockToken = jwt.generateJwt(
         {
-            id: mongoose.Types.ObjectId(),
+            _id: mongoose.Types.ObjectId(),
             role: 'Scan',
             token_version: 0,
         },
@@ -26,6 +26,7 @@ describe('Author', () => {
     );
 
     createAuthor(artist, mockToken);
+    
     createAuthor(writer, mockToken);
 
     it('GET /authors 2 documents', async () => {

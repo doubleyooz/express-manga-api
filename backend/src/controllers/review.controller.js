@@ -1,9 +1,8 @@
-import CryptoJs from 'crypto-js';
-
 import Manga from '../models/manga.model.js';
 import Review from '../models/review.model.js';
 import User from '../models/user.model.js';
 
+import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
 async function store(req, res) {
@@ -11,10 +10,7 @@ async function store(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    const current_user = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
+    const current_user = decrypt(req.auth);
     req.auth = null;
 
     const user = await User.findById(current_user);
@@ -152,10 +148,8 @@ async function update(req, res) {
     req.new_token = null;
 
     req.body.updatedAt = Date.now();
-    let user_id = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
+    let user_id = decrypt(req.auth);
+    req.auth = null
 
     const doesUserExists = await User.exists({ _id: user_id });
 
@@ -217,11 +211,7 @@ async function remove(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    const user_id = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
-
+    const user_id = decrypt(req.auth);
     req.auth = null;
 
     if (review) {

@@ -1,7 +1,7 @@
 import yup from 'yup';
-import CryptoJs from 'crypto-js';
 
 import jwt from '../utils/jwt.util.js';
+import { decrypt } from '../utils/password.util.js';
 import { user_rules as rules } from '../utils/yup.util.js';
 
 async function google_sign_up(req, res, next) {
@@ -146,16 +146,11 @@ async function remove(req, res, next) {
         schema
             .validate(req.query)
             .then(() => {
-                let req_id = CryptoJs.AES.decrypt(
-                    req.auth,
-                    `${process.env.SHUFFLE_SECRET}`,
-                ).toString(CryptoJs.enc.Utf8);
-
-                if (req_id === user_id) {
+                if (decrypt(req.auth) === user_id) {
                     next();
+                } else {
+                    return res.jsonBadRequest(null, null, null);
                 }
-
-                return res.jsonBadRequest(null, null, null);
             })
             .catch(err => {
                 return res.jsonBadRequest(null, null, err.errors);

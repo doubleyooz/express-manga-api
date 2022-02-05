@@ -1,11 +1,8 @@
-import bcrypt from 'bcrypt';
-import CryptoJs from 'crypto-js';
-
 import { OAuth2Client } from 'google-auth-library';
 
 import User from '../models/user.model.js';
 import jwt from '../utils/jwt.util.js';
-
+import { decrypt, matchPassword } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
 async function refreshAccessToken(req, res) {
@@ -224,7 +221,9 @@ async function sign_in(req, res) {
         return res.jsonUnauthorized(null, null, null);
     }
 
-    const [email, password] = Buffer.from(hash, 'base64').toString().split(':');
+    const [email, supposedPassword] = Buffer.from(hash, 'base64')
+        .toString()
+        .split(':');
 
     const user = await User.findOne({ email: email, active: true }).select([
         'password',
@@ -232,7 +231,7 @@ async function sign_in(req, res) {
         'token_version',
     ]);
 
-    const match = user ? await bcrypt.compare(password, user.password) : null;
+    const match = user ? matchPassword(user.password, supposedPassword) : null;
 
     if (!match) {
         return res.jsonBadRequest(null, null, null);
@@ -276,12 +275,7 @@ async function activateAccount(req, res) {
               };
         const decodedToken = jwt.verifyJwt(token, 3);
 
-        const supposed_id = CryptoJs.AES.decrypt(
-            decodedToken.id,
-            `${process.env.SHUFFLE_SECRET}`,
-        ).toString(CryptoJs.enc.Utf8);
-
-        User.findById(supposed_id)
+        User.findById(decrypt(decodedToken.id))
             .then(user => {
                 if (user.active) {
                     console.log('user.active');
@@ -314,15 +308,11 @@ async function activateAccount(req, res) {
 
 async function me(req, res) {
     const new_token = req.new_token ? req.new_token : null;
-    const session_id = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
 
     req.new_token = null;
     req.auth = null;
 
-    return res.jsonOK(session_id, null, new_token);
+    return res.jsonOK(decrypt(req.auth), null, new_token);
 }
 //missing test
 async function changeEmail(req, res) {
@@ -331,17 +321,9 @@ async function changeEmail(req, res) {
 
     if (!decodedToken) return res.jsonBadRequest(null, null, null);
 
-    const supposed_id = CryptoJs.AES.decrypt(
-        decodedToken.id,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
-
-    User.findById(supposed_id)
+    User.findById(decrypt(decodedToken.id))
         .then(user => {
-            const email = CryptoJs.AES.decrypt(
-                decodedToken.email,
-                `${process.env.SHUFFLE_SECRET}`,
-            ).toString(CryptoJs.enc.Utf8);
+            const email = decrypt(decodedToken.id);
             if (email) {
                 user.email = email;
                 user.save().then(savedDoc => {
@@ -374,11 +356,7 @@ async function recoverPassword(req, res) {
 
         if (decodedToken) {
             console.log('DecodedToken: ' + decodedToken.id);
-            const supposed_id = CryptoJs.AES.decrypt(
-                decodedToken.id,
-                `${process.env.SHUFFLE_SECRET}`,
-            ).toString(CryptoJs.enc.Utf8);
-            User.findById(supposed_id)
+            User.findById(decrypt(decodedToken.id))
                 .then(user => {
                     user.save().then(savedDoc => {
                         if (savedDoc === user) {

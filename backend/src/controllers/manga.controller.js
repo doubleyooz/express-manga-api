@@ -1,12 +1,13 @@
 import fs from 'fs';
-import CryptoJs from 'crypto-js';
 
 import Author from '../models/author.model.js';
 import Chapter from '../models/chapter.model.js';
 import Manga from '../models/manga.model.js';
 import User from '../models/user.model.js';
 
+import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
+
 import { folderName } from '../config/multer.config.js';
 const list_projection = {
     0: {
@@ -149,10 +150,7 @@ async function store(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    let scan_id = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
+    let scan_id = decrypt(req.auth);
 
     const filesPath = folderName + 'mangas/' + title + '/' + req.file.filename;
 
@@ -277,15 +275,8 @@ async function findOne(req, res) {
 
     let role;
 
-    if (req.role) {
-        role = CryptoJs.AES.decrypt(
-            req.role,
-            `${process.env.SHUFFLE_SECRET}`,
-        ).toString(CryptoJs.enc.Utf8);
-        req.role = null;
-    } else {
-        role = 0;
-    }
+    role = req.role ? decrypt(req.role) : 0;
+    req.role = null;
 
     if (manga_id) {
         const manga = await Manga.findById(manga_id)
@@ -320,15 +311,8 @@ async function list(req, res) {
 
     let role;
 
-    if (req.role) {
-        role = CryptoJs.AES.decrypt(
-            req.role,
-            `${process.env.SHUFFLE_SECRET}`,
-        ).toString(CryptoJs.enc.Utf8);
-        req.role = null;
-    } else {
-        role = 0;
-    }
+    role = req.role ? decrypt(req.role) : 0;
+    req.role = null;
 
     let docs = [];
     if (recent) {
@@ -406,10 +390,7 @@ async function update(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    let scan_id = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
+    let scan_id = decrypt(req.auth);
 
     const artist = artist_id ? await Author.findById(artist_id) : null;
 
@@ -471,10 +452,7 @@ async function remove(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    const scan_id = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
+    const scan_id = decrypt(req.auth);
     req.auth = null;
 
     if (manga) {

@@ -1,4 +1,3 @@
-import CryptoJs from 'crypto-js';
 import supertest from 'supertest';
 
 import { app } from '../../src/config/express.config.js';

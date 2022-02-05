@@ -1,8 +1,7 @@
-import CryptoJs from 'crypto-js';
-
 import Manga from '../models/manga.model.js';
 import User from '../models/user.model.js';
 
+import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
 async function likeUser(req, res) {
@@ -10,10 +9,7 @@ async function likeUser(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    const current_user = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
+    const current_user = decrypt(req.auth);
     req.auth = null;
 
     const scan = await User.findById(scan_id);
@@ -81,10 +77,7 @@ async function likeManga(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    const current_user = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
+    const current_user = decrypt(req.auth);
     req.auth = null;
 
     const manga = await Manga.findById(manga_id);
@@ -143,10 +136,7 @@ async function pinManga(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    const current_user = CryptoJs.AES.decrypt(
-        req.auth,
-        `${process.env.SHUFFLE_SECRET}`,
-    ).toString(CryptoJs.enc.Utf8);
+    const current_user = decrypt(req.auth);
     req.auth = null;
 
     const manga = await Manga.findById(manga_id);

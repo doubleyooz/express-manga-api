@@ -1,7 +1,6 @@
-import CryptoJs from 'crypto-js';
-
 import User from '../models/user.model.js';
 import jwt from '../utils/jwt.util.js';
+import { encrypt } from '../utils/password.util.js';
 
 function auth(roles = []) {
     return async (req, res, next) => {
@@ -19,16 +18,14 @@ function auth(roles = []) {
                 //Invalid Token
                 return res.jsonUnauthorized(err, null, null);
             }
-
+           
             if (roles.length && !roles.includes(payload.role)) {
                 //Invalid roles
                 return res.jsonUnauthorized(null, null, null);
             } else {
+              
                 if (process.env.NODE_ENV === 'test') {                    
-                    req.auth = CryptoJs.AES.encrypt(
-                        payload.id,
-                        `${process.env.SHUFFLE_SECRET}`,
-                    );
+                    req.auth = encrypt(payload._id);                   
                     next();
                 } else {
                     User.exists({
@@ -85,7 +82,7 @@ function auth(roles = []) {
                 }
             }
         } catch (err) {
-            return res.jsonUnauthorized(null, null, null);
+            return res.jsonUnauthorized(null, null, err);
         }
     };
 }
@@ -105,10 +102,7 @@ function easyAuth() {
 
                     payload = jwt.verifyJwt(token, 1);
                     if (process.env.NODE_ENV === 'test') {
-                        req.auth = CryptoJs.AES.encrypt(
-                            payload.id,
-                            `${process.env.SHUFFLE_SECRET}`,
-                        );
+                        req.auth = encrypt(payload._id);
                         next();
                     } else {
                         User.exists({
