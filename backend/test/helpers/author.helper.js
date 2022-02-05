@@ -72,6 +72,61 @@ const createAuthor = (payload, token) => {
     });
 };
 
+const findAuthor = payload => {
+    it('GET /authors/findOne', async () => {
+        await supertest(app)
+            .get(`/authors/findOne?_id=${payload._id}`)
+            .expect(200)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                expect(response.body).toMatchObject({
+                    message: getMessage('author.findone.success'),
+                    data: schema(payload, photo),
+                    metadata: {},
+                    status: 200,
+                });
+            });
+    });
+};
+
+const listAuthor = (payload, number) => {
+    it(`GET /authors ${number} documents`, async () => {
+        await supertest(app)
+            .get('/authors')
+            .send({})
+            .expect(200)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                expect(
+                    response.body.message.startsWith(
+                        getMessage('author.list.success'),
+                    ),
+                ).toBeTruthy();
+                expect(response.body.status).toEqual(200);
+                expect(response.body).toMatchObject({
+                    message: `Author list retrieved successfully: ${number}`,
+                    data: payload.map(x => {
+                        return schema(x, photo);
+                    }),
+                    metadata: {},
+                    status: 200,
+                });
+            });
+    });
+};
+
 const deleteAuthor = (payload, token) => {
     it('DELETE /authors', async () => {
         payload._id = payload._id === 1 ? writer._id : artist._id;
@@ -197,4 +252,4 @@ const updateSchema = payload => {
     };
 };
 
-export { createAuthor, updateAuthor, deleteAuthor, updateSchema, schema };
+export { createAuthor, updateAuthor, listAuthor, findAuthor, deleteAuthor };
