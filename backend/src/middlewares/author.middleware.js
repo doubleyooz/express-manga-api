@@ -88,7 +88,8 @@ async function update(req, res, next) {
                     value.birthDate ||
                     value.deathDate ||
                     value.socialMedia ||
-                    value.biography
+                    value.biography ||
+                    req.files.length
                 ),
         );
 

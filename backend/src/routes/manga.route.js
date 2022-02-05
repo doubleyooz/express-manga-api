@@ -1,22 +1,25 @@
 import express from 'express';
+import multer from 'multer';
 
 import LikeController from '../controllers/like.controller.js';
 import MangaController from '../controllers/manga.controller.js';
 
 import MangaMiddleware from '../middlewares/manga.middleware.js';
-import UploadMiddleware from '../middlewares/upload.middleware.js';
+import multerConfig from '../config/multer.config.js';
 
 import {
     auth as Authorize,
     easyAuth,
 } from '../middlewares/session.middleware.js';
 
+const upload = multer(multerConfig.covers).array('imgCollection');
+
 const router = express.Router();
 
 router.post(
     '/',
     Authorize('Scan'),
-    UploadMiddleware.upload_single,
+    upload,
     MangaMiddleware.store,
     MangaController.store,
 );
@@ -30,6 +33,7 @@ router.get(
 router.put(
     '/',
     Authorize('Scan'),
+    upload,
     MangaMiddleware.update,
     MangaController.update,
 );

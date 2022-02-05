@@ -1,9 +1,10 @@
 import express from 'express';
+import multer from 'multer';
 
 import AuthorController from '../controllers/author.controller.js';
 
 import AuthorMiddleware from '../middlewares/author.middleware.js';
-import UploadMiddleware from '../middlewares/upload.middleware.js';
+import multerConfig from '../config/multer.config.js';
 
 import {
     auth as Authorize,
@@ -11,18 +12,21 @@ import {
 } from '../middlewares/session.middleware.js';
 
 const router = express.Router();
+const upload = multer(multerConfig.authorFiles).array('imgCollection');
 
 router.post(
     '/',
     Authorize('Scan'),
-    UploadMiddleware.upload_many_author,
+    upload,
     AuthorMiddleware.store,
     AuthorController.store,
 );
 router.put(
     '/',
-    AuthorMiddleware.update,
     Authorize('Scan'),
+    upload,
+    AuthorMiddleware.update,
+
     AuthorController.update,
 );
 router.get('/', easyAuth(), AuthorMiddleware.list, AuthorController.list);

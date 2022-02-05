@@ -1,13 +1,9 @@
 import mongoose from 'mongoose';
-import ImageSchema from './image.model';
+import ImageSchema from './image.model.js';
 
 const MangaSchema = new mongoose.Schema(
     {
-        imgCollection: [
-            {
-                type: [ImageSchema],
-            },
-        ],
+        imgCollection: [ImageSchema],
         title: {
             type: String,
             unique: true,

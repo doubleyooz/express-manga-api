@@ -97,12 +97,36 @@ async function update(req, res, next) {
     obj.artist_id = rules.id_not_required;
     obj.writer_id = rules.id_not_required;
 
-    let schema = yup.object().shape(obj).test();
+    let schema = yup
+        .object()
+        .shape(obj)
+        .test(
+            'at-least-one-field',
+            'you must provide at least one field',
+            value =>
+                !!(
+                    value.title ||
+                    value.genres ||
+                    value.themes ||
+                    value.writer_id ||
+                    value.artist_id ||
+                    value.synopsis ||
+                    value.n_chapters ||
+                    value.status ||
+                    value.n_chapters ||
+                    value.status ||
+                    value.nsfw ||
+                    value.type ||
+                    value.languages ||
+                    req.files.length
+                ),
+        );
 
     try {
         schema
-            .validate(req.body)
-            .then(() => {
+            .validate(req.body, { stripUnknown: true })
+            .then(result => {
+                req.body = result;
                 next();
             })
             .catch(err => {

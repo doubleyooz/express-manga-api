@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import ImageSchema from './image.model';
+import ImageSchema from './image.model.js';
 
 const AuthorSchema = new mongoose.Schema(
     {
@@ -9,11 +9,7 @@ const AuthorSchema = new mongoose.Schema(
             },
         ],
 
-        imgCollection: [
-            {
-                type: [ImageSchema],
-            },
-        ],
+        imgCollection: [ImageSchema],
 
         name: {
             type: String,

@@ -13,7 +13,7 @@ const createAuthor = (payload, token) => {
             .field(payload)
             .set('Authorization', 'Bearer ' + token)
 
-            .attach('photos', photo.dir + photo.name)
+            .attach('imgCollection', photo.dir + photo.name)
             .expect(200)
             .then(response => {
                 //console.log(response.body);
@@ -23,7 +23,7 @@ const createAuthor = (payload, token) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-
+                    console.log(response.body.data)
                 expect(response.body.data).toBeDefined();
                 expect(response.body.metadata).toBeDefined();
 
@@ -172,7 +172,7 @@ const schema = (payload, photo) => {
             typeof payload.types === 'string' || payload.types instanceof String
                 ? [payload.types]
                 : payload.types,
-        photos: [
+        imgCollection: [
             {
                 originalname: photo.name,
                 size: photo.size,

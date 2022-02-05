@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import ImageSchema from './image.model';
+import ImageSchema from './image.model.js';
 
 const ChapterSchema = new mongoose.Schema(
     {
@@ -10,11 +10,7 @@ const ChapterSchema = new mongoose.Schema(
             default: 'none',
         },
         //pages: Number,
-        imgCollection: [
-            {
-                type: [ImageSchema],
-            },
-        ],
+        imgCollection: [ImageSchema],
         views: {
             type: Number,
             default: 0,

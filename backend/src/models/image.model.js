@@ -1,12 +1,15 @@
 import mongoose from 'mongoose';
 
-const ImageSchema = new mongoose.Schema(
+export default new mongoose.Schema(
     {
         size: Number,
-        filename: String,
+        filename: {
+            type: String,
+            unique: true,
+        },
+
         originalname: String,
     },
-    { timestamps: true },
+    { _id: false, timestamps: true },
 );
 
-export default mongoose.model('Image', ImageSchema);

@@ -6,11 +6,12 @@ import CryptoJs from 'crypto-js';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const folderName = process.env.NODE_ENV === 'dev' ? 'uploads/' : 'uploads2/';
+export const folderName =
+    process.env.NODE_ENV === 'dev' ? 'uploads/' : 'uploads2/';
 
 const authorFiles = {
     storage: multer.diskStorage({
-        destination: (req, files, cb) => {            
+        destination: (req, files, cb) => {
             cb(
                 null,
                 path.resolve(
@@ -18,13 +19,14 @@ const authorFiles = {
                     '..',
                     '..',
                     folderName,
-                    'authors/',                   
+                    'authors/',
                     req.body.name,
                 ),
             );
-            
+
             let dir = './' + folderName + 'authors/';
 
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir);
             if (!fs.existsSync(dir + req.body.name))
                 fs.mkdirSync(dir + req.body.name);
         },
@@ -52,7 +54,7 @@ const authorFiles = {
     },
 };
 
-const files = {
+const chapters = {
     storage: multer.diskStorage({
         destination: (req, files, cb) => {
             let scan_id = CryptoJs.AES.decrypt(
@@ -113,9 +115,14 @@ const files = {
     },
 };
 
-const file = {
+const covers = {
     storage: multer.diskStorage({
         destination: (req, files, cb) => {
+            let scan_id = CryptoJs.AES.decrypt(
+                req.auth,
+                `${process.env.SHUFFLE_SECRET}`,
+            ).toString(CryptoJs.enc.Utf8);
+
             cb(
                 null,
                 path.resolve(
@@ -124,13 +131,19 @@ const file = {
                     '..',
                     folderName,
                     'mangas/',
-                    req.body.title + '/',
+                    req.body.manga_title + '/covers',
                 ),
             );
 
-            let dir = './' + folderName + 'mangas/' + req.body.title + '/';
+            let dir =
+                './' +
+                folderName +
+                'mangas/' +
+                req.body.manga_title +
+                '/covers/';
 
-            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            if (!fs.existsSync(dir)) return false;
+            //fs.mkdirSync(dir);
         },
         filename: (req, file, cb) => {
             crypto.randomBytes(16, (err, hash) => {
@@ -157,7 +170,7 @@ const file = {
 };
 
 export default {
-    file,
-    files,
+    covers,
+    chapters,
     authorFiles,
 };

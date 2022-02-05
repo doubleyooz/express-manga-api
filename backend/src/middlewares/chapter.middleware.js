@@ -11,9 +11,12 @@ async function valid_store(req, res, next) {
     });
     try {
         await schema
-            .validate(req.body)
-            .then(() => {
-                if (req.files.length) next();
+            .validate(req.body, { stripUnknown: true })
+            .then((result) => {
+                if (req.files.length) {
+                    req.body = result;
+                    next();
+                }
                 else return res.jsonBadRequest(null, null, null);
             })
             .catch(function (e) {
@@ -68,8 +71,12 @@ async function valid_update(req, res, next) {
     try {
         schema
             .validate(req.body)
-            .then(() => {
+            .then((result) => {
+                
+                req.body = result;
                 next();
+                
+                
             })
             .catch(err => {
                 return res.jsonBadRequest(null, null, err.errors);
