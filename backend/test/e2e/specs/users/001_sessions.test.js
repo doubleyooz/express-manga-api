@@ -30,7 +30,6 @@ describe('Session createUser', () => {
                 });
             });
     });
-  
 
     createUser(scan);
     createUser(user);
@@ -77,7 +76,7 @@ describe('Session createUser', () => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-                console.log(response.body)
+                console.log(response.body);
                 expect(response.body).toEqual({
                     message: getMessage('default.unauthorized'),
                     data: null,

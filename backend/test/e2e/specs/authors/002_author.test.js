@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 
 import { app } from '../../../../src/config/express.config.js';
 import { getMessage } from '../../../../src/utils/message.util.js';
-import { artist, writer, photo } from '../../../mocks/author.mock.js';
-import { user, scan } from '../../../mocks/user.mock.js';
+import { artist, writer } from '../../../mocks/author.mock.js';
+import { photo } from '../../../mocks/image.mock.js';
 import { createUser } from '../../../helpers/user.helper.js';
 import {
     createAuthor,
@@ -26,7 +26,7 @@ describe('Author', () => {
     );
 
     createAuthor(artist, mockToken);
-    
+
     createAuthor(writer, mockToken);
 
     it('GET /authors 2 documents', async () => {
@@ -82,11 +82,7 @@ describe('Author', () => {
             });
     });
 
-    updateAuthor(
-        { _id: 1, name: "George Masara" },
-        mockToken,
-        'update name',
-    );
+    updateAuthor({ _id: 1, name: 'George Masara' }, mockToken, 'update name');
     updateAuthor({ _id: 1, types: ['artist'] }, mockToken, 'update type');
 
     deleteAuthor({ author_id: 1 }, mockToken);

@@ -5,22 +5,22 @@ const scan = {
     name: 'Jojo',
     role: 'Scan',
     _id: '',
-    token: ''
+    token: '',
 };
 const user = {
-    email: "as" + `${process.env.TEST_GMAIL}`,
+    email: 'as' + `${process.env.TEST_GMAIL}`,
     password: `${process.env.TEST_GMAIL_PASS}`,
     active: false,
     name: 'Seth',
     role: 'User',
     _id: '',
-    token: ''
+    token: '',
 };
 
 const fake_user = {
     email: `25 + ${process.env.TEST_GMAIL}`,
     password: `${process.env.TEST_GMAIL_PASS_2}`,
     name: 'Matt',
-    role: 'd2asadn'
+    role: 'd2asadn',
 };
 export { user, scan, fake_user };

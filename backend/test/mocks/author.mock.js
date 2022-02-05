@@ -6,7 +6,7 @@ const artist = {
     socialMedia: ['orkut', 'twitter'],
     biography: 'A nice and sexy person',
     _id: '',
-    trash: "sadadasd"
+    trash: 'sadadasd',
 };
 const writer = {
     name: 'Abe Yamamoto',
@@ -17,10 +17,4 @@ const writer = {
     _id: '',
 };
 
-const photo = {
-    dir: `${process.env.DIR_PATH}`,
-    name: 'abc.jpg',
-    size: 9534,
-};
-
-export { artist, writer, photo };
+export { artist, writer };

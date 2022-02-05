@@ -2,8 +2,8 @@ import supertest from 'supertest';
 
 import { app } from '../../src/config/express.config.js';
 import { getMessage } from '../../src/utils/message.util.js';
-import { artist, writer, photo } from '../mocks/author.mock.js';
-import { user, scan } from '../mocks/user.mock.js';
+import { artist, writer } from '../mocks/author.mock.js';
+import { photo } from '../mocks/image.mock.js';
 
 const itif = condition => (condition ? it : it.skip);
 const createAuthor = (payload, token) => {
@@ -23,13 +23,16 @@ const createAuthor = (payload, token) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-                  
+
                 expect(response.body.data).toBeDefined();
                 expect(response.body.metadata).toBeDefined();
 
                 expect(
                     response.body.data.birthDate.startsWith(payload.birthDate),
                 ).toBeTruthy();
+                response.body.data.imgCollection.forEach(element => {
+                    expect(element.filename.endsWith(photo.name)).toBeTruthy();
+                });
 
                 expect(response.body).toMatchObject({
                     message: getMessage('author.save.success'),
@@ -127,7 +130,6 @@ const updateAuthor = (payload, token, message) => {
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .then(response => {
-                console.log(response.body);
                 // Check type and length
                 expect(
                     typeof response.body === 'object' &&
@@ -174,7 +176,7 @@ const schema = (payload, photo) => {
                 : payload.types,
         imgCollection: [
             {
-                originalname: photo.name,
+                mimetype: photo.mimetype,
                 size: photo.size,
             },
         ],
