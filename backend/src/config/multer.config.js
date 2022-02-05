@@ -24,10 +24,7 @@ const fileFilter = (req, file, cb) => {
 const fileName = (req, file, cb) => {
     randomBytes(16, (err, hash) => {
         if (err) cb(err);
-
-        let filename = `${hash.toString('hex')}-${file.originalname}`;
-
-        cb(null, filename);
+        cb(null, `${hash.toString('hex')}-${file.originalname}`);
     });
 };
 
@@ -49,7 +46,6 @@ const authorDestination = (req, files, cb) => {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
     if (!fs.existsSync(dir + req.body.name)) fs.mkdirSync(dir + req.body.name);
 };
-
 
 const chaptersDestination = (req, files, cb) => {
     cb(
@@ -82,7 +78,7 @@ const chaptersDestination = (req, files, cb) => {
         fs.mkdirSync(dir + req.body.number, { recursive: true });
 };
 
-const coversDestination = (req, files, cb) => {  
+const coversDestination = (req, files, cb) => {
     cb(
         null,
         path.resolve(
@@ -97,8 +93,7 @@ const coversDestination = (req, files, cb) => {
 
     let dir = './' + folderName + 'mangas/' + req.body.manga_title + '/covers/';
 
-    if (!fs.existsSync(dir)) return false;
-    //fs.mkdirSync(dir);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 };
 
 const multerConfig = destination => {
