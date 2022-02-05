@@ -11,94 +11,46 @@ async function store(req, res) {
     const { types, name, birthDate, socialMedia, deathDate, biography } =
         req.body;
     const new_token = req.new_token ? req.new_token : null;
+    req.auth = null;
     req.new_token = null;
-    const storedAuthor = await Author.findOne({ name: name });
-    const path = folderName + 'authors/' + name + '/';
-    
-    if (storedAuthor !== null) {
-        if (storedAuthor.type.includes(type)) {
-            Object.keys(req.files).forEach(i => {
-                let file = req.files[i];
-                fs.unlinkSync(path + file.filename);
-            });
 
-            return res.jsonBadRequest(
-                null,
-                getMessage('author.error.duplicate'),
-                new_token,
-            );
-        } else {
-            storedAuthor.type.push(type);
-            storedAuthor
-                .save()
-                .then(result => {
-                    Object.keys(req.files).forEach(i => {
-                        let file = req.files[i];
-                        fs.unlinkSync(path + file.filename);
-                    });
-                    return res.jsonOK(
-                        result,
-                        getMessage('author.save.success'),
-                        new_token,
-                    );
-                })
-                .catch(err => {
-                    console.log(err);
-                    Object.keys(req.files).forEach(i => {
-                        let file = req.files[i];
-                        fs.unlinkSync(path + file.filename);
-                    });
-                    return res.jsonServerError(null, null, err);
-                });
-        }
-    } else {
-        req.auth = null;
+    const imgCollection = req.files.map(x => ({
+        mimetype: x.mimetype,
+        filename: x.filename,
+        size: x.size,
+    }));
 
-        let jsonString = [];
-
+    const deleteFiles = () => {
         Object.keys(req.files).forEach(i => {
             let file = req.files[i];
-
-            let temp = {
-                originalname: file.originalname,
-                size: file.size,
-                filename: file.filename,
-            };
-
-            jsonString.push(JSON.parse(JSON.stringify(temp)));
+            fs.unlinkSync(folderName + 'authors/' + name + '/' + file.filename);
         });
+    };
 
-        const author = new Author({
-            imgCollection: [],
-            types: types,
-            name: name,
-            birthDate: birthDate,
-            deathDate: deathDate ? deathDate : null,
-            socialMedia: socialMedia,
-            biography: biography,
+    const author = new Author({
+        imgCollection: imgCollection,
+        types: types,
+        name: name,
+        birthDate: birthDate,
+        deathDate: deathDate ? deathDate : null,
+        socialMedia: socialMedia,
+        biography: biography,
+    });
 
-            //comments?
+    author
+        .save()
+        .then(result => {
+            return res.jsonOK(
+                result,
+                getMessage('author.save.success'),
+                new_token,
+            );
+        })
+        .catch(err => {
+            console.log(err);
+            deleteFiles();
+            return res.jsonServerError(null, null, err);
         });
-        author.imgCollection = jsonString;
-
-        author
-            .save()
-            .then(result => {
-                return res.jsonOK(
-                    result,
-                    getMessage('author.save.success'),
-                    new_token,
-                );
-            })
-            .catch(err => {
-                console.log(err);
-                Object.keys(req.files).forEach(i => {
-                    let file = req.files[i];
-                    fs.unlinkSync(path + file.filename);
-                });
-                return res.jsonServerError(null, null, err);
-            });
-    }
 }
 
 async function findOne(req, res) {
@@ -155,7 +107,7 @@ async function list(req, res) {
 
 async function update(req, res) {
     const new_token = req.new_token ? req.new_token : null;
-    req.new_token = null;  
+    req.new_token = null;
     if (
         await Author.exists({
             name: req.body.name,
@@ -167,7 +119,7 @@ async function update(req, res) {
             getMessage('author.error.overwrite'),
             new_token,
         );
-    console.log(req.body)
+    
     Author.findByIdAndUpdate(req.body._id, req.body)
         .select({ type: 1, name: 1 })
         .then(doc => {
@@ -248,10 +200,7 @@ async function remove(req, res) {
                         .then(manga => {
                             manga[author.type] = manga[author.type].filter(
                                 function (crt_id) {
-                                    return (
-                                        crt_id.toString() !==
-                                        _id.toString()
-                                    );
+                                    return crt_id.toString() !== _id.toString();
                                 },
                             );
                             manga

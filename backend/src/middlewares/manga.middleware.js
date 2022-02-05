@@ -19,9 +19,10 @@ async function store(req, res, next) {
     });
 
     schema
-        .validate(req.body)
-        .then(() => {
-            if (req.file) {
+        .validate(req.body, { stripUnknown: true })
+        .then(result => {
+            if (req.files) {
+                req.body = result;
                 req.nsfw = req.nsfw === 'true';
                 next();
             } else {

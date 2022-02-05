@@ -10,7 +10,7 @@ function auth(roles = []) {
                 : [, ''];
             if (typeof roles === 'string') {
                 roles = [roles];
-            }            
+            }
             let payload = null;
             try {
                 payload = jwt.verifyJwt(token, 1);
@@ -18,18 +18,17 @@ function auth(roles = []) {
                 //Invalid Token
                 return res.jsonUnauthorized(err, null, null);
             }
-           
+
             if (roles.length && !roles.includes(payload.role)) {
                 //Invalid roles
                 return res.jsonUnauthorized(null, null, null);
             } else {
-              
-                if (process.env.NODE_ENV === 'test') {                    
-                    req.auth = encrypt(payload._id);                   
+                if (process.env.NODE_ENV === 'test') {
+                    req.auth = encrypt(payload._id);
                     next();
                 } else {
                     User.exists({
-                        _id: payload.id,
+                        _id: payload._id,
                         active: true,
                         token_version: payload.token_version,
                     })
@@ -44,7 +43,7 @@ function auth(roles = []) {
                                     ) {
                                         let new_token = jwt.generateJwt(
                                             {
-                                                id: payload.id,
+                                                id: payload._id,
                                                 role: payload.role,
                                                 token_version:
                                                     payload.token_version,
@@ -57,10 +56,7 @@ function auth(roles = []) {
                                         console.log('Token not expired');
                                     }
 
-                                    req.auth = CryptoJs.AES.encrypt(
-                                        payload.id,
-                                        `${process.env.SHUFFLE_SECRET}`,
-                                    );
+                                    req.auth = encrypt(payload._id);
                                     payload = null;
                                     next();
                                 } catch (err) {
@@ -82,6 +78,7 @@ function auth(roles = []) {
                 }
             }
         } catch (err) {
+            console.log(err);
             return res.jsonUnauthorized(null, null, err);
         }
     };
@@ -106,7 +103,7 @@ function easyAuth() {
                         next();
                     } else {
                         User.exists({
-                            _id: payload.id,
+                            _id: payload._id,
                             active: true,
                             token_version: payload.token_version,
                         })
@@ -125,7 +122,7 @@ function easyAuth() {
                                         ) {
                                             let new_token = jwt.generateJwt(
                                                 {
-                                                    id: payload.id,
+                                                    id: payload._id,
                                                     role: payload.role,
                                                     token_version:
                                                         payload.token_version,

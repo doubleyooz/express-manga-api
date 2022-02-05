@@ -152,11 +152,23 @@ async function store(req, res) {
 
     let scan_id = decrypt(req.auth);
 
-    const filesPath = folderName + 'mangas/' + title + '/' + req.file.filename;
+    const imgCollection = req.files.map(x => ({
+        mimetype: x.mimetype,
+        filename: x.filename,
+        size: x.size,
+    }));
+    const deleteFiles = () => {
+        Object.keys(req.files).forEach(i => {
+            let file = req.files[i];
+            fs.unlinkSync(
+                folderName + 'mangas/' + title + '/covers/' + file.filename,
+            );
+        });
+    };
 
     req.auth = null;
     const manga = new Manga({
-        imgCollection: req.file.filename,
+        imgCollection: imgCollection,
         title: title,
         synopsis: synopsis,
         n_chapters: n_chapters,
@@ -175,7 +187,7 @@ async function store(req, res) {
         const scan = await User.findById(scan_id);
 
         if (!scan) {
-            fs.unlinkSync(filesPath);
+            deleteFiles();
 
             return res.jsonNotFound(
                 null,
@@ -187,7 +199,7 @@ async function store(req, res) {
         const doesMangaExist = await Manga.exists({ title: title });
 
         if (doesMangaExist) {
-            fs.unlinkSync(filesPath);
+            deleteFiles();
             return res.jsonBadRequest(
                 null,
                 getMessage('manga.error.duplicate'),
@@ -198,8 +210,8 @@ async function store(req, res) {
         const artist = await Author.findById(artist_id);
 
         if (!artist || !artist.types.includes('artist')) {
-            fs.unlinkSync(filesPath);
-            console.log(getMessage('manga.error.artist'));
+            deleteFiles();
+
             return res.jsonNotFound(
                 null,
                 getMessage('manga.error.artist'),
@@ -210,7 +222,7 @@ async function store(req, res) {
         const writer = await Author.findById(writer_id);
 
         if (!writer || !writer.types.includes('writer')) {
-            fs.unlinkSync(filesPath);
+            deleteFiles();
             return res.jsonNotFound(
                 null,
                 getMessage('manga.error.writer'),
@@ -247,7 +259,7 @@ async function store(req, res) {
             })
             .catch(err => {
                 console.log(err);
-                fs.unlinkSync(filesPath);
+                deleteFiles();
                 return res.jsonServerError(null, null, err);
             });
     } else {
@@ -262,7 +274,7 @@ async function store(req, res) {
             })
             .catch(err => {
                 console.log(err);
-                fs.unlinkSync(filesPath);
+                deleteFiles();
                 return res.jsonServerError(null, null, err);
             });
     }
@@ -394,12 +406,12 @@ async function update(req, res) {
 
     const artist = artist_id ? await Author.findById(artist_id) : null;
 
-    if (!artist || !artist.types.includes('artist'))
+    if (artist_id && (!artist || !artist.types.includes('artist')))
         return res.jsonBadRequest(null, getMessage('manga.error.artist'), null);
 
     const writer = writer_id ? await Author.findById(writer_id) : null;
 
-    if (!writer || !writer.types.includes('writer'))
+    if (writer_id && (!writer || !writer.types.includes('writer')))
         return res.jsonBadRequest(null, getMessage('manga.error.writer'), null);
 
     Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body)

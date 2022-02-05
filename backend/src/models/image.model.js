@@ -8,7 +8,7 @@ export default new mongoose.Schema(
             unique: true,
         },
 
-        originalname: String,
+        mimetype: String,
     },
     { _id: false, timestamps: true },
 );
