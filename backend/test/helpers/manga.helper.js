@@ -23,17 +23,19 @@ const createManga = (payload, token) => {
 
                 expect(response.body.data).toBeDefined();
                 expect(response.body.metadata).toBeDefined();
-                manga._id = response.body.data._id;
+                    
                 expect(response.body).toMatchObject({
                     message: getMessage('manga.save.success'),
                     data: schema(payload, photo),
                     metadata: {},
                     status: 200,
                 });
+
+                manga._id = response.body.data._id;   
             });
     });
 
-    it('GET /mangas ', async () => {
+    it('GET /mangas ', async () => {      
         await supertest(app)
             .get('/mangas')
             .send({})
@@ -57,22 +59,20 @@ const createManga = (payload, token) => {
                     data: [schema(manga)],
                     metadata: {},
                     status: 200,
-                });
-                manga._id = response.body.data[0]._id;
+                });               
             });
     });
 };
 
 const updateManga = (payload, token, message) => {
     it(`PUT /mangas ${message}`, async () => {
-        payload._id = manga._id;       
+        payload._id = manga._id;
         await supertest(app)
             .put('/mangas')
             .send(payload)
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .then(response => {
-               
                 // Check type and length
                 expect(
                     typeof response.body === 'object' &&
@@ -113,8 +113,33 @@ const updateManga = (payload, token, message) => {
                     data: [schema(manga)],
                     metadata: {},
                     status: 200,
+                });              
+            });
+    });
+};
+
+const findManga = (payload, byId) => {
+    it(`GET /mangas/findOne?${byId ? '_id=' : 'title='}`, async () => {       
+        const path = byId
+            ? `/mangas/findOne?_id=${payload._id}`
+            : `/mangas/findOne?title=${payload.title}`;
+        await supertest(app)
+            .get(path)
+            .expect(200)
+            .then(response => {              
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                expect(response.body).toMatchObject({
+                    message: getMessage('manga.findone.success'),
+                    data: schema(payload, photo),
+                    metadata: {},
+                    status: 200,
                 });
-                manga.manga_id = response.body.data[0]._id;
             });
     });
 };
@@ -134,4 +159,4 @@ const schema = payload => {
     };
 };
 
-export { createManga, updateManga, schema };
+export { createManga, updateManga, findManga };

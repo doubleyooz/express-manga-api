@@ -281,7 +281,7 @@ async function store(req, res) {
 }
 
 async function findOne(req, res) {
-    const { title, manga_id } = req.query;
+    const { title, _id } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
@@ -290,29 +290,21 @@ async function findOne(req, res) {
     role = req.role ? decrypt(req.role) : 0;
     req.role = null;
 
-    if (manga_id) {
-        const manga = await Manga.findById(manga_id)
-            .select(read_projection[role])
-            .exec();
+    const manga = _id
+        ? await Manga.findById(_id).select(read_projection[role]).exec()
+        : await Manga.findOne({
+              title: title,
+          })
+              .select(read_projection[role])
+              .exec();
+
+    if (manga)
         return res.jsonOK(
             manga,
             getMessage('manga.findone.success'),
             new_token,
         );
-    } else if (title) {
-        const manga = await Manga.find({
-            title: { $regex: title, $options: 'i' },
-        })
-            .select(read_projection[role])
-            .exec();
-        return res.jsonOK(
-            manga,
-            getMessage('manga.findone.success'),
-            new_token,
-        );
-    } else {
-        return res.jsonBadRequest(null, null, null);
-    }
+    else return res.jsonBadRequest(null, null, null);
 }
 
 async function list(req, res) {

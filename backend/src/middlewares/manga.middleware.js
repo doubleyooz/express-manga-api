@@ -36,32 +36,30 @@ async function store(req, res, next) {
 }
 
 async function findOne(req, res, next) {
-    let schema = yup.object().shape(
-        {
-            title: rules.title.when(['_id'], {
-                is: _id => !_id,
-                then: yup.required(),
-            }),
-            _id: rules.mongo_id.when(['title'], {
-                is: title => !title,
-                then: yup.required(),
-            }),
-        },
-        [['title', '_id']],
-    );
+    let schema = yup
+        .object()
+        .shape({
+            title: rules.title,
+            _id: rules.id_not_required,
+        })
+        .test(
+            'at-least-one-field',
+            'you must provide at least one field',
+            value =>
+                ((value.title && !value._id) || (!value.title && value._id)),
+        );
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    
+    schema
+        .validate(req.query)
+        .then(() => {
+            next();
+        })
+        .catch(err => {        
+            console.log(err)    
+            return res.jsonBadRequest(null, null, err.errors);
+        });
+
 }
 
 async function list(req, res, next) {
