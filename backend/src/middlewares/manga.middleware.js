@@ -45,21 +45,18 @@ async function findOne(req, res, next) {
         .test(
             'at-least-one-field',
             'you must provide at least one field',
-            value =>
-                ((value.title && !value._id) || (!value.title && value._id)),
+            value => (value.title && !value._id) || (!value.title && value._id),
         );
 
-    
     schema
         .validate(req.query)
         .then(() => {
             next();
         })
-        .catch(err => {        
-            console.log(err)    
+        .catch(err => {
+            console.log(err);
             return res.jsonBadRequest(null, null, err.errors);
         });
-
 }
 
 async function list(req, res, next) {

@@ -390,7 +390,7 @@ async function list(req, res) {
 }
 
 async function update(req, res) {
-    const { writer_id, artist_id, manga_id } = req.body;
+    const { writer_id, artist_id, _id } = req.body;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
@@ -406,11 +406,11 @@ async function update(req, res) {
     if (writer_id && (!writer || !writer.types.includes('writer')))
         return res.jsonBadRequest(null, getMessage('manga.error.writer'), null);
 
-    Manga.updateOne({ _id: manga_id, scan_id: scan_id }, req.body)
+    Manga.updateOne({ _id: _id, scan_id: scan_id }, req.body)
         .then(manga => {
             if (artist_id !== manga.artist_id) {
                 let cloneData = artist.works.filter(function (work_id) {
-                    return manga_id.toString() !== work_id.toString();
+                    return _id.toString() !== work_id.toString();
                 });
                 //update artist document
                 artist.works = cloneData;
@@ -424,7 +424,7 @@ async function update(req, res) {
 
             if (writer_id !== manga.writer_id) {
                 let cloneData = writer.works.filter(function (work_id) {
-                    return manga_id.toString() !== work_id.toString();
+                    return _id.toString() !== work_id.toString();
                 });
                 //update writer document
                 writer.works = cloneData;

@@ -89,9 +89,9 @@ const coversDestination = (req, files, cb) => {
         ),
     );
 
-    let dir = './' + folderName + 'mangas/';
+    let dir = './' + folderName + 'mangas/' + req.body.title;
     
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir + req.body.title + '/covers/', {recursive: true});
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir + '/covers/', {recursive: true});
 };
 
 const multerConfig = destination => {
