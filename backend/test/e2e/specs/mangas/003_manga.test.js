@@ -1,9 +1,10 @@
-import { manga } from '../../../mocks/manga.mock.js';
+import { manga, manga2 } from '../../../mocks/manga.mock.js';
 
 import {
     createManga,
     updateManga,
     findManga,
+    listManga,
 } from '../../../helpers/manga.helper.js';
 import jwt from '../../../../src/utils/jwt.util.js';
 
@@ -18,9 +19,11 @@ describe('Manga', () => {
     );
 
     createManga(manga, mockToken);
-    updateManga({ title: 'Gantz' }, mockToken, 'update name');
-    findManga(manga, true);
-    findManga(manga);
-});
+    createManga(manga2, mockToken);
 
-//fs.unlinkSync('./test/e2e/tests/scan.json');
+    updateManga({ title: 'Gantz', _id: 1 }, mockToken, 'update name');
+    findManga(manga, true);
+    findManga(manga2, true);
+    findManga(manga);
+    listManga([manga2, manga], 2);
+});

@@ -17,4 +17,21 @@ const manga = {
     __v: 0,
 };
 
-export { manga };
+const manga2 = {
+    title: 'Vagabond',
+    genres: ['action', 'philosophical', 'historical', 'tragedy'],
+    synopsis: 'A story following Miyamoto Musashi',
+    artist_id: mongoose.Types.ObjectId().toString(),
+    writer_id: mongoose.Types.ObjectId().toString(),
+    scan_id: mongoose.Types.ObjectId().toString(),
+    type: 'manga',
+    themes: ['martial arts', 'samurai', 'survival'],
+    n_chapters: 354,
+    status: 2,
+    languages: ['en', 'pt'],
+    nsfw: 'true',
+    _id: '',
+    __v: 0,
+};
+
+export { manga, manga2 };
