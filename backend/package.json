@@ -21,9 +21,9 @@
   },
   "scripts": {
     "start:dev": "NODE_ENV=dev nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
-    "test": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test",
-    "test:e2e": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test/e2e/specs",
-    "test:unit": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test/unit"
+    "test": "NODE_ENV=e2e node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test",
+    "test:e2e": "NODE_ENV=e2e node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test/e2e/specs",
+    "test:unit": "NODE_ENV=unit node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test/unit"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",

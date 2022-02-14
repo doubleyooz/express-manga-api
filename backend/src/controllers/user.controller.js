@@ -3,6 +3,8 @@ import ProtonMail from 'protonmail-api';
 //import smtpTransport from 'nodemailer-smtp-transport';
 
 import User from '../models/user.model.js';
+
+import { TEST_E2E_ENV } from '../utils/constant.util.js';
 import jwt from '../utils/jwt.util.js';
 import { encrypt, decrypt, hashPassword } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
@@ -10,7 +12,7 @@ import { getMessage } from '../utils/message.util.js';
 const Protonmail = false;
 
 async function sendEmail(email, activationToken) {
-    if (!`${process.env.ENV}` === 'test') {
+    if (process.env.NODE_ENV !== TEST_E2E_ENV) {
         if (Protonmail) {
             console.log('aqui - 0');
             const pm = await ProtonMail.connect({
@@ -93,7 +95,7 @@ async function store(req, res) {
                         return res.jsonOK(
                             null,
                             getMessage('user.activation.account.activate'),
-                            process.env.NODE_ENV === 'test' ? tkn : null,
+                            process.env.NODE_ENV === TEST_E2E_ENV ? tkn : null,
                         );
                     })
                     .catch(err => {
@@ -128,7 +130,7 @@ async function store(req, res) {
                             return res.jsonOK(
                                 null,
                                 getMessage('user.activation.account.activate'),
-                                process.env.NODE_ENV === 'test'
+                                process.env.NODE_ENV === TEST_E2E_ENV
                                     ? activationToken
                                     : null,
                             );

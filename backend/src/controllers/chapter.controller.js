@@ -3,63 +3,16 @@ import fs from 'fs';
 import Chapter from '../models/chapter.model.js';
 import Manga from '../models/manga.model.js';
 
+import {
+    TEST_E2E_ENV,
+    LIST_PROJECTION,
+    FIND_ONE_PROJECTION,
+} from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 import folderName from '../config/multer.config.js';
 
 const dir = folderName + 'mangas/';
-
-const read_projection = {
-    0: {
-        imgCollection: 1,
-        title: 1,
-        number: 1,
-        views: 1,
-    },
-    1: {
-        updatedAt: 1,
-        createdAt: 1,
-        title: 1,
-        number: 1,
-        visualizations: 1,
-        __v: 1,
-        views: 1,
-        imgCollection: 1,
-    },
-    2: {
-        imgCollection: 1,
-        title: 1,
-        number: 1,
-        views: 1,
-    },
-};
-
-const list_projection = {
-    0: {
-        title: 1,
-        number: 1,
-        views: 1,
-        updatedAt: 1,
-        language: 1,
-    },
-    1: {
-        updatedAt: 1,
-        createdAt: 1,
-        title: 1,
-        number: 1,
-        language: 1,
-        visualizations: 1,
-        __v: 1,
-        views: 1,
-    },
-    2: {
-        title: 1,
-        number: 1,
-        language: 1,
-        views: 1,
-        updatedAt: 1,
-    },
-};
 
 async function store(req, res) {
     const { manga_title, number, chapter_title, language } = req.body;
@@ -224,7 +177,7 @@ async function findOne(req, res) {
     req.role = null;
 
     Chapter.findById(_id)
-        .select(read_projection[role])
+        .select(FIND_ONE_PROJECTION[role])
         .then(doc => {
             console.log(doc.views);
             doc.views = doc.views + 1;
@@ -265,7 +218,7 @@ async function list(req, res) {
     if (doesMangaExist) {
         Chapter.find({ manga_id: manga_id })
             .sort('updatedAt')
-            .select(list_projection[role])
+            .select(LIST_PROJECTION[role])
             .then(result => {
                 result.forEach(doc => {
                     docs.push(doc);

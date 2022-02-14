@@ -5,132 +5,15 @@ import Chapter from '../models/chapter.model.js';
 import Manga from '../models/manga.model.js';
 import User from '../models/user.model.js';
 
+import {
+    TEST_E2E_ENV,
+    LIST_PROJECTION,
+    FIND_ONE_PROJECTION,
+} from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
 import { folderName } from '../config/multer.config.js';
-const list_projection = {
-    0: {
-        title: 1,
-        genre: 1,
-        synopsis: 1,
-        n_chapters: 1,
-        status: 1,
-        nsfw: 1,
-        rating: 1,
-        imgCollection: 1,
-        type: 1,
-        likes: 1,
-        themes: 1,
-        genres: 1,
-        languages: 1,
-        writer_id: 1,
-        artist_id: 1,
-        _id: 0,
-    },
-    1: {
-        updatedAt: 1,
-        createdAt: 1,
-        title: 1,
-        genre: 1,
-
-        type: 1,
-        synopsis: 1,
-        n_chapters: 1,
-
-        languages: 1,
-        nsfw: 1,
-        status: 1,
-        writer_id: 1,
-        artist_id: 1,
-        scan_id: 1,
-        rating: 1,
-        themes: 1,
-        genres: 1,
-        likes: 1,
-        __v: 1,
-        imgCollection: 1,
-    },
-    2: {
-        title: 1,
-        genre: 1,
-        synopsis: 1,
-        n_chapters: 1,
-        imgCollection: 1,
-        rating: 1,
-        writer_id: 1,
-        artist_id: 1,
-        type: 1,
-        themes: 1,
-        genres: 1,
-        nsfw: 1,
-        status: 1,
-        languages: 1,
-        likes: 1,
-    },
-};
-
-const read_projection = {
-    0: {
-        title: 1,
-        genre: 1,
-        synopsis: 1,
-        n_chapters: 1,
-        chapters: 1,
-        status: 1,
-        writer_id: 1,
-        artist_id: 1,
-        type: 1,
-        rating: 1,
-        themes: 1,
-        languages: 1,
-        genres: 1,
-        nsfw: 1,
-        imgCollection: 1,
-        likes: 1,
-    },
-    1: {
-        _id: 1,
-        updatedAt: 1,
-        createdAt: 1,
-        type: 1,
-        title: 1,
-        genre: 1,
-        synopsis: 1,
-        n_chapters: 1,
-        chapters: 1,
-        languages: 1,
-        nsfw: 1,
-        artist_id: 1,
-        writer_id: 1,
-        status: 1,
-        rating: 1,
-        scan_id: 1,
-        likes: 1,
-        themes: 1,
-        genres: 1,
-        __v: 1,
-        imgCollection: 1,
-    },
-    2: {
-        title: 1,
-        genre: 1,
-        synopsis: 1,
-        n_chapters: 1,
-        chapters: 1,
-        type: 1,
-        imgCollection: 1,
-        rating: 1,
-        writer_id: 1,
-        artist_id: 1,
-        nsfw: 1,
-        status: 1,
-        themes: 1,
-        genres: 1,
-        languages: 1,
-        likes: 1,
-    },
-};
 
 async function store(req, res) {
     const {
@@ -183,7 +66,7 @@ async function store(req, res) {
         artist_id: artist_id,
         //comments?
     });
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== TEST_E2E_ENV) {
         const scan = await User.findById(scan_id);
 
         if (!scan) {
@@ -291,11 +174,11 @@ async function findOne(req, res) {
     req.role = null;
 
     const manga = _id
-        ? await Manga.findById(_id).select(read_projection[role]).exec()
+        ? await Manga.findById(_id).select(FIND_ONE_PROJECTION[role]).exec()
         : await Manga.findOne({
               title: title,
           })
-              .select(read_projection[role])
+              .select(FIND_ONE_PROJECTION[role])
               .exec();
 
     if (manga)
@@ -365,7 +248,7 @@ async function list(req, res) {
         (
             await Manga.find(search)
                 .sort('updatedAt')
-                .select(list_projection[role])
+                .select(LIST_PROJECTION[role])
         ).forEach(function (doc) {
             docs.push(doc);
         });
@@ -400,7 +283,7 @@ async function update(req, res) {
 
     if (
         (!artist || !artist.types.includes('artist')) &&
-        process.env.NODE_ENV !== 'test'
+        process.env.NODE_ENV !== TEST_E2E_ENV
     )
         return res.jsonBadRequest(null, getMessage('manga.error.artist'), null);
 
@@ -408,7 +291,7 @@ async function update(req, res) {
 
     if (
         (!writer || !writer.types.includes('writer')) &&
-        process.env.NODE_ENV !== 'test'
+        process.env.NODE_ENV !== TEST_E2E_ENV
     )
         return res.jsonBadRequest(null, getMessage('manga.error.writer'), null);
 
@@ -501,7 +384,7 @@ async function remove(req, res) {
                     new_token,
                 );
 
-            if (!process.env.NODE_ENV === 'test') {
+            if (!process.env.NODE_ENV === TEST_E2E_ENV) {
                 const scan = await User.findById(scan_id);
                 scan.mangas = scan.mangas.filter(function (_id) {
                     return _id.toString() !== _id.toString();

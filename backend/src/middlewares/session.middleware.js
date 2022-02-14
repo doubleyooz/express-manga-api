@@ -1,4 +1,6 @@
 import User from '../models/user.model.js';
+
+import { TEST_E2E_ENV } from '../utils/constant.util.js';
 import jwt from '../utils/jwt.util.js';
 import { encrypt } from '../utils/password.util.js';
 
@@ -23,7 +25,7 @@ function auth(roles = []) {
                 //Invalid roles
                 return res.jsonUnauthorized(null, null, null);
             } else {
-                if (process.env.NODE_ENV === 'test') {
+                if (process.env.NODE_ENV === TEST_E2E_ENV) {
                     req.auth = encrypt(payload._id);
                     next();
                 } else {
@@ -98,7 +100,7 @@ function easyAuth() {
                     let payload = null;
 
                     payload = jwt.verifyJwt(token, 1);
-                    if (process.env.NODE_ENV === 'test') {
+                    if (process.env.NODE_ENV === TEST_E2E_ENV) {
                         req.auth = encrypt(payload._id);
                         next();
                     } else {

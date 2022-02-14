@@ -2,6 +2,7 @@ import Manga from '../models/manga.model.js';
 import Review from '../models/review.model.js';
 import User from '../models/user.model.js';
 
+import { TEST_E2E_ENV } from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
@@ -17,7 +18,7 @@ async function store(req, res) {
 
     const manga = await Manga.findById(manga_id);
 
-    if (!manga && process.env.NODE_ENV !== 'test')
+    if (!manga && process.env.NODE_ENV !== TEST_E2E_ENV)
         return res.jsonBadRequest(null, getMessage('review.error.manga'), null);
 
     const doesReviewExist = await Review.exists({
@@ -40,7 +41,7 @@ async function store(req, res) {
         manga_id: manga_id,
     });
 
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== TEST_E2E_ENV) {
         manga.reviews.push(review._id);
         user.reviews.push(review._id);
         manga.rating += rating;
@@ -177,7 +178,7 @@ async function update(req, res) {
             let temp = -review.rating + rating;
             review.rating = rating;
             review.text = text;
-            if (!process.env.NODE_ENV === 'test') {
+            if (!process.env.NODE_ENV === TEST_E2E_ENV) {
                 Manga.findById({ _id: review.manga_id })
                     .then(manga => {
                         manga.rating += temp;
