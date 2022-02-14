@@ -1,4 +1,5 @@
 import { manga, manga2 } from '../../../mocks/manga.mock.js';
+import { userToken, scanToken } from '../../../mocks/jwt.mock.js';
 
 import {
     createManga,
@@ -7,17 +8,10 @@ import {
     listManga,
     deleteManga,
 } from '../../../helpers/manga.helper.js';
-import jwt from '../../../../src/utils/jwt.util.js';
+
 
 describe('Manga', () => {
-    let mockToken = jwt.generateJwt(
-        {
-            _id: manga.scan_id,
-            role: 'Scan',
-            token_version: 0,
-        },
-        1,
-    );
+    let mockToken = scanToken(manga.scan_id);
 
     createManga(manga, mockToken);
     createManga(manga2, mockToken);

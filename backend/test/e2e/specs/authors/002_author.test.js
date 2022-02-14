@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
-import jwt from '../../../../src/utils/jwt.util.js';
 import { artist, writer } from '../../../mocks/author.mock.js';
+import { userToken, scanToken } from '../../../mocks/jwt.mock.js';
 import {
     createAuthor,
     updateAuthor,
@@ -11,14 +11,7 @@ import {
 } from '../../../helpers/author.helper.js';
 
 describe('Author', () => {
-    let mockToken = jwt.generateJwt(
-        {
-            _id: mongoose.Types.ObjectId(),
-            role: 'Scan',
-            token_version: 0,
-        },
-        1,
-    );
+    let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
     createAuthor(artist, mockToken);
     createAuthor(writer, mockToken);

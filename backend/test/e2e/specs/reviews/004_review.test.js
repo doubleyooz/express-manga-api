@@ -1,27 +1,19 @@
 import { review, review2 } from '../../../mocks/review.mock.js';
+import { userToken, scanToken } from '../../../mocks/jwt.mock.js';
 
-import { createReview, updateReview } from '../../../helpers/review.helper.js';
-import jwt from '../../../../src/utils/jwt.util.js';
+import {
+    createReview,
+    findReview,
+    listReview,
+    updateReview,
+} from '../../../helpers/review.helper.js';
 
 describe('Review', () => {
-    let mockToken = jwt.generateJwt(
-        {
-            _id: review.user_id,
-            role: 'User',
-            token_version: 0,
-        },
-        1,
-    );
+   
+    let mockToken = userToken(review.user_id);
+    let mockToken2 = userToken(review2.user_id);
 
-    let mockToken2 = jwt.generateJwt(
-        {
-            _id: review2.user_id,
-            role: 'User',
-            token_version: 0,
-        },
-        1,
-    );
-
+    createReview(review, mockToken);
     createReview(review, mockToken);
     createReview(review2, mockToken2);
     updateReview(
@@ -32,4 +24,7 @@ describe('Review', () => {
         mockToken,
         'update text',
     );
+
+    findReview(review2);
+    listReview([review, review], true, 2);
 });
