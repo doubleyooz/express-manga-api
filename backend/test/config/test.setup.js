@@ -75,7 +75,7 @@ function setupDB(databaseName) {
     // Disconnect Mongoose
     afterAll(async () => {
         await dropAllCollections();
-        await dropTestUploadFolder();
+        //await dropTestUploadFolder();
         await mongoose.connection.close();
     });
 }

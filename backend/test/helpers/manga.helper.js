@@ -38,7 +38,7 @@ const createManga = (payload, token) => {
     it('GET /mangas/findOne ', async () => {
         await supertest(app)
             .get(`/mangas/findOne?_id=${payload._id}`)
-            .send({})
+            
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .then(response => {
@@ -122,7 +122,6 @@ const findManga = (payload, byId) => {
             .get(path)
             .expect(200)
             .then(response => {
-                console.log(response.body);
                 // Check type and length
                 expect(
                     typeof response.body === 'object' &&
@@ -171,6 +170,56 @@ const listManga = (payload, number) => {
     });
 };
 
+const deleteManga = (payload, token) => {
+    it('DELETE /mangas', async () => {      
+        await supertest(app)
+            .delete(`/mangas?_id=${payload._id}`)
+
+            .set('Authorization', 'Bearer ' + token)
+            .expect(200)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                expect(response.body.data['mangas affected']).toEqual(1);
+                expect(response.body.data['chapters affected']).toEqual(
+                    expect.any(Number),
+                );
+                expect(
+                    response.body.message.startsWith(
+                        getMessage('manga.delete.success'),
+                    ),
+                ).toBeTruthy();
+            });
+    });
+
+    it('GET /mangas/findOne', async () => {
+        
+        await supertest(app)
+            .get(`/mangas/findOne?_id=${payload._id}`)
+            .expect(404)
+            .then(response => {                
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                expect(response.body).toMatchObject({
+                    message: getMessage('manga.notfound'),
+                    data: null,
+                    metadata: {},
+                    status: 404,
+                });
+            });
+    });
+};
+
 const schema = payload => {
     return {
         genres: payload.genres,
@@ -186,4 +235,4 @@ const schema = payload => {
     };
 };
 
-export { createManga, updateManga, listManga, findManga };
+export { createManga, updateManga, listManga, findManga, deleteManga };

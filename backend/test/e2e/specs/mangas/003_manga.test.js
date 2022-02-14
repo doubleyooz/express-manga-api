@@ -5,6 +5,7 @@ import {
     updateManga,
     findManga,
     listManga,
+    deleteManga,
 } from '../../../helpers/manga.helper.js';
 import jwt from '../../../../src/utils/jwt.util.js';
 
@@ -26,4 +27,6 @@ describe('Manga', () => {
     findManga(manga2, true);
     findManga(manga);
     listManga([manga2, manga], 2);
+
+    deleteManga(manga, mockToken);
 });
