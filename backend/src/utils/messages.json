@@ -54,7 +54,7 @@
     "manga.pin.success": "Manga pinned successfuly",
     "manga.save.success": "Manga added!",
     "manga.update.success": "Manga updated!",
-    "manga.deleted": "Manga deleted.",
+    "manga.delete.success": "Manga deleted.",
     "manga.notfound": "Manga could not be found.",
     "manga.notify.success": "Users notified successfuly",
     "manga.notify.error": "Users weren't notified successfuly",

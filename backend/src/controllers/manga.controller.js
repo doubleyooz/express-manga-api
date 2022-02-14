@@ -304,7 +304,7 @@ async function findOne(req, res) {
             getMessage('manga.findone.success'),
             new_token,
         );
-    else return res.jsonBadRequest(null, null, null);
+    else return res.jsonNotFound(null, getMessage('manga.notfound'), null);
 }
 
 async function list(req, res) {
@@ -395,53 +395,83 @@ async function update(req, res) {
     req.new_token = null;
 
     let scan_id = decrypt(req.auth);
-
+    if (process.env.NODE_ENV !== 'test') {
+    }
     const artist = artist_id ? await Author.findById(artist_id) : null;
 
-    if (artist_id && (!artist || !artist.types.includes('artist')))
+    if (
+        (!artist || !artist.types.includes('artist')) &&
+        process.env.NODE_ENV !== 'test'
+    )
         return res.jsonBadRequest(null, getMessage('manga.error.artist'), null);
 
     const writer = writer_id ? await Author.findById(writer_id) : null;
 
-    if (writer_id && (!writer || !writer.types.includes('writer')))
+    if (
+        (!writer || !writer.types.includes('writer')) &&
+        process.env.NODE_ENV !== 'test'
+    )
         return res.jsonBadRequest(null, getMessage('manga.error.writer'), null);
 
-    Manga.updateOne({ _id: _id, scan_id: scan_id }, req.body)
+    Manga.findById(_id)
         .then(manga => {
-            if (artist_id !== manga.artist_id) {
-                let cloneData = artist.works.filter(function (work_id) {
-                    return _id.toString() !== work_id.toString();
-                });
-                //update artist document
-                artist.works = cloneData;
-                artist
-                    .save()
-                    .then(answer => {})
-                    .catch(err => {
-                        console.log(err);
-                    });
-            }
+            if (manga.scan_id.toString() !== scan_id.toString())
+                return res.jsonUnauthorized(null, null, null);
 
-            if (writer_id !== manga.writer_id) {
-                let cloneData = writer.works.filter(function (work_id) {
-                    return _id.toString() !== work_id.toString();
-                });
-                //update writer document
-                writer.works = cloneData;
-                writer.updatedAt = Date.now();
-                writer
-                    .save()
-                    .then(answer => {})
-                    .catch(err => {
-                        console.log(err);
+            manga
+                .updateOne(req.body)
+                .then(result => {
+                    [artist, writer].forEach((author, i) => {
+                        if (author) {
+                            const condition =
+                                i === 0
+                                    ? author._id !== manga.artist_id
+                                    : author._id !== manga.writer_id;
+                            if (condition) {
+                                let cloneData = author.works.filter(function (
+                                    work_id,
+                                ) {
+                                    return (
+                                        _id.toString() !== work_id.toString()
+                                    );
+                                });
+                                //update artist document
+                                author.works = cloneData;
+                                author
+                                    .save()
+                                    .then(answer => {})
+                                    .catch(err => {
+                                        console.log(err);
+                                    });
+                            }
+                        }
                     });
-            }
 
-            return res.jsonOK(
-                null,
-                getMessage('manga.update.success'),
-                new_token,
-            );
+                    if (req.body.title) {
+                        const currPath = folderName + 'mangas/' + manga.title;
+                        const newPath = folderName + 'mangas/' + req.body.title;
+
+                        fs.rename(currPath, newPath, function (err) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log(
+                                    'Successfully renamed the directory.',
+                                );
+                            }
+                        });
+                    }
+
+                    return res.jsonOK(
+                        null,
+                        getMessage('manga.update.success'),
+                        new_token,
+                    );
+                })
+                .catch(err => {
+                    console.log(err);
+                    return res.jsonServerError(null, null, err);
+                });
         })
         .catch(err => {
             console.log(err);
@@ -450,8 +480,8 @@ async function update(req, res) {
 }
 
 async function remove(req, res) {
-    const { manga_id } = req.query;
-    const manga = await Manga.findById(manga_id);
+    const { _id } = req.query;
+    const manga = await Manga.findById(_id);
 
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
@@ -461,7 +491,7 @@ async function remove(req, res) {
 
     if (manga) {
         if (manga.scan_id.toString() === scan_id) {
-            const mangas = await Manga.deleteMany({ _id: manga_id });
+            const mangas = await Manga.deleteMany({ _id: _id });
             //console.log(mangas)
 
             // update writer and artist documents
@@ -472,53 +502,54 @@ async function remove(req, res) {
                     new_token,
                 );
 
-            const scan = await User.findById(scan_id);
+            if (!process.env.NODE_ENV === 'test') {
+                const scan = await User.findById(scan_id);
+                scan.mangas = scan.mangas.filter(function (_id) {
+                    return _id.toString() !== _id.toString();
+                });
 
-            scan.mangas = scan.mangas.filter(function (_id) {
-                return _id.toString() !== manga_id.toString();
-            });
+                scan.save(function (err) {
+                    // yet another err object to deal with
+                    if (err) {
+                        return res.jsonServerError(null, null, err);
+                    }
+                });
 
-            scan.save(function (err) {
-                // yet another err object to deal with
-                if (err) {
-                    return res.jsonServerError(null, null, err);
-                }
-            });
+                /*(await Chapter.find({_id: _id})).forEach(function (doc){
+                    doc.imgCollection.forEach(function (page){                            
+                        fs.unlinkSync('uploads/' + manga.title + "/"+ page.filename)  
+                    })                      
+                });
+                */
 
-            /*(await Chapter.find({manga_id: manga_id})).forEach(function (doc){
-				doc.imgCollection.forEach(function (page){                            
-					fs.unlinkSync('uploads/' + manga.title + "/"+ page.filename)  
-				})                      
-			});
-			*/
+                const writer = await Author.findById(manga.writer_id);
 
-            const writer = await Author.findById(manga.writer_id);
+                writer.works = writer.works.filter(function (_id) {
+                    return _id.toString() !== _id.toString();
+                });
 
-            writer.works = writer.works.filter(function (_id) {
-                return _id.toString() !== manga_id.toString();
-            });
+                writer.save(function (err) {
+                    // yet another err object to deal with
+                    if (err) {
+                        return res.jsonServerError(null, null, err);
+                    }
+                });
 
-            writer.save(function (err) {
-                // yet another err object to deal with
-                if (err) {
-                    return res.jsonServerError(null, null, err);
-                }
-            });
+                const artist = await Author.findById(manga.artist_id);
 
-            const artist = await Author.findById(manga.artist_id);
+                artist.works = artist.works.filter(function (_id) {
+                    return _id.toString() !== _id.toString();
+                });
 
-            artist.works = artist.works.filter(function (_id) {
-                return _id.toString() !== manga_id.toString();
-            });
+                artist.save(function (err) {
+                    // yet another err object to deal with
+                    if (err) {
+                        return res.jsonServerError(null, null, err);
+                    }
+                });
+            }
 
-            artist.save(function (err) {
-                // yet another err object to deal with
-                if (err) {
-                    return res.jsonServerError(null, null, err);
-                }
-            });
-
-            const chapters = await Chapter.deleteMany({ manga_id: manga_id });
+            const chapters = await Chapter.deleteMany({ manga_id: _id });
 
             let dir = folderName + 'mangas/' + manga.title;
 
@@ -535,7 +566,7 @@ async function remove(req, res) {
                     'mangas affected': mangas.deletedCount,
                     'chapters affected': chapters.deletedCount,
                 },
-                null,
+                getMessage('manga.delete.success'),
                 new_token,
             );
         }

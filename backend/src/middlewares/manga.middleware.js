@@ -135,7 +135,7 @@ async function update(req, res, next) {
 
 async function remove(req, res, next) {
     let schema = yup.object().shape({
-        manga_id: rules.mongo_id_req,
+        _id: rules.mongo_id_req,
     });
 
     try {
