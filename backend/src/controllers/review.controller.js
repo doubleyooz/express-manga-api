@@ -17,6 +17,9 @@ async function store(req, res) {
 
     const manga = await Manga.findById(manga_id);
 
+    if (!manga && process.env.NODE_ENV !== 'test')
+        return res.jsonBadRequest(null, getMessage('review.error.manga'), null);
+
     const doesReviewExist = await Review.exists({
         user_id: current_user,
         manga_id: manga_id,
@@ -37,45 +40,61 @@ async function store(req, res) {
         manga_id: manga_id,
     });
 
-    manga.reviews.push(review._id);
-    user.reviews.push(review._id);
-    manga.rating += rating;
+    if (process.env.NODE_ENV !== 'test') {
+        manga.reviews.push(review._id);
+        user.reviews.push(review._id);
+        manga.rating += rating;
 
-    manga.updatedAt = Date.now();
-    user.updatedAt = Date.now();
+        manga.updatedAt = Date.now();
+        user.updatedAt = Date.now();
 
-    manga
-        .save()
-        .then(() => {
-            user.save()
-                .then(() => {
-                    review
-                        .save()
-                        .then(() => {
-                            return res.jsonOK(
-                                null,
-                                getMessage('review.save.success'),
-                                new_token,
-                            );
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            return res.jsonServerError(
-                                null,
-                                null,
-                                err.toString(),
-                            );
-                        });
-                })
-                .catch(err => {
-                    console.log(err);
-                    return res.jsonServerError(null, null, err.toString());
-                });
-        })
-        .catch(err => {
-            console.log(err);
-            return res.jsonServerError(null, null, err.toString());
-        });
+        manga
+            .save()
+            .then(() => {
+                user.save()
+                    .then(() => {
+                        review
+                            .save()
+                            .then(result => {
+                                return res.jsonOK(
+                                    result,
+                                    getMessage('review.save.success'),
+                                    new_token,
+                                );
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                return res.jsonServerError(
+                                    null,
+                                    null,
+                                    err.toString(),
+                                );
+                            });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        return res.jsonServerError(null, null, err.toString());
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+                return res.jsonServerError(null, null, err.toString());
+            });
+    } else {
+        review
+            .save()
+            .then(result => {
+                return res.jsonOK(
+                    result,
+                    getMessage('review.save.success'),
+                    new_token,
+                );
+            })
+            .catch(err => {
+                console.log(err);
+                return res.jsonServerError(null, null, err.toString());
+            });
+    }
 }
 
 async function findOne(req, res) {
@@ -88,7 +107,7 @@ async function findOne(req, res) {
             if (review)
                 return res.jsonOK(
                     review,
-                    getMessage('review.read.success'),
+                    getMessage('review.findone.success'),
                     new_token,
                 );
             return res.jsonNotFound(
@@ -147,19 +166,18 @@ async function update(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    req.body.updatedAt = Date.now();
     let user_id = decrypt(req.auth);
-    req.auth = null
+    req.auth = null;
 
-    const doesUserExists = await User.exists({ _id: user_id });
+    Review.findById({ _id: _id })
+        .then(review => {
+            if (review.user_id.toString() !== user_id.toString())
+                return res.jsonUnauthorized(null, null, null);
 
-    if (doesUserExists) {
-        Review.findById({ _id: _id })
-            .then(review => {
-                let temp = -review.rating + rating;
-                review.rating = rating;
-                review.text = text;
-
+            let temp = -review.rating + rating;
+            review.rating = rating;
+            review.text = text;
+            if (!process.env.NODE_ENV === 'test') {
                 Manga.findById({ _id: review.manga_id })
                     .then(manga => {
                         manga.rating += temp;
@@ -190,18 +208,29 @@ async function update(req, res) {
                     .catch(err => {
                         return res.jsonServerError(null, null, err);
                     });
-            })
-            .catch(err => {
-                console.log(err);
-                return res.jsonNotFound(
-                    err,
-                    getMessage('review.notfound'),
-                    new_token,
-                );
-            });
-    } else {
-        return res.jsonBadRequest(null, null, new_token);
-    }
+            } else {
+                review
+                    .save()
+                    .then(() => {
+                        return res.jsonOK(
+                            null,
+                            getMessage('review.update.success'),
+                            new_token,
+                        );
+                    })
+                    .catch(err => {
+                        return res.jsonServerError(null, null, err);
+                    });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.jsonNotFound(
+                err,
+                getMessage('review.notfound'),
+                new_token,
+            );
+        });
 }
 
 async function remove(req, res) {

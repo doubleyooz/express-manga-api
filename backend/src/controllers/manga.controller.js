@@ -395,8 +395,7 @@ async function update(req, res) {
     req.new_token = null;
 
     let scan_id = decrypt(req.auth);
-    if (process.env.NODE_ENV !== 'test') {
-    }
+
     const artist = artist_id ? await Author.findById(artist_id) : null;
 
     if (

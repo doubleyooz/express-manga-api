@@ -25,18 +25,14 @@ async function findById(req, res, next) {
         _id: rules._id.required(),
     });
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query)
+        .then(() => {
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 async function list(req, res, next) {
@@ -73,18 +69,15 @@ async function update(req, res, next) {
         rating: rules.rating,
     });
 
-    try {
-        schema
-            .validate(req.body)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.body, { stripUnknown: true })
+        .then(result => {
+            req.body = result;
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 export default {
