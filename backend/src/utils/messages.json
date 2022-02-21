@@ -64,9 +64,9 @@
     "review.invalid.text.short": "Text is too short - it must be at least 2 characters long.",
     "review.invalid.text.long": "Text is too long - it must be a maximum of 500 characters.",
     "review.findone.success": "Selected review retrieved.",
-    "review.list.success": "Review list retrieved.",
+    "review.list.success": "Review list retrieved! Reviews found: ",
     "review.update.success": "Review updated.",
-    "review.deleted": "Review deleted.",
+    "review.delete.success": "Review deleted.",
 
     "review.notfound": "Review could not be found.",
 

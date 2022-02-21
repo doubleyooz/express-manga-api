@@ -10,8 +10,9 @@ async function store(req, res, next) {
     });
 
     schema
-        .validate(req.body)
-        .then(() => {
+        .validate(req.body, { stripUnknown: true })
+        .then(result => {
+            req.body = result;          
             next();
         })
         .catch(function (e) {
@@ -45,13 +46,14 @@ async function list(req, res, next) {
         .test(
             'at-least-one-field',
             'you must provide at least one id',
-            value => !!(value.manga_id || value.user_id),
+            value => value.manga_id || value.user_id,
         );
 
     try {
         schema
-            .validate(req.query)
-            .then(() => {
+            .validate(req.query, { stripUnknown: true })
+            .then(result => {
+                req.query = result;
                 next();
             })
             .catch(err => {

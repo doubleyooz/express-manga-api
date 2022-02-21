@@ -27,7 +27,7 @@ async function store(req, res) {
     });
 
     if (doesReviewExist) {
-        return res.jsonNotFound(
+        return res.jsonBadRequest(
             null,
             getMessage('review.error.duplicate'),
             new_token,
@@ -127,39 +127,27 @@ async function list(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    if (user_id) {
-        Review.find({ user_id: user_id })
-            .then(docs => {
-                return res.jsonOK(
-                    docs,
-                    getMessage('review.list.success'),
-                    new_token,
-                );
-            })
-            .catch(err => {
-                return res.jsonNotFound(
-                    null,
-                    getMessage('review.notfound'),
-                    new_token,
-                );
-            });
-    } else {
-        Review.find({ manga_id: manga_id })
-            .then(docs => {
-                return res.jsonOK(
-                    docs,
-                    getMessage('review.list.success'),
-                    new_token,
-                );
-            })
-            .catch(err => {
-                return res.jsonNotFound(
-                    null,
-                    getMessage('review.notfound'),
-                    new_token,
-                );
-            });
-    }
+    const search = user_id
+        ? { user_id: user_id }
+        : manga_id
+        ? { manga_id: manga_id }
+        : {};
+
+    Review.find(search)
+        .then(docs => {
+            return res.jsonOK(
+                docs,
+                getMessage('review.list.success') + docs.length,
+                new_token,
+            );
+        })
+        .catch(err => {
+            return res.jsonNotFound(
+                null,
+                getMessage('review.notfound'),
+                new_token,
+            );
+        });
 }
 
 async function update(req, res) {
@@ -170,38 +158,21 @@ async function update(req, res) {
     let user_id = decrypt(req.auth);
     req.auth = null;
 
-    Review.findById({ _id: _id })
+    Review.findOneAndUpdate(
+        { _id: _id, user_id: user_id.toString() },
+        req.body,
+        { new: true },
+    )
         .then(review => {
-            if (review.user_id.toString() !== user_id.toString())
-                return res.jsonUnauthorized(null, null, null);
+            let temp = rating ? -review.rating + rating : 0;
 
-            let temp = -review.rating + rating;
-            review.rating = rating;
-            review.text = text;
             if (!process.env.NODE_ENV === TEST_E2E_ENV) {
                 Manga.findById({ _id: review.manga_id })
                     .then(manga => {
                         manga.rating += temp;
                         manga
                             .save()
-                            .then(() => {
-                                review
-                                    .save()
-                                    .then(() => {
-                                        return res.jsonOK(
-                                            null,
-                                            getMessage('review.update.success'),
-                                            new_token,
-                                        );
-                                    })
-                                    .catch(err => {
-                                        return res.jsonServerError(
-                                            null,
-                                            null,
-                                            err,
-                                        );
-                                    });
-                            })
+                            .then(() => {})
                             .catch(err => {
                                 return res.jsonServerError(null, null, err);
                             });
@@ -209,20 +180,13 @@ async function update(req, res) {
                     .catch(err => {
                         return res.jsonServerError(null, null, err);
                     });
-            } else {
-                review
-                    .save()
-                    .then(() => {
-                        return res.jsonOK(
-                            null,
-                            getMessage('review.update.success'),
-                            new_token,
-                        );
-                    })
-                    .catch(err => {
-                        return res.jsonServerError(null, null, err);
-                    });
             }
+
+            return res.jsonOK(
+                review,
+                getMessage('review.update.success'),
+                new_token,
+            );
         })
         .catch(err => {
             console.log(err);
@@ -248,41 +212,41 @@ async function remove(req, res) {
         if (review.user_id.toString() === user_id) {
             const response = await Review.deleteOne({ _id: _id });
 
-            // `1` if MongoDB deleted a doc, `0` if no docs matched the filter `{ name: ... }`
             if (response.n === 0)
                 return res.jsonNotFound(
                     response,
                     getMessage('review.notfound'),
                     new_token,
                 );
+            if (process.env.NODE_ENV !== TEST_E2E_ENV) {
+                const user = await User.findById(user_id);
 
-            const user = await User.findById(user_id);
+                user.reviews = user.reviews.filter(function (_id) {
+                    return _id.toString() !== _id.toString();
+                });
 
-            user.reviews = user.reviews.filter(function (_id) {
-                return _id.toString() !== _id.toString();
-            });
+                const manga = await Manga.findById(review.manga_id);
+                manga.rating -= review.rating;
+                manga.reviews = manga.reviews.filter(function (_id) {
+                    return _id.toString() !== _id.toString();
+                });
 
-            const manga = await Manga.findById(review.manga_id);
-            manga.rating -= review.rating;
-            manga.reviews = manga.reviews.filter(function (_id) {
-                return _id.toString() !== _id.toString();
-            });
+                user.save(function (err) {
+                    // yet another err object to deal with
+                    if (err) {
+                        return res.jsonServerError(null, null, err);
+                    }
+                });
 
-            user.save(function (err) {
-                // yet another err object to deal with
-                if (err) {
-                    return res.jsonServerError(null, null, err);
-                }
-            });
+                manga.save(function (err) {
+                    // yet another err object to deal with
+                    if (err) {
+                        return res.jsonServerError(null, null, err);
+                    }
+                });
+            }
 
-            manga.save(function (err) {
-                // yet another err object to deal with
-                if (err) {
-                    return res.jsonServerError(null, null, err);
-                }
-            });
-
-            return res.jsonOK(null, getMessage('review.deleted'), new_token);
+            return res.jsonOK(null, getMessage('review.delete.success'), new_token);
         } else return res.jsonUnauthorized(null, null, null);
     } else
         return res.jsonNotFound(null, getMessage('review.notfound'), new_token);

@@ -72,17 +72,18 @@ const updateReview = (payload, token, message) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-                expect(response.body).toMatchObject({
-                    message: getMessage('review.update.success'),
-                    data: null,
-                    metadata: {},
-                    status: 200,
-                });
                 let bool = payload._id === review._id;
                 Object.keys(payload).forEach(function (value) {
                     if (bool) review[value] = payload[value];
                     else review2[value] = payload[value];
                 });
+                expect(response.body).toMatchObject({
+                    message: getMessage('review.update.success'),
+                    data: payload,
+                    metadata: {},
+                    status: 200,
+                });
+                
             });
     });
 
@@ -133,11 +134,14 @@ const findReview = payload => {
     });
 };
 
-const listReview = (payload, byUserId, number) => {      
+const listReview = (payload, selection, number) => {
+  
     it(`GET /reviews ${number} documents`, async () => {
-        const path = byUserId
-        ? `/reviews?user_id=${payload.user_id}`
-        : `/reviews?manga_id=${payload.manga_id}`;
+        const path = selection.user_id
+            ? `/reviews?user_id=${selection.user_id}`
+            : selection.manga_id
+            ? `/reviews?manga_id=${selection.manga_id}`
+            : `/reviews`;
         await supertest(app)
             .get(path)
             .send()
@@ -150,7 +154,11 @@ const listReview = (payload, byUserId, number) => {
                         response.body !== null,
                 ).toBeTruthy();
 
-    
+                payload.sort((a, b) => (a.text > b.text ? 1 : -1));
+                response.body.data.sort((a, b) =>
+                    a.text > b.text ? 1 : -1,
+                );
+
                 expect(response.body).toMatchObject({
                     message: getMessage('review.list.success') + number,
                     data: payload.map(x => {
@@ -163,10 +171,10 @@ const listReview = (payload, byUserId, number) => {
     });
 };
 
-const deleteManga = (payload, token) => {
-    it('DELETE /mangas', async () => {
+const deleteReview = (payload, token) => {
+    it('DELETE /reviews', async () => {
         await supertest(app)
-            .delete(`/mangas?_id=${payload._id}`)
+            .delete(`/reviews?_id=${payload._id}`)
 
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
@@ -178,21 +186,18 @@ const deleteManga = (payload, token) => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                expect(response.body.data['mangas affected']).toEqual(1);
-                expect(response.body.data['chapters affected']).toEqual(
-                    expect.any(Number),
-                );
+            
                 expect(
                     response.body.message.startsWith(
-                        getMessage('manga.delete.success'),
+                        getMessage('review.delete.success'),
                     ),
                 ).toBeTruthy();
             });
     });
 
-    it('GET /mangas/findOne', async () => {
+    it('GET /reviews/findOne', async () => {
         await supertest(app)
-            .get(`/mangas/findOne?_id=${payload._id}`)
+            .get(`/reviews/findOne?_id=${payload._id}`)
             .expect(404)
             .then(response => {
                 // Check type and length
@@ -203,7 +208,7 @@ const deleteManga = (payload, token) => {
                 ).toBeTruthy();
 
                 expect(response.body).toMatchObject({
-                    message: getMessage('manga.notfound'),
+                    message: getMessage('review.notfound'),
                     data: null,
                     metadata: {},
                     status: 404,
@@ -215,9 +220,9 @@ const deleteManga = (payload, token) => {
 const schema = payload => {
     return {
         text: payload.text,
-        rating: payload.rating,        
+        rating: payload.rating,
         manga_id: payload.manga_id,
     };
 };
 
-export { createReview, findReview, listReview, updateReview };
+export { createReview, findReview, listReview, updateReview, deleteReview };
