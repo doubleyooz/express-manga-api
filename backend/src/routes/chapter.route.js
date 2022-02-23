@@ -13,38 +13,38 @@ import {
 
 const router = express.Router();
 
-const upload = multer(multerConfig.covers).array('imgCollection');
+const upload = multer(multerConfig.chapters).array('imgCollection');
 
 router.post(
     '/',
     Authorize('Scan'),
     upload,
-    ChapterMiddleware.valid_store,
+    ChapterMiddleware.store,
     ChapterController.store,
 );
 router.get(
     '/',
     easyAuth(),
-    ChapterMiddleware.valid_list,
+    ChapterMiddleware.list,
     ChapterController.list,
 );
 router.get(
     '/findOne',
     easyAuth(),
-    ChapterMiddleware.valid_findOne,
+    ChapterMiddleware.findOne,
     ChapterController.findOne,
 );
 router.put(
     '/',
     Authorize('Scan'),
     upload,
-    ChapterMiddleware.valid_update,
+    ChapterMiddleware.update,
     ChapterController.update,
 );
 router.delete(
     '/',
     Authorize('Scan'),
-    ChapterMiddleware.valid_remove,
+    ChapterMiddleware.remove,
     ChapterController.remove,
 );
 

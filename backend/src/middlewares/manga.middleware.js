@@ -118,19 +118,15 @@ async function update(req, res, next) {
                 ),
         );
 
-    try {
-        schema
-            .validate(req.body, { stripUnknown: true })
-            .then(result => {
-                req.body = result;
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.body, { stripUnknown: true })
+        .then(result => {
+            req.body = result;
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 async function remove(req, res, next) {

@@ -15,16 +15,16 @@ import folderName from '../config/multer.config.js';
 const dir = folderName + 'mangas/';
 
 async function store(req, res) {
-    const { manga_title, number, chapter_title, language } = req.body;
+    const { manga_id, number, title, language } = req.body;
 
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    Manga.findOne({ title: manga_title }, function (err, manga) {
+    Manga.findOne({ title: manga_id }, function (err, manga) {
         if (manga) {
             const filesPath =
                 dir +
-                manga_title +
+                manga_id +
                 '/' +
                 number +
                 '/' +
@@ -63,10 +63,10 @@ async function store(req, res) {
                     });
 
                     const chapter = new Chapter({
-                        manga_id: manga._id,
+                        manga_id: manga_id,
                         number: number,
-                        title: chapter_title,
-                        langauge: language,
+                        title: title,
+                        language: language,
                         imgCollection: [],
                     });
 
@@ -81,7 +81,7 @@ async function store(req, res) {
                                 .then(answer => {
                                     return res.jsonOK(
                                         result,
-                                        getMessage('chapter.upload.success'),
+                                        getMessage('chapter.save.success'),
                                         new_token,
                                     );
                                 })
@@ -109,7 +109,7 @@ async function store(req, res) {
                 }
             });
         } else {
-            let dir2 = dir + manga_title;
+            let dir2 = dir + manga_id;
 
             fs.rmdir(dir2, { recursive: true }, err => {
                 if (err) {
@@ -138,9 +138,7 @@ async function update(req, res) {
         return res.jsonNotFound(null, getMessage('manga.notfound'), new_token);
     }
 
-    if (
-        manga.scan_id.toString() === decrypt(req.auth)
-    ) {
+    if (manga.scan_id.toString() === decrypt(req.auth)) {
         manga = null;
 
         Chapter.findOneAndUpdate(
@@ -172,8 +170,7 @@ async function findOne(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    
-    const role = req.role ? decrypt(req.role) : 0
+    const role = req.role ? decrypt(req.role) : 0;
     req.role = null;
 
     Chapter.findById(_id)
@@ -182,15 +179,11 @@ async function findOne(req, res) {
             console.log(doc.views);
             doc.views = doc.views + 1;
             doc.save()
-                .then(() => {
-                    return res.jsonOK(
-                        doc,
-                        getMessage('chapter.findone.success'),
-                        new_token,
-                    );
-                })
+                .then(() => {})
                 .catch(err => {
                     console.log(err);
+                })
+                .finally(() => {
                     return res.jsonOK(
                         doc,
                         getMessage('chapter.findone.success'),
@@ -210,8 +203,8 @@ async function list(req, res) {
 
     let role;
 
-    role = req.role ? decrypt(req.role) : 0
-    req.role = null;  
+    role = req.role ? decrypt(req.role) : 0;
+    req.role = null;
 
     let docs = [];
     const doesMangaExist = await Manga.exists({ _id: manga_id });
@@ -261,7 +254,7 @@ async function remove(req, res) {
                     });
                     const filesPath =
                         dir +
-                        manga_title +
+                        manga_id +
                         '/' +
                         number +
                         '/' +

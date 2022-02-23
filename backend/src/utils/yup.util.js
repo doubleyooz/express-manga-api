@@ -248,10 +248,10 @@ const author_rules = {
 
 const chapter_rules = {
     _id: mongo_id_req,
-    manga_title: yup
+    manga_id: yup
         .string('manga title must be a string.')
         .max(60, getMessage('manga.invalid.title.long')),
-    chapter_title: yup
+    title: yup
         .string('title must be a string.')
         .max(40, getMessage('chapter.invalid.title.long')),
     number: yup
@@ -260,7 +260,7 @@ const chapter_rules = {
 
     language: yup
         .string('language must be a string.')
-        .default({ language: 'pt' })
+        .default('pt')
         .test(
             'Valid language',
             'This value for ${path} is not a valid option',

@@ -48,6 +48,7 @@ const authorDestination = (req, files, cb) => {
 };
 
 const chaptersDestination = (req, files, cb) => {
+    let user_id = decrypt(req.auth);
     cb(
         null,
         path.resolve(
@@ -56,24 +57,26 @@ const chaptersDestination = (req, files, cb) => {
             '..',
             folderName,
             'mangas/',
-            req.body.manga_title + '/',
+            req.body.manga_id + '/',
             req.body.number + '/',
             req.body.language + '/',
-            decrypt(req.auth),
+            user_id,
         ),
     );
-
+    
     let dir =
         './' +
         folderName +
         'mangas/' +
-        req.body.manga_title +
+        req.body.manga_id +
         '/' +
         req.body.number +
+        '/' +
+        req.body.language +
         '/';
 
-    if (!fs.existsSync(dir + req.body.number))
-        fs.mkdirSync(dir + req.body.number, { recursive: true });
+    if (!fs.existsSync(dir + user_id))
+        fs.mkdirSync(dir + user_id, { recursive: true });
 };
 
 const coversDestination = (req, files, cb) => {
@@ -90,8 +93,9 @@ const coversDestination = (req, files, cb) => {
     );
 
     let dir = './' + folderName + 'mangas/' + req.body.title;
-    
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir + '/covers/', {recursive: true});
+
+    if (!fs.existsSync(dir))
+        fs.mkdirSync(dir + '/covers/', { recursive: true });
 };
 
 const multerConfig = destination => {

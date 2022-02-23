@@ -14,7 +14,7 @@
     
     "chapter.invalid.title.short": "Title is too short - it must be at least 2 characters long.",
     "chapter.invalid.title.long": "Title is too long - it must be a maximum of 40 characters.",
-    "chapter.upload.success": "Upload Done!",
+    "chapter.save.success": "Upload Done!",
     "chapter.update.success": "Update Done!",
     "chapter.findone.success": "Chapter retrieved successfully!",
     "chapter.list.success": "Chapter list retrieved successfully! Chapters found: ",

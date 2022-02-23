@@ -2,34 +2,31 @@ import yup from 'yup';
 
 import { chapter_rules as rules } from '../utils/yup.util.js';
 
-async function valid_store(req, res, next) {
+async function store(req, res, next) {
     let schema = yup.object().shape({
-        manga_title: rules.manga_title.required(),
-        chapter_title: rules.chapter_title.required(),
+        manga_id: rules.manga_id.required(),
+        title: rules.title.required(),
         number: rules.number.required(),
         language: rules.language.required(),
     });
-    try {
-        await schema
-            .validate(req.body, { stripUnknown: true })
-            .then((result) => {
-                if (req.files.length) {
-                    req.body = result;
-                    next();
-                }
-                else return res.jsonBadRequest(null, null, null);
-            })
-            .catch(function (e) {
-                return res.jsonBadRequest(null, null, e);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err);
-    }
+
+    schema
+        .validate(req.body, { stripUnknown: true })
+        .then(result => {
+            if (req.files.length) {
+                req.body = result;
+                next();
+            } else return res.jsonBadRequest(null, null, null);
+        })
+        .catch(function (e) {
+            console.log(e);
+            return res.jsonBadRequest(null, null, e);
+        });
 }
 
-async function valid_findOne(req, res, next) {
+async function findOne(req, res, next) {
     let schema = yup.object().shape({
-        chapter_id: rules._id.required(),
+        _id: rules._id.required(),
     });
 
     try {
@@ -46,7 +43,7 @@ async function valid_findOne(req, res, next) {
     }
 }
 
-async function valid_list(req, res, next) {
+async function list(req, res, next) {
     let schema = yup.object().shape({
         manga_id: rules._id.required(),
     });
@@ -60,7 +57,7 @@ async function valid_list(req, res, next) {
         });
 }
 
-async function valid_update(req, res, next) {
+async function update(req, res, next) {
     let schema = yup.object().shape({
         chapter_title: rules.chapter_title,
         number: rules.number,
@@ -71,12 +68,9 @@ async function valid_update(req, res, next) {
     try {
         schema
             .validate(req.body)
-            .then((result) => {
-                
+            .then(result => {
                 req.body = result;
                 next();
-                
-                
             })
             .catch(err => {
                 return res.jsonBadRequest(null, null, err.errors);
@@ -86,7 +80,7 @@ async function valid_update(req, res, next) {
     }
 }
 
-async function valid_remove(req, res, next) {
+async function remove(req, res, next) {
     let schema = yup.object().shape({
         _id: rules._id.required(),
         manga_id: rules._id.required(),
@@ -107,9 +101,9 @@ async function valid_remove(req, res, next) {
 }
 
 export default {
-    valid_store,
-    valid_findOne,
-    valid_list,
-    valid_update,
-    valid_remove,
+    store,
+    findOne,
+    list,
+    update,
+    remove,
 };
