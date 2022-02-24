@@ -27,57 +27,51 @@ function auth(roles = []) {
             } else {
                 if (process.env.NODE_ENV === TEST_E2E_ENV) {
                     req.auth = encrypt(payload._id);
-                    next();
-                } else {
-                    User.exists({
-                        _id: payload._id,
-                        active: true,
-                        token_version: payload.token_version,
-                    })
-                        .then(result => {
-                            if (result) {
-                                try {
-                                    var current_time =
-                                        Date.now().valueOf() / 1000;
-                                    if (
-                                        (payload.exp - payload.iat) / 2 >
-                                        payload.exp - current_time
-                                    ) {
-                                        let new_token = jwt.generateJwt(
-                                            {
-                                                id: payload._id,
-                                                role: payload.role,
-                                                token_version:
-                                                    payload.token_version,
-                                            },
-                                            1,
-                                        );
-                                        req.new_token = `Bearer ${new_token}`;
-                                        console.log(`New Token: ${new_token}`);
-                                    } else {
-                                        console.log('Token not expired');
-                                    }
-
-                                    req.auth = encrypt(payload._id);
-                                    payload = null;
-                                    next();
-                                } catch (err) {
-                                    console.log(err);
-                                    //Server error
-                                    return res.jsonServerError(
-                                        null,
-                                        null,
-                                        null,
-                                    );
-                                }
-                            } else {
-                                return res.jsonUnauthorized(null, null, null);
-                            }
-                        })
-                        .catch(err => {
-                            return res.jsonUnauthorized(null, null, err);
-                        });
+                    return next();
                 }
+                User.exists({
+                    _id: payload._id,
+                    active: true,
+                    token_version: payload.token_version,
+                })
+                    .then(result => {
+                        if (result) {
+                            try {
+                                var current_time = Date.now().valueOf() / 1000;
+                                if (
+                                    (payload.exp - payload.iat) / 2 >
+                                    payload.exp - current_time
+                                ) {
+                                    let new_token = jwt.generateJwt(
+                                        {
+                                            id: payload._id,
+                                            role: payload.role,
+                                            token_version:
+                                                payload.token_version,
+                                        },
+                                        1,
+                                    );
+                                    req.new_token = `Bearer ${new_token}`;
+                                    console.log(`New Token: ${new_token}`);
+                                } else {
+                                    console.log('Token not expired');
+                                }
+
+                                req.auth = encrypt(payload._id);
+                                payload = null;
+                                return next();
+                            } catch (err) {
+                                console.log(err);
+                                //Server error
+                                return res.jsonServerError(null, null, null);
+                            }
+                        } else {
+                            return res.jsonUnauthorized(null, null, null);
+                        }
+                    })
+                    .catch(err => {
+                        return res.jsonUnauthorized(null, null, err);
+                    });
             }
         } catch (err) {
             console.log(err);
@@ -88,87 +82,72 @@ function auth(roles = []) {
 
 function easyAuth() {
     return async (req, res, next) => {
-        try {
-            if (!req.headers.authorization) {
-                next();
-            } else {
-                const [, token] = req.headers.authorization.split(' ');
+        if (!req.headers.authorization) return next();
 
-                if (!token) {
-                    next();
-                } else {
-                    let payload = null;
+        const [, token] = req.headers.authorization.split(' ');
+        if (!token) return next();
 
-                    payload = jwt.verifyJwt(token, 1);
-                    if (process.env.NODE_ENV === TEST_E2E_ENV) {
-                        req.auth = encrypt(payload._id);
-                        next();
-                    } else {
-                        User.exists({
-                            _id: payload._id,
-                            active: true,
-                            token_version: payload.token_version,
-                        })
-                            .then(result => {
-                                if (result) {
-                                    try {
-                                        var current_time =
-                                            Date.now().valueOf() / 1000;
-                                        console.log(payload);
-                                        console.log(payload.exp - payload.iat);
-                                        console.log(payload.exp - current_time);
-                                        console.log(current_time);
-                                        if (
-                                            (payload.exp - payload.iat) / 2 >
-                                            payload.exp - current_time
-                                        ) {
-                                            let new_token = jwt.generateJwt(
-                                                {
-                                                    id: payload._id,
-                                                    role: payload.role,
-                                                    token_version:
-                                                        payload.token_version,
-                                                },
-                                                1,
-                                            );
-                                            req.new_token = `Bearer ${new_token}`;
-                                            console.log(
-                                                `New Token: ${new_token}`,
-                                            );
-                                        } else {
-                                            console.log('Token not expired');
-                                        }
-                                        let dict = {
-                                            '': 0,
-                                            Scan: 1,
-                                            User: 2,
-                                        };
+        let payload = null;
+        const dict = {
+            '': 0,
+            Scan: 1,
+            User: 2,
+        };
 
-                                        req.role = CryptoJs.AES.encrypt(
-                                            dict[payload.role].toString(),
-                                            `${process.env.SHUFFLE_SECRET}`,
-                                        );
-                                        payload = null;
-                                        dict = null;
-                                        next();
-                                    } catch (err) {
-                                        console.log('something went wrong.');
-                                        console.log(err);
-                                        next();
-                                    }
-                                } else {
-                                    next();
-                                }
-                            })
-                            .catch(err => {
-                                next();
-                            });
-                    }
-                }
-            }
-        } catch (err) {
-            next();
+        payload = jwt.verifyJwt(token, 1);
+        if (process.env.NODE_ENV === TEST_E2E_ENV) {
+            req.auth = encrypt(payload._id);
+            req.role = encrypt(dict[payload.role].toString());
+            payload = null;
+            return next();
         }
+
+        User.exists({
+            _id: payload._id,
+            active: true,
+            token_version: payload.token_version,
+        })
+            .then(result => {
+                if (result) {
+                    try {
+                        var current_time = Date.now().valueOf() / 1000;
+                        console.log(payload);
+                        console.log(payload.exp - payload.iat);
+                        console.log(payload.exp - current_time);
+                        console.log(current_time);
+                        if (
+                            (payload.exp - payload.iat) / 2 >
+                            payload.exp - current_time
+                        ) {
+                            let new_token = jwt.generateJwt(
+                                {
+                                    id: payload._id,
+                                    role: payload.role,
+                                    token_version: payload.token_version,
+                                },
+                                1,
+                            );
+                            req.new_token = `Bearer ${new_token}`;
+                            console.log(`New Token: ${new_token}`);
+                        } else {
+                            console.log('Token not expired');
+                        }
+
+                        req.role = encrypt(dict[payload.role].toString());
+                        payload = null;
+                        return next();
+                    } catch (err) {
+                        console.log('something went wrong.');
+                        console.log(err);
+                        return next();
+                    }
+                } else {
+                    return next();
+                }
+            })
+            .catch(err => {
+                return next();
+            });
     };
 }
 

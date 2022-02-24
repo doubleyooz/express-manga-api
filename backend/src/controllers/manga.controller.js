@@ -5,11 +5,7 @@ import Chapter from '../models/chapter.model.js';
 import Manga from '../models/manga.model.js';
 import User from '../models/user.model.js';
 
-import {
-    TEST_E2E_ENV,
-    LIST_PROJECTION,
-    FIND_ONE_PROJECTION,
-} from '../utils/constant.util.js';
+import { TEST_E2E_ENV, MANGA_PROJECTION } from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
@@ -168,17 +164,15 @@ async function findOne(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    let role;
-
-    role = req.role ? decrypt(req.role) : 0;
+    let role = req.role ? parseInt(decrypt(req.role)) : 0;
     req.role = null;
 
     const manga = _id
-        ? await Manga.findById(_id).select(FIND_ONE_PROJECTION[role]).exec()
+        ? await Manga.findById(_id).select(MANGA_PROJECTION[role]).exec()
         : await Manga.findOne({
               title: title,
           })
-              .select(FIND_ONE_PROJECTION[role])
+              .select(MANGA_PROJECTION[role])
               .exec();
 
     if (manga)
@@ -196,9 +190,7 @@ async function list(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    let role;
-
-    role = req.role ? decrypt(req.role) : 0;
+    let role = req.role ? parseInt(decrypt(req.role)) : 0;
     req.role = null;
 
     let docs = [];
@@ -248,7 +240,7 @@ async function list(req, res) {
         (
             await Manga.find(search)
                 .sort('updatedAt')
-                .select(LIST_PROJECTION[role])
+                .select(MANGA_PROJECTION[role])
         ).forEach(function (doc) {
             docs.push(doc);
         });

@@ -5,8 +5,7 @@ import Manga from '../models/manga.model.js';
 
 import {
     TEST_E2E_ENV,
-    LIST_PROJECTION,
-    FIND_ONE_PROJECTION,
+    CHAPTER_PROJECTION,
 } from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
@@ -169,14 +168,14 @@ async function findOne(req, res) {
     const { _id } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
-
+    console.log(req.role)
     const role = req.role ? decrypt(req.role) : 0;
     req.role = null;
 
     Chapter.findById(_id)
-        .select(FIND_ONE_PROJECTION[role])
+        .select(CHAPTER_PROJECTION[role])
         .then(doc => {
-            console.log(doc.views);
+            console.log(doc);
             doc.views = doc.views + 1;
             doc.save()
                 .then(() => {})
@@ -211,7 +210,7 @@ async function list(req, res) {
     if (doesMangaExist) {
         Chapter.find({ manga_id: manga_id })
             .sort('updatedAt')
-            .select(LIST_PROJECTION[role])
+            .select(CHAPTER_PROJECTION[role])
             .then(result => {
                 result.forEach(doc => {
                     docs.push(doc);

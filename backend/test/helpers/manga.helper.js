@@ -102,7 +102,8 @@ const updateManga = (payload, token, message) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-
+                console.log(response.body);
+                
                 expect(response.body).toMatchObject({
                     message: getMessage('manga.findone.success'),
                     data: payload,
