@@ -49,8 +49,9 @@ async function findOne(req, res, next) {
         );
 
     schema
-        .validate(req.query)
-        .then(() => {
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
             next();
         })
         .catch(err => {
@@ -67,22 +68,15 @@ async function list(req, res, next) {
         recent: yup.boolean(),
     });
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(e => {
-                return res.jsonBadRequest(
-                    null,
-                    null,
-                    e.path + ' : ' + e.message,
-                );
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
+            next();
+        })
+        .catch(e => {
+            return res.jsonBadRequest(null, null, e.path + ' : ' + e.message);
+        });
 }
 
 async function update(req, res, next) {
@@ -131,21 +125,19 @@ async function update(req, res, next) {
 
 async function remove(req, res, next) {
     let schema = yup.object().shape({
-        _id: rules.mongo_id_req,
+        _id: rules._id.required(),
     });
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
+            next();
+        })
+        .catch(err => {
+            console.log(err);
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 export default {

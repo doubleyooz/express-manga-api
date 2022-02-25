@@ -102,8 +102,7 @@ const updateManga = (payload, token, message) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-                console.log(response.body);
-
+                
                 expect(response.body).toMatchObject({
                     message: getMessage('manga.findone.success'),
                     data: payload,
@@ -174,7 +173,7 @@ const listManga = (payload, number) => {
 const deleteManga = (payload, token) => {
     it('DELETE /mangas', async () => {
         await supertest(app)
-            .delete(`/mangas?_id=${payload._id}`)
+            .delete(`/mangas?_id=${payload._id}&sas=asas`)
 
             .set('Authorization', 'Bearer ' + token)
             .expect(200)

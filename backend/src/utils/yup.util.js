@@ -122,6 +122,11 @@ const mongo_id_req = yup
         isValidMongoIdRequired(value),
     );
 
+const name = yup
+    .string('name must be a string.')
+    .min(3, getMessage('yup.invalid.name.short'))
+    .max(20, getMessage('yup.invalid.name.long'));
+
 const manga_rules = {
     title: yup
         .string('title must be a string.')
@@ -215,9 +220,7 @@ const author_rules = {
         .max(2, 'Can not provide more than two types'),
     type: yup.string('type must be a string.').matches(/(^writer$|^artist$)/),
     _id: mongo_id_req,
-    name: yup
-        .string('name must be a string.')
-        .min(3, getMessage('yup.invalid.name.short')),
+    name: name,
 
     birthDate: yup
         .date()
@@ -285,6 +288,7 @@ const review_rules = {
 const user_rules = {
     _id: mongo_id_req,
     email: yup.string().email().required(),
+    name: name,
     password: yup
         .string()
         .min(8, getMessage('user.invalid.password.short'))

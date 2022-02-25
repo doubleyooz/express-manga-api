@@ -355,6 +355,7 @@ async function update(req, res) {
 
 async function remove(req, res) {
     const { _id } = req.query;
+
     const manga = await Manga.findById(_id);
 
     const new_token = req.new_token ? req.new_token : null;
@@ -373,7 +374,7 @@ async function remove(req, res) {
         return res.jsonUnauthorized(null, null, null);
 
     const mangas = await Manga.deleteMany({ _id: _id });
-   
+
     // update writer and artist documents
     if (mangas.n === 0)
         return res.jsonNotFound(

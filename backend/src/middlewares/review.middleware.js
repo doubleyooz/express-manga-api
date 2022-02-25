@@ -12,7 +12,7 @@ async function store(req, res, next) {
     schema
         .validate(req.body, { stripUnknown: true })
         .then(result => {
-            req.body = result;          
+            req.body = result;
             next();
         })
         .catch(function (e) {
@@ -27,8 +27,9 @@ async function findById(req, res, next) {
     });
 
     schema
-        .validate(req.query)
-        .then(() => {
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
             next();
         })
         .catch(err => {
@@ -49,19 +50,15 @@ async function list(req, res, next) {
             value => value.manga_id || value.user_id,
         );
 
-    try {
-        schema
-            .validate(req.query, { stripUnknown: true })
-            .then(result => {
-                req.query = result;
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 async function update(req, res, next) {

@@ -16,25 +16,24 @@ async function google_sign_up(req, res, next) {
         return res.jsonUnauthorized(null, null, null);
     }
 
-    const yupObject = yup.object().shape({
+    const schema = yup.object().shape({
         email: rules.email,
         password: rules.password,
         name: rules.name,
         role: rules.role,
     });
-    console.log(req.body);
-    yupObject
-        .validate({
-            email: payload.email,
-            name: payload.name,
-            password: password,
-        })
-        .then(() => {
-            req.body = {
+
+    schema
+        .validate(
+            {
                 email: payload.email,
                 name: payload.name,
                 password: password,
-            };
+            },
+            { stripUnknown: true },
+        )
+        .then(result => {
+            req.body = result;
             next();
         })
         .catch(err => {
@@ -47,14 +46,18 @@ async function sign_up(req, res, next) {
     const yupObject = yup.object().shape({
         email: rules.email,
         password: rules.password,
-        name: rules.name,
-        role: rules.role,
+        name: rules.name.required(),
+        role: rules.role.required(),
     });
 
     yupObject
-        .validate(req.body)
-        .then(() => next())
+        .validate(req.body, { stripUnknown: true })
+        .then((result) => {          
+            req.body = result;            
+            next();
+        })
         .catch(err => {
+            console.log(err);
             return res.jsonBadRequest(null, null, err.errors);
         });
 }
@@ -76,8 +79,11 @@ async function sign_in(req, res, next) {
     });
 
     yupObject
-        .validate({ email: email, password: password })
-        .then(() => next())
+        .validate({ email: email, password: password }, { stripUnknown: true })
+        .then(result => {
+            req.body = result;
+            next();
+        })
         .catch(err => {
             return res.jsonBadRequest(null, null, err.errors);
         });
@@ -88,19 +94,16 @@ async function findOne(req, res, next) {
         user_id: rules._id,
     });
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                console.log(err);
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
+            next();
+        })
+        .catch(err => {
+            console.log(err);
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 async function list(req, res, next) {
@@ -108,18 +111,15 @@ async function list(req, res, next) {
         name: rules.name,
     });
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 async function update(req, res, next) {
@@ -128,8 +128,9 @@ async function update(req, res, next) {
     });
 
     schema
-        .validate(req.body)
-        .then(() => {
+        .validate(req.body, { stripUnknown: true })
+        .then(result => {
+            req.body = result;
             next();
         })
         .catch(err => {
@@ -142,22 +143,17 @@ async function remove(req, res, next) {
         user_id: rules._id,
     });
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                if (decrypt(req.auth) === user_id) {
-                    next();
-                } else {
-                    return res.jsonBadRequest(null, null, null);
-                }
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            if (decrypt(req.auth) !== user_id)
+                return res.jsonBadRequest(null, null, null);
+            req.query = result;
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 export default {

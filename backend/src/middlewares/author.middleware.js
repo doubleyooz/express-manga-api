@@ -5,7 +5,7 @@ import { author_rules as rules } from '../utils/yup.util.js';
 async function store(req, res, next) {
     let currentDate = new Date();
     currentDate.setFullYear(currentDate.getFullYear() - 10);
-  
+
     const schema = yup.object().shape({
         types: rules.types.required(),
         name: rules.name.required(),
@@ -19,7 +19,6 @@ async function store(req, res, next) {
         .validate(req.body, { stripUnknown: true })
         .then(result => {
             req.body = result;
-
             next();
         })
         .catch(function (e) {
@@ -33,18 +32,15 @@ async function findById(req, res, next) {
         _id: rules._id,
     });
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 async function list(req, res, next) {
@@ -53,18 +49,15 @@ async function list(req, res, next) {
         name: rules.name,
     });
 
-    try {
-        schema
-            .validate(req.query)
-            .then(() => {
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 async function update(req, res, next) {
@@ -93,19 +86,15 @@ async function update(req, res, next) {
                 ),
         );
 
-    try {
-        schema
-            .validate(req.body, { stripUnknown: true })
-            .then(result => {
-                req.body = result;
-                next();
-            })
-            .catch(err => {
-                return res.jsonBadRequest(null, null, err.errors);
-            });
-    } catch (err) {
-        return res.jsonBadRequest(null, null, err.errors);
-    }
+    schema
+        .validate(req.body, { stripUnknown: true })
+        .then(result => {
+            req.body = result;
+            next();
+        })
+        .catch(err => {
+            return res.jsonBadRequest(null, null, err.errors);
+        });
 }
 
 export default {

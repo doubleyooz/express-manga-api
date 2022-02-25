@@ -31,7 +31,7 @@ router.get(
 router.get(
     '/findOne',
     easyAuth(),
-    ChapterMiddleware.findOne,
+    ChapterMiddleware.findById,
     ChapterController.findOne,
 );
 router.put(
@@ -44,7 +44,7 @@ router.put(
 router.delete(
     '/',
     Authorize('Scan'),
-    ChapterMiddleware.remove,
+    ChapterMiddleware.findById,
     ChapterController.remove,
 );
 
