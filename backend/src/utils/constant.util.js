@@ -71,13 +71,14 @@ export const CHAPTER_PROJECTION = {
     0: {
         title: 1,
         imgCollection: 1,
+        views: 1,
         _id: 1,
     },  
     1: {
         title: 1,
         imgCollection: 1,
         views: 1,
-        number: 2,
+        number: 1,
         manga_id: 1,
         language: 1,
         updatedAt: 1,

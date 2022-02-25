@@ -1,4 +1,5 @@
 import supertest from 'supertest';
+import mongoose from 'mongoose';
 
 import { app } from '../../src/config/express.config.js';
 import { CHAPTER_PROJECTION } from '../../src/utils/constant.util.js';
@@ -123,36 +124,45 @@ const updateChapter = (payload, token, message) => {
     });
 };
 
-const findChapter = (payload, byId) => {
-    it(`GET /chapters/findOne?${byId ? '_id=' : 'title='}`, async () => {
-        const path = byId
-            ? `/chapters/findOne?_id=${payload._id}`
-            : `/chapters/findOne?title=${payload.title}`;
-        await supertest(app)
-            .get(path)
-            .expect(200)
-            .then(response => {
-                // Check type and length
-                expect(
-                    typeof response.body === 'object' &&
-                        !Array.isArray(response.body) &&
-                        response.body !== null,
-                ).toBeTruthy();
+const findChapter = (payload, auth) => {
+    it('GET /chapters/findOne?_id=', async () => {
+        const request = auth
+            ? supertest(app)
+                  .get(`/chapters/findOne?_id=${payload._id}`)
+                  .set('Authorization', 'Bearer ' + auth.token)
+            : supertest(app).get(`/chapters/findOne?_id=${payload._id}`);
 
-                expect(response.body).toMatchObject({
-                    message: getMessage('manga.findone.success'),
-                    data: schema(payload, photo),
-                    metadata: {},
-                    status: 200,
-                });
+        await request.expect(200).then(response => {
+            // Check type and length
+            expect(
+                typeof response.body === 'object' &&
+                    !Array.isArray(response.body) &&
+                    response.body !== null,
+            ).toBeTruthy();
+
+            expect(response.body).toMatchObject({
+                message: getMessage('chapter.findone.success'),
+                data: schema(payload, CHAPTER_PROJECTION[auth ? auth.role : 0]),
+                metadata: {},
+                status: 200,
             });
+        });
     });
 };
 
-const listChapter = (payload, number) => {
+const listChapter = (payload, manga_id, number, auth) => {
     it(`GET /chapters ${number} documents`, async () => {
-        await supertest(app)
-            .get('/chapters')
+        let path = mongoose.Types.ObjectId.isValid(manga_id)
+            ? `/chapters?manga_id=${manga_id}`
+            : `/chapters?manga_title=${manga_id}`;
+
+        const request = auth
+            ? supertest(app)
+                  .get(path)
+                  .set('Authorization', 'Bearer ' + auth.token)
+            : supertest(app).get(path);
+
+        await request
             .send({})
             .expect(200)
             .then(response => {
@@ -163,15 +173,16 @@ const listChapter = (payload, number) => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                payload.sort((a, b) => (a.synopsis > b.synopsis ? 1 : -1));
-                response.body.data.sort((a, b) =>
-                    a.synopsis > b.synopsis ? 1 : -1,
-                );
+                payload.sort((a, b) => a.number - b.number);
+                response.body.data.sort((a, b) => a.number - b.number);
 
                 expect(response.body).toMatchObject({
-                    message: getMessage('manga.list.success') + number,
+                    message: getMessage('chapter.list.success') + number,
                     data: payload.map(x => {
-                        return schema(x, photo);
+                        return schema(
+                            x,
+                            CHAPTER_PROJECTION[auth ? auth.role : 0],
+                        );
                     }),
                     metadata: {},
                     status: 200,
@@ -238,4 +249,4 @@ const schema = (payload, projection) => {
     return temp;
 };
 
-export { createChapter, updateChapter };
+export { createChapter, updateChapter, findChapter, listChapter };

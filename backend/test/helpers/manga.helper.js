@@ -38,7 +38,7 @@ const createManga = (payload, token) => {
     it('GET /mangas/findOne ', async () => {
         await supertest(app)
             .get(`/mangas/findOne?_id=${payload._id}`)
-            
+
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .then(response => {
@@ -103,7 +103,7 @@ const updateManga = (payload, token, message) => {
                         response.body !== null,
                 ).toBeTruthy();
                 console.log(response.body);
-                
+
                 expect(response.body).toMatchObject({
                     message: getMessage('manga.findone.success'),
                     data: payload,
@@ -172,7 +172,7 @@ const listManga = (payload, number) => {
 };
 
 const deleteManga = (payload, token) => {
-    it('DELETE /mangas', async () => {      
+    it('DELETE /mangas', async () => {
         await supertest(app)
             .delete(`/mangas?_id=${payload._id}`)
 
@@ -199,11 +199,10 @@ const deleteManga = (payload, token) => {
     });
 
     it('GET /mangas/findOne', async () => {
-        
         await supertest(app)
             .get(`/mangas/findOne?_id=${payload._id}`)
             .expect(404)
-            .then(response => {                
+            .then(response => {
                 // Check type and length
                 expect(
                     typeof response.body === 'object' &&

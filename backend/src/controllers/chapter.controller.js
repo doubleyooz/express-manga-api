@@ -13,8 +13,6 @@ const dir = folderName + 'mangas/';
 async function store(req, res) {
     const { manga_id, number, title, language } = req.body;
 
-    console.log(req.body);
-
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
@@ -190,45 +188,47 @@ async function findOne(req, res) {
 }
 
 async function list(req, res) {
-    const { manga_id } = req.query;
+    const { manga_id, manga_title } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    let role;
-
-    role = req.role ? decrypt(req.role) : 0;
+    let role = req.role ? decrypt(req.role) : 0;
     req.role = null;
 
-    let docs = [];
-    const doesMangaExist = await Manga.exists({ _id: manga_id });
-    if (doesMangaExist) {
-        Chapter.find({ manga_id: manga_id })
-            .sort('updatedAt')
-            .select(CHAPTER_PROJECTION[role])
-            .then(result => {
-                result.forEach(doc => {
-                    docs.push(doc);
-                });
-                if (docs.length === 0) {
-                    return res.jsonNotFound(
-                        docs,
-                        getMessage('chapter.list.empty'),
-                        new_token,
-                    );
-                } else {
-                    return res.jsonOK(
-                        docs,
-                        getMessage('chapter.list.success') + docs.length,
-                        new_token,
-                    );
-                }
-            })
-            .catch(err => {
-                return res.jsonBadRequest(err, null, null);
-            });
-    } else {
+    let docs = [];  
+
+    const doesMangaExist = manga_id
+        ? await Manga.exists({ _id: manga_id })
+        : await Manga.exists({ title: manga_title });
+    if (!doesMangaExist) {
         return res.jsonNotFound(null, getMessage('manga.notfound'), null);
     }
+    Chapter.find({
+        manga_id: manga_id ? manga_id : manga_title ? manga_title : null,
+    })
+        .sort('updatedAt')
+        .select(CHAPTER_PROJECTION[role])
+        .then(result => {
+            result.forEach(doc => {
+                docs.push(doc);
+            });
+            if (docs.length === 0) {
+                return res.jsonNotFound(
+                    docs,
+                    getMessage('chapter.list.empty'),
+                    new_token,
+                );
+            } else {
+                return res.jsonOK(
+                    docs,
+                    getMessage('chapter.list.success') + docs.length,
+                    new_token,
+                );
+            }
+        })
+        .catch(err => {
+            return res.jsonBadRequest(err, null, null);
+        });
 }
 
 async function remove(req, res) {

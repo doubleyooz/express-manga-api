@@ -213,9 +213,7 @@ const author_rules = {
         .ensure()
         .min(1, 'Need to provide at least one type')
         .max(2, 'Can not provide more than two types'),
-    type: yup
-        .string('type must be a string.')
-        .matches(/(^writer$|^artist$)/),
+    type: yup.string('type must be a string.').matches(/(^writer$|^artist$)/),
     _id: mongo_id_req,
     name: yup
         .string('name must be a string.')
@@ -247,6 +245,7 @@ const author_rules = {
 };
 
 const chapter_rules = {
+    id_not_required: mongo_id,
     _id: mongo_id_req,
     manga_id: yup
         .string('manga title must be a string.')

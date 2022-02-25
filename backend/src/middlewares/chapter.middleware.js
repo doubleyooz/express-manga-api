@@ -9,7 +9,7 @@ async function store(req, res, next) {
         number: rules.number.required(),
         language: rules.language.required(),
     });
-   
+
     schema
         .validate(req.body, { stripUnknown: true })
         .then(result => {
@@ -45,14 +45,21 @@ async function findOne(req, res, next) {
 
 async function list(req, res, next) {
     let schema = yup.object().shape({
-        manga_id: rules._id.required(),
-    });
+        manga_id: rules.id_not_required,
+        manga_title: rules.manga_id,
+    }).test(
+            'at-least-one-field',
+            'you must provide at least one field',
+            value => (value.manga_title && !value.manga_id) || (!value.manga_title && value.manga_id),
+        );;
     schema
-        .validate(req.query)
-        .then(() => {
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;            
             next();
         })
         .catch(err => {
+            console.log(err);
             return res.jsonBadRequest(null, null, err.errors);
         });
 }
