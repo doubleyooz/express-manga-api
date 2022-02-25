@@ -7,7 +7,8 @@ import { userToken, scanToken } from '../../../mocks/jwt.mock.js';
 import {
     createChapter,
     findChapter,
-    listChapter
+    listChapter,
+    deleteChapter
   
 } from '../../../helpers/chapter.helper.js';
 import {
@@ -26,5 +27,5 @@ describe('Chapter', () => {
     createChapter(chapter2, mockToken);
     findChapter(chapter);
     listChapter([chapter, chapter2], chapter.manga_id, 2);
-   
+    deleteChapter(chapter, mockToken);
 });

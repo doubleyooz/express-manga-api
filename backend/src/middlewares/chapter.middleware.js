@@ -31,8 +31,9 @@ async function findOne(req, res, next) {
 
     try {
         schema
-            .validate(req.query)
-            .then(() => {
+            .validate(req.query, { stripUnknown: true })
+            .then(result => {
+                req.query = result;
                 next();
             })
             .catch(err => {
@@ -44,18 +45,23 @@ async function findOne(req, res, next) {
 }
 
 async function list(req, res, next) {
-    let schema = yup.object().shape({
-        manga_id: rules.id_not_required,
-        manga_title: rules.manga_id,
-    }).test(
+    let schema = yup
+        .object()
+        .shape({
+            manga_id: rules.id_not_required,
+            manga_title: rules.manga_id,
+        })
+        .test(
             'at-least-one-field',
             'you must provide at least one field',
-            value => (value.manga_title && !value.manga_id) || (!value.manga_title && value.manga_id),
-        );;
+            value =>
+                (value.manga_title && !value.manga_id) ||
+                (!value.manga_title && value.manga_id),
+        );
     schema
         .validate(req.query, { stripUnknown: true })
         .then(result => {
-            req.query = result;            
+            req.query = result;
             next();
         })
         .catch(err => {
@@ -90,7 +96,6 @@ async function update(req, res, next) {
 async function remove(req, res, next) {
     let schema = yup.object().shape({
         _id: rules._id.required(),
-        manga_id: rules._id.required(),
     });
 
     try {

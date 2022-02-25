@@ -363,92 +363,92 @@ async function remove(req, res) {
     const scan_id = decrypt(req.auth);
     req.auth = null;
 
-    if (manga) {
-        if (manga.scan_id.toString() === scan_id) {
-            const mangas = await Manga.deleteMany({ _id: _id });
-            //console.log(mangas)
+    if (!manga)
+        return res.jsonBadRequest(
+            null,
+            getMessage('manga.notfound'),
+            new_token,
+        );
+    if (manga.scan_id.toString() !== scan_id)
+        return res.jsonUnauthorized(null, null, null);
 
-            // update writer and artist documents
-            if (mangas.n === 0)
-                return res.jsonNotFound(
-                    mangas,
-                    getMessage('manga.notfound'),
-                    new_token,
-                );
+    const mangas = await Manga.deleteMany({ _id: _id });
+   
+    // update writer and artist documents
+    if (mangas.n === 0)
+        return res.jsonNotFound(
+            mangas,
+            getMessage('manga.notfound'),
+            new_token,
+        );
 
-            if (!process.env.NODE_ENV === TEST_E2E_ENV) {
-                const scan = await User.findById(scan_id);
-                scan.mangas = scan.mangas.filter(function (_id) {
-                    return _id.toString() !== _id.toString();
-                });
+    if (!process.env.NODE_ENV === TEST_E2E_ENV) {
+        const scan = await User.findById(scan_id);
+        scan.mangas = scan.mangas.filter(function (_id) {
+            return _id.toString() !== _id.toString();
+        });
 
-                scan.save(function (err) {
-                    // yet another err object to deal with
-                    if (err) {
-                        return res.jsonServerError(null, null, err);
-                    }
-                });
+        scan.save(function (err) {
+            // yet another err object to deal with
+            if (err) {
+                return res.jsonServerError(null, null, err);
+            }
+        });
 
-                /*(await Chapter.find({_id: _id})).forEach(function (doc){
+        /*(await Chapter.find({_id: _id})).forEach(function (doc){
                     doc.imgCollection.forEach(function (page){                            
                         fs.unlinkSync('uploads/' + manga.title + "/"+ page.filename)  
                     })                      
                 });
                 */
 
-                const writer = await Author.findById(manga.writer_id);
+        const writer = await Author.findById(manga.writer_id);
 
-                writer.works = writer.works.filter(function (_id) {
-                    return _id.toString() !== _id.toString();
-                });
+        writer.works = writer.works.filter(function (_id) {
+            return _id.toString() !== _id.toString();
+        });
 
-                writer.save(function (err) {
-                    // yet another err object to deal with
-                    if (err) {
-                        return res.jsonServerError(null, null, err);
-                    }
-                });
-
-                const artist = await Author.findById(manga.artist_id);
-
-                artist.works = artist.works.filter(function (_id) {
-                    return _id.toString() !== _id.toString();
-                });
-
-                artist.save(function (err) {
-                    // yet another err object to deal with
-                    if (err) {
-                        return res.jsonServerError(null, null, err);
-                    }
-                });
+        writer.save(function (err) {
+            // yet another err object to deal with
+            if (err) {
+                return res.jsonServerError(null, null, err);
             }
+        });
 
-            const chapters = await Chapter.deleteMany({ manga_id: _id });
+        const artist = await Author.findById(manga.artist_id);
 
-            let dir = folderName + 'mangas/' + manga.title;
+        artist.works = artist.works.filter(function (_id) {
+            return _id.toString() !== _id.toString();
+        });
 
-            fs.rmdir(dir, { recursive: true }, err => {
-                if (err) {
-                    console.log(err);
-                }
-            });
-
-            fs.rmdirSync(dir, { recursive: true });
-
-            return res.jsonOK(
-                {
-                    'mangas affected': mangas.deletedCount,
-                    'chapters affected': chapters.deletedCount,
-                },
-                getMessage('manga.delete.success'),
-                new_token,
-            );
-        }
-
-        return res.jsonUnauthorized(null, null, null);
+        artist.save(function (err) {
+            // yet another err object to deal with
+            if (err) {
+                return res.jsonServerError(null, null, err);
+            }
+        });
     }
 
-    return res.jsonBadRequest(null, getMessage('manga.notfound'), new_token);
+    const chapters = await Chapter.deleteMany({ manga_id: _id });
+
+    let dir = folderName + 'mangas/' + manga.title;
+
+    fs.rmdir(dir, { recursive: true }, err => {
+        if (err) {
+            console.log(err);
+        }
+    });
+
+    fs.rmdirSync(dir, { recursive: true });
+
+    return res.jsonOK(
+        {
+            'mangas affected': mangas.deletedCount,
+            'chapters affected': chapters.deletedCount,
+        },
+        getMessage('manga.delete.success'),
+        new_token,
+    );
 }
 
 export default { store, findOne, list, update, remove };

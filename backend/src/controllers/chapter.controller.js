@@ -168,6 +168,12 @@ async function findOne(req, res) {
     Chapter.findById(_id)
         .select(CHAPTER_PROJECTION[role])
         .then(doc => {
+            if (!doc)
+                return res.jsonNotFound(
+                    null,
+                    getMessage('chapter.notfound'),
+                    null,
+                );
             doc.views = doc.views + 1;
             doc.save()
                 .then(() => {})
@@ -183,6 +189,7 @@ async function findOne(req, res) {
                 });
         })
         .catch(err => {
+            console.log(err);
             return res.jsonBadRequest(err, null, null);
         });
 }
@@ -195,7 +202,7 @@ async function list(req, res) {
     let role = req.role ? decrypt(req.role) : 0;
     req.role = null;
 
-    let docs = [];  
+    let docs = [];
 
     const doesMangaExist = manga_id
         ? await Manga.exists({ _id: manga_id })
@@ -232,98 +239,81 @@ async function list(req, res) {
 }
 
 async function remove(req, res) {
-    const { manga_id, _id } = req.query;
+    const { _id } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
+    const chapter = await Chapter.findById(_id);
 
-    Chapter.findById(_id)
-        .then(chapter => {
-            cloneData = [];
-            //get the deleted chapter read in order to exclude it from chapters array inside manga object
-            Manga.findOne({ _id: manga_id }, function (err, manga) {
-                if (manga) {
-                    cloneData = manga.chapters.filter(function (chap_id) {
-                        return chap_id.toString() !== _id.toString();
-                    });
-                    const filesPath =
-                        dir +
-                        manga_id +
-                        '/' +
-                        number +
-                        '/' +
-                        language +
-                        '/' +
-                        manga.scan_id +
-                        '/';
-                    Chapter.deleteMany({ manga_id: manga_id, _id: _id })
-                        .then(chapters => {
-                            console.log(chapters);
-                            if (chapters.n === 0) {
-                                //chapter could not be found
-                                return res.jsonNotFound(
-                                    { removed: false },
-                                    getMessage('chapter.notfound'),
-                                    new_token,
-                                );
-                            } else {
-                                manga.chapters = cloneData;
-                                manga
-                                    .save()
-                                    .then(result => {
-                                        try {
-                                            chapter.imgCollection.forEach(
-                                                function (file) {
-                                                    fs.unlinkSync(
-                                                        filesPath +
-                                                            file.filename,
-                                                    );
-                                                },
-                                            );
-                                        } catch (err) {
-                                            return res.jsonServerError(
-                                                { removed: true },
-                                                getMessage(
-                                                    'chapter.delete.error',
-                                                ),
-                                                null,
-                                            );
-                                        }
+    if (!chapter)
+        return res.jsonBadRequest(
+            null,
+            getMessage('chapter.notfound'),
+            new_token,
+        );
 
-                                        return res.jsonOK(
-                                            {
-                                                removed: true,
-                                                chapters: chapters,
-                                            },
-                                            getMessage(
-                                                'chapter.delete.success',
-                                            ),
-                                            new_token,
-                                        );
-                                    })
-                                    .catch(err => {
-                                        console.log(err);
-                                        return res.jsonServerError(
-                                            null,
-                                            null,
-                                            err,
-                                        );
-                                    });
-                            }
-                        })
-                        .catch(err => {
-                            return res.jsonBadRequest(err, null, null);
-                        });
-                } else {
+    let cloneData = [];
+    //get the deleted chapter read in order to exclude it from chapters array inside manga object
+    Manga.findOne({ title: chapter.manga_id }, function (err, manga) {
+        if (!manga) {
+            return res.jsonNotFound(
+                { removed: false },
+                getMessage('manga.notfound'),
+                new_token,
+            );
+        }
+        cloneData = manga.chapters.filter(function (chap_id) {
+            return chap_id.toString() !== _id.toString();
+        });
+        const filesPath =
+            dir +
+            chapter.manga_id +
+            '/' +
+            chapter.number +
+            '/' +
+            chapter.language +
+            '/' +
+            manga.scan_id +
+            '/';
+        Chapter.deleteMany({ manga_id: chapter.manga_id, _id: _id })
+            .then(result => {
+                if (result.n === 0) {
+                    //chapter could not be found
                     return res.jsonNotFound(
-                        { removed: false },
-                        getMessage('manga.notfound'),
+                        null,
+                        getMessage('chapter.notfound'),
                         new_token,
                     );
                 }
+                manga.chapters = cloneData;
+                manga
+                    .save()
+                    .then(result2 => {
+                        try {
+                            chapter.imgCollection.forEach(function (file) {
+                                fs.unlinkSync(filesPath + file.filename);
+                            });
+                        } catch (err) {
+                            return res.jsonServerError(
+                                null,
+                                getMessage('chapter.delete.error'),
+                                null,
+                            );
+                        }
+
+                        return res.jsonOK(
+                            result,
+                            getMessage('chapter.delete.success'),
+                            new_token,
+                        );
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        return res.jsonServerError(null, null, err);
+                    });
+            })
+            .catch(err => {
+                return res.jsonBadRequest(err, null, null);
             });
-        })
-        .catch(err => {
-            return res.jsonBadRequest(err, null, null);
-        });
+    });
 }
 export default { store, findOne, list, update, remove };
