@@ -3,23 +3,22 @@ import fs from 'fs';
 import Chapter from '../models/chapter.model.js';
 import Manga from '../models/manga.model.js';
 
-import {
-    TEST_E2E_ENV,
-    CHAPTER_PROJECTION,
-} from '../utils/constant.util.js';
+import { TEST_E2E_ENV, CHAPTER_PROJECTION } from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
-import folderName from '../config/multer.config.js';
+import { folderName } from '../config/multer.config.js';
 
 const dir = folderName + 'mangas/';
 
 async function store(req, res) {
     const { manga_id, number, title, language } = req.body;
 
+    console.log(req.body);
+
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
-    Manga.findOne({ title: manga_id }, function (err, manga) {
+    Manga.findOne({ title: manga_id }, (err, manga) => {
         if (manga) {
             const filesPath =
                 dir +
@@ -110,13 +109,9 @@ async function store(req, res) {
         } else {
             let dir2 = dir + manga_id;
 
-            fs.rmdir(dir2, { recursive: true }, err => {
-                if (err) {
-                    console.log(err);
-                }
+            fs.rmdir(dir2, { recursive: true }, e => {
+                if (e) console.log(e);
             });
-
-            fs.rmdirSync(dir2, { recursive: true });
 
             return res.jsonNotFound(
                 null,
@@ -168,14 +163,13 @@ async function findOne(req, res) {
     const { _id } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
-    console.log(req.role)
+
     const role = req.role ? decrypt(req.role) : 0;
     req.role = null;
 
     Chapter.findById(_id)
         .select(CHAPTER_PROJECTION[role])
         .then(doc => {
-            console.log(doc);
             doc.views = doc.views + 1;
             doc.save()
                 .then(() => {})

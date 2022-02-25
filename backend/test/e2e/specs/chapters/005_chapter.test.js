@@ -19,8 +19,9 @@ describe('Chapter', () => {
 
     createManga(manga, mockToken)
     chapter.manga_id = manga.title;
+    chapter2.manga_id = manga.title;
     createChapter(chapter, mockToken);
-    //createChapter(chapter2, mockToken);
+    createChapter(chapter2, mockToken);
 
    
 });

@@ -1,6 +1,7 @@
 import supertest from 'supertest';
 
 import { app } from '../../src/config/express.config.js';
+import { CHAPTER_PROJECTION } from '../../src/utils/constant.util.js';
 import { chapter } from '../mocks/chapter.mock.js';
 import { photo } from '../mocks/image.mock.js';
 import { getMessage } from '../../src/utils/message.util.js';
@@ -27,19 +28,20 @@ const createChapter = (payload, token) => {
                     !Array.isArray(response.body) &&
                     response.body !== null,
             ).toBeTruthy();
-          
-            expect(response.body.data.imgCollection.length).toBe(filledArray.length);
+
+            expect(response.body.data.imgCollection.length).toBe(
+                filledArray.length,
+            );
             expect(response.body.data).toBeDefined();
             expect(response.body.metadata).toBeDefined();
+            payload._id = response.body.data._id;
 
             expect(response.body).toMatchObject({
                 message: getMessage('chapter.save.success'),
-                data: schema(payload),
+                data: payload,
                 metadata: {},
                 status: 200,
             });
-
-            payload._id = response.body.data._id;
         });
     });
 
@@ -56,10 +58,10 @@ const createChapter = (payload, token) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-                console.log(response.body);
+
                 expect(response.body).toMatchObject({
                     message: getMessage('chapter.findone.success'),
-                    data: schema(payload),
+                    data: schema(payload, CHAPTER_PROJECTION[1]),
                     metadata: {},
                     status: 200,
                 });
@@ -227,13 +229,13 @@ const deleteChapter = (payload, token) => {
     });
 };
 
-const schema = payload => {
-    return {
-        manga_id: payload.manga_id,
-        title: payload.title,
-        number: payload.number,
-        language: payload.language,
-    };
+const schema = (payload, projection) => {
+    let temp = {};
+    Object.keys(projection).forEach(function (value) {
+        if (projection[value] === 1 && payload[value])
+            temp[value] = payload[value];
+    });
+    return temp;
 };
 
 export { createChapter, updateChapter };

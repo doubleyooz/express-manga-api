@@ -18,56 +18,54 @@ function auth(roles = []) {
             //Invalid Token
             return res.jsonUnauthorized(err, null, null);
         }
-
-        if (roles.length && !roles.includes(payload.role)) {
-            //Invalid roles
+        //Invalid roles
+        if (roles.length && !roles.includes(payload.role))
             return res.jsonUnauthorized(null, null, null);
-        } else {
-            if (process.env.NODE_ENV === TEST_E2E_ENV) {
-                req.auth = encrypt(payload._id);
-                return next();
-            }
-            User.exists({
-                _id: payload._id,
-                active: true,
-                token_version: payload.token_version,
-            })
-                .then(result => {
-                    if (!result) return res.jsonUnauthorized(null, null, null);
 
-                    try {
-                        var current_time = Date.now().valueOf() / 1000;
-                        if (
-                            (payload.exp - payload.iat) / 2 >
-                            payload.exp - current_time
-                        ) {
-                            let new_token = jwt.generateJwt(
-                                {
-                                    id: payload._id,
-                                    role: payload.role,
-                                    token_version: payload.token_version,
-                                },
-                                1,
-                            );
-                            req.new_token = `Bearer ${new_token}`;
-                            console.log(`New Token: ${new_token}`);
-                        } else {
-                            console.log('Token not expired');
-                        }
-
-                        req.auth = encrypt(payload._id);
-                        payload = null;
-                        return next();
-                    } catch (err) {
-                        console.log(err);
-                        //Server error
-                        return res.jsonServerError(null, null, null);
-                    }
-                })
-                .catch(err => {
-                    return res.jsonUnauthorized(null, null, err);
-                });
+        if (process.env.NODE_ENV === TEST_E2E_ENV) {
+            req.auth = encrypt(payload._id);
+            return next();
         }
+        User.exists({
+            _id: payload._id,
+            active: true,
+            token_version: payload.token_version,
+        })
+            .then(result => {
+                if (!result) return res.jsonUnauthorized(null, null, null);
+
+                try {
+                    var current_time = Date.now().valueOf() / 1000;
+                    if (
+                        (payload.exp - payload.iat) / 2 >
+                        payload.exp - current_time
+                    ) {
+                        let new_token = jwt.generateJwt(
+                            {
+                                id: payload._id,
+                                role: payload.role,
+                                token_version: payload.token_version,
+                            },
+                            1,
+                        );
+                        req.new_token = `Bearer ${new_token}`;
+                        console.log(`New Token: ${new_token}`);
+                    } else {
+                        console.log('Token not expired');
+                    }
+
+                    req.auth = encrypt(payload._id);
+                    payload = null;
+                    return next();
+                } catch (err) {
+                    console.log(err);
+                    //Server error
+                    return res.jsonServerError(null, null, null);
+                }
+            })
+            .catch(err => {
+                return res.jsonUnauthorized(null, null, err);
+            });
     };
 }
 
