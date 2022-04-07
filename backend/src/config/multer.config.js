@@ -29,22 +29,13 @@ const fileName = (req, file, cb) => {
 };
 
 const authorDestination = (req, files, cb) => {
-    cb(
-        null,
-        path.resolve(
-            __dirname,
-            '..',
-            '..',
-            folderName,
-            'authors/',
-            req.body.name,
-        ),
-    );
+    let temp = req.body.name ? req.body.name : 'toBeExcluded';
+    cb(null, path.resolve(__dirname, '..', '..', folderName, 'authors/', temp));
 
     let dir = './' + folderName + 'authors/';
 
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-    if (!fs.existsSync(dir + req.body.name)) fs.mkdirSync(dir + req.body.name);
+    if (!fs.existsSync(dir + temp)) fs.mkdirSync(dir + temp);
 };
 
 const chaptersDestination = (req, files, cb) => {
@@ -63,7 +54,7 @@ const chaptersDestination = (req, files, cb) => {
             user_id,
         ),
     );
-    
+
     let dir =
         './' +
         folderName +

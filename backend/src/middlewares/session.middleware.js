@@ -22,17 +22,18 @@ function auth(roles = []) {
         if (roles.length && !roles.includes(payload.role))
             return res.jsonUnauthorized(null, null, null);
 
-        if (process.env.NODE_ENV === TEST_E2E_ENV) {
-            req.auth = encrypt(payload._id);
-            return next();
-        }
         User.exists({
             _id: payload._id,
             active: true,
             token_version: payload.token_version,
         })
             .then(result => {
-                if (!result) return res.jsonUnauthorized(null, null, null);
+                if (!result) {
+                    if (process.env.NODE_ENV === TEST_E2E_ENV) {
+                        req.auth = encrypt(payload._id);
+                        return next();
+                    } else return res.jsonUnauthorized(null, null, null);
+                }
 
                 try {
                     var current_time = Date.now().valueOf() / 1000;
