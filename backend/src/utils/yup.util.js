@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import yup from 'yup';
-import { parseISO, isDate, addYears, subYears } from 'date-fns';
+import { parseISO, isDate, addYears, subYears, min } from 'date-fns';
 
 import { getMessage } from '../utils/message.util.js';
 
@@ -122,10 +122,10 @@ const mongo_id_req = yup
         isValidMongoIdRequired(value),
     );
 
-const name = yup.string().min(3).max(20);
+const name = yup.string().min(3).max(20).trim();
 
 const manga_rules = {
-    title: yup.string().min(2).max(60),
+    title: yup.string().min(2).max(60).trim(),
     genres: yup
         .array(yup.string())
         .min(3, '')
@@ -160,7 +160,7 @@ const manga_rules = {
             },
         ),
 
-    synopsis: yup.string().min(10, getMessage()).max(400, getMessage()),
+    synopsis: yup.string().min(10).max(400).trim(),
     n_chapters: yup.number().min(1),
     status: yup
         .number()
@@ -207,7 +207,6 @@ const author_rules = {
         .ensure()
         .min(1, 'Need to provide at least one type')
         .max(2, 'Can not provide more than two types'),
-    type: yup.string('type must be a string.').matches(/(^writer$|^artist$)/),
     _id: mongo_id_req,
     name: name,
 
@@ -227,15 +226,15 @@ const author_rules = {
                     'death date must be at least 10 years longer than birthDate',
                 ),
         ),
-    socialMedia: yup.array(yup.string()).min(1).max(5),
-    biography: yup.string().min(15),
+    socialMedia: yup.array(yup.string().trim()).min(1).max(5),
+    biography: yup.string().min(15).max(800).trim(),
 };
 
 const chapter_rules = {
     id_not_required: mongo_id,
     _id: mongo_id_req,
-    manga_id: yup.string().max(60, getMessage('manga.invalid.title.long')),
-    title: yup.string().max(40, getMessage('chapter.invalid.title.long')),
+    manga_id: yup.string().max(60),
+    title: yup.string().min(2).max(40).trim(),
     number: yup.number().min(1),
 
     language: yup
@@ -254,12 +253,12 @@ const review_rules = {
     _id: mongo_id_req,
     id_not_required: mongo_id,
     rating: yup.number().min(0).max(5),
-    text: yup.string().min(2).max(500),
+    text: yup.string().min(2).max(500).trim(),
 };
 
 const user_rules = {
     _id: mongo_id_req,
-    email: yup.string().email().required(),
+    email: yup.string().email().trim().required(),
     name: name,
     password: yup
         .string()
