@@ -39,33 +39,51 @@ describe('Author', () => {
     describeif(true)('should reject', () => {
         describeif(true)('invalid arguments', () => {
             describeif(false)('invalid names', () => {
-                let temp = { ...artist };
-                temp.name = 2;
-                createAuthor(temp, mockToken, 400);
+                const wrongName = change => {
+                    let temp = { ...artist };
+                    //can't send a null value
+                    if (change) temp['name'] = change;
+                    else delete temp.name;
 
-                temp.name = [''];
-                createAuthor(temp, mockToken, 400);
+                    return temp;
+                };
 
-                temp.name = { ...artist };
-                createAuthor(temp, mockToken, 400);
+                describeif(false)('invalid type', () => {
+                    createAuthor(wrongName(2), mockToken, 400);
 
-                temp.name = '';
-                createAuthor(temp, mockToken, 400);
+                    //createAuthor(wrongName(true), mockToken, 400);
 
-                temp.name = 'sd';
-                createAuthor(temp, mockToken, 400);
+                    createAuthor(wrongName(false), mockToken, 400);
 
-                temp.name = 'more than 20 characters for sure';
-                createAuthor(temp, mockToken, 400);
+                    createAuthor(wrongName(['']), mockToken, 400);
 
-                temp.name = null;
-                createAuthor(temp, mockToken, 400);
+                    createAuthor(
+                        wrongName(JSON.stringify({ ...artist })),
+                        mockToken,
+                        400,
+                    );
 
-                delete temp.name;
-                createAuthor(temp, mockToken, 400);
+                    createAuthor(wrongName(), mockToken, 400);
+                });
+
+                describeif(false)('invalid format', () => {
+                    createAuthor(wrongName(''), mockToken, 400);
+
+                    createAuthor(wrongName('sd'), mockToken, 400);
+
+                    createAuthor(wrongName('\n\n\n'), mockToken, 400);
+
+                    createAuthor(wrongName('       '), mockToken, 400);
+
+                    createAuthor(
+                        wrongName('more than 20 characters for sure'),
+                        mockToken,
+                        400,
+                    );
+                });
             });
 
-            describeif(true)('invalid types', () => {
+            describeif(false)('invalid types', () => {
                 const wrongTypes = change => {
                     let temp = { ...artist };
                     //can't send a null value
@@ -84,11 +102,11 @@ describe('Author', () => {
                         400,
                     );
 
-                    createAuthor(wrongTypes(true), mockToken, 400);
+                    createAuthor(wrongTypes('true'), mockToken, 400);
 
                     createAuthor(wrongTypes(false), mockToken, 400);
 
-                    createAuthor(wrongTypes(), mockToken, 400);                   
+                    createAuthor(wrongTypes(), mockToken, 400);
 
                     createAuthor(wrongTypes([54, 25, 0]), mockToken, 400);
 
@@ -100,7 +118,6 @@ describe('Author', () => {
                 });
 
                 describeif(true)('invalid format', () => {
-
                     createAuthor(wrongTypes(''), mockToken, 400);
 
                     createAuthor(wrongTypes('sass'), mockToken, 400);
@@ -123,7 +140,6 @@ describe('Author', () => {
                         400,
                     );
 
-
                     createAuthor(
                         wrongTypes(['artist', 'writer', 'something']),
                         mockToken,
@@ -136,11 +152,7 @@ describe('Author', () => {
                         400,
                     );
 
-                    createAuthor(
-                        wrongTypes('artist'),
-                        mockToken,
-                        400,
-                    );
+                    createAuthor(wrongTypes('artist'), mockToken, 400);
                 });
             });
 
@@ -212,6 +224,47 @@ describe('Author', () => {
                     createAuthor(wrongBirthDate('2000-06-1'), mockToken, 400);
 
                     createAuthor(wrongBirthDate('2000-6-1'), mockToken, 400);
+                });
+            });
+
+            describeif(true)('invalid biography', () => {
+                const wrongBiography = change => {
+                    let temp = { ...artist };
+                    //can't send a null value
+                    if (change) temp['biography'] = change;
+                    else delete temp.biography;
+
+                    return temp;
+                };
+
+                describeif(true)('invalid type', () => {
+                    createAuthor(wrongBiography(2), mockToken, 400);
+
+                    createAuthor(wrongBiography(-52), mockToken, 400);
+
+                    //createAuthor(wrongBiography(true), mockToken, 400);
+
+                    createAuthor(wrongBiography(false), mockToken, 400);
+
+                    createAuthor(wrongBiography(['']), mockToken, 400);
+
+                    createAuthor(wrongBiography(), mockToken, 400);
+                });
+
+                describeif(true)('invalid format', () => {
+                    createAuthor(wrongBiography(''), mockToken, 400);
+
+                    createAuthor(
+                        wrongBiography(
+                            '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
+                        ),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(wrongBiography('sd'), mockToken, 400);
+
+                    createAuthor(wrongBiography('   '), mockToken, 400);
                 });
             });
         });
