@@ -122,16 +122,10 @@ const mongo_id_req = yup
         isValidMongoIdRequired(value),
     );
 
-const name = yup
-    .string('name must be a string.')
-    .min(3, getMessage('yup.invalid.name.short'))
-    .max(20, getMessage('yup.invalid.name.long'));
+const name = yup.string().min(3).max(20);
 
 const manga_rules = {
-    title: yup
-        .string('title must be a string.')
-        .min(2, getMessage('manga.invalid.title.short'))
-        .max(60, getMessage('manga.invalid.title.long')),
+    title: yup.string().min(2).max(60),
     genres: yup
         .array(yup.string())
         .min(3, '')
@@ -166,20 +160,15 @@ const manga_rules = {
             },
         ),
 
-    synopsis: yup
-        .string('synopsis must be a string.')
-        .min(10, getMessage('manga.invalid.synopsis.short'))
-        .max(400, getMessage('manga.invalid.synopsis.long')),
-    n_chapters: yup
-        .number('chapters must be a number.')
-        .min(1, 'There must be at least one chapter.'),
+    synopsis: yup.string().min(10, getMessage()).max(400, getMessage()),
+    n_chapters: yup.number().min(1),
     status: yup
-        .number('status must be a number.')
+        .number()
         .min(1, getMessage('manga.invalid.code'))
         .max(6, getMessage('manga.invalid.code')),
-    nsfw: yup.string('nsfw must be a string.').matches(/(true|false)/, null),
+    nsfw: yup.string().matches(/(true|false)/, null),
     type: yup
-        .string('type must be a string.')
+        .string()
         .matches(/^manga$|^manhwa$|^manhua$/, null)
         .default({ type: 'manga' }),
     languages: yup
@@ -208,10 +197,10 @@ const manga_rules = {
 
 const author_rules = {
     types: yup
-        .array('types must be an array.')
+        .array()
         .of(
             yup
-                .string('the array must contains only strings.')
+                .string()
                 .lowercase()
                 .matches(/(^writer$|^artist$)/),
         )
@@ -238,30 +227,19 @@ const author_rules = {
                     'death date must be at least 10 years longer than birthDate',
                 ),
         ),
-    socialMedia: yup
-        .array(yup.string('socialMedia must be a string.'))
-        .min(1, '')
-        .max(5, ''),
-    biography: yup
-        .string('biography')
-        .min(15, getMessage('author.invalid.biography.short')),
+    socialMedia: yup.array(yup.string()).min(1).max(5),
+    biography: yup.string().min(15),
 };
 
 const chapter_rules = {
     id_not_required: mongo_id,
     _id: mongo_id_req,
-    manga_id: yup
-        .string('manga title must be a string.')
-        .max(60, getMessage('manga.invalid.title.long')),
-    title: yup
-        .string('title must be a string.')
-        .max(40, getMessage('chapter.invalid.title.long')),
-    number: yup
-        .number('Must to be a valid number')
-        .min(1, 'Must be a positive number'),
+    manga_id: yup.string().max(60, getMessage('manga.invalid.title.long')),
+    title: yup.string().max(40, getMessage('chapter.invalid.title.long')),
+    number: yup.number().min(1),
 
     language: yup
-        .string('language must be a string.')
+        .string()
         .default('pt')
         .test(
             'Valid language',
@@ -275,14 +253,8 @@ const chapter_rules = {
 const review_rules = {
     _id: mongo_id_req,
     id_not_required: mongo_id,
-    rating: yup
-        .number('rating must be a number.')
-        .min(0, 'The minimum limit is 0.')
-        .max(5, 'The maximum limit is 5.'),
-    text: yup
-        .string('text must be a string.')
-        .min(2, getMessage('text.invalid.text.short'))
-        .max(500, getMessage('text.invalid.text.long')),
+    rating: yup.number().min(0).max(5),
+    text: yup.string().min(2).max(500),
 };
 
 const user_rules = {

@@ -21,9 +21,8 @@ async function store(req, res, next) {
             req.body = result;
             next();
         })
-        .catch(function (e) {
-            console.log(e);
-            return res.jsonBadRequest(null, null, e);
+        .catch(function (e) {            
+            return res.jsonBadRequest(null, null, e.message);
         });
 }
 
@@ -39,7 +38,7 @@ async function findById(req, res, next) {
             next();
         })
         .catch(err => {
-            return res.jsonBadRequest(null, null, err.errors);
+            return res.jsonBadRequest(null, null, err.message);
         });
 }
 
@@ -56,7 +55,7 @@ async function list(req, res, next) {
             next();
         })
         .catch(err => {
-            return res.jsonBadRequest(null, null, err.errors);
+            return res.jsonBadRequest(null, null, err.message);
         });
 }
 
@@ -93,7 +92,7 @@ async function update(req, res, next) {
             next();
         })
         .catch(err => {
-            return res.jsonBadRequest(null, null, err.errors);
+            return res.jsonBadRequest(null, null, err.message);
         });
 }
 
