@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+
+  redis:
+    image: redis
+    container_name: redis_container
+    command: redis-server --save 60 1 --requirepass ${DB_PASS} --
+    restart: always
+
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+
+  server:
+    container_name: mail-service
+    build: ./mail-service
+  
+    environment:
+      REDIS_URL: redis:6379
+      CHOKIDAR_USEPOLLING: 'true'
+      CHOKIDAR_INTERVAL: 1000
+    ports:
+     - 5000:5000
+    volumes:
+      - ./:/var/app
+    depends_on:
+      - redis
+
+  server1:
+    container_name: manga-service
+    build: ./manga-service
+  
+    ports:
+     - 5000:5000
+    volumes:
+      - ./:/var/app
+    depends_on:
+      - redis

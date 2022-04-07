@@ -206,19 +206,16 @@ const deleteChapter = (payload, token) => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                expect(response.body.data['chapters affected']).toEqual(1);
-                expect(response.body.data['chapters affected']).toEqual(
-                    expect.any(Number),
-                );
-                expect(
-                    response.body.message.startsWith(
-                        getMessage('manga.delete.success'),
-                    ),
-                ).toBeTruthy();
+                expect(response.body).toMatchObject({
+                    message: getMessage('chapter.delete.success'),
+                    data: { deletedCount: 1, n: 1, ok: 1 },
+                    metadata: {},
+                    status: 200,
+                });
             });
     });
 
-    it('GET /chapters/findOne', async () => {
+    it('GET /chapters/findOne', async () => {      
         await supertest(app)
             .get(`/chapters/findOne?_id=${payload._id}`)
             .expect(404)
@@ -231,7 +228,7 @@ const deleteChapter = (payload, token) => {
                 ).toBeTruthy();
 
                 expect(response.body).toMatchObject({
-                    message: getMessage('manga.notfound'),
+                    message: getMessage('chapter.notfound'),
                     data: null,
                     metadata: {},
                     status: 404,
@@ -249,4 +246,10 @@ const schema = (payload, projection) => {
     return temp;
 };
 
-export { createChapter, updateChapter, findChapter, listChapter };
+export {
+    createChapter,
+    updateChapter,
+    findChapter,
+    listChapter,
+    deleteChapter,
+};

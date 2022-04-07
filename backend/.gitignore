@@ -4,6 +4,9 @@
 .env.dev
 .env
 .env.test
+
+.prettierrc
+
 /node_modules
 /.pnp
 

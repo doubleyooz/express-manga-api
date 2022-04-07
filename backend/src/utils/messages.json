@@ -103,6 +103,7 @@
     "user.email.notification.manga.text.warning": "You choose being notified by email, if you want to turn it off click in this link\n",
     "user.email.notification.manga.text.warning.url": "Click here!!\n",
     
-    "yup.invalid.name.short": "Name must be at least 3 characters long" 
+    "yup.invalid.name.short": "Name must be at least 3 characters long",
+    "yup.invalid.name.long": "Name must be at most 20 characters long" 
 
 }
