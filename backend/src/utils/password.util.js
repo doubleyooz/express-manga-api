@@ -12,7 +12,7 @@ export const matchPassword = async (
     password,
     supposedPassword,
 ) => {
-    return await bcrypt.compare(password, supposedPassword);
+    return await bcrypt.compare(supposedPassword, password);
 };
 
 export const encrypt = (val) => {    
