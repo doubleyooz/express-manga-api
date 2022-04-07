@@ -1,0 +1,1 @@
+This repository consumes https://github.com/WaifuForever/grpc-node-mail-service as microservice.
