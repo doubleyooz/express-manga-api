@@ -21,7 +21,7 @@ async function store(req, res, next) {
             req.body = result;
             next();
         })
-        .catch(function (e) {            
+        .catch(function (e) {
             return res.jsonBadRequest(null, null, e.message);
         });
 }

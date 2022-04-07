@@ -6,7 +6,7 @@ import { artist, writer } from '../mocks/author.mock.js';
 import { photo } from '../mocks/image.mock.js';
 
 const itif = condition => (condition ? it : it.skip);
-const createAuthor = (payload, token, statusCode) => {  
+const createAuthor = (payload, token, statusCode) => {
     it('POST /authors', async () => {
         await supertest(app)
             .post('/authors')
@@ -77,7 +77,7 @@ const createAuthor = (payload, token, statusCode) => {
             });
     });
 
-    it('GET /authors/findOne', async () => {
+    it('GET /authors/findOne', async () => {       
         await supertest(app)
             .get(`/authors/findOne?_id=${payload._id}`)
             .then(response => {
@@ -98,7 +98,7 @@ const createAuthor = (payload, token, statusCode) => {
                             status: 200,
                         });
                         break;
-                    case 400:                        
+                    case 400:                      
                         expect(response.status).toEqual(400);
                         expect(response.body).toMatchObject({
                             message: getMessage('default.badRequest'),
@@ -107,7 +107,7 @@ const createAuthor = (payload, token, statusCode) => {
                             status: 400,
                         });
                         break;
-                    case 401:                        
+                    case 401:
                         expect(response.status).toEqual(404);
                         expect(response.body).toMatchObject({
                             message: getMessage('author.notfound'),
@@ -117,7 +117,7 @@ const createAuthor = (payload, token, statusCode) => {
                         });
                         break;
 
-                    case 404:                        
+                    case 404:
                         expect(response.status).toEqual(404);
                         expect(response.body).toMatchObject({
                             message: getMessage('author.notfound'),
