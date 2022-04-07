@@ -213,18 +213,19 @@ const author_rules = {
     birthDate: yup
         .date()
         .transform(parseDateString)
-        .max(subYears(new Date(), 5)),
+        .max(subYears(new Date(), 5))
+        .min(new Date(1900, 1, 1)),
+
     deathDate: yup
         .date()
         .transform(parseDateString)
         .when(
             'birthDate',
-            (birthDate, yup) =>
-                birthDate &&
-                yup.min(
-                    addYears(birthDate, 10),
-                    'death date must be at least 10 years longer than birthDate',
-                ),
+            (birthDate, yup) => birthDate && yup.min(addYears(birthDate, 10)),
+        )
+        .when(
+            'birthDate',
+            (birthDate, yup) => birthDate && yup.max(addYears(birthDate, 101)),
         ),
     socialMedia: yup.array(yup.string().trim()).min(1).max(5),
     biography: yup.string().min(15).max(800).trim(),
