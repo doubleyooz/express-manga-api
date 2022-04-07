@@ -156,7 +156,7 @@ describe('Author', () => {
                 });
             });
 
-            describeif(false)('invalid birthDate', () => {
+            describeif(true)('invalid birthDate', () => {
                 const wrongBirthDate = change => {
                     let temp = { ...artist };
                     //can't send a null value
@@ -166,7 +166,7 @@ describe('Author', () => {
                     return temp;
                 };
 
-                describeif(true)('invalid type', () => {
+                describeif(false)('invalid type', () => {
                     createAuthor(wrongBirthDate(3), mockToken, 400);
 
                     createAuthor(wrongBirthDate(['sass']), mockToken, 400);
@@ -208,7 +208,7 @@ describe('Author', () => {
                     createAuthor(wrongBirthDate('1980/02/20'), mockToken, 400);
                 });
 
-                describeif(false)('invalid date', () => {
+                describeif(true)('invalid date', () => {
                     createAuthor(
                         wrongBirthDate('ds-dsas-2012'),
                         mockToken,
@@ -223,11 +223,15 @@ describe('Author', () => {
 
                     createAuthor(wrongBirthDate('2000-06-1'), mockToken, 400);
 
+                    createAuthor(wrongBirthDate('2000-6-01'), mockToken, 400);
+
                     createAuthor(wrongBirthDate('2000-6-1'), mockToken, 400);
+
+                    createAuthor(wrongBirthDate('1000-06-01'), mockToken, 400);
                 });
             });
 
-            describeif(true)('invalid biography', () => {
+            describeif(false)('invalid biography', () => {
                 const wrongBiography = change => {
                     let temp = { ...artist };
                     //can't send a null value
