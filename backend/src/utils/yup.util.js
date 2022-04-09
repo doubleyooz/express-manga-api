@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import yup from 'yup';
-import { parseISO, isDate, addYears, subYears, min } from 'date-fns';
+import { parseISO, isDate, addYears, subYears, isBefore } from 'date-fns';
 
 import { getMessage } from '../utils/message.util.js';
 
@@ -217,16 +217,28 @@ const author_rules = {
         .min(new Date(1900, 1, 1)),
 
     deathDate: yup
-        .date()
+        .date()        
         .transform(parseDateString)
         .when(
             'birthDate',
             (birthDate, yup) => birthDate && yup.min(addYears(birthDate, 10)),
-        )
+        )    
         .when(
             'birthDate',
             (birthDate, yup) => birthDate && yup.max(addYears(birthDate, 101)),
-        ),
+        )    
+        .test({
+            name: 'Valid ${path}',
+            exclusive: false,
+            params: { },
+            message: 'This is not a valid value for ${path}',
+            test: value => {
+                // You can access the price field with `this.parent`.
+                return isBefore(value, new Date());
+            },
+          
+           
+        }),
     socialMedia: yup.array(yup.string().trim()).min(1).max(5),
     biography: yup.string().min(15).max(800).trim(),
 };
