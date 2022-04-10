@@ -46,8 +46,7 @@ async function store(req, res) {
                 new_token,
             );
         })
-        .catch(err => {
-            console.log(err);
+        .catch(err => {           
             deleteFiles();
             return res.jsonServerError(null, null, err);
         });
