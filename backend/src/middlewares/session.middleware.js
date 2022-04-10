@@ -84,7 +84,12 @@ function easyAuth() {
             User: 2,
         };
 
-        payload = jwt.verifyJwt(token, 1);
+        try {
+            payload = jwt.verifyJwt(token, 1);
+        } catch (err) {
+            return next();
+        }
+
         if (process.env.NODE_ENV === TEST_E2E_ENV) {
             req.auth = encrypt(payload._id);
             req.role = encrypt(dict[payload.role].toString());

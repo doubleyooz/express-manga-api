@@ -14,7 +14,7 @@ describe('Author', () => {
         createAuthor(writer, mockToken, 200);
     });
 
-    describeif(!runAll)('should reject', () => {
+    describeif(runAll)('should reject', () => {
         describeif(!runAll)('invalid arguments', () => {
             createAuthor(bad_artist, mockToken, 400);
             describeif(runAll)('invalid name', () => {
