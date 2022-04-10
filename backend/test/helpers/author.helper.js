@@ -12,7 +12,6 @@ const createAuthor = (payload, token, statusCode) => {
             .post('/authors')
             .field(payload)
             .set('Authorization', 'Bearer ' + token)
-
             .attach('imgCollection', photo.dir + photo.name)
             .then(response => {
                 //console.log(response.body);
@@ -66,7 +65,6 @@ const createAuthor = (payload, token, statusCode) => {
                         break;
 
                     case 401:
-                        console.log(response.body);
                         expect(response.status).toEqual(401);
                         break;
 
@@ -77,7 +75,7 @@ const createAuthor = (payload, token, statusCode) => {
             });
     });
 
-    it('GET /authors/findOne', async () => {       
+    it('GET /authors/findOne', async () => {
         await supertest(app)
             .get(`/authors/findOne?_id=${payload._id}`)
             .then(response => {
@@ -98,7 +96,7 @@ const createAuthor = (payload, token, statusCode) => {
                             status: 200,
                         });
                         break;
-                    case 400:                      
+                    case 400:
                         expect(response.status).toEqual(400);
                         expect(response.body).toMatchObject({
                             message: getMessage('default.badRequest'),
@@ -134,11 +132,11 @@ const createAuthor = (payload, token, statusCode) => {
     });
 };
 
-const findAuthor = payload => {
+const findAuthor = (payload, token, statusCode) => {
     it('GET /authors/findOne', async () => {
         await supertest(app)
             .get(`/authors/findOne?_id=${payload._id}`)
-            .expect(200)
+            .set('Authorization', 'Bearer ' + token)
             .then(response => {
                 // Check type and length
                 expect(
@@ -147,12 +145,47 @@ const findAuthor = payload => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                expect(response.body).toMatchObject({
-                    message: getMessage('author.findone.success'),
-                    data: schema(payload, photo),
-                    metadata: {},
-                    status: 200,
-                });
+                switch (statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(200);
+                        expect(response.body.data).toBeDefined();
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.findone.success'),
+                            data: schema(payload, photo),
+                            metadata: {},
+                            status: 200,
+                        });
+                        break;
+                    case 400:
+                        expect(response.status).toEqual(400);
+                        expect(response.body.data).toBeDefined();
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                            data: null,
+                            metadata: {},
+                            status: 400,
+                        });
+                        break;
+                    case 404:
+                        expect(response.status).toEqual(404);
+                        expect(response.body.data).toBeDefined();
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.notfound'),
+                            data: null,
+                            metadata: {},
+                            status: 404,
+                        });
+                        break;
+                    default:
+                        expect(3).toBe(2);
+                        break;
+                }
             });
     });
 };
