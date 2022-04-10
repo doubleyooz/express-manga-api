@@ -22,6 +22,7 @@
   "scripts": {
     "start:dev": "NODE_ENV=dev nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
     "test": "NODE_ENV=e2e node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test",
+    "test:clear" : "yarn jest --clear-cache",
     "test:e2e": "NODE_ENV=e2e node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test/specs/e2e",
     "test:unit": "NODE_ENV=unit node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test/specs/unit"
   },
