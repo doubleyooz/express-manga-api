@@ -1,43 +1,22 @@
 import mongoose from 'mongoose';
 
 import { artist, bad_artist, writer } from '../../../mocks/author.mock.js';
-import {
-    userToken,
-    scanToken,
-    corruptedToken,
-} from '../../../mocks/jwt.mock.js';
-import {
-    createAuthor,
-    updateAuthor,
-    deleteAuthor,
-    findAuthor,
-    listAuthor,
-} from '../../../helpers/author.helper.js';
+import { scanToken } from '../../../mocks/jwt.mock.js';
+import { createAuthor } from '../../../helpers/author.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
 const runAll = false;
 describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
-    let mockToken2 = corruptedToken('');
+
     describeif(runAll)('should accept', () => {
         createAuthor(artist, mockToken, 200);
         createAuthor(writer, mockToken, 200);
-
-        listAuthor([artist, writer], 2);
-        findAuthor(writer);
-
-        updateAuthor(
-            { _id: 1, name: 'George Masara' },
-            mockToken,
-            'update name',
-        );
-        updateAuthor({ _id: 1, types: ['artist'] }, mockToken, 'update type');
-
-        deleteAuthor({ author_id: 1 }, mockToken);
     });
 
     describeif(!runAll)('should reject', () => {
         describeif(!runAll)('invalid arguments', () => {
+            createAuthor(bad_artist, mockToken, 400);
             describeif(runAll)('invalid name', () => {
                 const wrongName = change => {
                     let temp = { ...artist };
@@ -623,10 +602,6 @@ describe('Author', () => {
                     });
                 });
             });
-        });
-
-        describeif(runAll)('invalid token', () => {
-            createAuthor(bad_artist, mockToken2, 401);
         });
     });
 });
