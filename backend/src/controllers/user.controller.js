@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer';
-import ProtonMail from 'protonmail-api';
 //import smtpTransport from 'nodemailer-smtp-transport';
 
 import User from '../models/user.model.js';
@@ -9,47 +8,28 @@ import jwt from '../utils/jwt.util.js';
 import { encrypt, decrypt, hashPassword } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
-const Protonmail = false;
-
 async function sendEmail(email, activationToken) {
-    if (process.env.NODE_ENV !== TEST_E2E_ENV) {
-        if (Protonmail) {
-            console.log('aqui - 0');
-            const pm = await ProtonMail.connect({
-                username: `${process.env.EMAIL_USER}`,
-                password: `${process.env.EMAIL_PASSWORD}`,
-            });
-            console.log('aqui - 1');
-            await pm.sendEmail({
-                to: email,
-                subject: getMessage('user.activation.account.subject'),
-                body: `
-			<h2>${getMessage('user.activation.account.text')}</h2>
-			<p>${process.env.CLIENT_URL}/activateaccount/${activationToken}</p>
-			
-		`,
-            });
+    if (process.env.NODE_ENV === TEST_E2E_ENV) {
+        return true;
+    }
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: `${process.env.GMAIL_USER}`, // generated ethereal user
+            pass: `${process.env.GMAIL_PASSWORD}`, // generated ethereal password
+        },
 
-            pm.close();
-        } else {
-            // create reusable transporter object using the default SMTP transport
-            let transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: `${process.env.GMAIL_USER}`, // generated ethereal user
-                    pass: `${process.env.GMAIL_PASSWORD}`, // generated ethereal password
-                },
+        tls: {
+            rejectUnauthorized: false,
+        },
+    });
 
-                tls: {
-                    rejectUnauthorized: false,
-                },
-            });
-
-            const mailOptions = {
-                from: `${process.env.GMAIL_USER}`, // sender address
-                to: email, // receiver (use array of string for a list)
-                subject: getMessage('user.activation.account.subject'), // Subject line
-                html: `
+    const mailOptions = {
+        from: `${process.env.GMAIL_USER}`, // sender address
+        to: email, // receiver (use array of string for a list)
+        subject: getMessage('user.activation.account.subject'), // Subject line
+        html: `
 					<h2>${getMessage('user.activation.account.text')}</h2>
 					<a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
 					${getMessage(
@@ -58,15 +38,13 @@ async function sendEmail(email, activationToken) {
 					<a/>
 					
 				`, // plain text body
-            };
+    };
 
-            transporter.sendMail(mailOptions, (err, info) => {
-                if (err) console.log(err);
-                //else console.log(info);
-            });
-            transporter.close();
-        }
-    }
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) console.log(err);
+        //else console.log(info);
+    });
+    transporter.close();
     return true;
 }
 
