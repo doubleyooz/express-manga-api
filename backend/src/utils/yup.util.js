@@ -217,29 +217,39 @@ const author_rules = {
         .min(new Date(1900, 1, 1)),
 
     deathDate: yup
-        .date()        
+        .date()
         .transform(parseDateString)
+        .nullable()
         .when(
             'birthDate',
             (birthDate, yup) => birthDate && yup.min(addYears(birthDate, 10)),
-        )    
+        )
         .when(
             'birthDate',
             (birthDate, yup) => birthDate && yup.max(addYears(birthDate, 101)),
-        )    
+        )
         .test({
             name: 'Valid ${path}',
             exclusive: false,
-            params: { },
+            params: {},
             message: 'This is not a valid value for ${path}',
-            test: value => {
+            test: value =>
+                !value ||
                 // You can access the price field with `this.parent`.
-                return isBefore(value, new Date());
-            },
-          
-           
+                isBefore(value, new Date()),
         }),
-    socialMedia: yup.array(yup.string().trim()).min(1).max(5),
+    socialMedia: yup
+        .array(
+            yup
+                .string()
+                .trim()
+                .matches(
+                    /^(?=.{4,2048}$)((http|https):\/\/)?(www.)?(?!.*(http|https|www.))[a-zA-Z0-9_-]{1,63}(\.[a-zA-Z]{1,63}){1,5}(\/){1}.([\w\?[a-zA-Z-_%\/@?]+)*([^\/\w\?[a-zA-Z0-9_-]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/,
+                    'must be a valid url',
+                ),
+        )
+        .min(1)
+        .max(5),
     biography: yup.string().min(15).max(800).trim(),
 };
 
