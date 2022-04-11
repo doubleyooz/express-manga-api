@@ -43,10 +43,12 @@ async function findById(req, res, next) {
 }
 
 async function list(req, res, next) {
-    let schema = yup.object().shape({
-        types: rules.type,
-        name: rules.name,
+    var obj = {};
+    Object.keys(req.query).forEach(function (value) {
+        obj[value] = rules[value];
     });
+
+    let schema = yup.object().shape(obj);
 
     schema
         .validate(req.query, { stripUnknown: true })

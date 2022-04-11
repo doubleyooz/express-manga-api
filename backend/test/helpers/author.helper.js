@@ -190,12 +190,32 @@ const findAuthor = (payload, token, statusCode) => {
     });
 };
 
-const listAuthor = (payload, number) => {
-    it(`GET /authors ${number} documents`, async () => {
+const listAuthor = (payload, documents, token, statusCode) => {
+    it(`GET /authors ${documents.length} documents`, async () => {
+        let path = '/authors';
+        let temp = payload.types ? payload.types.length : 0;
+        switch (temp) {
+            case 0:
+                path = payload.name ? path + `?name=${payload.name}` : path;
+                break;
+            case 1:
+                path = payload.name
+                    ? path + `?name=${payload.name}&types=${payload.types[0]}`
+                    : path + `?types=${payload.types[0]}`;
+                break;
+            case 2:
+                path = payload.name
+                    ? path +
+                      `?name=${payload.name}&types=${payload.types[0]}&types=${payload.types[1]}`
+                    : path +
+                      `?types=${payload.types[0]}}&types=${payload.types[1]}`;
+            default:
+                break;
+        }
+
         await supertest(app)
-            .get('/authors')
-            .send({})
-            .expect(200)
+            .get(path)
+            .set('Authorization', 'Bearer ' + token)
             .then(response => {
                 // Check type and length
                 expect(
@@ -204,20 +224,42 @@ const listAuthor = (payload, number) => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                expect(
-                    response.body.message.startsWith(
-                        getMessage('author.list.success'),
-                    ),
-                ).toBeTruthy();
-                expect(response.body.status).toEqual(200);
-                expect(response.body).toMatchObject({
-                    message: `Author list retrieved successfully: ${number}`,
-                    data: payload.map(x => {
-                        return schema(x, photo);
-                    }),
-                    metadata: {},
-                    status: 200,
-                });
+                switch (statusCode) {
+                    case 200:
+                        expect(response.body.status).toEqual(200);
+                        expect(response.body).toMatchObject({
+                            message:
+                                getMessage('author.list.success') +
+                                `: ${documents.length}`,
+                            data: documents.map(x => {
+                                return schema(x, photo);
+                            }),
+                            metadata: {},
+                            status: 200,
+                        });
+                        break;
+                    case 400:
+                        expect(response.body.status).toEqual(400);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                            data: null,
+                            metadata: {},
+                            status: 400,
+                        });
+                        break;
+                    case 404:
+                        expect(response.body.status).toEqual(404);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.list.empty'),
+                            data: [],
+                            metadata: {},
+                            status: 404,
+                        });
+                        break;
+                    default:
+                        expect(3).toBe(2);
+                        break;
+                }
             });
     });
 };

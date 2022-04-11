@@ -122,7 +122,12 @@ const mongo_id_req = yup
         isValidMongoIdRequired(value),
     );
 
-const name = yup.string().min(3).max(20).trim();
+const name = yup
+    .string()
+    .min(3)
+    .max(20)
+    .trim()
+    .matches(/^([^0-9]*)$/, 'no numbers allowed');
 
 const manga_rules = {
     title: yup.string().min(2).max(60).trim(),

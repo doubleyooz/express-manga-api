@@ -46,7 +46,7 @@ async function store(req, res) {
                 new_token,
             );
         })
-        .catch(err => {           
+        .catch(err => {
             deleteFiles();
             return res.jsonServerError(null, null, err);
         });
@@ -68,19 +68,19 @@ async function findOne(req, res) {
 }
 
 async function list(req, res) {
-    const { type, name } = req.query;
+    const { types, name } = req.query;
     const new_token = req.new_token ? req.new_token : null;
     req.new_token = null;
 
     let docs = [];
 
-    const search = type
+    const search = types
         ? name
             ? {
                   name: { $regex: name, $options: 'i' },
-                  type: type,
+                  types: types,
               }
-            : { type: type }
+            : { types: types }
         : name
         ? { name: { $regex: name, $options: 'i' } }
         : {};
@@ -118,7 +118,7 @@ async function update(req, res) {
             getMessage('author.error.overwrite'),
             new_token,
         );
-    
+
     Author.findByIdAndUpdate(req.body._id, req.body)
         .select({ type: 1, name: 1 })
         .then(doc => {
