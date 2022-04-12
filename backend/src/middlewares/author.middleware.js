@@ -18,6 +18,7 @@ async function store(req, res, next) {
     schema
         .validate(req.body, { stripUnknown: true })
         .then(result => {
+            console.log(result)
             req.body = result;
             next();
         })

@@ -14,10 +14,10 @@ describe('Author', () => {
         createAuthor(writer, mockToken, 200);
     });
 
-    describeif(runAll)('should reject', () => {
+    describeif(!runAll)('should reject', () => {
         describeif(!runAll)('invalid arguments', () => {
             createAuthor(bad_artist, mockToken, 400);
-            describeif(runAll)('invalid name', () => {
+            describeif(!runAll)('invalid name', () => {
                 const wrongName = change => {
                     let temp = { ...artist };
                     //can't send a null value
@@ -62,7 +62,7 @@ describe('Author', () => {
                 });
             });
 
-            describeif(runAll)('invalid types', () => {
+            describeif(!runAll)('invalid types', () => {
                 const wrongTypes = change => {
                     let temp = { ...artist };
                     //can't send a null value
@@ -94,9 +94,11 @@ describe('Author', () => {
                         mockToken,
                         400,
                     );
+
+                    createAuthor(wrongTypes([true, false, 2]), mockToken, 400);
                 });
 
-                describeif(runAll)('invalid format', () => {
+                describeif(!runAll)('invalid format', () => {
                     createAuthor(wrongTypes(''), mockToken, 400);
 
                     createAuthor(wrongTypes('sass'), mockToken, 400);
@@ -120,6 +122,18 @@ describe('Author', () => {
                     );
 
                     createAuthor(
+                        wrongTypes(['artist', 'artist']),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongTypes(['writer', 'writer']),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
                         wrongTypes(['artist', 'writer', 'something']),
                         mockToken,
                         400,
@@ -131,7 +145,7 @@ describe('Author', () => {
                         400,
                     );
 
-                    createAuthor(wrongTypes('artist'), mockToken, 400);
+                    createAuthor(wrongTypes('/artist|writer/'), mockToken, 400);
                 });
             });
 
@@ -436,7 +450,7 @@ describe('Author', () => {
                 });
             });
 
-            describeif(!runAll)('invalid social Media', () => {
+            describeif(runAll)('invalid social Media', () => {
                 const wrongSocialMedia = change => {
                     let temp = { ...artist };
                     //can't send a null value

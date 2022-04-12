@@ -211,7 +211,10 @@ const author_rules = {
         )
         .ensure()
         .min(1, 'Need to provide at least one type')
-        .max(2, 'Can not provide more than two types'),
+        .max(2, 'Can not provide more than two types')
+        .test('Has duplicates', 'No duplicates are allow in ${path}', array => {
+            return !(new Set(array).size !== array.length);
+        }),
     _id: mongo_id_req,
     name: name,
 
