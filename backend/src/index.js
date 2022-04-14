@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 import http from 'http';
-//import io from 'socket.io';
-
 import { app } from './config/express.config.js';
 
 const server = http.Server(app);

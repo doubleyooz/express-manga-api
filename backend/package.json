@@ -27,6 +27,7 @@
     "test:unit": "NODE_ENV=unit node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --runInBand ./test/specs/unit"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.6.3",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
