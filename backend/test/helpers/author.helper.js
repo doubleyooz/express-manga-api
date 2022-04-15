@@ -196,7 +196,12 @@ const listAuthor = (payload, documents, token, statusCode) => {
         let temp = payload.types ? payload.types.length : 0;
         switch (temp) {
             case 0:
-                path = payload.name ? path + `?name=${payload.name}` : path;
+                path = payload.name
+                    ? payload.name.length
+                        ? path +
+                          `?name=${payload.name[0]}&name=${payload.name[1]}`
+                        : path + `?name=${payload.name}`
+                    : path;
                 break;
             case 1:
                 path = payload.name
