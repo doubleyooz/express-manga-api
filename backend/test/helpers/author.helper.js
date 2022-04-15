@@ -197,7 +197,7 @@ const listAuthor = (payload, documents, token, statusCode) => {
         switch (temp) {
             case 0:
                 path = payload.name
-                    ? payload.name.length
+                    ? Array.isArray(payload.name)
                         ? path +
                           `?name=${payload.name[0]}&name=${payload.name[1]}`
                         : path + `?name=${payload.name}`
@@ -213,7 +213,7 @@ const listAuthor = (payload, documents, token, statusCode) => {
                     ? path +
                       `?name=${payload.name}&types=${payload.types[0]}&types=${payload.types[1]}`
                     : path +
-                      `?types=${payload.types[0]}}&types=${payload.types[1]}`;
+                      `?types=${payload.types[0]}&types=${payload.types[1]}`;
             default:
                 break;
         }

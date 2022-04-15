@@ -48,6 +48,8 @@ describe('Author', () => {
                 describeif(runAll)('invalid format', () => {
                     createAuthor(wrongName(''), mockToken, 400);
 
+                    createAuthor(wrongName('s'), mockToken, 400);
+
                     createAuthor(wrongName('sd'), mockToken, 400);
 
                     createAuthor(wrongName('\n\n\n'), mockToken, 400);
