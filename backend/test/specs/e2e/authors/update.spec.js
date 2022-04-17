@@ -23,7 +23,7 @@ describe('Author', () => {
         updateAuthor({ _id: 1, socialMedia: ['https://www.orkut.com/dassd', 'https://twitter.com/usedasdsdsa']}, mockToken, "socialMedia", 200);
         
     });
-
+    //prettier-ignore
     describeif(!runAll)('should reject', () => {
         //ensure you have created authors beforehand, otherwise it will break
         describeif(!runAll)('mock data', () => {
@@ -66,7 +66,7 @@ describe('Author', () => {
                     updateAuthor({ _id: 1, name: 'more than 20 characters for sure...' }, mockToken, "reject string longer than 20 characters", 400);
                 });
             });
-            //prettier-ignore
+           
             describeif(runAll)('invalid types', () => {
               
                 describeif(!runAll)('invalid type', () => {
@@ -118,7 +118,7 @@ describe('Author', () => {
 
                 });
             });
-            //prettier-ignore
+         
             describeif(runAll)('invalid birthDate', () => {
                 
                 describeif(!runAll)('invalid type', () => {
@@ -135,9 +135,7 @@ describe('Author', () => {
                     updateAuthor({ _id: 1}, mockToken, "reject undefined", 400);
                 });
 
-                describeif(!runAll)('invalid format', () => {
-                    updateAuthor({ _id: 1}, mockToken, "reject undefined", 400);
-
+                describeif(!runAll)('invalid format', () => {                   
                     updateAuthor({ _id: 1, birthDate: 'sass'}, mockToken, "reject invalid string", 400);
 
                     updateAuthor({ _id: 1, birthDate: '25/15/2012'}, mockToken, "reject dd/mm/yyyy", 400);
@@ -164,9 +162,9 @@ describe('Author', () => {
                   
                     updateAuthor({ _id: 1, birthDate: '1900-02-30'}, mockToken, "reject invalid february", 400);
                    
-                    updateAuthor({ _id: 1, birthDate: '1903-02-39'}, mockToken, "reject invalid february", 400);
+                    updateAuthor({ _id: 1, birthDate: '1903-02-29'}, mockToken, "reject invalid february", 400);
 
-                    updateAuthor({ _id: 1, birthDate: '1903-02-39'}, mockToken, "reject invalid months", 400);
+                    updateAuthor({ _id: 1, birthDate: '1943-15-29'}, mockToken, "reject invalid months", 400);
 
                     updateAuthor({ _id: 1, birthDate: '2030-10-23'}, mockToken, "reject future dates", 400);
                             
@@ -174,154 +172,91 @@ describe('Author', () => {
         
                 });
 
+                describeif(!runAll)('invalid birthDate and deathDate relation', () => {
+                    updateAuthor({ _id: 1, birthDate: '2019-12-22'}, mockToken, "reject dates with a gap lower than 10 years", 400);
+                    
+                    updateAuthor({ _id: 1, birthDate: '2022-02-05'}, mockToken, "reject birthDate after deathDate", 400);
+
+                    updateAuthor({ _id: 1, birthDate: '2015-04-29'}, mockToken, "reject dates with a gap lower than 10 years", 400);
+
+                    updateAuthor({ _id: 1, birthDate: '1900-06-06'}, mockToken, "reject dates with a gap greater than 101 years", 400);
+
+                    updateAuthor({ _id: 1, birthDate: '1905-06-10'}, mockToken, "reject dates with a gap greater than 101 years", 400);
+        
+                    updateAuthor({ _id: 1, birthDate: '1000-06-01'}, mockToken, "reject dates with a gap greater than 101 years", 400);
+
+                });
+            });
+            
+            describeif(runAll)('invalid deathDate', () => {
+             
+                describeif(!runAll)('invalid type', () => {
+                    updateAuthor({ _id: 1, deathDate: 3 }, mockToken, "reject number", 400);                     
+
+                    updateAuthor({ _id: 1, deathDate: ['sass'] }, mockToken, "reject single string array", 400);
+
+                    updateAuthor({ _id: 1, deathDate: ['sass', '3213123'] }, mockToken, "reject string array", 400);
+                    
+                    updateAuthor({ _id: 1, deathDate: [54, 25, 0]}, mockToken, "reject number array", 400);
+
+                    updateAuthor({ _id: 1, deathDate: {...artist} }, mockToken, "reject nested object", 400);
+
+                    updateAuthor({ _id: 1}, mockToken, "reject undefined", 400);
+                });
+
+                describeif(!runAll)('invalid format', () => {                 
+                    updateAuthor({ _id: 1, deathDate: 'sass'}, mockToken, "reject invalid string", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '25/15/2012'}, mockToken, "reject dd/mm/yyyy", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '25/15/2000'}, mockToken, "reject dd/mm/yyyy", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '2222/12/30'}, mockToken, "reject yyyy/mm/dd", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '22/12/30'}, mockToken, "reject yy/mm/dd", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '2222/december/30'}, mockToken, "reject yyyy/month/dd", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '1980/02/20'}, mockToken, "reject yyyy/mm/dd", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '2000-06-1'}, mockToken, "reject yyyy-mm-d", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '2000-6-01'}, mockToken, "reject yyyy-m-dd", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '2000-6-1'}, mockToken, "reject yyyy-m-d", 400);
+                });
+
+                describeif(!runAll)('invalid date', () => {
+                    updateAuthor({ _id: 1, deathDate: 'ds-dsas-2012'}, mockToken, "reject letters in the date", 400);
+                  
+                    updateAuthor({ _id: 1, deathDate: '1900-02-30'}, mockToken, "reject invalid february", 400);
+                   
+                    updateAuthor({ _id: 1, deathDate: '1903-02-29'}, mockToken, "reject invalid february", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '1903-15-39'}, mockToken, "reject invalid months", 400);
+
+                    updateAuthor({ _id: 1, deathDate: '2030-10-23'}, mockToken, "reject future dates", 400);
+                            
+                    updateAuthor({ _id: 1, deathDate: '1909-12-31'}, mockToken, "reject dates earlier than 1910-01-01", 400);
+        
+                });
+
                 describeif(!runAll)(
                     'invalid birthDate and deathDate relation',
                     () => {
-                        updateAuthor({ _id: 1, birthDate: '2019-12-22'}, mockToken, "reject dates with a gap lower than 10 years", 400);
-                       
-                        updateAuthor({ _id: 1, birthDate: '2022-02-05'}, mockToken, "reject birthDate after deathDate", 400);
-
-                        updateAuthor({ _id: 1, birthDate: '2015-04-29'}, mockToken, "reject dates with a gap lower than 10 years", 400);
-
-                        updateAuthor({ _id: 1, birthDate: '1900-06-06'}, mockToken, "reject dates with a gap greater than 101 years", 400);
-
-                        updateAuthor({ _id: 1, birthDate: '1905-06-10'}, mockToken, "reject dates with a gap greater than 101 years", 400);
-            
-                        updateAuthor({ _id: 1, birthDate: '1000-06-01'}, mockToken, "reject dates with a gap greater than 101 years", 400);
-
+                        updateAuthor({ _id: 1, deathDate: '1990-08-02'}, mockToken,  "reject dates with a gap lower than 10 years", 400);
+                        updateAuthor({ _id: 1, deathDate: '2000-07-12'}, mockToken,  "reject dates with a gap lower than 10 years", 400);
+                        updateAuthor({ _id: 1, deathDate: '2032-02-14'}, mockToken,  "reject future dates", 400);
+                        updateAuthor({ _id: 1, deathDate: '1911-05-27'}, mockToken,  "reject deathDate earlier than birthDate", 400);
+                        updateAuthor({ _id: 1, deathDate: '1980-04-11'}, mockToken,  "reject deathDate earlier than birthDate", 400);
+                        updateAuthor({ _id: 1, birthDate: '1899-12-31'}, mockToken, "reject dates earlier than 1900-01-01", 400);
+                        updateAuthor({ _id: 1, deathDate: '1000-06-30'}, mockToken,  "reject deathDate earlier than 1900-01-01", 400);
+                        updateAuthor({ _id: 1, deathDate: '1905-06-10'}, mockToken,  "reject deathDate earlier than birthDate", 400);
+                    
                     },
                 );
             });
             /*
-            describeif(runAll)('invalid deathDate', () => {
-                const wrongDeathDate = change => {
-                    let temp = { ...artist };
-                    temp.birthDate = '1912-12-10';
-                    //can't send a null value
-                    if (change) temp['deathDate'] = change;
-                    else delete temp.deathDate;
-
-                    return temp;
-                };
-
-                describeif(runAll)('invalid type', () => {
-                    updateAuthor(wrongDeathDate(3), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate(['sass']), mockToken, 400);
-
-                    updateAuthor(
-                        wrongDeathDate(['saas', '32123']),
-                        mockToken,
-                        400,
-                    );
-
-                    updateAuthor(wrongDeathDate([54, 25, 0]), mockToken, 400);
-
-                    updateAuthor(
-                        wrongDeathDate(JSON.stringify(artist)),
-                        mockToken,
-                        400,
-                    );
-
-                    updateAuthor(wrongDeathDate(), mockToken, 400);
-                });
-
-                describeif(runAll)('invalid format', () => {
-                    updateAuthor(wrongDeathDate(''), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('sass'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('22/15/2012'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('22/15/2000'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('2222/12/30'), mockToken, 400);
-
-                    updateAuthor(
-                        wrongDeathDate('2222/december/30'),
-                        mockToken,
-                        400,
-                    );
-
-                    updateAuthor(wrongDeathDate('1980/02/20'), mockToken, 400);
-                });
-
-                describeif(runAll)('invalid date', () => {
-                    updateAuthor(
-                        wrongDeathDate('ds-dsas-2012'),
-                        mockToken,
-                        400,
-                    );
-
-                    updateAuthor(wrongDeathDate('1900-02-30'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('1903-02-29'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('2000-15-15'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('2000-06-1'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('2000-6-01'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('2000-6-1'), mockToken, 400);
-
-                    updateAuthor(wrongDeathDate('1000-06-01'), mockToken, 400);
-                });
-
-                describeif(runAll)(
-                    'invalid birthDate and deathDate relation',
-                    () => {
-                        updateAuthor(
-                            wrongDeathDate('2013-12-22'),
-                            mockToken,
-                            400,
-                        );
-
-                        updateAuthor(
-                            wrongDeathDate('2032-02-05'),
-                            mockToken,
-                            400,
-                        );
-
-                        updateAuthor(
-                            wrongDeathDate('1911-04-29'),
-                            mockToken,
-                            400,
-                        );
-
-                        updateAuthor(
-                            wrongDeathDate('1912-12-10'),
-                            mockToken,
-                            400,
-                        );
-
-                        updateAuthor(
-                            wrongDeathDate('2019-06-10'),
-                            mockToken,
-                            400,
-                        );
-
-                        updateAuthor(
-                            wrongDeathDate('1900-06-06'),
-                            mockToken,
-                            400,
-                        );
-
-                        updateAuthor(
-                            wrongDeathDate('1905-06-10'),
-                            mockToken,
-                            400,
-                        );
-
-                        updateAuthor(
-                            wrongDeathDate('1000-06-01'),
-                            mockToken,
-                            400,
-                        );
-                    },
-                );
-            });
-
             describeif(runAll)('invalid biography', () => {
                 const wrongBiography = change => {
                     let temp = { ...artist };

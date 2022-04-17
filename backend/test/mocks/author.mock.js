@@ -7,7 +7,7 @@ const artist = {
     _id: '',
 };
 
-//tests depends on this deathDate being set the way it is
+//the tests depend on this deathDate being set the way it is
 const writer = {
     name: 'Abe Yamamoto',
     types: ['writer'],
