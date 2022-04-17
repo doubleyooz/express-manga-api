@@ -1,17 +1,18 @@
 const artist = {
     name: 'Kentarou Kishima',
     types: ['artist'],
-    birthDate: '1998-05-22',
-    //deathDate: '2018-05-22',
+    birthDate: '1998-05-22',   
     socialMedia: ['https://www.orkut.com/user', 'https://twitter.com/usesdsa'],
     biography: 'A nice and sexy person',
     _id: '',
 };
 
+//tests depends on this deathDate being set the way it is
 const writer = {
     name: 'Abe Yamamoto',
     types: ['writer'],
     birthDate: '1990-08-02',
+    deathDate: '2020-12-10',
     socialMedia: ['https://reddit.com/dsd', 'https://twitter.com/usessdadsa'],
     biography: 'A tough and gloom person',
     _id: '',

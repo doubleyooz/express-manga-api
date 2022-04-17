@@ -317,7 +317,7 @@ const deleteAuthor = (payload, token) => {
     });
 };
 
-const updateAuthor = (payload, token, message) => {
+const updateAuthor = (payload, token, message, statusCode) => {
     it(`PUT /authors ${message}`, async () => {
         payload._id = payload._id === 1 ? writer._id : artist._id;
 
@@ -325,7 +325,6 @@ const updateAuthor = (payload, token, message) => {
             .put('/authors')
             .send(payload)
             .set('Authorization', 'Bearer ' + token)
-            .expect(200)
             .then(response => {
                 // Check type and length
                 expect(
@@ -334,19 +333,45 @@ const updateAuthor = (payload, token, message) => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                expect(response.body).toMatchObject({
-                    message: getMessage('author.update.success'),
-                    data: null,
-                    metadata: {},
-                    status: 200,
-                });
+                switch (statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(200);
+                        expect(response.body.data).toBeDefined();
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.update.success'),
+                            data: null,
+                            metadata: {},
+                            status: 200,
+                        });
+
+                        break;
+
+                    case 400:
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                            data: null,
+                            metadata: {},
+                            status: 400,
+                        });
+                        break;
+
+                    case 401:
+                        expect(response.status).toEqual(401);
+                        break;
+
+                    default:
+                        expect(2).toBe(3);
+                        break;
+                }
             });
     });
 
     it('GET check previous PUT operation', async () => {
         await supertest(app)
             .get(`/authors/findOne?_id=${payload._id}`)
-            .expect(200)
             .then(response => {
                 // Check type and length
                 expect(
@@ -355,12 +380,58 @@ const updateAuthor = (payload, token, message) => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                expect(response.body).toMatchObject({
-                    message: getMessage('author.findone.success'),
-                    data: payload,
-                    metadata: {},
-                    status: 200,
-                });
+                switch (statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(200);
+                        if (payload.birthDate)
+                            payload.birthDate =
+                                payload.birthDate + 'T03:00:00.000Z';
+                        if (payload.deathDate)
+                            payload.deathDate =
+                                payload.deathDate + 'T03:00:00.000Z';
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.findone.success'),
+                            data: payload,
+                            metadata: {},
+                            status: 200,
+                        });
+                        break;
+                    case 400:
+                        expect(response.status).toEqual(200);
+
+                        if (!(payload._id && Object.keys(payload).length === 1))
+                            expect(response.body.data).not.toMatchObject(
+                                payload,
+                            );
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.findone.success'),
+                            metadata: {},
+                            status: 200,
+                        });
+                        break;
+                    case 401:
+                        expect(response.status).toEqual(404);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.notfound'),
+                            data: null,
+                            metadata: expect.any(String),
+                            status: 404,
+                        });
+                        break;
+
+                    case 404:
+                        expect(response.status).toEqual(404);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.notfound'),
+                            data: null,
+                            metadata: expect.any(String),
+                            status: 404,
+                        });
+                        break;
+                    default:
+                        expect(2).toBe(3);
+                        break;
+                }
             });
     });
 };

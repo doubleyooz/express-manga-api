@@ -23,9 +23,9 @@ describe('Author', () => {
         createAuthor(artist, mockToken, 200);
         createAuthor(writer, mockToken, 200);
 
-        listAuthor([artist, writer], 2);
-        findAuthor(writer);
-
+        listAuthor({}, [artist, writer], mockToken, 200);
+        findAuthor(writer, mockToken, 200);
+    
         updateAuthor(
             { _id: 1, name: 'George Masara' },
             mockToken,
