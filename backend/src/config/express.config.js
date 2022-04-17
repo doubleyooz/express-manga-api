@@ -12,6 +12,7 @@ import userRoute from '../routes/user.route.js';
 import corsOptionsDelegate from './cors.config.js';
 import limiter from './limiter.config.js';
 
+import { TEST_E2E_ENV } from '../utils/constant.util.js';
 import { response } from '../middlewares/response.middleware.js';
 
 const app = express();
@@ -22,7 +23,7 @@ app.use('/files', express.static('uploads'));
 
 app.use(cookieParser());
 app.use(cors(corsOptionsDelegate));
-app.use(limiter); // limiting all requests
+if (!process.env.NODE_ENV === TEST_E2E_ENV) app.use(limiter); // limiting all requests
 app.use(response);
 
 app.use(authRoute);
