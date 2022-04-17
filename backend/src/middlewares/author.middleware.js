@@ -91,6 +91,7 @@ async function update(req, res, next) {
         .validate(req.body, { stripUnknown: true })
         .then(result => {
             req.body = result;
+
             next();
         })
         .catch(err => {

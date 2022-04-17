@@ -1,5 +1,7 @@
 import fs from 'fs';
-import { parseISO } from 'date-fns';
+import yup from 'yup';
+
+import { author_rules as rules } from '../utils/yup.util.js';
 
 import Author from '../models/author.model.js';
 import Manga from '../models/manga.model.js';
@@ -119,8 +121,8 @@ async function update(req, res) {
             new_token,
         );
 
-    Author.findByIdAndUpdate(req.body._id, req.body)
-        .select({ type: 1, name: 1 })
+    Author.findById(req.body._id)
+        .select({ birthDate: 1, deathDate: 1, name: 1 })
         .then(doc => {
             if (!doc) {
                 return res.jsonNotFound(
@@ -128,44 +130,71 @@ async function update(req, res) {
                     getMessage('author.notfound'),
                     new_token,
                 );
-            } else {
-                if (req.body.name) {
-                    const currPath = './' + folderName + `authors/${doc.name}`;
-                    const newPath =
-                        './' + folderName + `authors/${req.body.name}`;
-
-                    fs.rename(currPath, newPath, function (err) {
-                        if (err) {
-                            if (fs.existsSync(newPath)) {
-                                fs.rmdirSync(newPath, { recursive: true });
-                            }
-
-                            fs.rename(currPath, newPath, function (e) {
-                                if (e) {
-                                    fs.rmdirSync(newPath, { recursive: true });
-                                    console.log(e);
-                                } else {
-                                    console.log(
-                                        'Successfully renamed the directory.',
-                                    );
-                                }
-                            });
-                        } else {
-                            console.log('Successfully renamed the directory.');
-                        }
-                    });
-                }
-
-                return res.jsonOK(
-                    null,
-                    getMessage('author.update.success'),
-                    new_token,
-                );
             }
+
+            const schema = yup.object().shape({
+                birthDate: rules.birthDate.required(),
+                deathDate: rules.deathDate.required(),
+            });
+
+            let temp =
+                req.body.birthDate && doc.deathDate
+                    ? {
+                          birthDate: req.body.birthDate,
+                          deathDate: doc.deathDate,
+                      }
+                    : req.body.deathDate && !req.body.birthDate
+                    ? {
+                          birthDate: doc.birthDate,
+                          deathDate: req.body.deathDate,
+                      }
+                    : {};
+
+            if (!schema.isValidSync(temp))
+                return res.jsonBadRequest(null, null, null);
+
+            if (req.body.name) {
+                const currPath = './' + folderName + `authors/${doc.name}`;
+                const newPath = './' + folderName + `authors/${req.body.name}`;
+
+                fs.rename(currPath, newPath, function (err) {
+                    if (err) {
+                        if (fs.existsSync(newPath)) {
+                            fs.rmdirSync(newPath, { recursive: true });
+                        }
+
+                        fs.rename(currPath, newPath, function (e) {
+                            if (e) {
+                                fs.rmdirSync(newPath, { recursive: true });
+                                console.log(e);
+                            } else {
+                                console.log(
+                                    'Successfully renamed the directory.',
+                                );
+                            }
+                        });
+                    } else {
+                        console.log('Successfully renamed the directory.');
+                    }
+                });
+            }
+
+            doc.updateOne(req.body)
+                .then(result => {
+                    return res.jsonOK(
+                        null,
+                        getMessage('author.update.success'),
+                        new_token,
+                    );
+                })
+                .catch(err => {
+                    console.log(err);
+                    return res.jsonServerError(null, null, err);
+                });
         })
         .catch(err => {
             console.log(err);
-            return res.jsonServerError(err, null, new_token);
+            return res.jsonServerError(null, null, err);
         });
 }
 

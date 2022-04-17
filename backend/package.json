@@ -16,8 +16,8 @@
     ],
     "setupFilesAfterEnv": [
       "./test/config/test.setup.js"
-    ],
-    "verbose": true
+    ]
+ 
   },
   "scripts": {
     "start:dev": "NODE_ENV=dev nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
