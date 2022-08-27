@@ -434,13 +434,13 @@ async function remove(req, res) {
 
     let dir = folderName + 'mangas/' + manga.title;
 
-    fs.rmdir(dir, { recursive: true }, err => {
+    fs.rm(dir, { recursive: true }, err => {
         if (err) {
             console.log(err);
         }
     });
 
-    fs.rmdirSync(dir, { recursive: true });
+    fs.rmSync(dir, { recursive: true });
 
     return res.jsonOK(
         {

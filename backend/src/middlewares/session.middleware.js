@@ -65,6 +65,7 @@ function auth(roles = []) {
                 }
             })
             .catch(err => {
+                console.log(err)
                 return res.jsonUnauthorized(null, null, err);
             });
     };

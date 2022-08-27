@@ -107,7 +107,7 @@ async function store(req, res) {
         } else {
             let dir2 = dir + manga_id;
 
-            fs.rmdir(dir2, { recursive: true }, e => {
+            fs.rm(dir2, { recursive: true }, e => {
                 if (e) console.log(e);
             });
 

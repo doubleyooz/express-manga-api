@@ -15,7 +15,7 @@ async function store(req, res) {
     const new_token = req.new_token ? req.new_token : null;
     req.auth = null;
     req.new_token = null;
-
+    
     const imgCollection = req.files.map(x => ({
         mimetype: x.mimetype,
         filename: x.filename,
@@ -160,12 +160,12 @@ async function update(req, res) {
                 fs.rename(currPath, newPath, function (err) {
                     if (err) {
                         if (fs.existsSync(newPath)) {
-                            fs.rmdirSync(newPath, { recursive: true });
+                            fs.rmSync(newPath, { recursive: true });
                         }
 
                         fs.rename(currPath, newPath, function (e) {
                             if (e) {
-                                fs.rmdirSync(newPath, { recursive: true });
+                                fs.rmSync(newPath, { recursive: true });
                                 console.log(e);
                             } else {
                                 console.log(
@@ -215,13 +215,13 @@ async function remove(req, res) {
                     fs.unlinkSync(dir + file.filename);
                 });
 
-                fs.rmdir(dir, { recursive: true }, err => {
+                fs.rm(dir, { recursive: true }, err => {
                     if (err) {
                         console.log(err);
                     }
                 });
 
-                fs.rmdirSync(dir, { recursive: true });
+                fs.rmSync(dir, { recursive: true });
 
                 author.works.forEach(manga_id => {
                     Manga.findById(manga_id)
