@@ -15,7 +15,7 @@ import {
 } from '../../../helpers/author.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
-const runAll = false;
+const runAll = true;
 describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
     let mockToken2 = corruptedToken('');

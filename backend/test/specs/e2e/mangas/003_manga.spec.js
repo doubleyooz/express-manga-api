@@ -9,18 +9,22 @@ import {
     deleteManga,
 } from '../../../helpers/manga.helper.js';
 
+const describeif = condition => (condition ? describe : describe.skip);
+const runAll = false;
 
 describe('Manga', () => {
-    let mockToken = scanToken(manga.scan_id);
+    describeif(runAll)('should accept', () => {
+        let mockToken = scanToken(manga.scan_id);
 
-    createManga(manga, mockToken);
-    createManga(manga2, mockToken);
+        createManga(manga, mockToken);
+        createManga(manga2, mockToken);
 
-    updateManga({ title: 'Gantz', _id: 1 }, mockToken, 'update name');
-    findManga(manga, true);
-    findManga(manga2, true);
-    findManga(manga);
-    listManga([manga2, manga], 2);
+        updateManga({ title: 'Gantz', _id: 1 }, mockToken, 'update name');
+        findManga(manga, true);
+        findManga(manga2, true);
+        findManga(manga);
+        listManga([manga2, manga], 2);
 
-    deleteManga(manga, mockToken);
+        deleteManga(manga, mockToken);
+    });
 });

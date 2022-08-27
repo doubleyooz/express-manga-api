@@ -5,11 +5,11 @@ import { scanToken } from '../../../mocks/jwt.mock.js';
 import { createAuthor, listAuthor } from '../../../helpers/author.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
-const runAll = false;
+const runAll = true;
 describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
-    describeif(runAll)('should accept', () => {
+    describeif(!runAll)('should accept', () => {
         listAuthor(artist, mockToken, 200);
         listAuthor(writer, mockToken, 200);
 

@@ -5,7 +5,7 @@ import { scanToken } from '../../../mocks/jwt.mock.js';
 import { updateAuthor, createAuthor } from '../../../helpers/author.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
-const runAll = false;
+const runAll = true;
 
 const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris iaculis odio risus, eu sodales tellus mattis et. Pellentesque ut magna sed mi condimentum feugiat. Nam massa erat, porta non commodo ac, sodales non felis. In hac habitasse platea dictumst. Nam velit mi, semper id odio id, cursus interdum odio. Suspendisse aliquet sapien est. Vivamus dignissim sodales sollicitudin. Pellentesque tristique mi elit, ut semper leo bibendum eu. Proin ut laoreet neque. Maecenas eget massa mollis ligula euismod lacinia. Phasellus nec vestibulum nisl. Suspendisse finibus enim tellus. Aenean tempus leo imperdiet quam ultrices tempor a eu orci. Praesent fermentum dignissim dapibus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nunc consectetur elit quis venenatis pulvinar. Nulla non laoreet nisl. Praesent hendrerit nulla arcu, in ultricies ex interdum eu. Fusce in viverra leo. In hac habitasse platea dictumst. Curabitur vulputate, magna id gravida finibus, ex augue sodales augue, quis iaculis risus turpis sed quam. Sed mattis, dui a facilisis volutpat, ipsum enim pretium diam, venenatis bibendum velit neque ut magna. Ut suscipit leo nec orci iaculis lacinia. Donec eleifend magna interdum auctor aliquam. Maecenas et nunc facilisis, convallis purus id, euismod eros. Proin suscipit vel purus non aliquet. In elementum sit amet sapien eget dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras lobortis venenatis purus, id euismod turpis pellentesque congue. Sed viverra est semper, interdum neque eu, porttitor ipsum. Aliquam efficitur lacinia est, quis finibus lorem tempus vel. Morbi eget odio facilisis, laoreet felis non, efficitur libero. Fusce quis tellus pretium, ultrices mi id, placerat lacus. Sed sagittis dolor sit amet porta finibus. Praesent at metus accumsan, suscipit orci sed, tempor nisi. Pellentesque non felis lacinia, sollicitudin diam sit amet, vestibulum justo. Cras nec neque tincidunt, dignissim est et, vestibulum arcu. Sed auctor ac enim vitae pulvinar. Suspendisse pretium aliquam risus, ut pharetra ante commodo sit amet. Nullam suscipit nibh nunc, eu tempus nisi elementum id. Ut purus erat, finibus in efficitur quis, scelerisque ut tortor. Donec gravida turpis libero, porttitor dictum sapien venenatis ac. Ut pulvinar laoreet leo, in congue tellus. Aenean a ex faucibus, viverra diam eu, accumsan nibh. Etiam dui ex.'
 
@@ -15,7 +15,7 @@ describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
     //prettier-ignore
-    describeif(runAll)('should accept', () => {
+    describeif(!runAll)('should accept', () => {
         createAuthor(artist, mockToken, 200);
         createAuthor(writer, mockToken, 200);
         updateAuthor({ _id: 1, types: ['writer'] }, mockToken, "types", 200);

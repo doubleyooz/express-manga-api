@@ -41,7 +41,7 @@ async function dropAllCollections() {
 
 async function dropTestUploadFolder() {
     let reqPath = path.resolve(path.dirname(''), 'uploads2');   
-    fs.rmdirSync(reqPath, { recursive: true });
+    fs.rmSync(reqPath, { recursive: true });
    
 }
 
