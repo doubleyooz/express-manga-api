@@ -6,58 +6,70 @@ import { createAuthor } from '../../../helpers/author.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
 const runAll = false;
+
+const wrongProperty = (property, change) => {
+    let temp = { ...artist };
+    //can't send a null value
+    if (change) temp[property] = change;
+    else delete temp[property];
+
+    return temp;
+};
+
 describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
-    describeif(runAll)('should accept', () => {
+    describeif(!runAll)('should accept', () => {
         createAuthor(artist, mockToken, 200);
         createAuthor(writer, mockToken, 200);
     });
 
-    describeif(!runAll)('should reject', () => {
+    describeif(runAll)('should reject', () => {
         describeif(!runAll)('invalid arguments', () => {
             createAuthor(bad_artist, mockToken, 400);
             describeif(!runAll)('invalid name', () => {
-                const wrongName = change => {
-                    let temp = { ...artist };
-                    //can't send a null value
-                    if (change) temp['name'] = change;
-                    else delete temp.name;
-
-                    return temp;
-                };
-
                 describeif(runAll)('invalid type', () => {
-                    createAuthor(wrongName(2), mockToken, 400);
+                    createAuthor(wrongProperty('name', 2), mockToken, 400);
 
-                    //createAuthor(wrongName(true), mockToken, 400);
+                    //createAuthor(wrongProperty('name',true), mockToken, 400);
 
-                    createAuthor(wrongName(false), mockToken, 400);
+                    createAuthor(wrongProperty('name', false), mockToken, 400);
 
-                    createAuthor(wrongName(['']), mockToken, 400);
+                    createAuthor(wrongProperty('name', ['']), mockToken, 400);
 
                     createAuthor(
-                        wrongName(JSON.stringify({ ...artist })),
+                        wrongProperty('name', JSON.stringify({ ...artist })),
                         mockToken,
                         400,
                     );
 
-                    createAuthor(wrongName(), mockToken, 400);
+                    createAuthor(wrongProperty('name'), mockToken, 400);
                 });
 
                 describeif(runAll)('invalid format', () => {
-                    createAuthor(wrongName(''), mockToken, 400);
+                    createAuthor(wrongProperty('name', ''), mockToken, 400);
 
-                    createAuthor(wrongName('s'), mockToken, 400);
+                    createAuthor(wrongProperty('name', 's'), mockToken, 400);
 
-                    createAuthor(wrongName('sd'), mockToken, 400);
-
-                    createAuthor(wrongName('\n\n\n'), mockToken, 400);
-
-                    createAuthor(wrongName('       '), mockToken, 400);
+                    createAuthor(wrongProperty('name', 'sd'), mockToken, 400);
 
                     createAuthor(
-                        wrongName('more than 20 characters for sure'),
+                        wrongProperty('name', '\n\n\n'),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('name', '       '),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty(
+                            'name',
+                            'more than 20 characters for sure',
+                        ),
                         mockToken,
                         400,
                     );
@@ -65,89 +77,112 @@ describe('Author', () => {
             });
 
             describeif(!runAll)('invalid types', () => {
-                const wrongTypes = change => {
-                    let temp = { ...artist };
-                    //can't send a null value
-                    if (change) temp['types'] = change;
-                    else delete temp.types;
-
-                    return temp;
-                };
-
                 describeif(runAll)('invalid type', () => {
-                    createAuthor(wrongTypes(3), mockToken, 400);
+                    createAuthor(wrongProperty('types', 3), mockToken, 400);
 
                     createAuthor(
-                        wrongTypes(JSON.stringify(artist)),
+                        wrongProperty('types', JSON.stringify(artist)),
                         mockToken,
                         400,
                     );
 
-                    createAuthor(wrongTypes('true'), mockToken, 400);
-
-                    createAuthor(wrongTypes(false), mockToken, 400);
-
-                    createAuthor(wrongTypes(), mockToken, 400);
-
-                    createAuthor(wrongTypes([54, 25, 0]), mockToken, 400);
-
                     createAuthor(
-                        wrongTypes([true, false, true]),
+                        wrongProperty('types', 'true'),
                         mockToken,
                         400,
                     );
 
-                    createAuthor(wrongTypes([true, false, 2]), mockToken, 400);
+                    createAuthor(wrongProperty('types', false), mockToken, 400);
+
+                    createAuthor(wrongProperty('types'), mockToken, 400);
+
+                    createAuthor(
+                        wrongProperty('types', [54, 25, 0]),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('types', [true, false, true]),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('types', [true, false, 2]),
+                        mockToken,
+                        400,
+                    );
                 });
 
                 describeif(!runAll)('invalid format', () => {
-                    createAuthor(wrongTypes(''), mockToken, 400);
-
-                    createAuthor(wrongTypes('sass'), mockToken, 400);
-
-                    createAuthor(wrongTypes([]), mockToken, 400);
-
-                    createAuthor(wrongTypes(['sass']), mockToken, 400);
-
-                    createAuthor(wrongTypes(['saas', '32123']), mockToken, 400);
+                    createAuthor(wrongProperty('types', ''), mockToken, 400);
 
                     createAuthor(
-                        wrongTypes(['writer', 'dasdas']),
+                        wrongProperty('types', 'sass'),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(wrongProperty('types', []), mockToken, 400);
+
+                    createAuthor(
+                        wrongProperty('types', ['sass']),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongTypes(['artist', 'dasdas']),
+                        wrongProperty('types', ['saas', '32123']),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongTypes(['artist', 'artist']),
+                        wrongProperty('types', ['writer', 'dasdas']),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongTypes(['writer', 'writer']),
+                        wrongProperty('types', ['artist', 'dasdas']),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongTypes(['artist', 'writer', 'something']),
+                        wrongProperty('types', ['artist', 'artist']),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongTypes(['artist', 'writer', 32]),
+                        wrongProperty('types', ['writer', 'writer']),
                         mockToken,
                         400,
                     );
 
-                    createAuthor(wrongTypes('/artist|writer/'), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('types', [
+                            'artist',
+                            'writer',
+                            'something',
+                        ]),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('types', ['artist', 'writer', 32]),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('types', '/artist|writer/'),
+                        mockToken,
+                        400,
+                    );
                 });
             });
 
@@ -412,122 +447,165 @@ describe('Author', () => {
             });
 
             describeif(runAll)('invalid biography', () => {
-                const wrongBiography = change => {
-                    let temp = { ...artist };
-                    //can't send a null value
-                    if (change) temp['biography'] = change;
-                    else delete temp.biography;
-
-                    return temp;
-                };
-
                 describeif(runAll)('invalid type', () => {
-                    createAuthor(wrongBiography(2), mockToken, 400);
+                    createAuthor(wrongProperty('biography', 2), mockToken, 400);
 
-                    createAuthor(wrongBiography(-52), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('biography', -52),
+                        mockToken,
+                        400,
+                    );
 
-                    //createAuthor(wrongBiography(true), mockToken, 400);
+                    //createAuthor(wrongProperty('biography', true), mockToken, 400);
 
-                    createAuthor(wrongBiography(false), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('biography', false),
+                        mockToken,
+                        400,
+                    );
 
-                    createAuthor(wrongBiography(['']), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('biography', ['']),
+                        mockToken,
+                        400,
+                    );
 
-                    createAuthor(wrongBiography(), mockToken, 400);
+                    createAuthor(wrongProperty('biography'), mockToken, 400);
                 });
 
                 describeif(runAll)('invalid format', () => {
-                    createAuthor(wrongBiography(''), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('biography', ''),
+                        mockToken,
+                        400,
+                    );
 
                     createAuthor(
-                        wrongBiography(
+                        wrongProperty(
+                            'biography',
                             '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
                         ),
                         mockToken,
                         400,
                     );
 
-                    createAuthor(wrongBiography('sd'), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('biography', 'sd'),
+                        mockToken,
+                        400,
+                    );
 
-                    createAuthor(wrongBiography('   '), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('biography', '   '),
+                        mockToken,
+                        400,
+                    );
                 });
             });
 
             describeif(runAll)('invalid social Media', () => {
-                const wrongSocialMedia = change => {
-                    let temp = { ...artist };
-                    //can't send a null value
-                    if (change) temp['socialMedia'] = change;
-                    else delete temp.socialMedia;
-
-                    return temp;
-                };
-
                 describeif(runAll)('invalid type', () => {
-                    createAuthor(wrongSocialMedia(3), mockToken, 400);
-
                     createAuthor(
-                        wrongSocialMedia(JSON.stringify(artist)),
+                        wrongProperty('socialMedia', 3),
                         mockToken,
                         400,
                     );
 
-                    createAuthor(wrongSocialMedia('true'), mockToken, 400);
-
-                    createAuthor(wrongSocialMedia(false), mockToken, 400);
-
-                    createAuthor(wrongSocialMedia(), mockToken, 400);
-
-                    createAuthor(wrongSocialMedia([54, 25, 0]), mockToken, 400);
-
                     createAuthor(
-                        wrongSocialMedia([true, false, true]),
+                        wrongProperty('socialMedia', JSON.stringify(artist)),
                         mockToken,
                         400,
                     );
 
-                    createAuthor(wrongSocialMedia(''), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('socialMedia', 'true'),
+                        mockToken,
+                        400,
+                    );
 
-                    createAuthor(wrongSocialMedia('sassf'), mockToken, 400);
+                    createAuthor(
+                        wrongProperty('socialMedia', false),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(wrongProperty('socialMedia'), mockToken, 400);
+
+                    createAuthor(
+                        wrongProperty('socialMedia', [54, 25, 0]),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('socialMedia', [true, false, true]),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('socialMedia', ''),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('socialMedia', 'sassf'),
+                        mockToken,
+                        400,
+                    );
                 });
 
                 describeif(!runAll)('invalid format', () => {
-                    createAuthor(wrongSocialMedia([]), mockToken, 400);
-
-                    createAuthor(wrongSocialMedia(['sass']), mockToken, 400);
-
                     createAuthor(
-                        wrongSocialMedia(['saas', '32123']),
+                        wrongProperty('socialMedia', []),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongSocialMedia(['writer', 'dasdas']),
+                        wrongProperty('socialMedia', ['sass']),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongSocialMedia(['artist', 'dasdas']),
+                        wrongProperty('socialMedia', ['saas', '32123']),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongSocialMedia(['artist', 'writer', 'something']),
+                        wrongProperty('socialMedia', ['writer', 'dasdas']),
                         mockToken,
                         400,
                     );
 
                     createAuthor(
-                        wrongSocialMedia(['artist', 'writer', 32]),
+                        wrongProperty('socialMedia', ['artist', 'dasdas']),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('socialMedia', [
+                            'artist',
+                            'writer',
+                            'something',
+                        ]),
+                        mockToken,
+                        400,
+                    );
+
+                    createAuthor(
+                        wrongProperty('socialMedia', ['artist', 'writer', 32]),
                         mockToken,
                         400,
                     );
 
                     describeif(!runAll)('invalid url', () => {
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'http://socialm.co/khj',
                                 'https://soc.ialmco/khj',
                                 'http://socialmco/khjk/hjk',
@@ -537,7 +615,7 @@ describe('Author', () => {
                         );
 
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'http://socialm.co/khj',
                                 'http://socialmco/khj',
                                 'https://social.mco/khjk/hjk',
@@ -547,7 +625,7 @@ describe('Author', () => {
                         );
 
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'https://socialmco/khj',
                                 'http://social.mco/khj',
                                 'http://social.mco/khjk/hjk',
@@ -557,7 +635,7 @@ describe('Author', () => {
                         );
 
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'https://socialm.co/khj',
                                 'hsttp://socialm.co/khj',
                                 'http://socialm.co/khjk/hjk',
@@ -567,7 +645,7 @@ describe('Author', () => {
                         );
 
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'httpsw://socialm.co/khj',
                                 'http://socialm.co/khj',
                                 'http://social.mco/khjk/hjk',
@@ -577,7 +655,7 @@ describe('Author', () => {
                         );
 
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'http://social.dsmco/khj',
                                 'http://social.mco/khj',
                                 'htts23p://social.mco/khjk/hjk',
@@ -587,7 +665,7 @@ describe('Author', () => {
                         );
 
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'http://soc.dsaial.dsmco',
                                 'http://social.mco/khj',
                                 'http://social.mco/khjk/hjk',
@@ -597,7 +675,7 @@ describe('Author', () => {
                         );
 
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'http://social.dsmco/khj',
                                 'http://social.mco/khj',
                                 'https://social.mco',
@@ -607,7 +685,7 @@ describe('Author', () => {
                         );
 
                         createAuthor(
-                            wrongSocialMedia([
+                            wrongProperty('socialMedia', [
                                 'http://social.dsmco/khj',
                                 'http://social.mco',
                                 'http://social.mco/khjk/hjk',

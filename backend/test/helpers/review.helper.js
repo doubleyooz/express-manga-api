@@ -1,13 +1,10 @@
-import supertest from 'supertest';
-
-import { app } from '../../src/config/express.config.js';
 import { review } from '../mocks/review.mock.js';
-import { photo } from '../mocks/image.mock.js';
 import { getMessage } from '../../src/utils/message.util.js';
+import { request } from '../config/connection.config.js';
 
 const createReview = (payload, token) => {
     it('POST /reviews', async () => {
-        await supertest(app)
+        await request
             .post('/reviews')
             .set('Authorization', 'Bearer ' + token)
             .send(payload)
@@ -35,7 +32,7 @@ const createReview = (payload, token) => {
     });
 
     it('GET /reviews/findOne ', async () => {
-        await supertest(app)
+        await request
             .get(`/reviews/findOne?_id=${payload._id}`)
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
@@ -60,7 +57,7 @@ const createReview = (payload, token) => {
 const updateReview = (payload, token, message) => {
     it(`PUT /reviews ${message}`, async () => {
         payload._id = payload._id === 1 ? review._id : review2._id;
-        await supertest(app)
+        await request
             .put('/reviews')
             .send(payload)
             .set('Authorization', 'Bearer ' + token)
@@ -88,7 +85,7 @@ const updateReview = (payload, token, message) => {
     });
 
     it('GET check previous PUT operation', async () => {
-        await supertest(app)
+        await request
             .get(`/reviews/findOne?_id=${payload._id}`)
             .send({})
             .set('Authorization', 'Bearer ' + token)
@@ -113,7 +110,7 @@ const updateReview = (payload, token, message) => {
 
 const findReview = payload => {
     it('GET /reviews/findOne', async () => {
-        await supertest(app)
+        await request
             .get(`/reviews/findOne?_id=${payload._id}`)
             .expect(200)
             .then(response => {
@@ -142,7 +139,7 @@ const listReview = (payload, selection, number) => {
             : selection.manga_id
             ? `/reviews?manga_id=${selection.manga_id}`
             : `/reviews`;
-        await supertest(app)
+        await request
             .get(path)
             .send()
             .expect(200)
@@ -173,7 +170,7 @@ const listReview = (payload, selection, number) => {
 
 const deleteReview = (payload, token) => {
     it('DELETE /reviews', async () => {
-        await supertest(app)
+        await request
             .delete(`/reviews?_id=${payload._id}`)
 
             .set('Authorization', 'Bearer ' + token)
@@ -196,7 +193,7 @@ const deleteReview = (payload, token) => {
     });
 
     it('GET /reviews/findOne', async () => {
-        await supertest(app)
+        await request
             .get(`/reviews/findOne?_id=${payload._id}`)
             .expect(404)
             .then(response => {

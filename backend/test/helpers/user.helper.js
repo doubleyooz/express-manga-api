@@ -1,15 +1,13 @@
-import supertest from 'supertest';
-
-import { app } from '../../src/config/express.config.js';
 import { getMessage } from '../../src/utils/message.util.js';
 import jwt from '../../src/utils/jwt.util.js';
 import { user, scan, fake_user } from '../mocks/user.mock.js';
+import { request } from '../config/connection.config.js';
 
 let activationToken;
 
 const createUser = payload => {
     it('POST /sign-up', async () => {
-        await supertest(app)
+        await request
             .post('/sign-up')
             .send(payload)
             .expect(200)
@@ -31,7 +29,7 @@ const createUser = payload => {
     });
 
     it('POST /authentication/activate/:tky', async () => {
-        await supertest(app)
+        await request
             .post('/authentication/activate/' + activationToken)
             .expect(200)
             .then(response => {
@@ -54,7 +52,7 @@ const createUser = payload => {
     });
 
     it('GET /sign-in', async () => {
-        await supertest(app)
+        await request
             .get('/sign-in')
             .auth(payload.email, payload.password)
             .expect(200)
@@ -84,7 +82,7 @@ const createUser = payload => {
     });
 
     it('GET /users/findOne', async () => {
-        await supertest(app)
+        await request
             .get(`/users/findOne?user_id=${payload._id}`)
             .send({})
             .expect(200)

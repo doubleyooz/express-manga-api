@@ -22,7 +22,7 @@ describe('Author', () => {
     describeif(!runAll)('should accept', () => {
         createAuthor(artist, mockToken, 200);
         createAuthor(writer, mockToken, 200);
-
+        
         listAuthor({}, [artist, writer], mockToken, 200);
         findAuthor(writer, mockToken, 200);
     

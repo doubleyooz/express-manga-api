@@ -1,15 +1,13 @@
-import supertest from 'supertest';
 import mongoose from 'mongoose';
 
-import { app } from '../../src/config/express.config.js';
 import { CHAPTER_PROJECTION } from '../../src/utils/constant.util.js';
 import { chapter } from '../mocks/chapter.mock.js';
 import { photo } from '../mocks/image.mock.js';
 import { getMessage } from '../../src/utils/message.util.js';
+import { request } from '../config/connection.config.js';
 
 const createChapter = (payload, token) => {
     it('POST /chapters', async () => {
-        const request = supertest(app);
         let filledArray = new Array(10).fill(photo.dir + photo.name);
 
         let requestInstance = request
@@ -47,7 +45,7 @@ const createChapter = (payload, token) => {
     });
 
     it('GET /chapters/findOne ', async () => {
-        await supertest(app)
+        await request
             .get(`/chapters/findOne?_id=${payload._id}`)
 
             .set('Authorization', 'Bearer ' + token)
@@ -73,7 +71,7 @@ const createChapter = (payload, token) => {
 const updateChapter = (payload, token, message) => {
     it(`PUT /chapters ${message}`, async () => {
         payload._id = payload._id === 1 ? chapter._id : chapter2._id;
-        await supertest(app)
+        await request
             .put('/chapters')
             .send(payload)
             .set('Authorization', 'Bearer ' + token)
@@ -101,7 +99,7 @@ const updateChapter = (payload, token, message) => {
     });
 
     it('GET check previous PUT operation', async () => {
-        await supertest(app)
+        await request
             .get(`/chapters/findOne?_id=${payload._id}`)
             .send({})
             .set('Authorization', 'Bearer ' + token)
@@ -193,7 +191,7 @@ const listChapter = (payload, manga_id, number, auth) => {
 
 const deleteChapter = (payload, token) => {
     it('DELETE /chapters', async () => {
-        await supertest(app)
+        await request
             .delete(`/chapters?_id=${payload._id}`)
 
             .set('Authorization', 'Bearer ' + token)
@@ -215,8 +213,8 @@ const deleteChapter = (payload, token) => {
             });
     });
 
-    it('GET /chapters/findOne', async () => {      
-        await supertest(app)
+    it('GET /chapters/findOne', async () => {
+        await request
             .get(`/chapters/findOne?_id=${payload._id}`)
             .expect(404)
             .then(response => {

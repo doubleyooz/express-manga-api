@@ -1,13 +1,11 @@
-import supertest from 'supertest';
-
-import { app } from '../../src/config/express.config.js';
 import { manga } from '../mocks/manga.mock.js';
 import { photo } from '../mocks/image.mock.js';
 import { getMessage } from '../../src/utils/message.util.js';
+import { request } from '../config/connection.config.js';
 
 const createManga = (payload, token) => {
     it('POST /mangas', async () => {
-        await supertest(app)
+        await request
             .post('/mangas')
             .set('Authorization', 'Bearer ' + token)
             .field(payload)
@@ -36,7 +34,7 @@ const createManga = (payload, token) => {
     });
 
     it('GET /mangas/findOne ', async () => {
-        await supertest(app)
+        await request
             .get(`/mangas/findOne?_id=${payload._id}`)
 
             .set('Authorization', 'Bearer ' + token)
@@ -62,7 +60,7 @@ const createManga = (payload, token) => {
 const updateManga = (payload, token, message) => {
     it(`PUT /mangas ${message}`, async () => {
         payload._id = payload._id === 1 ? manga._id : manga2._id;
-        await supertest(app)
+        await request
             .put('/mangas')
             .send(payload)
             .set('Authorization', 'Bearer ' + token)
@@ -90,7 +88,7 @@ const updateManga = (payload, token, message) => {
     });
 
     it('GET check previous PUT operation', async () => {
-        await supertest(app)
+        await request
             .get(`/mangas/findOne?_id=${payload._id}`)
             .send({})
             .set('Authorization', 'Bearer ' + token)
@@ -118,7 +116,7 @@ const findManga = (payload, byId) => {
         const path = byId
             ? `/mangas/findOne?_id=${payload._id}`
             : `/mangas/findOne?title=${payload.title}`;
-        await supertest(app)
+        await request
             .get(path)
             .expect(200)
             .then(response => {
@@ -141,7 +139,7 @@ const findManga = (payload, byId) => {
 
 const listManga = (payload, number) => {
     it(`GET /mangas ${number} documents`, async () => {
-        await supertest(app)
+        await request
             .get('/mangas')
             .send({})
             .expect(200)
@@ -172,7 +170,7 @@ const listManga = (payload, number) => {
 
 const deleteManga = (payload, token) => {
     it('DELETE /mangas', async () => {
-        await supertest(app)
+        await request
             .delete(`/mangas?_id=${payload._id}&sas=asas`)
 
             .set('Authorization', 'Bearer ' + token)
@@ -198,7 +196,7 @@ const deleteManga = (payload, token) => {
     });
 
     it('GET /mangas/findOne', async () => {
-        await supertest(app)
+        await request
             .get(`/mangas/findOne?_id=${payload._id}`)
             .expect(404)
             .then(response => {

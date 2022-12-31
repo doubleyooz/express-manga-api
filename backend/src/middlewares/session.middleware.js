@@ -4,20 +4,24 @@ import { TEST_E2E_ENV } from '../utils/constant.util.js';
 import jwt from '../utils/jwt.util.js';
 import { encrypt } from '../utils/password.util.js';
 
-function auth(roles = []) {
-    return async (req, res, next) => {
+const auth = (roles = []) => {
+    return (req, res, next) => {
         const [, token] = req.headers.authorization
             ? req.headers.authorization.split(' ')
             : [, ''];
         roles = typeof roles === 'string' ? [roles] : roles;
-
+       
         let payload = null;
+
+        return res.jsonUnauthorized(null, null, null);
         try {
             payload = jwt.verifyJwt(token, 1);
         } catch (err) {
             //Invalid Token
-            return res.jsonUnauthorized(err, null, null);
+            console.log(err)
+            
         }
+        console.log('here')
         //Invalid roles
         if (roles.length && !roles.includes(payload.role))
             return res.jsonUnauthorized(null, null, null);
@@ -31,6 +35,7 @@ function auth(roles = []) {
                 if (!result) {
                     if (process.env.NODE_ENV === TEST_E2E_ENV) {
                         req.auth = encrypt(payload._id);
+                        
                         return next();
                     } else return res.jsonUnauthorized(null, null, null);
                 }
