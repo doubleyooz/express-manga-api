@@ -1,1 +1,0 @@
-The routes forget password and activate account must be changed to a put and post request respectively
