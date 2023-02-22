@@ -1,54 +1,55 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
-  "author": "Waifu_Forever",
-  "license": "MIT",
-  "jest": {
-    "transform": {},
-    "globals": {
-      "__DEV__": true,
-      "__RCTProfileIsProfiling": false
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "src/index.js",
+    "type": "module",
+    "author": "Waifu_Forever",
+    "license": "MIT",
+    "jest": {
+        "transform": {},
+        "globals": {
+            "__DEV__": true,
+            "__RCTProfileIsProfiling": false
+        },
+        "setupFiles": [
+            "dotenv/config"
+        ],
+        "setupFilesAfterEnv": [
+            "./test/config/test.setup.js"
+        ]
     },
-    "setupFiles": [
-      "dotenv/config"
-    ],
-    "setupFilesAfterEnv": [
-      "./test/config/test.setup.js"
-    ]
-  },
-  "scripts": {
-    "start:dev": "set NODE_ENV=dev&& nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
-    "test": "set NODE_ENV=e2e&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test",
-    "test:clear": "yarn jest --clear-cache",
-    "test:e2e": "set NODE_ENV=e2e&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e",
-    "test:unit": "set NODE_ENV=unit&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/unit"
-  },
-  "dependencies": {
-    "@grpc/grpc-js": "^1.6.3",
-    "bcrypt": "^5.0.0",
-    "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.5",
-    "cors": "^2.8.5",
-    "date-fns": "^2.22.1",
-    "date-fns-tz": "^1.1.4",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-rate-limit": "^5.4.1",
-    "google-auth-library": "^7.1.2",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.17",
-    "multer": "^1.4.2",
-    "multer-gridfs-storage": "^4.2.0",
-    "nodemailer": "^6.5.0",
-    "path": "^0.12.7",
-    "yup": "^0.32.9"
-  },
-  "devDependencies": {
-    "jest": "^27.3.1",
-    "mongodb-memory-server": "^7.5.1",
-    "nodemon": "^2.0.7",
-    "supertest": "^6.1.6"
-  }
+    "scripts": {
+        "start:dev": "set NODE_ENV=dev&& nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
+        "test": "set NODE_ENV=e2e&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test",
+        "test:clear": "yarn jest --clear-cache",
+        "test:e2e": "set NODE_ENV=e2e&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e",
+        "test:unit": "set NODE_ENV=unit&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/unit",
+        "test:sample": "set NODE_ENV=e2e&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e/authors/sample.spec.js"
+    },
+    "dependencies": {
+        "@grpc/grpc-js": "^1.6.3",
+        "bcrypt": "^5.0.0",
+        "body-parser": "^1.19.0",
+        "cookie-parser": "^1.4.5",
+        "cors": "^2.8.5",
+        "date-fns": "^2.22.1",
+        "date-fns-tz": "^1.1.4",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-rate-limit": "^5.4.1",
+        "google-auth-library": "^7.1.2",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^5.11.17",
+        "multer": "^1.4.5-lts.1",
+        "multer-gridfs-storage": "^5.0.2",
+        "nodemailer": "^6.5.0",
+        "path": "^0.12.7",
+        "yup": "^0.32.9"
+    },
+    "devDependencies": {
+        "jest": "^29.3.1",
+        "mongodb-memory-server": "^7.5.1",
+        "nodemon": "^2.0.7",
+        "supertest": "^6.3.3"
+    }
 }

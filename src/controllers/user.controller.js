@@ -2,18 +2,22 @@ import nodemailer from 'nodemailer';
 //import smtpTransport from 'nodemailer-smtp-transport';
 
 import User from '../models/user.model.js';
-import { client } from '../config/grpc.config.js';
 import { TEST_E2E_ENV } from '../utils/constant.util.js';
 import jwt from '../utils/jwt.util.js';
 import { encrypt, decrypt, hashPassword } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
-async function store(req, res) {
+const store = async (req, res) => {
     const { email, password, name, role } = req.body;
 
-    User.find({ email: email })
-        .select({ _id: 1, email: 1, active: 1 })
-        .then(user => {
+    try {
+        const user = await User.findOne(email).select({
+            _id: 1,
+            email: 1,
+            active: 1,
+        });
+
+        if (user) {
             if (user[0].active) {
                 return res.jsonBadRequest(
                     null,
@@ -21,73 +25,83 @@ async function store(req, res) {
                     null,
                 );
             }
+
             const tkn = jwt.generateJwt(
-                {
-                    id: encrypt(user[0]._id.toString()),
-                },
+                { id: encrypt(user[0]._id.toString()) },
                 3,
             );
-            client.sendMail();
-            client.getAll(null, (err, data) => {
-                if (!err) {
-                    res.render('customers', {
-                        results: data.customers,
-                    });
-                }
-            });
-            sendEmail(email);
-
             return res.jsonOK(
                 null,
                 getMessage('user.activation.account.activate'),
                 process.env.NODE_ENV === TEST_E2E_ENV ? tkn : null,
             );
-        })
-        .catch(err => {
+        }
+    } catch (err) {
+        try {
             const p1 = new User({
-                email: email,
-                password: async () => await hashPassword(password),
-                name: name,
-                role: role ? role : 'User',
+                email,
+                password: await hashPassword(password),
+                name,
+                role: role || 'User',
             });
 
-            p1.save()
-                .then(result => {
-                    result.password = undefined;
+            const result = await p1.save();
+            result.password = undefined;
 
-                    const activationToken = jwt.generateJwt(
-                        { id: encrypt(p1._id.toString()) },
-                        3,
-                    );
+            const activationToken = jwt.generateJwt(
+                { id: encrypt(p1._id.toString()) },
+                3,
+            );
 
-                    // async..await is not allowed in global scope, must use a wrapper
-                    // Generate test SMTP service account from ethereal.email
+            // async..await is not allowed in global scope, must use a wrapper
+            // Generate test SMTP service account from ethereal.email
+            
+            const mailOptions = {
+                from: `${process.env.GMAIL_USER}`, // sender address
+                to: email, // receiver (use array of string for a list)
+                subject: getMessage('user.activation.account.subject'), // Subject line
+                html: `
+					<h2>${getMessage('user.activation.account.text')}</h2>
+					<a href="${process.env.CLIENT_URL}/activateaccount/${activationToken}">
+					${getMessage(
+                        'user.activation.account.text.subtitle',
+                    )}                               
+					<a/>
+					
+				`, // plain text body
+            };
 
-                    sendEmail(email);
-                    return res.jsonOK(
-                        null,
-                        getMessage('user.activation.account.activate'),
-                        process.env.NODE_ENV === TEST_E2E_ENV
-                            ? activationToken
-                            : null,
-                    );
-                })
-                .catch(err => {
-                    console.log(err);
-                    if (err.name === 'MongoError' && err.code === 11000) {
-                        //next(new Error("There was a duplicate key error"));
-                        return res.jsonBadRequest(
-                            null,
-                            getMessage('user.error.sign_up.duplicatekey'),
-                            { err },
-                        );
-                    } else {
-                        return res.jsonBadRequest(null, null, { err });
-                    }
-                });
-        });
-}
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+            return res.jsonOK(
+                null,
+                getMessage('user.activation.account.activate'),
+                process.env.NODE_ENV === TEST_E2E_ENV ? activationToken : null,
+            );
+        } catch (err) {
+            console.log(err);
 
+            if (err.name === 'MongoError' && err.code === 11000) {
+                return res.jsonBadRequest(
+                    null,
+                    getMessage('user.error.sign_up.duplicatekey'),
+                    { err },
+                );
+            } else {
+                return res.jsonBadRequest(
+                    null,
+                    getMessage('user.error.sign_up'),
+                    { err },
+                );
+            }
+        }
+    }
+};
 async function findOne(req, res) {
     const { user_id } = req.query;
 
