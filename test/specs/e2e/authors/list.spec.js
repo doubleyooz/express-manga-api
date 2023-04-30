@@ -9,7 +9,7 @@ const runAll = true;
 describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
-    describeif(!runAll)('should accept', () => {
+    describeif(runAll)('should accept', () => {
         listAuthor(artist, mockToken, 200);
         listAuthor(writer, mockToken, 200);
 
@@ -20,14 +20,14 @@ describe('Author', () => {
         listAuthor({ types: writer.types }, [writer], mockToken, 200);
     });
 
-    describeif(!runAll)('should reject', () => {
+    describeif(runAll)('should reject', () => {
         //ensure you have created authors beforehand, otherwise it will break
         describeif(runAll)('mock data', () => {
             createAuthor(artist, mockToken, 200);
             createAuthor(writer, mockToken, 200);
         });
-        describeif(!runAll)('invalid arguments', () => {
-            describeif(!runAll)('invalid name', () => {
+        describeif(runAll)('invalid arguments', () => {
+            describeif(runAll)('invalid name', () => {
                 //prettier-ignore
                 describeif(runAll)('invalid type', () => {
                     
@@ -36,7 +36,7 @@ describe('Author', () => {
                     
                 })
                 //prettier-ignore
-                describeif(!runAll)('invalid format', () => {                    
+                describeif(runAll)('invalid format', () => {                    
                     listAuthor({ name: 'd' }, [artist], mockToken, 400);
                     listAuthor({ name: 'sd' }, [artist], mockToken, 400);
                     listAuthor({ name: 'aabbccddsseegg ddssaaadasdas' }, [artist], mockToken, 400);
@@ -49,12 +49,12 @@ describe('Author', () => {
                     
                 })
             });
-            describeif(!runAll)('invalid types', () => {
-                describeif(!runAll)('invalid type', () => {
+            describeif(runAll)('invalid types', () => {
+                describeif(runAll)('invalid type', () => {
                     listAuthor({ types: [32132] }, [artist], mockToken, 400);
                 });
                 //prettier-ignore
-                describeif(!runAll)('invalid format', () => {
+                describeif(runAll)('invalid format', () => {
                     listAuthor({ types: [''] }, [artist], mockToken, 400);
 
                     listAuthor({ types: ['sass'] }, [artist], mockToken, 400);
@@ -74,7 +74,7 @@ describe('Author', () => {
             });
 
             //prettier-ignore
-            describeif(!runAll)('no registered author', () => {
+            describeif(runAll)('no registered author', () => {
                 listAuthor({ name: 'dsada' }, [artist], mockToken, 404);
                 listAuthor({ name: 'name' }, [artist], mockToken, 404);
                 listAuthor({ name: 'namesd' }, [artist], mockToken, 404);

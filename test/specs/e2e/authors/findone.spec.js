@@ -9,16 +9,16 @@ const runAll = true;
 describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
-    describeif(!runAll)('should accept', () => {
+    describeif(runAll)('should accept', () => {
         createAuthor(artist, mockToken, 200);
         createAuthor(writer, mockToken, 200);
 
         findAuthor(writer, mockToken, 200);
     });
 
-    describeif(!runAll)('should reject', () => {
-        describeif(!runAll)('invalid arguments', () => {
-            describeif(!runAll)('invalid type', () => {
+    describeif(runAll)('should reject', () => {
+        describeif(runAll)('invalid arguments', () => {
+            describeif(runAll)('invalid type', () => {
                 findAuthor({ _id: 23 }, mockToken, 400);
                 findAuthor({ _id: true }, mockToken, 400);
                 findAuthor({ _id: false }, mockToken, 400);
@@ -28,7 +28,7 @@ describe('Author', () => {
                 findAuthor({}, mockToken, 400);
             });
 
-            describeif(!runAll)('invalid format', () => {
+            describeif(runAll)('invalid format', () => {
                 findAuthor({ _id: 'kKucLRLt9Npgxcep6iWH' }, mockToken, 400);
                 findAuthor({ _id: 'QauOFWloK8pnnliczC4r' }, mockToken, 400);
                 findAuthor({ _id: 'XhQcXH4sk2mWgGyRurQI' }, mockToken, 400);
@@ -39,7 +39,7 @@ describe('Author', () => {
             });
 
             //prettier-ignore
-            describeif(!runAll)('no registered _id', () => {
+            describeif(runAll)('no registered _id', () => {
                 findAuthor({ _id: mongoose.Types.ObjectId().toString() }, mockToken, 404);
                 findAuthor({ _id: mongoose.Types.ObjectId().toString() }, mockToken, 404);
                 findAuthor({ _id: mongoose.Types.ObjectId().toString() }, mockToken, 404);

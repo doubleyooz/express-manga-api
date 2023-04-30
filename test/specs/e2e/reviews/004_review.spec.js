@@ -10,7 +10,7 @@ import {
 } from '../../../helpers/review.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
-const runAll = false;
+const runAll = true;
 
 describe('Review', () => {
     describeif(runAll)('should accept', () => {

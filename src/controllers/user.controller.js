@@ -1,11 +1,8 @@
-import nodemailer from 'nodemailer';
-//import smtpTransport from 'nodemailer-smtp-transport';
-
 import User from '../models/user.model.js';
-import { TEST_E2E_ENV } from '../utils/constant.util.js';
 import jwt from '../utils/jwt.util.js';
 import { encrypt, decrypt, hashPassword } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
+import { transporter } from '../config/nodemailer.config.js';
 
 const store = async (req, res) => {
     const { email, password, name, role } = req.body;
@@ -33,7 +30,7 @@ const store = async (req, res) => {
             return res.jsonOK(
                 null,
                 getMessage('user.activation.account.activate'),
-                process.env.NODE_ENV === TEST_E2E_ENV ? tkn : null,
+                tkn,
             );
         }
     } catch (err) {
@@ -45,8 +42,8 @@ const store = async (req, res) => {
                 role: role || 'User',
             });
 
-            const result = await p1.save();
-            result.password = undefined;
+            const user = await p1.save();
+            user.password = undefined;
 
             const activationToken = jwt.generateJwt(
                 { id: encrypt(p1._id.toString()) },
@@ -55,9 +52,9 @@ const store = async (req, res) => {
 
             // async..await is not allowed in global scope, must use a wrapper
             // Generate test SMTP service account from ethereal.email
-            
+
             const mailOptions = {
-                from: `${process.env.GMAIL_USER}`, // sender address
+                from: `${process.env.GMAIL_EMAIL}`, // sender address
                 to: email, // receiver (use array of string for a list)
                 subject: getMessage('user.activation.account.subject'), // Subject line
                 html: `
@@ -71,17 +68,13 @@ const store = async (req, res) => {
 				`, // plain text body
             };
 
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
-            });
+            const result = await transporter.sendMail(mailOptions);
+            console.log(result);
+
             return res.jsonOK(
                 null,
                 getMessage('user.activation.account.activate'),
-                process.env.NODE_ENV === TEST_E2E_ENV ? activationToken : null,
+                activationToken,
             );
         } catch (err) {
             console.log(err);

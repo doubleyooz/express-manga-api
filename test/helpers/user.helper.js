@@ -17,7 +17,7 @@ const createUser = payload => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-
+                console.log(response.body);
                 activationToken = response.body.metadata;
                 expect(response.body).toEqual({
                     message: getMessage('user.activation.account.activate'),

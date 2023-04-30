@@ -13,7 +13,7 @@ import {
 import { createManga } from '../../../helpers/manga.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
-const runAll = false;
+const runAll = true;
 
 describe('Chapter', () => {
     describeif(runAll)('should accept', () => {

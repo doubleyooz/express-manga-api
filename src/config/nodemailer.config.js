@@ -3,10 +3,10 @@ import nodemailer from 'nodemailer';
 export const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: `${env.process.GMAIL_USER}`,
-        pass: `${env.process.GMAIL_PASSWORD}`,
+        user: `${process.env.GMAIL_EMAIL}`,
+        pass: `${process.env.GMAIL_PASS}`,
     },
-    tls: {
-        rejectUnauthorized: false,
-    },
+
+    port: 2525,
+    secure: true,
 });

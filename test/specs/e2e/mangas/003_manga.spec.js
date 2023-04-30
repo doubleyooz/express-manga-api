@@ -10,7 +10,7 @@ import {
 } from '../../../helpers/manga.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
-const runAll = false;
+const runAll = true;
 
 describe('Manga', () => {
     describeif(runAll)('should accept', () => {

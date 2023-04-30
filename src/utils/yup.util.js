@@ -295,7 +295,7 @@ const user_rules = {
         .string()
         .min(8, getMessage('user.invalid.password.short'))
         .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/,
             getMessage('user.invalid.password.weak'),
         )
         .required(),

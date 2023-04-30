@@ -15,11 +15,11 @@ import {
 } from '../../../helpers/author.helper.js';
 
 const describeif = condition => (condition ? describe : describe.skip);
-const runAll = false;
+const runAll = true;
 describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
-    describeif(!runAll)('should accept', () => {
+    describeif(runAll)('should accept', () => {
         createAuthor(artist, mockToken, 200);
         createAuthor(writer, mockToken, 200);
         

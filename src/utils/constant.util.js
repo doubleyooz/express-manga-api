@@ -1,9 +1,3 @@
-export const TEST_E2E_ENV = 'e2e';
-export const TEST_UNIT_ENV = 'unit';
-export const TEST_INT_ENV = 'int';
-export const DEV_ENV = 'dev';
-export const PROD_ENV = 'prod';
-
 export const MANGA_PROJECTION = {
     0: {
         title: 1,

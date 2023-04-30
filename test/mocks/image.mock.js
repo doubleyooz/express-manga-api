@@ -1,6 +1,6 @@
 const photo = {
-    dir: `${process.env.DIR_PATH}`,
-    name: `${process.env.IMG_NAME}`,
+    dir: `C:/Users/sirjo/OneDrive/Documentos/Vs Projects/javascript/Express/express-manga-api/`,
+    name: `temp.jpeg`,
     mimetype: 'image/jpeg',
     size: 34825,
 };

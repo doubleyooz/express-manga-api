@@ -1,6 +1,6 @@
 const scan = {
-    email: `${process.env.TEST_GMAIL}`,
-    password: `${process.env.TEST_GMAIL_PASS}`,
+    email: 'scan@gmail.com',
+    password: 'ddsad@#We1',
     active: false,
     name: 'Jojo',
     role: 'Scan',
@@ -8,8 +8,8 @@ const scan = {
     token: '',
 };
 const user = {
-    email: 'as' + `${process.env.TEST_GMAIL}`,
-    password: `${process.env.TEST_GMAIL_PASS}`,
+    email: 'as' + 'user@gmail.com',
+    password: 'ddsad@#We1',
     active: false,
     name: 'Seth',
     role: 'User',
@@ -18,8 +18,8 @@ const user = {
 };
 
 const fake_user = {
-    email: `25 + ${process.env.TEST_GMAIL}`,
-    password: `${process.env.TEST_GMAIL_PASS_2}`,
+    email: `25dsad@d.com`,
+    password: 'dasdasda',
     name: 'Matt',
     role: 'd2asadn',
 };

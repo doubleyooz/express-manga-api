@@ -2,7 +2,6 @@ import Manga from '../models/manga.model.js';
 import Review from '../models/review.model.js';
 import User from '../models/user.model.js';
 
-import { TEST_E2E_ENV } from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
@@ -41,61 +40,45 @@ async function store(req, res) {
         manga_id: manga_id,
     });
 
-    if (process.env.NODE_ENV !== TEST_E2E_ENV) {
-        manga.reviews.push(review._id);
-        user.reviews.push(review._id);
-        manga.rating += rating;
+    manga.reviews.push(review._id);
+    user.reviews.push(review._id);
+    manga.rating += rating;
 
-        manga.updatedAt = Date.now();
-        user.updatedAt = Date.now();
+    manga.updatedAt = Date.now();
+    user.updatedAt = Date.now();
 
-        manga
-            .save()
-            .then(() => {
-                user.save()
-                    .then(() => {
-                        review
-                            .save()
-                            .then(result => {
-                                return res.jsonOK(
-                                    result,
-                                    getMessage('review.save.success'),
-                                    new_token,
-                                );
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                return res.jsonServerError(
-                                    null,
-                                    null,
-                                    err.toString(),
-                                );
-                            });
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        return res.jsonServerError(null, null, err.toString());
-                    });
-            })
-            .catch(err => {
-                console.log(err);
-                return res.jsonServerError(null, null, err.toString());
-            });
-    } else {
-        review
-            .save()
-            .then(result => {
-                return res.jsonOK(
-                    result,
-                    getMessage('review.save.success'),
-                    new_token,
-                );
-            })
-            .catch(err => {
-                console.log(err);
-                return res.jsonServerError(null, null, err.toString());
-            });
-    }
+    manga
+        .save()
+        .then(() => {
+            user.save()
+                .then(() => {
+                    review
+                        .save()
+                        .then(result => {
+                            return res.jsonOK(
+                                result,
+                                getMessage('review.save.success'),
+                                new_token,
+                            );
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            return res.jsonServerError(
+                                null,
+                                null,
+                                err.toString(),
+                            );
+                        });
+                })
+                .catch(err => {
+                    console.log(err);
+                    return res.jsonServerError(null, null, err.toString());
+                });
+        })
+        .catch(err => {
+            console.log(err);
+            return res.jsonServerError(null, null, err.toString());
+        });
 }
 
 async function findOne(req, res) {
@@ -166,21 +149,19 @@ async function update(req, res) {
         .then(review => {
             let temp = rating ? -review.rating + rating : 0;
 
-            if (!process.env.NODE_ENV === TEST_E2E_ENV) {
-                Manga.findById({ _id: review.manga_id })
-                    .then(manga => {
-                        manga.rating += temp;
-                        manga
-                            .save()
-                            .then(() => {})
-                            .catch(err => {
-                                return res.jsonServerError(null, null, err);
-                            });
-                    })
-                    .catch(err => {
-                        return res.jsonServerError(null, null, err);
-                    });
-            }
+            Manga.findById({ _id: review.manga_id })
+                .then(manga => {
+                    manga.rating += temp;
+                    manga
+                        .save()
+                        .then(() => {})
+                        .catch(err => {
+                            return res.jsonServerError(null, null, err);
+                        });
+                })
+                .catch(err => {
+                    return res.jsonServerError(null, null, err);
+                });
 
             return res.jsonOK(
                 review,
@@ -218,35 +199,38 @@ async function remove(req, res) {
                     getMessage('review.notfound'),
                     new_token,
                 );
-            if (process.env.NODE_ENV !== TEST_E2E_ENV) {
-                const user = await User.findById(user_id);
 
-                user.reviews = user.reviews.filter(function (_id) {
-                    return _id.toString() !== _id.toString();
-                });
+            const user = await User.findById(user_id);
 
-                const manga = await Manga.findById(review.manga_id);
-                manga.rating -= review.rating;
-                manga.reviews = manga.reviews.filter(function (_id) {
-                    return _id.toString() !== _id.toString();
-                });
+            user.reviews = user.reviews.filter(function (_id) {
+                return _id.toString() !== _id.toString();
+            });
 
-                user.save(function (err) {
-                    // yet another err object to deal with
-                    if (err) {
-                        return res.jsonServerError(null, null, err);
-                    }
-                });
+            const manga = await Manga.findById(review.manga_id);
+            manga.rating -= review.rating;
+            manga.reviews = manga.reviews.filter(function (_id) {
+                return _id.toString() !== _id.toString();
+            });
 
-                manga.save(function (err) {
-                    // yet another err object to deal with
-                    if (err) {
-                        return res.jsonServerError(null, null, err);
-                    }
-                });
-            }
+            user.save(function (err) {
+                // yet another err object to deal with
+                if (err) {
+                    return res.jsonServerError(null, null, err);
+                }
+            });
 
-            return res.jsonOK(null, getMessage('review.delete.success'), new_token);
+            manga.save(function (err) {
+                // yet another err object to deal with
+                if (err) {
+                    return res.jsonServerError(null, null, err);
+                }
+            });
+
+            return res.jsonOK(
+                null,
+                getMessage('review.delete.success'),
+                new_token,
+            );
         } else return res.jsonUnauthorized(null, null, null);
     } else
         return res.jsonNotFound(null, getMessage('review.notfound'), new_token);

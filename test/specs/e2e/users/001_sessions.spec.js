@@ -7,7 +7,7 @@ import { getMessage } from '../../../../src/utils/message.util.js';
 
 const itif = condition => (condition ? it : it.skip);
 const describeif = condition => (condition ? describe : describe.skip);
-const runAll = false;
+const runAll = true;
 
 describe('Session createUser', () => {
     describeif(runAll)('should accept', () => {

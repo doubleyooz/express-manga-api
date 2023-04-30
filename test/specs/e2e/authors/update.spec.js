@@ -15,7 +15,7 @@ describe('Author', () => {
     let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
     //prettier-ignore
-    describeif(!runAll)('should accept', () => {
+    describeif(runAll)('should accept', () => {
         createAuthor(artist, mockToken, 200);
         createAuthor(writer, mockToken, 200);
         updateAuthor({ _id: 1, types: ['writer'] }, mockToken, "types", 200);
@@ -29,16 +29,16 @@ describe('Author', () => {
         
     });
     //prettier-ignore
-    describeif(!runAll)('should reject', () => {
+    describeif(runAll)('should reject', () => {
         //ensure you have created authors beforehand, otherwise it will break
-        describeif(!runAll)('mock data', () => {
+        describeif(runAll)('mock data', () => {
             createAuthor(artist, mockToken, 200);
             createAuthor(writer, mockToken, 200);
         });
-        describeif(!runAll)('invalid arguments', () => {
+        describeif(runAll)('invalid arguments', () => {
             describeif(runAll)('invalid name', () => {
                 
-                describeif(!runAll)('invalid type', () => {
+                describeif(runAll)('invalid type', () => {
                     updateAuthor({ _id: 1, name: 2 }, mockToken, "reject number", 400);  
                     
                     //can't test for boolean because yup casts it to string, no strict() set there
@@ -57,7 +57,7 @@ describe('Author', () => {
                     
                 });
                 
-                describeif(!runAll)('invalid format', () => {
+                describeif(runAll)('invalid format', () => {
                     updateAuthor({ _id: 1, name: '' }, mockToken, "reject empty string", 400);
 
                     updateAuthor({ _id: 1, name: 's' }, mockToken, "reject one character string", 400);
@@ -76,7 +76,7 @@ describe('Author', () => {
            
             describeif(runAll)('invalid types', () => {
               
-                describeif(!runAll)('invalid type', () => {
+                describeif(runAll)('invalid type', () => {
                    
                     updateAuthor({ _id: 1, types: 3 }, mockToken, "reject number", 400);  
                     
@@ -98,7 +98,7 @@ describe('Author', () => {
                     
                 });
 
-                describeif(!runAll)('invalid format', () => {
+                describeif(runAll)('invalid format', () => {
                     updateAuthor({ _id: 1, types: '' }, mockToken, "reject empty string", 400);
 
                     updateAuthor({ _id: 1, types: 'sass' }, mockToken, "reject invalid string", 400);
@@ -128,7 +128,7 @@ describe('Author', () => {
          
             describeif(runAll)('invalid birthDate', () => {
                 
-                describeif(!runAll)('invalid type', () => {
+                describeif(runAll)('invalid type', () => {
                     updateAuthor({ _id: 1, birthDate: 3 }, mockToken, "reject number", 400);                     
 
                     updateAuthor({ _id: 1, birthDate: ['sass'] }, mockToken, "reject single string array", 400);
@@ -142,7 +142,7 @@ describe('Author', () => {
                     updateAuthor({ _id: 1}, mockToken, "reject undefined", 400);
                 });
 
-                describeif(!runAll)('invalid format', () => {                   
+                describeif(runAll)('invalid format', () => {                   
                     updateAuthor({ _id: 1, birthDate: 'sass'}, mockToken, "reject invalid string", 400);
 
                     updateAuthor({ _id: 1, birthDate: '25/15/2012'}, mockToken, "reject dd/mm/yyyy", 400);
@@ -164,7 +164,7 @@ describe('Author', () => {
                     updateAuthor({ _id: 1, birthDate: '2000-6-1'}, mockToken, "reject yyyy-m-d", 400);
                 });
 
-                describeif(!runAll)('invalid date', () => {
+                describeif(runAll)('invalid date', () => {
                     updateAuthor({ _id: 1, birthDate: 'ds-dsas-2012'}, mockToken, "reject letters in the date", 400);
                   
                     updateAuthor({ _id: 1, birthDate: '1900-02-30'}, mockToken, "reject invalid february", 400);
@@ -179,7 +179,7 @@ describe('Author', () => {
         
                 });
 
-                describeif(!runAll)('invalid birthDate and deathDate relation', () => {
+                describeif(runAll)('invalid birthDate and deathDate relation', () => {
                     updateAuthor({ _id: 1, birthDate: '2019-12-22'}, mockToken, "reject dates with a gap lower than 10 years", 400);
                     
                     updateAuthor({ _id: 1, birthDate: '2022-02-05'}, mockToken, "reject birthDate after deathDate", 400);
@@ -197,7 +197,7 @@ describe('Author', () => {
             
             describeif(runAll)('invalid deathDate', () => {
              
-                describeif(!runAll)('invalid type', () => {
+                describeif(runAll)('invalid type', () => {
                     updateAuthor({ _id: 1, deathDate: 3 }, mockToken, "reject number", 400);                     
 
                     updateAuthor({ _id: 1, deathDate: ['sass'] }, mockToken, "reject single string array", 400);
@@ -211,7 +211,7 @@ describe('Author', () => {
                     updateAuthor({ _id: 1}, mockToken, "reject undefined", 400);
                 });
 
-                describeif(!runAll)('invalid format', () => {                 
+                describeif(runAll)('invalid format', () => {                 
                     updateAuthor({ _id: 1, deathDate: 'sass'}, mockToken, "reject invalid string", 400);
 
                     updateAuthor({ _id: 1, deathDate: '25/15/2012'}, mockToken, "reject dd/mm/yyyy", 400);
@@ -233,7 +233,7 @@ describe('Author', () => {
                     updateAuthor({ _id: 1, deathDate: '2000-6-1'}, mockToken, "reject yyyy-m-d", 400);
                 });
 
-                describeif(!runAll)('invalid date', () => {
+                describeif(runAll)('invalid date', () => {
                     updateAuthor({ _id: 1, deathDate: 'ds-dsas-2012'}, mockToken, "reject letters in the date", 400);
                   
                     updateAuthor({ _id: 1, deathDate: '1900-02-30'}, mockToken, "reject invalid february", 400);
@@ -248,7 +248,7 @@ describe('Author', () => {
         
                 });
 
-                describeif(!runAll)(
+                describeif(runAll)(
                     'invalid birthDate and deathDate relation',
                     () => {
                         updateAuthor({ _id: 1, deathDate: '1990-08-02'}, mockToken,  "reject dates with a gap lower than 10 years", 400);
@@ -265,7 +265,7 @@ describe('Author', () => {
             });
             
             describeif(runAll)('invalid biography', () => {
-                describeif(!runAll)('invalid type', () => {
+                describeif(runAll)('invalid type', () => {
                     updateAuthor({ _id: 1, biography: 2 }, mockToken, "reject number", 400);  
                     
                     //can't test for boolean because yup casts it to string, no strict() set there
@@ -284,7 +284,7 @@ describe('Author', () => {
                     
                 });
                 
-                describeif(!runAll)('invalid format', () => {
+                describeif(runAll)('invalid format', () => {
                     updateAuthor({ _id: 1, biography: '' }, mockToken, "reject empty string", 400);
 
                     updateAuthor({ _id: 1, biography: 's' }, mockToken, "reject one character string", 400);
@@ -345,7 +345,7 @@ describe('Author', () => {
                     updateAuthor(wrongSocialMedia('sassf'), mockToken, 400);
                 });
 
-                describeif(!runAll)('invalid format', () => {
+                describeif(runAll)('invalid format', () => {
                     updateAuthor(wrongSocialMedia([]), mockToken, 400);
 
                     updateAuthor(wrongSocialMedia(['sass']), mockToken, 400);
@@ -380,7 +380,7 @@ describe('Author', () => {
                         400,
                     );
 
-                    describeif(!runAll)('invalid url', () => {
+                    describeif(runAll)('invalid url', () => {
                         updateAuthor(
                             wrongSocialMedia([
                                 'http://socialm.co/khj',

@@ -3,7 +3,7 @@ import fs from 'fs';
 import Chapter from '../models/chapter.model.js';
 import Manga from '../models/manga.model.js';
 
-import { TEST_E2E_ENV, CHAPTER_PROJECTION } from '../utils/constant.util.js';
+import { CHAPTER_PROJECTION } from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 import { folderName } from '../config/multer.config.js';

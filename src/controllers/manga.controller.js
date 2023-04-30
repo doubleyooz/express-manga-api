@@ -5,7 +5,7 @@ import Chapter from '../models/chapter.model.js';
 import Manga from '../models/manga.model.js';
 import User from '../models/user.model.js';
 
-import { TEST_E2E_ENV, MANGA_PROJECTION } from '../utils/constant.util.js';
+import { MANGA_PROJECTION } from '../utils/constant.util.js';
 import { decrypt } from '../utils/password.util.js';
 import { getMessage } from '../utils/message.util.js';
 
@@ -63,69 +63,56 @@ const store = async (req, res) => {
     });
 
     try {
-        if (process.env.NODE_ENV !== TEST_E2E_ENV) {
-            const [scan, doesMangaExist, artist, writer] = await Promise.all([
-                User.findById(scan_id),
-                Manga.exists({ title: title }),
-                Author.findById(artist_id),
-                Author.findById(writer_id),
-            ]);
+        const [scan, doesMangaExist, artist, writer] = await Promise.all([
+            User.findById(scan_id),
+            Manga.exists({ title: title }),
+            Author.findById(artist_id),
+            Author.findById(writer_id),
+        ]);
 
-            if (!scan) {
-                deleteFiles();
-                return res.jsonNotFound(
-                    null,
-                    getMessage('manga.error.scan_id'),
-                    null,
-                );
-            }
-
-            if (doesMangaExist) {
-                deleteFiles();
-                return res.jsonBadRequest(
-                    null,
-                    getMessage('manga.error.duplicate'),
-                    new_token,
-                );
-            }
-
-            if (!artist || !artist.types.includes('artist')) {
-                deleteFiles();
-                return res.jsonNotFound(
-                    null,
-                    getMessage('manga.error.artist'),
-                    null,
-                );
-            }
-
-            if (!writer || !writer.types.includes('writer')) {
-                deleteFiles();
-                return res.jsonNotFound(
-                    null,
-                    getMessage('manga.error.writer'),
-                    null,
-                );
-            }
-
-            await Promise.all([
-                manga.save(),
-                artist.updateOne({ $push: { works: manga._id } }),
-                writer.updateOne({ $push: { works: manga._id } }),
-                scan.updateOne({ $push: { mangas: manga._id } }),
-            ]);
-            return res.jsonOK(
-                manga,
-                getMessage('manga.save.success'),
-                new_token,
+        if (!scan) {
+            deleteFiles();
+            return res.jsonNotFound(
+                null,
+                getMessage('manga.error.scan_id'),
+                null,
             );
-        } else {
-            await manga.save();
-            return res.jsonOK(
-                manga,
-                getMessage('manga.save.success'),
+        }
+
+        if (doesMangaExist) {
+            deleteFiles();
+            return res.jsonBadRequest(
+                null,
+                getMessage('manga.error.duplicate'),
                 new_token,
             );
         }
+
+        if (!artist || !artist.types.includes('artist')) {
+            deleteFiles();
+            return res.jsonNotFound(
+                null,
+                getMessage('manga.error.artist'),
+                null,
+            );
+        }
+
+        if (!writer || !writer.types.includes('writer')) {
+            deleteFiles();
+            return res.jsonNotFound(
+                null,
+                getMessage('manga.error.writer'),
+                null,
+            );
+        }
+
+        await Promise.all([
+            manga.save(),
+            artist.updateOne({ $push: { works: manga._id } }),
+            writer.updateOne({ $push: { works: manga._id } }),
+            scan.updateOne({ $push: { mangas: manga._id } }),
+        ]);
+        return res.jsonOK(manga, getMessage('manga.save.success'), new_token);
     } catch (error) {
         const isValidationError = error.name === 'ValidationError';
 
@@ -243,18 +230,12 @@ const update = async (req, res) => {
 
     const artist = artist_id ? await Author.findById(artist_id) : null;
 
-    if (
-        (!artist || !artist.types.includes('artist')) &&
-        process.env.NODE_ENV !== TEST_E2E_ENV
-    )
+    if (!artist || !artist.types.includes('artist'))
         return res.jsonBadRequest(null, getMessage('manga.error.artist'), null);
 
     const writer = writer_id ? await Author.findById(writer_id) : null;
 
-    if (
-        (!writer || !writer.types.includes('writer')) &&
-        process.env.NODE_ENV !== TEST_E2E_ENV
-    )
+    if (!writer || !writer.types.includes('writer'))
         return res.jsonBadRequest(null, getMessage('manga.error.writer'), null);
 
     try {
