@@ -19,15 +19,14 @@
         ]
     },
     "scripts": {
-        "start:dev": "set NODE_ENV=dev&& nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
-        "test": "set NODE_ENV=e2e&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test",
+        "start:dev": "nodemon -r dotenv/config src/index.js",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test",
         "test:clear": "yarn jest --clear-cache",
-        "test:e2e": "set NODE_ENV=e2e&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e",
-        "test:unit": "set NODE_ENV=unit&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/unit",
-        "test:sample": "set NODE_ENV=e2e&& node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e/authors/sample.spec.js"
+        "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e",
+        "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/unit",
+        "test:sample": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e/authors/sample.spec.js"
     },
     "dependencies": {
-        "@grpc/grpc-js": "^1.6.3",
         "bcrypt": "^5.0.0",
         "body-parser": "^1.19.0",
         "cookie-parser": "^1.4.5",

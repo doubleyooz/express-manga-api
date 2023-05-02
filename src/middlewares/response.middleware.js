@@ -40,6 +40,7 @@ const jsonUnauthorized = function (data, message, metadata) {
     this.status(status);
     this.type(TYPE_JSON);
 
+    console.log('right before');
     return this.json({ message, data, metadata, status: status });
 };
 
@@ -60,7 +61,7 @@ const jsonServerError = function (data, message, metadata) {
     data = data ? data : null;
     message = message ? message : getMessage('default.server.error');
     metadata = metadata ? metadata : {};
-
+    console.log('server error', { data, message, metadata });
     this.status(status);
     this.type(TYPE_JSON);
 

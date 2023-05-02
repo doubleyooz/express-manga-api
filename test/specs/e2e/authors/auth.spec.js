@@ -25,13 +25,12 @@ describe('Author', () => {
         describeif(runAll)('invalid token', () => {
             createAuthor(artist, mockToken2, 401);
             createAuthor(writer, mockToken2, 401);
-
-            findAuthor({ _id: 'kKucLRLt9Npgxcep6iWH' }, mockToken2, 400);
-            findAuthor({ _id: 'kKucLRLt9Npgxcep6iWH' }, mockToken2, 400);
-            findAuthor({ _id: mongoose.Types.ObjectId().toString() }, mockToken2, 404);
-            findAuthor({ _id: mongoose.Types.ObjectId().toString() }, mockToken2, 404);
-    
             
+            findAuthor({ _id: 'kKucLRLt9Npgxcep6iWH' }, mockToken2, 400);     
+            findAuthor({ _id: 'kKucLRLt9Npgxcep6iWH' }, mockToken2, 400);
+            findAuthor({ _id: mongoose.Types.ObjectId().toString() }, mockToken2, 404);
+            findAuthor({ _id: mongoose.Types.ObjectId().toString() }, mockToken2, 404);
+                
         });
     });
 });

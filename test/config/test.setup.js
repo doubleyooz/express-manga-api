@@ -5,7 +5,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-dotenv.config({ path: '.env.test' });
+dotenv.config();
 mongoose.set('useCreateIndex', true);
 mongoose.promise = global.Promise;
 
@@ -40,9 +40,8 @@ async function dropAllCollections() {
 }
 
 async function dropTestUploadFolder() {
-    let reqPath = path.resolve(path.dirname(''), 'uploads2');   
+    let reqPath = path.resolve(path.dirname(''), 'uploads2');
     fs.rmSync(reqPath, { recursive: true });
-   
 }
 
 function setupDB(databaseName) {
@@ -61,11 +60,11 @@ function setupDB(databaseName) {
     });
 
     beforeAll(async () => {
-        let dir = path.resolve(path.dirname(''), 'uploads2');   
-        if (!fs.existsSync(dir)){
+        let dir = path.resolve(path.dirname(''), 'uploads2');
+        if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
-    })
+    });
 
     // Cleans up database between each test
     afterEach(async () => {

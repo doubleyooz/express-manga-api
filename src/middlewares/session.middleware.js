@@ -12,63 +12,64 @@ const auth = (roles = []) => {
         let payload = null;
 
         try {
+            console.log('before payload');
             payload = jwt.verifyJwt(token, 1);
-        } catch (err) {
-            //Invalid Token
-            console.log(err)
-
-        }
-        console.log('here')
-        //Invalid roles
-        if (roles.length && !roles.includes(payload.role))
-            return res.jsonUnauthorized(null, null, null);
-
-        User.exists({
-            _id: payload._id,
-            active: true,
-            token_version: payload.token_version,
-        })
-            .then(result => {
-                if (!result) {
-
-                    return res.jsonUnauthorized(null, null, null);
-                }
-
-                try {
-                    var current_time = Date.now().valueOf() / 1000;
-                    if (
-                        (payload.exp - payload.iat) / 2 >
-                        payload.exp - current_time
-                    ) {
-                        let new_token = jwt.generateJwt(
-                            {
-                                id: payload._id,
-                                role: payload.role,
-                                token_version: payload.token_version,
-                            },
-                            1,
-                        );
-                        req.new_token = `Bearer ${new_token}`;
-                        console.log(`New Token: ${new_token}`);
-                    } else {
-                        console.log('Token not expired');
+            console.log('after verifying token');
+            //Invalid roles
+            if (roles.length && !roles.includes(payload.role))
+                return res.jsonUnauthorized(null, null, null);
+            console.log('about to consult the user');
+            User.exists({
+                _id: payload._id,
+                active: true,
+                token_version: payload.token_version,
+            })
+                .then(result => {
+                    if (!result) {
+                        return res.jsonUnauthorized(null, null, null);
                     }
 
-                    req.auth = encrypt(payload._id);
-                    payload = null;
-                    return next();
-                } catch (err) {
+                    try {
+                        var current_time = Date.now().valueOf() / 1000;
+                        if (
+                            (payload.exp - payload.iat) / 2 >
+                            payload.exp - current_time
+                        ) {
+                            let new_token = jwt.generateJwt(
+                                {
+                                    id: payload._id,
+                                    role: payload.role,
+                                    token_version: payload.token_version,
+                                },
+                                1,
+                            );
+                            req.new_token = `Bearer ${new_token}`;
+                            console.log(`New Token: ${new_token}`);
+                        } else {
+                            console.log('Token not expired');
+                        }
+
+                        req.auth = encrypt(payload._id);
+                        payload = null;
+                        return next();
+                    } catch (err) {
+                        console.log('server error', err);
+                        //Server error
+                        return res.jsonServerError(null, null, null);
+                    }
+                })
+                .catch(err => {
                     console.log(err);
-                    //Server error
-                    return res.jsonServerError(null, null, null);
-                }
-            })
-            .catch(err => {
-                console.log(err)
-                return res.jsonUnauthorized(null, null, err);
-            });
+                    return res.jsonUnauthorized(null, null, null);
+                });
+        } catch (err) {
+            //Invalid Token
+            console.log('invalid token', err);
+
+            return res.jsonUnauthorized(null, null, err);
+        }
     };
-}
+};
 
 function easyAuth() {
     return async (req, res, next) => {
@@ -89,7 +90,6 @@ function easyAuth() {
         } catch (err) {
             return next();
         }
-
 
         User.exists({
             _id: payload._id,

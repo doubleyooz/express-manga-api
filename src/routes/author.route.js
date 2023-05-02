@@ -16,15 +16,15 @@ const upload = multer(multerConfig.authorFiles).array('imgCollection');
 
 router.post(
     '/',
-    Authorize('Scan'),
     upload,
+    Authorize('Scan'),
     AuthorMiddleware.store,
     AuthorController.store,
 );
 router.put(
-    '/',
-    Authorize('Scan'),
+    '/',   
     upload,
+    Authorize('Scan'),
     AuthorMiddleware.update,
 
     AuthorController.update,

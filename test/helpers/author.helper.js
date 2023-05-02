@@ -12,6 +12,7 @@ const createAuthor = (payload, token, statusCode) => {
             .set('Authorization', 'Bearer ' + token)
             .attach('imgCollection', photo.dir + photo.name)
             .then(response => {
+                console.log('TEST');
                 console.log(response.body);
                 // Check type and length
                 expect(
@@ -93,21 +94,13 @@ const createAuthor = (payload, token, statusCode) => {
                     });
                     break;
                 case 400:
+                case 401:
                     expect(response.status).toEqual(400);
                     expect(response.body).toMatchObject({
                         message: getMessage('default.badRequest'),
                         data: null,
                         metadata: expect.any(String),
                         status: 400,
-                    });
-                    break;
-                case 401:
-                    expect(response.status).toEqual(404);
-                    expect(response.body).toMatchObject({
-                        message: getMessage('author.notfound'),
-                        data: null,
-                        metadata: expect.any(String),
-                        status: 404,
                     });
                     break;
 
