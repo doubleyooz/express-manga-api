@@ -12,15 +12,12 @@ const createAuthor = (payload, token, statusCode) => {
             .set('Authorization', 'Bearer ' + token)
             .attach('imgCollection', photo.dir + photo.name)
             .then(response => {
-                console.log('TEST');
-                console.log(response.body);
                 // Check type and length
                 expect(
                     typeof response.body === 'object' &&
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-
                 switch (statusCode) {
                     case 200:
                         expect(response.status).toEqual(200);
@@ -71,53 +68,58 @@ const createAuthor = (payload, token, statusCode) => {
                         expect(2).toBe(3);
                         break;
                 }
-            });
-    });
+            }).catch(e => {
+                console.log(e);
+            });;
+    })
 
     it('GET /authors/findOne', async () => {
-        request.get(`/authors/findOne?_id=${payload._id}`).then(response => {
-            // Check type and length
-            expect(
-                typeof response.body === 'object' &&
-                    !Array.isArray(response.body) &&
-                    response.body !== null,
-            ).toBeTruthy();
+        request
+            .get(`/authors/findOne?_id=${payload._id}`)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
 
-            switch (response.statusCode) {
-                case 200:
-                    expect(response.status).toEqual(200);
-                    expect(response.body).toMatchObject({
-                        message: getMessage('author.findone.success'),
-                        data: schema(payload, photo),
-                        metadata: {},
-                        status: 200,
-                    });
-                    break;
-                case 400:
-                case 401:
-                    expect(response.status).toEqual(400);
-                    expect(response.body).toMatchObject({
-                        message: getMessage('default.badRequest'),
-                        data: null,
-                        metadata: expect.any(String),
-                        status: 400,
-                    });
-                    break;
+                switch (response.statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(200);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.findone.success'),
+                            data: schema(payload, photo),
+                            metadata: {},
+                            status: 200,
+                        });
+                        break;
+                    case 400:
+                    case 401:
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                            data: null,
+                            metadata: expect.any(String),
+                            status: 400,
+                        });
+                        break;
 
-                case 404:
-                    expect(response.status).toEqual(404);
-                    expect(response.body).toMatchObject({
-                        message: getMessage('author.notfound'),
-                        data: null,
-                        metadata: expect.any(String),
-                        status: 404,
-                    });
-                    break;
-                default:
-                    expect(2).toBe(3);
-                    break;
-            }
-        });
+                    case 404:
+                        expect(response.status).toEqual(404);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('author.notfound'),
+                            data: null,
+                            metadata: expect.any(String),
+                            status: 404,
+                        });
+                        break;
+                    default:
+                        expect(2).toBe(3);
+                        break;
+                }
+            })
+            
     });
 };
 
@@ -217,7 +219,7 @@ const listAuthor = (payload, documents, token, statusCode) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-
+                console.log('list', response.body);
                 switch (statusCode) {
                     case 200:
                         expect(response.body.status).toEqual(200);

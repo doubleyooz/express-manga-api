@@ -19,12 +19,21 @@ const auth = (roles = []) => {
             if (roles.length && !roles.includes(payload.role))
                 return res.jsonUnauthorized(null, null, null);
             console.log('about to consult the user');
+            User.find({})
+                .then(result => {
+                    console.log('find', result);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            console.log('before exists');
             User.exists({
                 _id: payload._id,
                 active: true,
                 token_version: payload.token_version,
             })
                 .then(result => {
+                    console.log('then', { result, payload });
                     if (!result) {
                         return res.jsonUnauthorized(null, null, null);
                     }
