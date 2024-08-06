@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { USER, MANGA, REVIEW } from "../utils/constant.util";
+import { USER, MANGA, REVIEW } from "../utils/constant.util.js";
 
 const ReviewSchema = new mongoose.Schema(
   {

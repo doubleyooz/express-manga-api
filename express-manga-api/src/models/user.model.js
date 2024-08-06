@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { READER, SCAN } from "../utils/constant.util";
+import { MANGA, READER, REVIEW, SCAN, USER } from "../utils/constant.util.js";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -41,7 +41,7 @@ const UserSchema = new mongoose.Schema(
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: MANGA,
+        ref: REVIEW,
       },
     ],
 

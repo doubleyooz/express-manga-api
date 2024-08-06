@@ -48,13 +48,5 @@ const doc = {
 };
 
 const outputFile = "./swagger.json";
-const routes = [
-  "src/routes/app.route.ts",
-  "src/routes/authentication.route.ts",
-  "src/routes/author.route.ts",
-  "src/routes/chapter.route.ts",
-  "src/routes/manga.route.ts",
-  "src/routes/review.route.ts",
-  "src/routes/user.route.ts",
-];
+const routes = ["../routes/users.route.js"];
 swaggerAutogen()(outputFile, routes, doc);

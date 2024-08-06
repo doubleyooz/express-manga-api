@@ -8,15 +8,11 @@ import UserMiddleware from "../middlewares/users.middleware.js";
 
 const router = express.Router();
 
-router.get(
-  "/findOne",
-
-  UserMiddleware.findOne,
-  UserController.findOne
-);
-router.get("/", UserMiddleware.list, UserController.list);
+router.post("/", UserMiddleware.create, UserController.create);
+router.get("/:userId", UserMiddleware.findOneById, UserController.findOne);
+router.get("/", UserMiddleware.find, UserController.find);
 router.put("/", UserMiddleware.update, UserController.update);
-router.delete("/", UserMiddleware.remove, UserController.remove);
+router.delete("/", UserController.remove);
 // router.put('/like', Authorize('User'), LikeController.likeUser);
 // router.get('//review',  easyAuth(), MangaMiddleware.review_list, ReviewController.list);
 // router.get('/notify', Authorize('Scan'), NotifyController.notifyUsers);

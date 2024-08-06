@@ -13,7 +13,7 @@ import {
 } from "../utils/exception.util.js";
 import { decrypt } from "../utils/password.util.js";
 
-const store = async (req, res) => {
+const create = async (req, res) => {
   const { email, password, name, role } = req.body;
 
   try {
@@ -119,4 +119,4 @@ const remove = async (req, res) => {
   }
 };
 
-export default { store, findOne, find, update, remove };
+export default { create, findOne, find, update, remove };

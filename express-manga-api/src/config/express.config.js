@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-// import swaggerUi from "swagger-ui-express";
+import swaggerUi from "swagger-ui-express";
 import corsOptions from "./cors.config.js";
 
-// import * as swaggerDocument from "../config/swagger.json";
+import swaggerDocument from "../config/swagger.json" assert { type: "json" };
 
 // import authRoute from "../routes/authentication.route.js";
 // import authorRoute from "../routes/author.route.js";
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 //app.use(cors());
 app.use(cors(corsOptions));
-// app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // app.use("/auth", authRoute);
 // app.use("/authors", authorRoute);

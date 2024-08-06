@@ -2,100 +2,88 @@ import yup from "yup";
 
 import { decrypt } from "../utils/password.util.js";
 import { user_rules as rules } from "../utils/yup.util.js";
+import { STATUS_CODE_BAD_REQUEST } from "../utils/exception.util.js";
 
 async function create(req, res, next) {
-  const yupObject = yup.object().shape({
-    email: rules.email,
-    password: rules.password,
-    name: rules.name.required(),
-    role: rules.role.required(),
-  });
+  try {
+    const result = await yup
+      .object({
+        email: rules.email,
+        password: rules.password,
+        name: rules.name.required(),
+        role: rules.role.required(),
+      })
+      .validate(req.body, { abortEarly: false, stripUnknown: true });
 
-  yupObject
-    .validate(req.body, { stripUnknown: true })
-    .then((result) => {
-      req.body = result;
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.jsonBadRequest(null, null, err.errors);
-    });
+    req.body = result;
+    next();
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(STATUS_CODE_BAD_REQUEST)
+      .json(err.inner.map((e) => e.message));
+  }
 }
 
-async function findOne(req, res, next) {
-  let schema = yup.object().shape({
-    user_id: rules._id,
-  });
+async function findOneById(req, res, next) {
+  try {
+    const result = await yup
+      .object({
+        userId: rules._id,
+      })
+      .validate(req.query, { stripUnknown: true });
 
-  schema
-    .validate(req.query, { stripUnknown: true })
-    .then((result) => {
-      req.query = result;
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.jsonBadRequest(null, null, err.errors);
-    });
+    req.query = result;
+    next();
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(STATUS_CODE_BAD_REQUEST)
+      .json(err.inner.map((e) => e.message));
+  }
 }
 
-async function list(req, res, next) {
-  let schema = yup.object().shape({
-    name: rules.name,
-  });
+async function find(req, res, next) {
+  try {
+    const result = await yup
+      .object({
+        name: rules.name,
+        role: rules.role,
+      })
+      .validate(req.query, { abortEarly: true, stripUnknown: true });
 
-  schema
-    .validate(req.query, { stripUnknown: true })
-    .then((result) => {
-      req.query = result;
-      next();
-    })
-    .catch((err) => {
-      return res.jsonBadRequest(null, null, err.errors);
-    });
+    req.query = result;
+    next();
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(STATUS_CODE_BAD_REQUEST)
+      .json(err.inner.map((e) => e.message));
+  }
 }
 
 async function update(req, res, next) {
-  let schema = yup.object().shape({
-    name: rules.name,
-  });
+  try {
+    const result = await yup
+      .object({
+        name: rules.name,
+        role: rules.role,
+      })
+      .validate(req.body, { abortEarly: false, stripUnknown: true });
 
-  schema
-    .validate(req.body, { stripUnknown: true })
-    .then((result) => {
-      req.body = result;
-      next();
-    })
-    .catch((err) => {
-      return res.jsonBadRequest(null, null, err.toString());
-    });
-}
-
-async function remove(req, res, next) {
-  let schema = yup.object().shape({
-    user_id: rules._id,
-  });
-
-  schema
-    .validate(req.query, { stripUnknown: true })
-    .then((result) => {
-      if (decrypt(req.auth) !== user_id)
-        return res.jsonBadRequest(null, null, null);
-      req.query = result;
-      next();
-    })
-    .catch((err) => {
-      return res.jsonBadRequest(null, null, err.errors);
-    });
+    req.body = result;
+    next();
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(STATUS_CODE_BAD_REQUEST)
+      .json(err.inner.map((e) => e.message));
+  }
 }
 
 export default {
-  google_sign_up,
-  sign_up,
-  sign_in,
-  findOne,
-  list,
+  create,
+  findOneById,
+  find,
   update,
-  remove,
 };

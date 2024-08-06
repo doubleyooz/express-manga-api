@@ -15,7 +15,8 @@ async function createUser(data) {
       role: data.role || "User",
       password: await hashPassword(data.password),
     });
-    console.log(newUser);
+
+    delete newUser.password;
     return newUser;
   } catch (err) {
     console.log(err);
@@ -43,7 +44,7 @@ async function findAll(filter) {
   const result = await User.find({
     where: filter,
   });
-
+  console.log({ filter, result });
   if (result.length === 0) {
     throw new NotFoundException(getMessage("user.list.notfound"));
   }

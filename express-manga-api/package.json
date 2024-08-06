@@ -12,7 +12,8 @@
     "test:clear": "yarn jest --clear-cache",
     "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e",
     "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/unit",
-    "test:sample": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e/authors/sample.spec.js"
+    "test:sample": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e/authors/sample.spec.js",
+    "swagger": "node src/config/swagger.config.js"
   },
   "keywords": [],
   "dependencies": {
