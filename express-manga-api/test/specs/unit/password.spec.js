@@ -1,7 +1,7 @@
 import {
   hashPassword,
   matchPassword,
-} from "../../../../express-manga-api-old/src/utils/password.util";
+} from "../../../../express-manga-api-old/src/services/password.util";
 import { fake_user, user } from "../../mocks/user.mock";
 
 const itif = (condition) => (condition ? it : it.skip);

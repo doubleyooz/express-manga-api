@@ -98,6 +98,10 @@ function parseDateString(value, originalValue) {
   return parsedDate;
 }
 
+const auth_rules = {
+  token: yup.string(),
+};
+
 function isValidMongoIdRequired(value) {
   return (
     mongoose.Types.ObjectId.isValid(value) &&
@@ -308,4 +312,11 @@ const user_rules = {
     .required(),
 };
 
-export { manga_rules, author_rules, user_rules, chapter_rules, review_rules };
+export {
+  manga_rules,
+  auth_rules,
+  author_rules,
+  user_rules,
+  chapter_rules,
+  review_rules,
+};

@@ -1,14 +1,15 @@
-import User from "../models/user.model.js";
-import jwt from "../utils/jwt.util.js";
-
 import usersService from "../services/users.service.js";
+import jwtService, {
+  ACTIVATE_ACC_TOKEN_SECRET_INDEX,
+} from "../services/jwt.service.js";
 
 import { getMessage } from "../utils/message.util.js";
-import { transporter } from "../config/nodemailer.config.js";
 import {
   BadRequestException,
   CustomException,
+  STATUS_CODE_OK,
   STATUS_CODE_SERVER_ERROR,
+  STATUS_CODE_UNPROCESSABLE_ENTITY,
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
 import { decrypt } from "../utils/password.util.js";
@@ -18,13 +19,38 @@ const create = async (req, res) => {
 
   try {
     const user = await usersService.createUser(req.body);
-
-    return res.json({
+    const activationToken = jwtService.generateJwt(
+      {
+        _id: user._id,
+        tokenVersion: user.tokenVersion,
+      },
+      ACTIVATE_ACC_TOKEN_SECRET_INDEX
+    );
+    return res.status(STATUS_CODE_OK).json({
       message: getMessage("user.activation.account.activate"),
-      data: user,
+      data: activationToken,
     });
   } catch (err) {
-    console.log(err);
+    if (err instanceof UnprocessableEntityException) {
+      const user = await usersService.getUser(
+        { email, active: false },
+        { _id: true, tokenVersion: true },
+        false
+      );
+      if (!user) return res.status(err.status).json(err.message);
+
+      const activationToken = jwtService.generateJwt(
+        {
+          _id: user._id,
+          tokenVersion: user.tokenVersion,
+        },
+        ACTIVATE_ACC_TOKEN_SECRET_INDEX
+      );
+      return res.status(STATUS_CODE_UNPROCESSABLE_ENTITY).json({
+        message: getMessage("user.activation.account.activate"),
+        data: activationToken,
+      });
+    }
 
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
@@ -91,7 +117,10 @@ const update = async (req, res) => {
   req.newToken = null;
 
   try {
-    const result = await usersService.updateUser(decrypt(req.auth), req.body);
+    const result = await usersService.updateUser(
+      { _id: decrypt(req.auth) },
+      req.body
+    );
     return res.json({
       message: getMessage("user.update.success"),
       data: result,

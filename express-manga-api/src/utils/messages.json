@@ -79,6 +79,7 @@
     "user.sign_up.google.password.required": "Set a password",
     "user.error.sign_up.twinned": "There was a duplicate key error.",
     "user.error.notfound": "The specified user could not be found.",
+    "user.activation.account.success": "User activated successfully!",
     "user.activation.account.activate": "Please check your email to activate your account.",
     "user.activation.account.subject": "No reply - Activate your account.",
     "user.activation.account.text": "Please click on given link to activate your account, if wasn't you just ignore this email.\n",

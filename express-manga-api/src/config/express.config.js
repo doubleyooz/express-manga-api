@@ -6,7 +6,7 @@ import corsOptions from "./cors.config.js";
 
 import swaggerDocument from "../config/swagger.json" assert { type: "json" };
 
-// import authRoute from "../routes/authentication.route.js";
+import authRoute from "../routes/auth.route.js";
 // import authorRoute from "../routes/author.route.js";
 // import chapterRoute from "../routes/chapter.route.js";
 // import mangaRoute from "../routes/manga.route.js";
@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// app.use("/auth", authRoute);
+app.use("/auth", authRoute);
 // app.use("/authors", authorRoute);
 // app.use("/chapters", chapterRoute);
 // app.use("/mangas", mangaRoute);

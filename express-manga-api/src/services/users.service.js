@@ -32,6 +32,20 @@ async function createUser(data) {
   }
 }
 
+async function getUser(filter, select = {}, throwNotFound = true) {
+  const user = await User.findOne(
+    {
+      ...filter,
+    },
+    select
+  );
+
+  if (!user && throwNotFound) {
+    throw new NotFoundException(getMessage("user.notfound"));
+  }
+  return user;
+}
+
 async function findById(id) {
   const document = await User.findById(id).exec();
   if (!document) {
@@ -53,7 +67,7 @@ async function findAll(filter) {
 }
 
 async function updateTokenVersion(_id) {
-  const document = await this.userModel.findOneAndUpdate(
+  const document = await User.findOneAndUpdate(
     { _id },
     { $inc: { tokenVersion: 1 } }
   );
@@ -63,11 +77,8 @@ async function updateTokenVersion(_id) {
   return document;
 }
 
-async function updateUser(_id, data) {
-  const document = await this.userModel.findOneAndUpdate(
-    { _id, active: true },
-    data
-  );
+async function updateUser(filter, data) {
+  const document = await User.findOneAndUpdate({ ...filter }, data);
   if (!document) {
     throw new NotFoundException(getMessage("user.notfound"));
   }
@@ -87,6 +98,7 @@ export default {
   findById,
   findAll,
   updateUser,
+  getUser,
   updateTokenVersion,
   deleteById,
 };
