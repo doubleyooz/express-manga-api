@@ -1,5 +1,12 @@
 import mongoose from "mongoose";
 import ImageSchema from "./image.model.js";
+import {
+  AUTHOR,
+  CHAPTER,
+  MANGA,
+  REVIEW,
+  USER,
+} from "../utils/constant.util.js";
 
 const MangaSchema = new mongoose.Schema(
   {
@@ -10,11 +17,11 @@ const MangaSchema = new mongoose.Schema(
     },
     writerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Author",
+      ref: AUTHOR,
     },
     artistId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Author",
+      ref: AUTHOR,
     },
     genres: [
       {
@@ -36,13 +43,13 @@ const MangaSchema = new mongoose.Schema(
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: USER,
       },
     ],
     subscribers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: USER,
       },
     ],
     nsfw: {
@@ -58,12 +65,12 @@ const MangaSchema = new mongoose.Schema(
       {
         //a array fill with the data links
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Chapter",
+        ref: CHAPTER,
       },
     ],
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: USER,
     },
 
     rating: {
@@ -73,11 +80,11 @@ const MangaSchema = new mongoose.Schema(
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
+        ref: REVIEW,
       },
     ],
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Manga", MangaSchema);
+export default mongoose.model(MANGA, MangaSchema);

@@ -87,3 +87,11 @@ export const CHAPTER_PROJECTION = {
     _id: 1,
   },
 };
+
+export const AUTHOR = "Author";
+export const USER = "User";
+export const READER = "Reader";
+export const SCAN = "Scan";
+export const MANGA = "Manga";
+export const CHAPTER = "Chapter";
+export const REVIEW = "Review";

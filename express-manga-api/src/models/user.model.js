@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { READER, SCAN } from "../utils/constant.util";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -7,8 +8,8 @@ const UserSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["Reader", "Scan"],
-      default: "Reader",
+      enum: [READER, SCAN],
+      default: READER,
     },
 
     name: {
@@ -19,28 +20,28 @@ const UserSchema = new mongoose.Schema(
     mangas: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Manga",
+        ref: MANGA,
       },
     ],
 
     subscribed: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Manga",
+        ref: MANGA,
       },
     ],
 
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: USER,
       },
     ],
 
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Manga",
+        ref: MANGA,
       },
     ],
 
@@ -62,4 +63,4 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model(USER, UserSchema);

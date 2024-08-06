@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import ImageSchema from "./image.model.js";
+import { CHAPTER, REVIEW } from "../utils/constant.util.js";
 
 const ChapterSchema = new mongoose.Schema(
   {
@@ -22,11 +23,11 @@ const ChapterSchema = new mongoose.Schema(
       {
         //a array fill with the review ids
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
+        ref: REVIEW,
       },
     ],
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Chapter", ChapterSchema);
+export default mongoose.model(CHAPTER, ChapterSchema);

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { USER, MANGA, REVIEW } from "../utils/constant.util";
 
 const ReviewSchema = new mongoose.Schema(
   {
@@ -6,14 +7,14 @@ const ReviewSchema = new mongoose.Schema(
     rating: Number,
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: USER,
     },
     mangaId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Manga",
+      ref: MANGA,
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Review", ReviewSchema);
+export default mongoose.model(REVIEW, ReviewSchema);
