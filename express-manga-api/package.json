@@ -1,0 +1,35 @@
+{
+  "name": "express-manga-api",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "author": "Waifu_Forever",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "start:dev": "nodemon -r dotenv/config src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test",
+    "test:clear": "yarn jest --clear-cache",
+    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e",
+    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/unit",
+    "test:sample": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e/authors/sample.spec.js"
+  },
+  "keywords": [],
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.2",
+    "nodemailer": "^6.9.14",
+    "swagger-ui-express": "^5.0.1",
+    "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "swagger-autogen": "^2.23.7"
+  }
+}
