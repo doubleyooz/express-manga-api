@@ -10,7 +10,7 @@ import {
 
 const MangaSchema = new mongoose.Schema(
   {
-    imgCollection: [ImageSchema],
+    covers: [ImageSchema],
     title: {
       type: String,
       unique: true,

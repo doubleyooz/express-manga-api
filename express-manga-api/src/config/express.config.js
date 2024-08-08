@@ -9,7 +9,7 @@ import swaggerDocument from "../config/swagger.json" assert { type: "json" };
 import authRoute from "../routes/auth.route.js";
 // import authorRoute from "../routes/author.route.js";
 // import chapterRoute from "../routes/chapter.route.js";
-// import mangaRoute from "../routes/manga.route.js";
+import mangaRoute from "../routes/manga.route.js";
 // import reviewRoute from "../routes/review.route.js";
 import userRoute from "../routes/users.route.js";
 
@@ -26,7 +26,7 @@ app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/auth", authRoute);
 // app.use("/authors", authorRoute);
 // app.use("/chapters", chapterRoute);
-// app.use("/mangas", mangaRoute);
+app.use("/mangas", mangaRoute);
 // app.use("/reviews", reviewRoute);
 app.use("/users", userRoute);
 

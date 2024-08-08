@@ -60,6 +60,8 @@ async function basicLogin(req, res) {
   }
 }
 
+async function logout(req, res) {}
+
 async function activateAccount(req, res) {
   try {
     const { token } = req.params;
