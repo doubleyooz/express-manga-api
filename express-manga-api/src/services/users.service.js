@@ -54,18 +54,22 @@ async function findById(id) {
   return document;
 }
 
-async function findAll(filter) {
-  const result = await User.find({
-    where: filter,
-  });
-  console.log({ filter, result });
-  if (result.length === 0) {
+async function findAll(filter, throwNotFound = true) {
+  let queryOptions = {};
+
+  // Check if filter is empty
+  if (Object.keys(filter).length > 0 && filter.constructor === Object) {
+    queryOptions.where = { ...filter };
+  }
+
+  const result = await User.find(queryOptions);
+
+  if (result.length === 0 && throwNotFound) {
     throw new NotFoundException(getMessage("user.list.notfound"));
   }
 
   return result;
 }
-
 async function updateTokenVersion(_id) {
   const document = await User.findOneAndUpdate(
     { _id },

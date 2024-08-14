@@ -36,10 +36,23 @@ function generateJwt(payload, num = 1) {
   return jwt.sign({ data: encrypt(jsonString) }, key, options);
 }
 
-function verifyJwt(token, num) {
+function verifyJwt(token, num = 1) {
+  console.log({ token, num });
   const [key] = tokens[num - 1];
+  console.log({ key });
+  const payload = JSON.parse(decrypt(jwt.verify(token, key).data));
+  console.log({ payload });
+  const current_time = Date.now().valueOf() / 1000;
+  let newToken = null;
+  if ((payload.exp - payload.iat) / 2 > payload.exp - current_time) {
+    newToken = jwtService.generateJwt({
+      id: payload._id,
+      role: payload.role,
+      tokenVersion: payload.tokenVersion,
+    });
+  }
 
-  return JSON.parse(decrypt(jwt.verify(token, key).data));
+  return [payload, newToken];
 }
 
 export default {
