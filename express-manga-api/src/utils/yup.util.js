@@ -1,94 +1,16 @@
 import mongoose from "mongoose";
 import yup from "yup";
 import { parseISO, isDate, addYears, subYears, isBefore } from "date-fns";
-import { SCAN, USER } from "../utils/constant.util.js";
+import {
+  genres,
+  languages,
+  mangaType,
+  SCAN,
+  themes,
+  USER,
+} from "./constant.util.js";
 
-import { getMessage } from "../utils/message.util.js";
-
-const genres = [
-  "action",
-  "adventure",
-  "boys' love",
-  "comedy",
-  "crime",
-  "drama",
-  "fantasy",
-  "girls' love",
-  "historical",
-  "horror",
-  "isekai",
-  "magical girls",
-  "mecha",
-  "medical",
-  "mystery",
-  "philosophical",
-  "psychological",
-  "romance",
-  "sci-fi",
-  "slice of life",
-  "sports",
-  "superhero",
-  "thriller",
-  "tragedy",
-  "wuxia",
-];
-
-const themes = [
-  "aliens",
-  "animals",
-  "cooking",
-  "crossdressing",
-  "deliquents",
-  "demons",
-  "genderswap",
-  "ghosts",
-  "gyaru",
-  "harem",
-  "incest",
-  "loli",
-  "mafia",
-  "magic",
-  "martial arts",
-  "military",
-  "monster girls",
-  "monsters",
-  "music",
-  "ninja",
-  "office workers",
-  "police",
-  "post-apocalyptic",
-  "reincarnation",
-  "reverse harem",
-  "samurai",
-  "school life",
-  "shota",
-  "supernatural",
-  "survival",
-  "time travel",
-  "traditional games",
-  "vampires",
-  "video games",
-  "villainess",
-  "virtual reality",
-  "zombies",
-];
-
-const languages = [
-  "da",
-  "nl",
-  "en",
-  "fi",
-  "fr",
-  "de",
-  "hu",
-  "it",
-  "nb",
-  "pt",
-  "ro",
-  "ru",
-  "tr",
-  "es",
-];
+import { getMessage } from "./message.util.js";
 
 function parseDateString(value, originalValue) {
   const parsedDate = isDate(originalValue)
@@ -171,7 +93,7 @@ const manga_rules = {
     ),
 
   synopsis: yup.string().min(10).max(400).trim(),
-  n_chapters: yup.number().min(1),
+  nChapters: yup.number().min(1),
   status: yup
     .number()
     .min(1, getMessage("manga.invalid.code"))
@@ -179,13 +101,16 @@ const manga_rules = {
   nsfw: yup.string().matches(/(true|false)/, null),
   type: yup
     .string()
-    .matches(/^manga$|^manhwa$|^manhua$/, null)
-    .default({ type: "manga" }),
+    .matches(
+      new RegExp(`${mangaType[0]}|${mangaType[1]}|${mangaType[2]}`),
+      null
+    )
+    .default(mangaType[0]),
   languages: yup
     .array(yup.string())
     .min(1, "")
     .max(languages.length, "")
-    .default(["pt"])
+    .default([languages[0]])
     .test(
       "Valid languages",
       "Not all given ${path} are valid options",
@@ -201,8 +126,8 @@ const manga_rules = {
 
   _id: mongo_id_req,
   id_not_required: mongo_id,
-  artist_id: mongo_id_req,
-  writer_id: mongo_id_req,
+  artistId: mongo_id,
+  writerId: mongo_id,
 };
 
 const author_rules = {

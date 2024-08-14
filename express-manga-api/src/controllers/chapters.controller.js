@@ -1,4 +1,4 @@
-import mangaService from "../services/manga.service.js";
+import chapterService from "../services/chapters.service.js";
 import jwtService, {
   ACTIVATE_ACC_TOKEN_SECRET_INDEX,
 } from "../services/jwt.service.js";
@@ -18,11 +18,11 @@ const create = async (req, res) => {
   const { title } = req.body;
   console.log({ file: req.file, files: req.files });
   try {
-    const manga = await mangaService.createManga(req.body);
+    const chapter = await chapterService.createChapter(req.body);
 
     return res.status(STATUS_CODE_OK).json({
-      message: getMessage("manga.save.success"),
-      data: manga,
+      message: getMessage("chapter.save.success"),
+      data: chapter,
     });
   } catch (err) {
     if (err instanceof CustomException)
@@ -32,17 +32,17 @@ const create = async (req, res) => {
   }
 };
 const findOne = async (req, res) => {
-  const { mangaId } = req.query;
+  const { chapterId } = req.query;
 
   const newToken = req.newToken || null;
   req.newToken = null;
 
   try {
-    const manga = await mangaService.findById(mangaId);
+    const chapter = await chapterService.findById(chapterId);
 
     return res.json({
-      message: getMessage("user.findone.success"),
-      data: manga,
+      message: getMessage("chapter.findone.success"),
+      data: chapter,
     });
   } catch (err) {
     if (err instanceof CustomException)
@@ -73,9 +73,9 @@ const find = async (req, res) => {
 
   console.log(search);
   try {
-    const result = await mangaService.findAll(search);
+    const result = await chapterService.findAll(search);
     return res.json({
-      message: getMessage("manga.list.success"),
+      message: getMessage("chapter.list.success"),
       data: result,
     });
   } catch (err) {
@@ -87,14 +87,17 @@ const find = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const { mangaId } = req.params;
+  const { chapterId } = req.params;
   const newToken = req.newToken ? req.newToken : null;
   req.newToken = null;
 
   try {
-    const result = await mangaService.updateManga({ _id: mangaId }, req.body);
+    const result = await chapterService.updateChapter(
+      { _id: chapterId },
+      req.body
+    );
     return res.json({
-      message: getMessage("manga.update.success"),
+      message: getMessage("chapter.update.success"),
       data: result,
     });
   } catch (err) {
@@ -106,18 +109,15 @@ const update = async (req, res) => {
 };
 
 const remove = async (req, res) => {
-  const { mangaId } = req.params;
+  const { chapterId } = req.params;
   try {
-    console.log({ mangaId });
-    const result = await mangaService.deleteById(mangaId);
-
+    const result = await chapterService.deleteById(chapterId);
     console.log({ result });
     return res.json({
       message: getMessage("manga.delete.success"),
       data: result,
     });
   } catch (err) {
-    console.log(err);
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 

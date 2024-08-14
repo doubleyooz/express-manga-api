@@ -1,7 +1,7 @@
 import yup from "yup";
 
 import { decrypt } from "../utils/password.util.js";
-import { manga_rules as rules } from "../utils/yup.util.js";
+import { chapter_rules as rules } from "../utils/yup.util.js";
 import { STATUS_CODE_BAD_REQUEST } from "../utils/exception.util.js";
 
 async function create(req, res, next) {
@@ -10,16 +10,9 @@ async function create(req, res, next) {
     const result = await yup
       .object({
         title: rules.title.required(),
-        genres: rules.genres.required(),
-        themes: rules.themes.required(),
-        writerId: rules.writerId,
-        artistId: rules.artistId,
-        synopsis: rules.synopsis.required(),
-        nChapters: rules.nChapters.required(),
-        status: rules.status.required(),
-        nsfw: rules.nsfw.required(),
-        type: rules.type.required(),
-        languages: rules.languages.required(),
+        number: rules.number.required(),
+        mangaId: rules._id.required(),
+        language: rules.language.required(),
       })
       .validate(req.body, { abortEarly: false, stripUnknown: true });
 
@@ -35,7 +28,7 @@ async function findOneById(req, res, next) {
   try {
     const result = await yup
       .object({
-        mangaId: rules._id,
+        chapterId: rules._id,
       })
       .validate(req.params, { stripUnknown: true });
 
@@ -54,7 +47,6 @@ async function find(req, res, next) {
     const result = await yup
       .object({
         title: rules.title,
-        role: rules.role,
       })
       .validate(req.query, { abortEarly: true, stripUnknown: true });
 
@@ -73,16 +65,9 @@ async function update(req, res, next) {
     const result = await yup
       .object({
         title: rules.title,
-        genres: rules.genres,
-        themes: rules.themes,
-        writerId: rules.writerId,
-        artistId: rules.artistId,
-        synopsis: rules.synopsis,
-        nChapters: rules.nChapters,
-        status: rules.status,
-        nsfw: rules.nsfw,
-        type: rules.type,
-        languages: rules.languages,
+        number: rules.number,
+        mangaId: rules.mangaId,
+        language: rules.language,
       })
       .validate(req.body, { abortEarly: false, stripUnknown: true });
 
@@ -90,7 +75,7 @@ async function update(req, res, next) {
 
     const paramsResult = await yup
       .object({
-        mangaId: rules._id,
+        chapterId: rules._id,
       })
       .validate(req.params, { stripUnknown: true });
 

@@ -48,16 +48,16 @@
     "manga.invalid.synopsis.short": "Synopsis is too short - it must be at least 10 characters long.",
     "manga.invalid.synopsis.long": "Synopsis is too long - it must be a maximum of 400 characters.",
     "manga.findone.success": "Manga retrieved successfully!",
-    "manga.list.success": "Manga list retrieved successfully! Mangas found: ",
+    "manga.list.success": "Manga list retrieved successfully!",
     "manga.list.empty": "No mangas matched",
-    "manga.like.success": "Like given successfuly",
-    "manga.pin.success": "Manga pinned successfuly",
+    "manga.like.success": "Like given successfully",
+    "manga.pin.success": "Manga pinned successfully",
     "manga.save.success": "Manga added!",
     "manga.update.success": "Manga updated!",
     "manga.delete.success": "Manga deleted.",
     "manga.notfound": "Manga could not be found.",
-    "manga.notify.success": "Users notified successfuly",
-    "manga.notify.error": "Users weren't notified successfuly",
+    "manga.notify.success": "Users notified successfully",
+    "manga.notify.error": "Users weren't notified successfully",
 
     "review.save.success": "Review added!",
     "review.error.twinned": "You've already reviewed this one!",
@@ -95,7 +95,7 @@
     "user.update.email.activate": "Please check your email to finish this operation.",
     "user.update.email.success": "Your email has been changed.",
     "user.update.success": "User updated",
-    "user.like.success": "Like given successfuly",
+    "user.like.success": "Like given successfully",
     "user.like.error.same.id": "Same id",
     "user.notfound": "User not found",
 
@@ -103,7 +103,7 @@
     "user.email.notification.manga.text": "Just added new chapters.\n",
     "user.email.notification.manga.text.url": "Read now!!\n",
     "user.email.notification.manga.text.warning": "You choose being notified by email, if you want to turn it off click in this link\n",
-    "user.email.notification.manga.text.warning.url": "Click here!!\n"
-
-    
+    "user.email.notification.manga.text.warning.url": "Click here!!\n",
+    "image.format.not.supported": "The image format is not supported. Only accept png/jpeg/jpg"
+ 
 }

@@ -8,10 +8,10 @@ import swaggerDocument from "../config/swagger.json" assert { type: "json" };
 
 import authRoute from "../routes/auth.route.js";
 // import authorRoute from "../routes/author.route.js";
-// import chapterRoute from "../routes/chapter.route.js";
+import chaptersRoute from "../routes/chapter.route.js";
 import mangaRoute from "../routes/manga.route.js";
 // import reviewRoute from "../routes/review.route.js";
-import userRoute from "../routes/users.route.js";
+import usersRoute from "../routes/users.route.js";
 
 const app = express();
 
@@ -22,12 +22,13 @@ app.use(cookieParser());
 //app.use(cors());
 app.use(cors(corsOptions));
 app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/files", express.static("uploads"));
 
 app.use("/auth", authRoute);
 // app.use("/authors", authorRoute);
-// app.use("/chapters", chapterRoute);
+app.use("/chapters", chaptersRoute);
 app.use("/mangas", mangaRoute);
 // app.use("/reviews", reviewRoute);
-app.use("/users", userRoute);
+app.use("/users", usersRoute);
 
 export { app };

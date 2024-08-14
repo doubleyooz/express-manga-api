@@ -3,10 +3,14 @@ import ImageSchema from "./image.model.js";
 import {
   AUTHOR,
   CHAPTER,
+  languages,
+  IMAGE,
   MANGA,
+  mangaType,
   REVIEW,
   USER,
 } from "../utils/constant.util.js";
+import chapterModel from "./chapter.model.js";
 
 const MangaSchema = new mongoose.Schema(
   {
@@ -18,10 +22,12 @@ const MangaSchema = new mongoose.Schema(
     writerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: AUTHOR,
+      required: false,
     },
     artistId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: AUTHOR,
+      required: false,
     },
     genres: [
       {
@@ -33,7 +39,7 @@ const MangaSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    type: String,
+
     synopsis: String,
     nChapters: {
       type: Number,
@@ -59,11 +65,11 @@ const MangaSchema = new mongoose.Schema(
     languages: [
       {
         type: String,
+        enum: languages,
       },
     ],
     chapters: [
       {
-        //a array fill with the data links
         type: mongoose.Schema.Types.ObjectId,
         ref: CHAPTER,
       },
@@ -83,8 +89,16 @@ const MangaSchema = new mongoose.Schema(
         ref: REVIEW,
       },
     ],
+
+    type: {
+      type: String,
+      enum: mangaType,
+    },
   },
   { timestamps: true }
-);
+).post("deleteOne", async function (doc) {
+  const mangaId = doc._id;
+  await chapterModel.deleteMany({ mangaId: mangaId });
+});
 
 export default mongoose.model(MANGA, MangaSchema);

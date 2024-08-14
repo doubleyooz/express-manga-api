@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import ImageSchema from "./image.model.js";
-import { CHAPTER, REVIEW } from "../utils/constant.util.js";
+import { CHAPTER, IMAGE, REVIEW } from "../utils/constant.util.js";
+import { deleteFiles } from "../utils/files.util.js";
 
 const ChapterSchema = new mongoose.Schema(
   {
@@ -10,8 +11,7 @@ const ChapterSchema = new mongoose.Schema(
       type: String,
       default: "none",
     },
-    //pages: Number,
-    imgCollection: [ImageSchema],
+    pages: [ImageSchema],
     views: {
       type: Number,
       default: 0,
@@ -28,6 +28,22 @@ const ChapterSchema = new mongoose.Schema(
     ],
   },
   { timestamps: true }
-);
+)
+  .pre("deleteMany", async function (next) {
+    const chaptersToDelete = await this.model.find(this.getFilter());
+
+    // Assuming deleteFiles is an asynchronous function that deletes the files
+    // You might need to adjust this part based on how your deleteFiles function works
+    const deletePromises = chaptersToDelete.flatMap((chapter) =>
+      chapter.pages.map((page) => deleteFiles(page))
+    );
+    await Promise.all(deletePromises);
+
+    next(); // Proceed with the actual deletion
+  })
+
+  .post("deleteOne", async function (doc) {
+    await deleteFiles(doc.pages);
+  });
 
 export default mongoose.model(CHAPTER, ChapterSchema);

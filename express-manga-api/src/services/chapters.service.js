@@ -35,19 +35,22 @@ async function findById(id) {
   }
   return document;
 }
-
 async function findAll(filter) {
-  const result = await Chapter.find({
-    where: filter,
-  });
-  console.log({ filter, result });
+  let queryOptions = {};
+
+  // Check if filter is empty
+  if (Object.keys(filter).length > 0 && filter.constructor === Object) {
+    queryOptions.where = { ...filter };
+  }
+
+  const result = await Chapter.find(queryOptions);
+
   if (result.length === 0) {
     throw new NotFoundException(getMessage("chapter.list.empty"));
   }
 
   return result;
 }
-
 async function updateChapter(filter, data) {
   const document = await Chapter.findOneAndUpdate({ ...filter }, data);
   if (!document) {
