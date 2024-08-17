@@ -33,12 +33,14 @@ export default function Login() {
         <TextField
           name="email"
           type="email"
+          placeholder="Email"
           error={errors["email"]?.message}
           register={register}
         />
         <TextField
-          name="email"
-          type="email"
+          name="password"
+          type="password"
+          placeholder="Password"
           error={errors["password"]?.message}
           register={register}
         />
