@@ -10,6 +10,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './models/users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ChaptersModule } from './models/chapters/chapters.module';
+import { MangasModule } from './models/mangas/mangas.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -35,7 +37,9 @@ import { AuthModule } from './auth/auth.module';
     }),
     LoggerModule.forRoot(),
     UsersModule,
+    MangasModule,
     AuthModule,
+    ChaptersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
