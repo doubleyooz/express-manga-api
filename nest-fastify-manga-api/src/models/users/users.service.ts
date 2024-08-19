@@ -57,9 +57,20 @@ export class UsersService {
   }
 
   async findAll(filter: FilterQuery<UserDocument>) {
-    return await this.userModel.find({
-      where: filter,
-    });
+    const queryOptions = { where: undefined };
+    console.log({ filter });
+    // Check if filter is empty
+    if (Object.keys(filter).length > 0 && filter.constructor === Object) {
+      queryOptions.where = { ...filter };
+    }
+
+    const result = await this.userModel.find(queryOptions);
+
+    if (result.length === 0) {
+      throw new NotFoundException('User not Found');
+    }
+
+    return result;
   }
 
   async findById(filter: FilterQuery<UserDocument>): Promise<User> {

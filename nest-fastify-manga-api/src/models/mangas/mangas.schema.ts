@@ -4,7 +4,6 @@ import { GENRES } from './constants/genres';
 import { THEMES } from './constants/themes';
 import { TYPES } from './constants/types';
 import { STATUS } from './constants/status';
-import { LANGUAGES } from './constants/languages';
 import { Chapter } from '../chapters/chapters.schema';
 import { User } from '../users/users.schema';
 import { CoverImage } from '../../common/interfaces/image.interface';
@@ -24,40 +23,34 @@ export class Manga {
   @Prop({ unique: true })
   title: string;
 
-  @Prop({ enum: GENRES })
+  @Prop({ type: [{ type: String, enum: GENRES }] })
   genres: string[];
 
-  @Prop({ enum: THEMES })
+  @Prop({ type: [{ type: String, enum: THEMES }] })
   themes: string[];
 
-  @Prop({ enum: TYPES })
+  @Prop({ enum: TYPES, default: TYPES[0] })
   type: string;
+
+  @Prop({ enum: STATUS, default: STATUS[0] })
+  status: string;
 
   @Prop({})
   synopsis: string;
 
-  @Prop({ default: 0 })
-  nChapters: number;
-
-  @Prop({ enum: STATUS })
-  status: string;
-
   @Prop({ default: false })
   nsfw: boolean;
 
-  @Prop({ enum: LANGUAGES })
-  languages: string[];
-
-  @Prop([{ type: Types.ObjectId, ref: () => Chapter.name }])
+  @Prop({ type: [{ type: Types.ObjectId, ref: Chapter.name }] })
   chapters: Types.ObjectId[];
 
-  @Prop([{ type: Types.ObjectId, ref: () => User.name }])
+  @Prop({ type: [{ type: Types.ObjectId, ref: User.name }] })
   subscribers: Types.ObjectId[];
 
-  @Prop([{ type: Types.ObjectId, ref: () => User.name }])
+  @Prop({ type: [{ type: Types.ObjectId, ref: User.name }] })
   likes: Types.ObjectId[];
 
-  @Prop({ type: Types.ObjectId, ref: () => User.name })
+  @Prop({ type: Types.ObjectId, ref: User.name })
   owner: Types.ObjectId;
 }
 

@@ -1,8 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { CoverImage } from '../../common/interfaces/image.interface';
+import { HydratedDocument, Types } from 'mongoose';
 
-export type ChapterDocument = Document & Chapter;
+import { CoverImage } from '../../common/interfaces/image.interface';
+import { LANGUAGES } from '../mangas/constants/languages';
+import { MANGA } from '../mangas/constants/manga';
+
+export type ChapterDocument = HydratedDocument<Chapter>;
 
 @Schema()
 export class Chapter {
@@ -14,13 +17,23 @@ export class Chapter {
   ])
   pages?: CoverImage[];
 
-  @Prop()
+  @Prop({ unique: true })
   title: string;
 
   @Prop()
-  content: string; // Assuming you want to store some form of content or reference to content here
+  number: number;
 
-  // Add other properties relevant to a chapter
+  @Prop({ default: 0 })
+  views: number;
+
+  @Prop({ type: Types.ObjectId, ref: MANGA })
+  mangaId: Types.ObjectId;
+
+  @Prop()
+  description: string;
+
+  @Prop({ enum: LANGUAGES })
+  language: string;
 }
 
 export const ChapterSchema = SchemaFactory.createForClass(Chapter);

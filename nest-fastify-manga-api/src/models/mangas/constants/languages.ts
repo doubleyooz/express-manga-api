@@ -9,7 +9,6 @@ export const LANGUAGES = [
   'hu',
   'it',
   'nb',
-
   'ro',
   'ru',
   'tr',

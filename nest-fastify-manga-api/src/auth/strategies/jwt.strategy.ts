@@ -19,20 +19,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: any) => {
-          console.log({ cookies: request?.cookies });
-          return request?.cookies[AUTHENTICATION_COOKIE];
+          const cookie = request?.headers[AUTHENTICATION_COOKIE];
+          if (!cookie) return null;
+          const [, token] = cookie.split(' ');
+          return token;
         },
       ]),
-      secretOrKey: configService.get<string>('REFRESH_TOKEN_SECRET'),
+      secretOrKey: configService.get<string>('ACCESS_TOKEN_SECRET'),
       signOptions: {
-        expiresIn: configService.get<string>('REFRESH_TOKEN_EXPIRATION') + 's',
+        expiresIn: configService.get<string>('ACCESS_TOKEN_EXPIRATION') + 's',
       },
     });
   }
 
   async validate(token: TokenPayload) {
     try {
-      console.log(token);
       const result = await this.usersService.getUser(
         {
           _id: token.userId,
