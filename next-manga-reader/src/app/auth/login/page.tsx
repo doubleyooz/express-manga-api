@@ -4,11 +4,11 @@ import NextLink from "next/link";
 import Image from "next/image";
 import login from "./login";
 import { useForm } from "react-hook-form";
-import TextField from "@/components/TextField";
+import TextField from "@/common/TextField";
 import { LoginFormProps, loginSchema } from "@/common/zod.common";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import Button from "@/components/Button";
+import Button from "@/app/Button";
 import { useState } from "react";
 import { CiCircleAlert } from "react-icons/ci";
 

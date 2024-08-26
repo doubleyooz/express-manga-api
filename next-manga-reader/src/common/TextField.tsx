@@ -9,6 +9,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   register?: UseFormRegister<any>;
   disabled?: boolean;
+  icon?: React.ReactNode;
   placeholder?: string;
 }
 
@@ -16,6 +17,7 @@ const TextField: React.FC<TextFieldProps> = ({
   name,
   type,
   error,
+  icon,
   disabled = false,
   placeholder,
   register,
@@ -25,23 +27,21 @@ const TextField: React.FC<TextFieldProps> = ({
   return (
     <div>
       <div
-        className={`relative flex items-center border-b-2 ${
-          error ? "border-red-500" : "border-gray-300"
-        }`}
+        className={`relative flex items-center border-b-2 ${error ? "border-red-500" : "border-gray-300"
+          }`}
       >
         <input
           id="`input-${placeholder}`"
           placeholder={placeholder}
-          className={`w-full font-sans bg-transparent text-gray-700 placeholder-gray-400 rounded-md focus:outline-none ${
-            isPassword ? "pl-3 pr-7" : "px-3"
-          } 
+          className={`w-full font-sans bg-transparent text-gray-700 placeholder-gray-400 rounded-md focus:outline-none ${isPassword ? "pl-3 pr-7" : "px-3"
+            } 
           }`}
           type={showPassword ? "text" : type}
           disabled={disabled}
           autoComplete="off"
           {...(register && register(name))}
         />
-        {isPassword && (
+        {icon ? <div>{icon}</div> : (isPassword) && (
           <div
             className="absolute right-0 pr-1 cursor-pointer"
             onClick={(prev) => setShowPassword(!showPassword)}

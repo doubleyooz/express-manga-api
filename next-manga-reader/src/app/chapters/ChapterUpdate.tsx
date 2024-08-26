@@ -2,11 +2,10 @@
 import type React from "react";
 import { useState } from "react";
 import Image from "next/image";
-import Button from "./Button";
+import Button from "@/common/Button";
 import { BiComment, BiUser } from "react-icons/bi";
 
-export interface ChapterUpdateProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface ChapterUpdateProps {
   mangaTitle: string;
   volume?: string;
   coverUrl?: string;
@@ -27,9 +26,9 @@ const ChapterUpdate: React.FC<ChapterUpdateProps> = ({
 }) => {
 
   return (
-    <div className="flex gap-2">
+    <div className="flex w-full gap-2">
       {coverUrl && <Image className="rounded-lg" src={coverUrl || ""} width={56} height={80} alt={mangaTitle} />}
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         <span className="font-bold">{mangaTitle}</span>
         <span>
           {volume && `Vol. ${volume}`} Ch. {chapterNumber}
@@ -38,9 +37,9 @@ const ChapterUpdate: React.FC<ChapterUpdateProps> = ({
           <BiUser /><span>{scanName}</span>
         </div>
       </div>
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col w-min justify-center">
         <Button icon={<BiComment />} size="x-small" handleClick={() => { console.log('click') }} />
-        <span className="text-xs text-gray-600">5 min</span>
+        <span className="text-xs text-gray-600 w-min">5 min</span>
       </div>
 
     </div>
