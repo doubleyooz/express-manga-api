@@ -36,7 +36,7 @@ export default function Login() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-xs px-10 py-20 rounded-[36px] bg-white"
+      className="w-full max-w-xs px-10 py-20 rounded-[36px] bg-white shadow-lg"
     >
       <div className="flex flex-col gap-2">
         <TextField
@@ -79,7 +79,7 @@ export default function Login() {
                   src="/facebook.png"
                   width={24}
                   height={24}
-                  alt="Picture of the author"
+                  alt="facebook"
                 />
               }
               rounded
@@ -95,7 +95,7 @@ export default function Login() {
                   src="/twitter.png"
                   width={24}
                   height={24}
-                  alt="Picture of the author"
+                  alt="twitter"
                 />
               }
               rounded
@@ -107,12 +107,7 @@ export default function Login() {
               variant="text"
               loading={loading}
               icon={
-                <Image
-                  src="/google.png"
-                  width={24}
-                  height={24}
-                  alt="Picture of the author"
-                />
+                <Image src="/google.png" width={24} height={24} alt="google" />
               }
               rounded
               outlined
