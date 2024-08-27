@@ -26,7 +26,7 @@ const ChapterUpdate: React.FC<ChapterUpdateProps> = ({
 }) => {
 
   return (
-    <div className="flex w-full gap-2">
+    <div className="flex w-full gap-2 min-w-64 max-w-[50rem]">
       {coverUrl && <Image className="rounded-lg" src={coverUrl || ""} width={56} height={80} alt={mangaTitle} />}
       <div className="flex flex-col w-full">
         <span className="font-bold">{mangaTitle}</span>

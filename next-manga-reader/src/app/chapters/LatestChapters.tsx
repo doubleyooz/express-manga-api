@@ -16,23 +16,25 @@ const chunkArray = (array: any[], chunkSize: number) =>
         array.slice(i * chunkSize, (i + 1) * chunkSize)
     );
 
+const styling = ['flex', 'hidden md:flex', 'hidden min-[100rem]:flex', 'hidden min-[150rem]:flex',]
+
+const chunkSize = 5;
 
 const LatestChapters: React.FC<LatestChaptersProps> = ({
     chapters,
     title = 'Latest Updates'
 }) => {
 
-    const chunkSize = 5;
-    const chapterChunks = chunkArray(chapters, chunkSize);
 
+    const chapterChunks = chunkArray(chapters, chunkSize);
 
     return (
         <div className="flex flex-col p-4 gap-2">
             <span className="font-bold text-2xl">{title}</span>
-            <div className="flex gap-5">
+            <div className="flex gap-x-4 max-h-[27rem]">
                 {
                     chapterChunks.map((chunk, chunkIndex) => (
-                        <div key={chunkIndex} className="flex flex-col bg-gray-400 rounded-md p-3 gap-2">
+                        <div key={chunkIndex} className={`${styling[chunkIndex]} flex-col w-full max-w-[50rem] bg-gray-400 rounded-md p-3 gap-2`}>
                             {chunk.map((item, index) => (
                                 <ChapterUpdate key={index} {...item} />
                             ))}

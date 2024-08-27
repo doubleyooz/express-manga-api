@@ -9,7 +9,9 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   register?: UseFormRegister<any>;
   disabled?: boolean;
+  noBorder?: boolean;
   icon?: React.ReactNode;
+  textColor?: string;
   placeholder?: string;
 }
 
@@ -19,6 +21,8 @@ const TextField: React.FC<TextFieldProps> = ({
   error,
   icon,
   disabled = false,
+  noBorder = false,
+  textColor = "text-gray-700",
   placeholder,
   register,
 }) => {
@@ -27,13 +31,13 @@ const TextField: React.FC<TextFieldProps> = ({
   return (
     <div>
       <div
-        className={`relative flex items-center border-b-2 ${error ? "border-red-500" : "border-gray-300"
+        className={`${noBorder ? "border-0" : "border-b-2"} relative flex items-center bg-transparent ${error ? "border-red-500" : "border-gray-300"
           }`}
       >
         <input
           id="`input-${placeholder}`"
           placeholder={placeholder}
-          className={`w-full font-sans bg-transparent text-gray-700 placeholder-gray-400 rounded-md focus:outline-none ${isPassword ? "pl-3 pr-7" : "px-3"
+          className={`w-full font-sans bg-transparent ${textColor} placeholder-gray-400 rounded-md focus:outline-none ${isPassword ? "pl-3 pr-7" : "px-3"
             } 
           }`}
           type={showPassword ? "text" : type}
