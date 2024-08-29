@@ -58,20 +58,15 @@ const find = async (req, res) => {
   const newToken = req.newToken || null;
   req.newToken = null;
 
-  let role = req.role ? decrypt(req.role) : 0;
+  const role = req.role ? decrypt(req.role) : 0;
 
   req.role = null;
 
-  let search =
-    role === 1
-      ? title
-        ? { title: { $regex: "^" + title, $options: "i" } }
-        : {}
-      : title
-      ? { title: { $regex: "^" + title, $options: "i" } }
-      : {};
+  const search = {};
+  if (title) {
+    search.title = new RegExp(title, 'i');
+  }
 
-  console.log(search);
   try {
     const result = await mangaService.findAll(search);
     return res.json({

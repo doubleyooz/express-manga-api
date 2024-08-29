@@ -5,12 +5,11 @@ import Image from "next/image";
 import login from "./login";
 import { useForm } from "react-hook-form";
 import TextField from "@/common/TextField";
-import { LoginFormProps, loginSchema } from "@/common/zod.common";
+import { LoginFormProps, loginSchema } from "@/common/utils/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import Button from "@/app/Button";
+import Button from "@/common/Button";
 import { useState } from "react";
-import { CiCircleAlert } from "react-icons/ci";
 
 export default function Login() {
   const [loading, setLoading] = useState(false);

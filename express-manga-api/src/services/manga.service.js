@@ -39,8 +39,9 @@ async function findAll(filter) {
 
   // Check if filter is empty
   if (Object.keys(filter).length > 0 && filter.constructor === Object) {
-    queryOptions.where = { ...filter };
+    queryOptions = { ...filter };
   }
+
 
   const result = await Manga.find(queryOptions);
 
