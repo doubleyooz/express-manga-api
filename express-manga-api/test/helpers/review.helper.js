@@ -13,8 +13,8 @@ const createReview = (payload, token) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body.data).toBeDefined();
@@ -40,8 +40,8 @@ const createReview = (payload, token) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -66,8 +66,8 @@ const updateReview = (payload, token, message) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
         let bool = payload._id === review._id;
         Object.keys(payload).forEach(function (value) {
@@ -93,8 +93,8 @@ const updateReview = (payload, token, message) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -116,8 +116,8 @@ const findReview = (payload) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -134,9 +134,9 @@ const listReview = (payload, selection, number) => {
   it(`GET /reviews ${number} documents`, async () => {
     const path = selection.user_id
       ? `/reviews?user_id=${selection.user_id}`
-      : selection.manga_id
-      ? `/reviews?manga_id=${selection.manga_id}`
-      : `/reviews`;
+      : selection.mangaId
+        ? `/reviews??mangaId=${selection.mangaId}`
+        : `/reviews`;
     await request
       .get(path)
       .send()
@@ -145,8 +145,8 @@ const listReview = (payload, selection, number) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         payload.sort((a, b) => (a.text > b.text ? 1 : -1));
@@ -175,8 +175,8 @@ const deleteReview = (payload, token) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(
@@ -193,8 +193,8 @@ const deleteReview = (payload, token) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -211,7 +211,7 @@ const schema = (payload) => {
   return {
     text: payload.text,
     rating: payload.rating,
-    manga_id: payload.manga_id,
+    mangaId: payload.mangaId,
   };
 };
 

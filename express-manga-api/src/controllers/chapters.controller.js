@@ -16,7 +16,6 @@ import { decrypt } from "../utils/password.util.js";
 
 const create = async (req, res) => {
   const { title } = req.body;
-  console.log({ file: req.file, files: req.files });
   try {
     const chapter = await chapterService.createChapter(req.body);
 
@@ -53,7 +52,7 @@ const findOne = async (req, res) => {
 };
 
 const find = async (req, res) => {
-  const { title } = req.query;
+  const { title, mangaId } = req.query;
 
   const newToken = req.newToken || null;
   req.newToken = null;
@@ -68,8 +67,10 @@ const find = async (req, res) => {
         ? { title: { $regex: "^" + title, $options: "i" } }
         : {}
       : title
-      ? { title: { $regex: "^" + title, $options: "i" } }
-      : {};
+        ? { title: { $regex: "^" + title, $options: "i" } }
+        : {};
+
+  if (mangaId) search.mangaId = mangaId;
 
   console.log(search);
   try {

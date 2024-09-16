@@ -44,12 +44,14 @@ async function findOneById(req, res, next) {
 
 async function find(req, res, next) {
   try {
+
     const result = await yup
       .object({
         title: rules.title,
+        mangaId: rules.manga_id,
       })
       .validate(req.query, { abortEarly: true, stripUnknown: true });
-
+    console.log(result, req.query)
     req.query = result;
     next();
   } catch (err) {

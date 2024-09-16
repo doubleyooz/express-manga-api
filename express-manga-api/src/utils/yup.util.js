@@ -194,7 +194,7 @@ const author_rules = {
 const chapter_rules = {
   id_not_required: mongo_id,
   _id: mongo_id_req,
-  manga_id: yup.string().max(60),
+  mangaId: yup.string().max(60),
   title: yup.string().min(2).max(40).trim(),
   number: yup.number().min(1),
 

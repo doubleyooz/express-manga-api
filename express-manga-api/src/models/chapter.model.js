@@ -5,8 +5,11 @@ import { deleteFiles } from "../utils/files.util.js";
 
 const ChapterSchema = new mongoose.Schema(
   {
-    manga_id: String,
-    number: Number,
+    mangaId: {
+      type: String,
+
+    },
+    number: { type: Number },
     title: {
       type: String,
       default: "none",

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const chapter = {
-    manga_id: mongoose.Types.ObjectId().toString(),
+    mangaId: mongoose.Types.ObjectId().toString(),
     title: 'The search',
     number: 52,
     language: 'en',
@@ -9,7 +9,7 @@ const chapter = {
 };
 
 const chapter2 = {
-    manga_id: mongoose.Types.ObjectId().toString(),
+    mangaId: mongoose.Types.ObjectId().toString(),
     title: 'The Beginning',
     number: 1,
     language: 'en',

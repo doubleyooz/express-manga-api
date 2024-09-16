@@ -24,8 +24,8 @@ const createChapter = (payload, token) => {
       // Check type and length
       expect(
         typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+        !Array.isArray(response.body) &&
+        response.body !== null
       ).toBeTruthy();
 
       expect(response.body.data.imgCollection.length).toBe(filledArray.length);
@@ -52,8 +52,8 @@ const createChapter = (payload, token) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -78,8 +78,8 @@ const updateChapter = (payload, token, message) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -106,8 +106,8 @@ const updateChapter = (payload, token, message) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -124,16 +124,16 @@ const findChapter = (payload, auth) => {
   it("GET /chapters/findOne?_id=", async () => {
     const request = auth
       ? supertest(app)
-          .get(`/chapters/findOne?_id=${payload._id}`)
-          .set("Authorization", "Bearer " + auth.token)
+        .get(`/chapters/findOne?_id=${payload._id}`)
+        .set("Authorization", "Bearer " + auth.token)
       : supertest(app).get(`/chapters/findOne?_id=${payload._id}`);
 
     await request.expect(200).then((response) => {
       // Check type and length
       expect(
         typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+        !Array.isArray(response.body) &&
+        response.body !== null
       ).toBeTruthy();
 
       expect(response.body).toMatchObject({
@@ -149,13 +149,13 @@ const findChapter = (payload, auth) => {
 const listChapter = (payload, manga_id, number, auth) => {
   it(`GET /chapters ${number} documents`, async () => {
     let path = mongoose.Types.ObjectId.isValid(manga_id)
-      ? `/chapters?manga_id=${manga_id}`
+      ? `/chapters?mangaId=${manga_id}`
       : `/chapters?manga_title=${manga_id}`;
 
     const request = auth
       ? supertest(app)
-          .get(path)
-          .set("Authorization", "Bearer " + auth.token)
+        .get(path)
+        .set("Authorization", "Bearer " + auth.token)
       : supertest(app).get(path);
 
     await request
@@ -165,8 +165,8 @@ const listChapter = (payload, manga_id, number, auth) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         payload.sort((a, b) => a.number - b.number);
@@ -195,8 +195,8 @@ const deleteChapter = (payload, token) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -216,8 +216,8 @@ const deleteChapter = (payload, token) => {
         // Check type and length
         expect(
           typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          !Array.isArray(response.body) &&
+          response.body !== null
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
