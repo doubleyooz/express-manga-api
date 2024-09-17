@@ -1,7 +1,7 @@
 import yup from "yup";
 
 import { decrypt } from "../utils/password.util.js";
-import { chapter_rules as rules } from "../utils/yup.util.js";
+import { chapter_rules as rules, populate } from "../utils/yup.util.js";
 import { STATUS_CODE_BAD_REQUEST } from "../utils/exception.util.js";
 
 async function create(req, res, next) {
@@ -49,6 +49,7 @@ async function find(req, res, next) {
       .object({
         title: rules.title,
         mangaId: rules.manga_id,
+        populate: populate
       })
       .validate(req.query, { abortEarly: true, stripUnknown: true });
     console.log(result, req.query)

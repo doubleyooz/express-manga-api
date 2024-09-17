@@ -56,6 +56,8 @@ const name = yup
   .trim()
   .matches(/^([^0-9]*)$/, "no numbers allowed");
 
+const populate = yup.boolean().default(false)
+
 const manga_rules = {
   title: yup.string().min(2).max(60).trim(),
   genres: yup
@@ -244,4 +246,5 @@ export {
   user_rules,
   chapter_rules,
   review_rules,
+  populate
 };

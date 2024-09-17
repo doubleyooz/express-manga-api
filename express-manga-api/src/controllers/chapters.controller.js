@@ -52,7 +52,7 @@ const findOne = async (req, res) => {
 };
 
 const find = async (req, res) => {
-  const { title, mangaId } = req.query;
+  const { title, mangaId, populate } = req.query;
 
   const newToken = req.newToken || null;
   req.newToken = null;
@@ -74,7 +74,7 @@ const find = async (req, res) => {
 
   console.log(search);
   try {
-    const result = await chapterService.findAll(search);
+    const result = await chapterService.findAll(search, populate);
     return res.json({
       message: getMessage("chapter.list.success"),
       data: result,

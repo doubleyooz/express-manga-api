@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import ImageSchema from "./image.model.js";
-import { CHAPTER, IMAGE, REVIEW } from "../utils/constant.util.js";
+import { CHAPTER, IMAGE, MANGA, REVIEW } from "../utils/constant.util.js";
 import { deleteFiles } from "../utils/files.util.js";
 
 const ChapterSchema = new mongoose.Schema(
   {
     mangaId: {
       type: String,
-
+      ref: MANGA
     },
     number: { type: Number },
     title: {

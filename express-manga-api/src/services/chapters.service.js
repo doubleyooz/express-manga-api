@@ -43,7 +43,7 @@ async function findById(id) {
   }
   return document;
 }
-async function findAll(filter) {
+async function findAll(filter, populate = false) {
   let queryOptions = {};
 
   // Check if filter is empty
@@ -51,7 +51,7 @@ async function findAll(filter) {
     queryOptions.where = { ...filter };
   }
   console.log({ filter, queryOptions })
-  const result = await Chapter.find(queryOptions);
+  const result = await Chapter.find(queryOptions).populate(populate ? "mangaId" : null);
 
   if (result.length === 0) {
     throw new NotFoundException(getMessage("chapter.list.empty"));
