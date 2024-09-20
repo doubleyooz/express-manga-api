@@ -26,9 +26,9 @@ const TitleHeader: React.FC<TitleHeaderProps> = ({
       )}
       <div className="flex w-full py-4 px-6 gap-4">
         {coverUrl && (
-          <div className="flex relative grow h-80 min-w-20">
+          <div className="flex relative grow h-80 min-w-20  max-w-52">
             <Image
-              className="rounded-lg "
+              className="rounded-lg  object-cover shadow-md w-full h-auto"
               src={coverUrl || ""}
               alt={title}
               fill

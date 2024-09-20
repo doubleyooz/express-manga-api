@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import getTitles from "../actions/get-titles";
 import TitleHeader, { TitleHeaderProps } from "../header";
+import ChapterItem from "../Chapter";
 
 export default async function TitlePage({ params }: any) {
   const data: TitleHeaderProps = {
@@ -35,10 +36,11 @@ export default async function TitlePage({ params }: any) {
             quis justo. Nulla at risus leo. Nullam tempor nisi non ante
             dignissim hendrerit. Curabitur est magna, dignissim in iaculis in,
             facilisis non ante. Ut nisl tellus, pretium consectetur lectus eu,
-            commodo pulvinar quam.{" "}
+            commodo pulvinar quam.
           </span>
         </div>
       </div>
+      <ChapterItem chapterNumber={22} date="231231" volume={32} scanName="dsdasds"/>
     </div>
   );
 }
