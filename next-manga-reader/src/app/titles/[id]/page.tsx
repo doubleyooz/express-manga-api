@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import getTitles from "../actions/get-titles";
 import TitleHeader, { TitleHeaderProps } from "../header";
 
@@ -8,8 +9,10 @@ export default async function TitlePage({ params }: any) {
     authorsName: "kamilmysliwiec",
     coverUrl: "https://picsum.photos/400/300",
   };
-  const data2 = await getTitles({ title: params.id });
-  console.log({ data2 });
+
+  const fetchedData = await getTitles({ title: params.id });
+
+  console.log({ fetchedData });
   console.log("here");
   return (
     <div className="flex flex-col  w-full h-full text-white">

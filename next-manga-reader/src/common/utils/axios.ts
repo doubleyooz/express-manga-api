@@ -9,13 +9,15 @@ export const getHeaders = () => ({
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = API_URL;
 
-export const get = async <T>(path: string, params?: object): Promise<T> => {
+export const get = async <T>(
+  path: string,
+  params?: object
+): Promise<{ message: string; data: T }> => {
   const headers = getHeaders();
 
-  const response = await axios.get(path, { headers, params });
-
   try {
-    return (await response.data) as T;
+    const response = await axios.get(path, { headers, params });
+    return (await response.data) as { message: string; data: T };
   } catch (error) {
     throw new Error(`Failed to parse response from ${path}: ${error}`);
   }

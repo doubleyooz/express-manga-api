@@ -5,6 +5,7 @@ import Image from "next/image";
 import Button from "@/common/Button";
 import { BiComment, BiUser } from "react-icons/bi";
 import Link from "next/link";
+import { TITLES } from "@/common/constants/titles";
 
 export interface ChapterUpdateProps {
   mangaTitle: string;
@@ -37,7 +38,7 @@ const ChapterUpdate: React.FC<ChapterUpdateProps> = ({
         />
       )}
       <div className="flex flex-col w-full">
-        <Link className="font-bold" href={`/title/${mangaTitle}`}>
+        <Link className="font-bold" href={`/${TITLES}/${mangaTitle}`}>
           {mangaTitle}
         </Link>
         <Link href={`/chapters/${chapterNumber}`}>
