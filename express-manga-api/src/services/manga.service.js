@@ -34,7 +34,7 @@ async function findById(id) {
   return document;
 }
 
-async function findAll(filter) {
+async function findAll(filter, populate = false) {
   let queryOptions = {};
 
   // Check if filter is empty
@@ -42,8 +42,7 @@ async function findAll(filter) {
     queryOptions = { ...filter };
   }
 
-
-  const result = await Manga.find(queryOptions);
+  const result = await Manga.find(queryOptions).populate(populate ? "chapter" : null);
 
   if (result.length === 0) {
     throw new NotFoundException(getMessage("manga.list.empty"));
@@ -61,9 +60,9 @@ async function updateManga(filter, data) {
 }
 
 async function deleteById(_id, throwNotFound = true) {
-  const document = await Manga.deleteOne({ _id }).exec();
+  const document = await Manga.findByIdAndDelete({ _id }).exec();
   console.log({ document, _id });
-  if (document?.deletedCount === 0 && throwNotFound) {
+  if (document === null && throwNotFound) {
     throw new NotFoundException(getMessage("manga.notfound"));
   }
   return document;

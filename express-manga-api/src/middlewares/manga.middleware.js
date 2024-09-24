@@ -1,7 +1,7 @@
 import yup from "yup";
 
 import { decrypt } from "../utils/password.util.js";
-import { manga_rules as rules } from "../utils/yup.util.js";
+import { manga_rules as rules, populate } from "../utils/yup.util.js";
 import { STATUS_CODE_BAD_REQUEST } from "../utils/exception.util.js";
 
 async function create(req, res, next) {
@@ -54,13 +54,15 @@ async function find(req, res, next) {
     const result = await yup
       .object({
         title: rules.title,
-        role: rules.role,
+        role: rules.role,        
+        populate: populate
       })
       .validate(req.query, { abortEarly: true, stripUnknown: true });
-
+    console.log({result})
     req.query = result;
     next();
   } catch (err) {
+    console.log('error')
     console.log(err);
     return res
       .status(STATUS_CODE_BAD_REQUEST)
@@ -97,7 +99,7 @@ async function update(req, res, next) {
     req.params = paramsResult;
     next();
   } catch (err) {
-    console.log(err);
+
     return res
       .status(STATUS_CODE_BAD_REQUEST)
       .json(err.inner.map((e) => e.message));

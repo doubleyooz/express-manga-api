@@ -45,7 +45,9 @@ const ChapterSchema = new mongoose.Schema(
     next(); // Proceed with the actual deletion
   })
 
-  .post("deleteOne", async function (doc) {
+  .post("findOneAndDelete", async function (doc) {
+    console.log('findOneAndDelete', doc);
+    if(doc?.deletedCount === 0) return;
     await deleteFiles(doc.pages);
   });
 

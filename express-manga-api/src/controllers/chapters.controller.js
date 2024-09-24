@@ -72,7 +72,7 @@ const find = async (req, res) => {
 
   if (mangaId) search.mangaId = mangaId;
 
-  console.log(search);
+
   try {
     const result = await chapterService.findAll(search, populate);
     return res.json({
@@ -113,12 +113,12 @@ const remove = async (req, res) => {
   const { chapterId } = req.params;
   try {
     const result = await chapterService.deleteById(chapterId);
-    console.log({ result });
     return res.json({
-      message: getMessage("manga.delete.success"),
+      message: getMessage("chapter.delete.success"),
       data: result,
     });
   } catch (err) {
+    console.log({err})
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 

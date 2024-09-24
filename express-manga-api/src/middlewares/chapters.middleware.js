@@ -52,7 +52,7 @@ async function find(req, res, next) {
         populate: populate
       })
       .validate(req.query, { abortEarly: true, stripUnknown: true });
-    console.log(result, req.query)
+
     req.query = result;
     next();
   } catch (err) {

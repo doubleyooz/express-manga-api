@@ -53,13 +53,13 @@ const findOne = async (req, res) => {
 };
 
 const find = async (req, res) => {
-  const { title } = req.query;
+  const { title, populate } = req.query;
 
   const newToken = req.newToken || null;
   req.newToken = null;
 
   const role = req.role ? decrypt(req.role) : 0;
-
+  console.log({find: req.query})
   req.role = null;
 
   const search = {};
@@ -68,12 +68,13 @@ const find = async (req, res) => {
   }
 
   try {
-    const result = await mangaService.findAll(search);
+    const result = await mangaService.findAll(search, populate);
     return res.json({
       message: getMessage("manga.list.success"),
       data: result,
     });
   } catch (err) {
+    console.log("error", err)
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
@@ -106,7 +107,6 @@ const remove = async (req, res) => {
     console.log({ mangaId });
     const result = await mangaService.deleteById(mangaId);
 
-    console.log({ result });
     return res.json({
       message: getMessage("manga.delete.success"),
       data: result,

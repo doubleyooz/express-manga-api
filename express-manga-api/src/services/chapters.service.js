@@ -67,9 +67,10 @@ async function updateChapter(filter, data) {
   return document;
 }
 
-async function deleteById(_id) {
-  const document = await Chapter.deleteOne({ _id }).exec();
-  if (!document) {
+async function deleteById(_id, throwNotFound = true) {
+  const document = await Chapter.findByIdAndDelete({ _id }).exec();
+
+  if (document === null && throwNotFound) {
     throw new NotFoundException(getMessage("chapter.notfound"));
   }
   return document;

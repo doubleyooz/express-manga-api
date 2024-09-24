@@ -5,34 +5,34 @@ import chapterController from "../controllers/chapters.controller.js";
 
 import chapterMiddleware from "../middlewares/chapters.middleware.js";
 
-import { rolesAuth } from "../guards/jwt.guard.js";
+import { bypassAll } from "../guards/jwt.guard.js";
 import multerConfig from "../config/multer.config.js";
 
 const router = express.Router();
 
 router.post(
   "/",
-  rolesAuth(),
+  bypassAll,
   multer(multerConfig.chapters).array("pages"),
   chapterMiddleware.create,
   chapterController.create
 );
-router.get("/", rolesAuth(), chapterMiddleware.find, chapterController.find);
+router.get("/", bypassAll, chapterMiddleware.find, chapterController.find);
 router.get(
   "/:chapterId",
-  rolesAuth(),
+  bypassAll,
   chapterMiddleware.findOneById,
   chapterController.findOne
 );
 router.put(
   "/:chapterId",
-  rolesAuth(),
+  bypassAll,
   chapterMiddleware.update,
   chapterController.update
 );
 router.delete(
   "/:chapterId",
-  rolesAuth(),
+  bypassAll,
   chapterMiddleware.findOneById,
   chapterController.remove
 );

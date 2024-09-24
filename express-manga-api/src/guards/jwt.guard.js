@@ -11,7 +11,7 @@ const rolesAuth =
         ? req.headers.authorization.split(" ")
         : [, ""];
 
-      if (!token || token === "")
+      if ((!token || token === "") && roles.length > 0)
         return res.status(STATUS_CODE_UNAUTHORIZED).json();
 
       //ensures that roles is an array
@@ -62,7 +62,7 @@ const bypassAll = async (req, res, next) => {
       _id: payload._id,
       active: true,
       tokenVersion: payload.tokenVersion,
-    });
+    }, false);
 
     if (!user) return next();
     req.newToken = newToken;

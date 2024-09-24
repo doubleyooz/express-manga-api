@@ -21,7 +21,7 @@
     "chapter.list.empty": "No chapters matched",
     "chapter.delete.success": "Chapter deleted.",
     "chapter.delete.error": "The chapter pages could not be found",
-    "chapter.notfound": "The Chapter could not be found.",
+    "chapter.notfound": "The chapter could not be found.",
 
     "author.save.success": "Author added!",
     "author.error.twinned": "This author already exists or the number is unavaliable.",
