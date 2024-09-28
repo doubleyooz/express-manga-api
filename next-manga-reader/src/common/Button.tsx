@@ -18,6 +18,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     column?: boolean;
     disabled?: boolean;
     shadow?: boolean;
+    hoverBrightness?: boolean;
     appendIcon?: React.ReactNode;
     prependIcon?: React.ReactNode;
     icon?: React.ReactNode;
@@ -27,13 +28,18 @@ const generateClassname = (
     size: StyleSize,
     outlined: boolean = false,
     rounded: boolean = false,
-    icon: boolean = false
+    icon: boolean = false,
+    hoverBrightness: boolean = false
 ) => {
     const base = 'flex justify-center items-center border ';
     const mainColor =
         variant === 'primary'
             ? 'bg-blue-700 enabled:hover:bg-blue-800 text-white border-blue-700'
-            : 'text-gray-800 bg-transparent enabled:hover:bg-gray-100';
+            : `text-gray-800 bg-transparent ${
+                  hoverBrightness
+                      ? 'enabled:hover:brightness-200'
+                      : 'enabled:hover:bg-gray-50'
+              }`;
     const border = outlined ? '' : ' border-0';
     const roundedClass = icon ? ' rounded-full' : ' w-full rounded-lg';
     const roundedStyle = rounded
@@ -83,6 +89,7 @@ const Button: React.FC<ButtonProps> = ({
     rounded,
     appendIcon,
     prependIcon,
+    hoverBrightness,
     icon,
 }) => {
     const btnClasses = generateClassname(
@@ -90,7 +97,8 @@ const Button: React.FC<ButtonProps> = ({
         size,
         outlined,
         rounded,
-        !!icon
+        !!icon,
+        hoverBrightness
     );
 
     return (

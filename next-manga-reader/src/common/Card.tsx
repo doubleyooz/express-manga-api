@@ -23,7 +23,7 @@ const Card: React.FC<CardProps> = ({
     header,
 }) => {
     return (
-        <div className="flex flex-col items-center px-2 gap-2 bg-gray-950 rounded-xl">
+        <div className="flex flex-col items-center p-2 gap-2 bg-gray-950 rounded-xl">
             {header && (
                 <div className="flex flex-col items-center w-full px-2 gap-2 bg-gray-950 rounded-xl">
                     {header}
@@ -37,7 +37,7 @@ const Card: React.FC<CardProps> = ({
                 </div>
             )}
 
-            <div className="flex flex-col items-center px-2 gap-2 bg-gray-950 rounded-xl">
+            <div className="flex flex-col items-center p-2 gap-2 bg-gray-950 rounded-xl">
                 <Button
                     size="large"
                     variant="primary"

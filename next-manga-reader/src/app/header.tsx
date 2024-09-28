@@ -14,9 +14,9 @@ export interface HeaderProps {}
 
 const CardHeader: React.FC = () => {
     return (
-        <div className="flex w-full h-full mt-4 h-64">
+        <div className="flex w-full mt-4 h-64">
             <Button
-                prependIcon={<BiUser color={'#fff'} />}
+                prependIcon={<BiUser color={'#bbb'} />}
                 size="flex"
                 column
                 handleClick={() => {
@@ -83,12 +83,13 @@ const Header: React.FC<HeaderProps> = ({}) => {
             <div className="flex relative gap-2">
                 <SearchField name="search" />
                 <Button
-                    icon={<BiUser color={'#fff'} />}
+                    icon={<BiUser color={'#ddd'} />}
                     size="large"
                     outlined
                     handleClick={() => {
                         setShowUserCard(!showUserCard);
                     }}
+                    hoverBrightness
                 />
                 {showUserCard && (
                     <div className="absolute top-16">
