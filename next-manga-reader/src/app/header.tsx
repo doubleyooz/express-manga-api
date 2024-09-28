@@ -6,7 +6,7 @@ import Button from '@/common/Button';
 import { BiCog, BiComment, BiDroplet, BiUser } from 'react-icons/bi';
 import TextField from '@/common/TextField';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import SearchField from '@/common/SearchField';
 import Card from '@/common/Card';
 
@@ -14,7 +14,7 @@ export interface HeaderProps {}
 
 const CardHeader: React.FC = () => {
     return (
-        <div className="flex w-full mt-4 h-64">
+        <NextLink className="flex w-full mt-4 h-64" href="/auth/login">
             <Button
                 prependIcon={<BiUser color={'#bbb'} />}
                 size="flex"
@@ -24,7 +24,7 @@ const CardHeader: React.FC = () => {
                 }}
                 text="User"
             />
-        </div>
+        </NextLink>
     );
 };
 
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
 
     return (
         <div className="flex w-full justify-between items-center bg-gray-800 gap-2 px-4 py-2">
-            <Link href={'/'}>Manga</Link>
+            <NextLink href={'/'}>Manga</NextLink>
             <div className="flex relative gap-2">
                 <SearchField name="search" />
                 <Button
