@@ -1,8 +1,8 @@
-import type React from "react";
-import { useState } from "react";
-import { UseFormRegister } from "react-hook-form";
-import { BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill } from "react-icons/bs";
-import { GoEye, GoEyeClosed } from "react-icons/go";
+import type React from 'react';
+import { useState } from 'react';
+import { UseFormRegister } from 'react-hook-form';
+import { BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill } from 'react-icons/bs';
+import { GoEye, GoEyeClosed } from 'react-icons/go';
 
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
@@ -10,6 +10,9 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   register?: UseFormRegister<any>;
   disabled?: boolean;
   noBorder?: boolean;
+  multiline?: boolean;
+  minWidth?: boolean;
+  onlyNumbers?: boolean;
   icon?: React.ReactNode;
   textColor?: string;
   placeholder?: string;
@@ -20,43 +23,76 @@ const TextField: React.FC<TextFieldProps> = ({
   type,
   error,
   icon,
+  minWidth = false,
   disabled = false,
   noBorder = false,
-  textColor = "text-gray-700",
+  multiline = false,
+  onlyNumbers = false,
+  textColor = 'text-gray-700',
   placeholder,
   register,
+  ...otherProps
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const isPassword = type === "password";
+  const isPassword = type === 'password';
+
+  const handleInput = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '');
+  };
+
   return (
     <div>
       <div
-        className={`${noBorder ? "border-0" : "border-b-2"} relative flex items-center bg-transparent ${error ? "border-red-500" : "border-gray-300"
+        className={`${
+          noBorder ? 'border-0' : 'border-b-2'
+        } relative flex items-center bg-transparent ${
+          error ? 'border-red-500' : 'border-gray-300'
+        } ${minWidth ? 'w-fit' : 'w-full'}`}>
+        {multiline && type === 'text' ? (
+          <textarea
+            id={`input-${placeholder}`}
+            placeholder={placeholder}
+            className={`font-sans bg-transparent ${textColor} placeholder-gray-400 rounded-md focus:outline-none ${
+              isPassword ? 'pl-3 pr-7' : 'px-3'
+            }   ${minWidth ? 'w-fit' : 'w-full'}
           }`}
-      >
-        <input
-          id="`input-${placeholder}`"
-          placeholder={placeholder}
-          className={`w-full font-sans bg-transparent ${textColor} placeholder-gray-400 rounded-md focus:outline-none ${isPassword ? "pl-3 pr-7" : "px-3"
-            } 
+            rows={4}
+            disabled={disabled}
+            onInput={onlyNumbers ? handleInput : undefined}
+            autoComplete="off"
+            {...(register && register(name))}
+            {...(otherProps as React.InputHTMLAttributes<HTMLTextAreaElement>)}
+          />
+        ) : (
+          <input
+            id={`input-${placeholder}`}
+            placeholder={placeholder}
+            className={`font-sans bg-transparent ${textColor} placeholder-gray-400 rounded-md focus:outline-none ${
+              isPassword ? 'pl-3 pr-7' : type === 'number' ? 'px-1' : 'px-3'
+            } ${minWidth ? 'w-fit' : 'w-full'}
           }`}
-          type={showPassword ? "text" : type}
-          disabled={disabled}
-          autoComplete="off"
-          {...(register && register(name))}
-        />
-        {icon ? <div>{icon}</div> : (isPassword) && (
-          <div
-            className="absolute right-0 pr-1 cursor-pointer"
-            onClick={(prev) => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <BsEyeFill /> : <BsEyeSlashFill />}
-          </div>
+            type={showPassword ? 'text' : type}
+            disabled={disabled}
+            onInput={onlyNumbers ? handleInput : undefined}
+            autoComplete="off"
+            {...(register && register(name))}
+            {...otherProps}
+          />
+        )}
+
+        {icon ? (
+          <div>{icon}</div>
+        ) : (
+          isPassword && (
+            <div
+              className="absolute right-0 pr-1 cursor-pointer"
+              onClick={(prev) => setShowPassword(!showPassword)}>
+              {showPassword ? <BsEyeFill /> : <BsEyeSlashFill />}
+            </div>
+          )
         )}
       </div>
-      {error && (
-        <span className="text-red-500 text-[10px] font-semibold">{error}</span>
-      )}
+      {error && <span className="text-red-500 text-[10px] font-semibold">{error}</span>}
     </div>
   );
 };
