@@ -12,12 +12,16 @@ import { Checkbox } from '@/components/ui/checkbox';
 import Button from '@/common/Button';
 import { useState } from 'react';
 import UploadField from '@/common/UploadField';
+import createTitle from '../actions/create-title';
+import SelectField from '@/common/SelectField';
 
 export default function NewTitle() {
   const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     watch,
     formState: { errors, isValid }
   } = useForm<TitleFormProps>({
@@ -28,8 +32,9 @@ export default function NewTitle() {
     setLoading(true);
     console.log(data);
 
+    const result = await createTitle(data);
     //await signIn(data.email, data.password);
-
+    console.log({ result });
     //nav("/");
     setLoading(false);
   };
@@ -57,7 +62,7 @@ export default function NewTitle() {
         />
 
         <TextField
-          name="Number of chapters"
+          name="nChapters"
           type="number"
           placeholder="Number of chapters"
           error={errors['nChapters']?.message}
@@ -67,6 +72,28 @@ export default function NewTitle() {
           inputMode="numeric"
           onlyNumbers
         />
+        <SelectField
+          placeholder="Genres"
+          items={[
+            'Action',
+            'Adventure',
+            'Comedy',
+            'Drama',
+            'Fantasy',
+            'Horror',
+            'Mystery',
+            'Romance',
+            'Sci-Fi',
+            'Slice of Life',
+            'Thriller'
+          ]}
+          name='genres'
+          
+          error={errors['genres']?.message}
+          register={register}
+          setValue={setValue}
+          getValues={getValues}
+        />
         <div className="flex gap-2">
           <Checkbox />
           <Label>Nsfw</Label>
@@ -74,14 +101,20 @@ export default function NewTitle() {
         <UploadField title="Cover" multiple preview />
 
         <div className="flex flex-col w-full justify-center gap-8 mt-9">
-          <Button
-            type="submit"
-            text="Login"
-            variant="primary"
-            loading={loading}
-            disabled={!isValid}
-            rounded
-          />
+          <Button type="submit" text="Submit" variant="primary" loading={loading} rounded />
+        </div>
+        <span>{isValid ? 'true' : 'false'}</span>
+        <div className="mt-4">
+          {Object.keys(errors).length > 0 && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+              <span className="block sm:inline">Error(s) occurred:</span>
+              <ul>
+                {Object.keys(errors).map((key, index) => (
+                  <li key={index}>{errors[key].message}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </form>

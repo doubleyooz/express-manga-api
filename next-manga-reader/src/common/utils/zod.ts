@@ -36,7 +36,7 @@ export const newTitleSchema = z.object({
         .string()
         .min(10, 'synopsis must be at least 10 characters long')
         .max(400, 'synopsis must be a maximum of 400 characters'),
-    nChapters: z.number().min(1, 'nChapters must be at least 1'),
+    nChapters: z.coerce.number().min(1, 'nChapters must be at least 1'),
     status: z.string(),
     nsfw: z.boolean(),
     type: z.string(),

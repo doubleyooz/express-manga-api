@@ -1,10 +1,11 @@
+import { Cross1Icon } from '@radix-ui/react-icons';
 import type React from 'react';
 import { useState } from 'react';
 import { UseFormRegister } from 'react-hook-form';
 import { BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill } from 'react-icons/bs';
 import { GoEye, GoEyeClosed } from 'react-icons/go';
 
-interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   error?: string;
   register?: UseFormRegister<any>;
@@ -13,7 +14,10 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   multiline?: boolean;
   minWidth?: boolean;
   onlyNumbers?: boolean;
+  clearable?: boolean;
   icon?: React.ReactNode;
+  iconAction?: () => void;
+
   textColor?: string;
   placeholder?: string;
 }
@@ -31,6 +35,7 @@ const TextField: React.FC<TextFieldProps> = ({
   textColor = 'text-gray-700',
   placeholder,
   register,
+  iconAction = () => {},
   ...otherProps
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -79,9 +84,10 @@ const TextField: React.FC<TextFieldProps> = ({
             {...otherProps}
           />
         )}
+   
 
         {icon ? (
-          <div>{icon}</div>
+          <div onClick={iconAction}>{icon}</div>
         ) : (
           isPassword && (
             <div

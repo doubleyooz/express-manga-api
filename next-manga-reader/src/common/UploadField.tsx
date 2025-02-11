@@ -71,8 +71,8 @@ const UploadField: React.FC<UploadFieldProps> = ({
           <Separator className="my-2" />
           <div className="max-h-56 overflow-auto">
             {files.map((file, index) => (
-              <div className="my-1">
-                <FilePreview key={index} file={file} />
+              <div className="my-1" key={index}>
+                <FilePreview file={file} />
               </div>
             ))}
           </div>
