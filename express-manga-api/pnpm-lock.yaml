@@ -11,6 +11,9 @@ importers:
       '@doubleyooz/wardenhttp':
         specifier: ^1.0.4
         version: 1.0.4
+      '@scalar/express-api-reference':
+        specifier: ^0.8.7
+        version: 0.8.7
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -279,6 +282,22 @@ packages:
   '@pkgr/core@0.2.7':
     resolution: {integrity: sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
+
+  '@scalar/core@0.3.5':
+    resolution: {integrity: sha512-tcLLaGT/otQuEZzTtWUlnBMtcs95gcqwJSQCHqDui2v/+2ctV3FKjGJFoZLutICmQaSGLk0zNt14w39/VAsEqw==}
+    engines: {node: '>=20'}
+
+  '@scalar/express-api-reference@0.8.7':
+    resolution: {integrity: sha512-bLi3bfi1J+hJPjE7t40SS0fRgkvXonwxmByuoRo+OLdU8AeRz2v4aewFK2WgvrLCmfofwtLAOW/zUYKIYe0chg==}
+    engines: {node: '>=20'}
+
+  '@scalar/openapi-types@0.3.4':
+    resolution: {integrity: sha512-MfHRX1jqLcf6kwDDeXSYENywZXJLZx9Jn8r7DCQApw2QJW/yxb4GnCU0vygCh5KBk1GVJ4x6pyXiWNozb+fGAw==}
+    engines: {node: '>=20'}
+
+  '@scalar/types@0.2.5':
+    resolution: {integrity: sha512-kXulR6peh+zzP9DFqhncUKtvnV59e6Cf/y3N5Q8RQIa8huRB+901MbXewUEXV4MXYzMMBKJXRgc1LwwbAZUtRA==}
+    engines: {node: '>=20'}
 
   '@stylistic/eslint-plugin@5.1.0':
     resolution: {integrity: sha512-TJRJul4u/lmry5N/kyCU+7RWWOk0wyXN+BncRlDYBqpLFnzXkd7QGVfN7KewarFIXv0IX0jSF/Ksu7aHWEDeuw==}
@@ -1560,6 +1579,11 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  nanoid@5.1.5:
+    resolution: {integrity: sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -2129,6 +2153,9 @@ packages:
   yup@1.4.0:
     resolution: {integrity: sha512-wPbgkJRCqIf+OHyiTBQoJiP5PFuAXaWiJK6AmYkzQAh5/c2K9hzSApBZG5wV9KoKSePF7sAxmNSvh/13YHkFDg==}
 
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -2364,6 +2391,24 @@ snapshots:
   '@pkgr/core@0.1.2': {}
 
   '@pkgr/core@0.2.7': {}
+
+  '@scalar/core@0.3.5':
+    dependencies:
+      '@scalar/types': 0.2.5
+
+  '@scalar/express-api-reference@0.8.7':
+    dependencies:
+      '@scalar/core': 0.3.5
+
+  '@scalar/openapi-types@0.3.4':
+    dependencies:
+      zod: 3.24.1
+
+  '@scalar/types@0.2.5':
+    dependencies:
+      '@scalar/openapi-types': 0.3.4
+      nanoid: 5.1.5
+      zod: 3.24.1
 
   '@stylistic/eslint-plugin@5.1.0(eslint@9.30.0)':
     dependencies:
@@ -3911,6 +3956,8 @@ snapshots:
 
   nanoid@3.3.11: {}
 
+  nanoid@5.1.5: {}
+
   natural-compare@1.4.0: {}
 
   natural-orderby@5.0.0: {}
@@ -4456,5 +4503,7 @@ snapshots:
       tiny-case: 1.0.3
       toposort: 2.0.2
       type-fest: 2.19.0
+
+  zod@3.24.1: {}
 
   zwitch@2.0.4: {}

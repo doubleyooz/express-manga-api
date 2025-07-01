@@ -1,19 +1,17 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import chapterService from "../services/chapters.service.js";
-import jwtService, {
-  ACTIVATE_ACC_TOKEN_SECRET_INDEX,
-} from "../services/jwt.service.js";
 
-import { getMessage } from "../utils/message.util.js";
+
 import {
   BadRequestException,
   CustomException,
 
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
+import { getMessage } from "../utils/message.util.js";
 import { decrypt } from "../utils/password.util.js";
 
-const create = async (req, res) => {
+async function create(req, res) {
   const { title } = req.body;
   try {
     const chapter = await chapterService.createChapter(req.body);
@@ -22,14 +20,15 @@ const create = async (req, res) => {
       message: getMessage("chapter.save.success"),
       data: chapter,
     });
-  } catch (err) {
+  }
+  catch (err) {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
     return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
-};
-const findOne = async (req, res) => {
+}
+async function findOne(req, res) {
   const { chapterId } = req.query;
 
   const newToken = req.newToken || null;
@@ -42,15 +41,16 @@ const findOne = async (req, res) => {
       message: getMessage("chapter.findone.success"),
       data: chapter,
     });
-  } catch (err) {
+  }
+  catch (err) {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
     return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
-};
+}
 
-const find = async (req, res) => {
+async function find(req, res) {
   const { title, mangaId, populate } = req.query;
 
   const newToken = req.newToken || null;
@@ -60,17 +60,17 @@ const find = async (req, res) => {
 
   req.role = null;
 
-  let search =
-    role === 1
+  let search
+    = role === 1
       ? title
-        ? { title: { $regex: "^" + title, $options: "i" } }
+        ? { title: { $regex: `^${title}`, $options: "i" } }
         : {}
       : title
-        ? { title: { $regex: "^" + title, $options: "i" } }
+        ? { title: { $regex: `^${title}`, $options: "i" } }
         : {};
 
-  if (mangaId) search.mangaId = mangaId;
-
+  if (mangaId)
+    search.mangaId = mangaId;
 
   try {
     const result = await chapterService.findAll(search, populate);
@@ -78,15 +78,16 @@ const find = async (req, res) => {
       message: getMessage("chapter.list.success"),
       data: result,
     });
-  } catch (err) {
+  }
+  catch (err) {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
     return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
-};
+}
 
-const update = async (req, res) => {
+async function update(req, res) {
   const { chapterId } = req.params;
   const newToken = req.newToken ? req.newToken : null;
   req.newToken = null;
@@ -94,21 +95,22 @@ const update = async (req, res) => {
   try {
     const result = await chapterService.updateChapter(
       { _id: chapterId },
-      req.body
+      req.body,
     );
     return res.json({
       message: getMessage("chapter.update.success"),
       data: result,
     });
-  } catch (err) {
+  }
+  catch (err) {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
     return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
-};
+}
 
-const remove = async (req, res) => {
+async function remove(req, res) {
   const { chapterId } = req.params;
   try {
     const result = await chapterService.deleteById(chapterId);
@@ -116,13 +118,14 @@ const remove = async (req, res) => {
       message: getMessage("chapter.delete.success"),
       data: result,
     });
-  } catch (err) {
-    console.log({err})
+  }
+  catch (err) {
+    console.log({ err });
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
     return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
-};
+}
 
 export default { create, findOne, find, update, remove };

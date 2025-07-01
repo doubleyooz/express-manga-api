@@ -2,28 +2,28 @@ import mongoose from "mongoose";
 
 import { getMessage } from "../../../../src/services/message.util.js";
 import { request } from "../../../config/connection.config.js";
+import { createAuthor } from "../../../helpers/author.helper.js";
 import { artist, writer } from "../../../mocks/author.mock.js";
 import { photo } from "../../../mocks/image.mock.js";
 import { scanToken } from "../../../mocks/jwt.mock.js";
-import { createAuthor } from "../../../helpers/author.helper.js";
 
 describe("test", () => {
   let mockToken = scanToken(mongoose.Types.ObjectId().toString());
   let payload = writer;
   console.log(photo);
-  it("POST /authors", async () => {
+  it("pOST /authors", async () => {
     request
       .post("/authors")
       .field(writer)
-      .set("Authorization", "Bearer " + mockToken)
+      .set("Authorization", `Bearer ${mockToken}`)
       .attach("imgCollection", photo.dir + photo.name)
       .then((response) => {
         console.log(response.body);
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         switch (statusCode) {
@@ -33,7 +33,7 @@ describe("test", () => {
             expect(response.body.metadata).toBeDefined();
 
             expect(
-              response.body.data.birthDate.startsWith(payload.birthDate)
+              response.body.data.birthDate.startsWith(payload.birthDate),
             ).toBeTruthy();
             response.body.data.imgCollection.forEach((element) => {
               expect(element.filename.endsWith(photo.name)).toBeTruthy();
@@ -71,6 +71,6 @@ describe("test", () => {
         }
       });
   });
-  //createAuthor(artist, mockToken, 200);
-  //createAuthor(writer, mockToken, 200);
+  // createAuthor(artist, mockToken, 200);
+  // createAuthor(writer, mockToken, 200);
 });

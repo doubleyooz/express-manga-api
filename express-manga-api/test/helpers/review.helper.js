@@ -1,20 +1,20 @@
-import { review } from "../mocks/review.mock.js";
 import { getMessage } from "../../src/services/message.util.js";
 import { request } from "../config/connection.config.js";
+import { review } from "../mocks/review.mock.js";
 
-const createReview = (payload, token) => {
+function createReview(payload, token) {
   it("POST /reviews", async () => {
     await request
       .post("/reviews")
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .send(payload)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body.data).toBeDefined();
@@ -34,14 +34,14 @@ const createReview = (payload, token) => {
   it("GET /reviews/findOne ", async () => {
     await request
       .get(`/reviews/findOne?_id=${payload._id}`)
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -52,26 +52,27 @@ const createReview = (payload, token) => {
         });
       });
   });
-};
+}
 
-const updateReview = (payload, token, message) => {
+function updateReview(payload, token, message) {
   it(`PUT /reviews ${message}`, async () => {
     payload._id = payload._id === 1 ? review._id : review2._id;
     await request
       .put("/reviews")
       .send(payload)
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
         let bool = payload._id === review._id;
-        Object.keys(payload).forEach(function (value) {
-          if (bool) review[value] = payload[value];
+        Object.keys(payload).forEach((value) => {
+          if (bool)
+            review[value] = payload[value];
           else review2[value] = payload[value];
         });
         expect(response.body).toMatchObject({
@@ -87,14 +88,14 @@ const updateReview = (payload, token, message) => {
     await request
       .get(`/reviews/findOne?_id=${payload._id}`)
       .send({})
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -105,9 +106,9 @@ const updateReview = (payload, token, message) => {
         });
       });
   });
-};
+}
 
-const findReview = (payload) => {
+function findReview(payload) {
   it("GET /reviews/findOne", async () => {
     await request
       .get(`/reviews/findOne?_id=${payload._id}`)
@@ -115,9 +116,9 @@ const findReview = (payload) => {
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -128,9 +129,9 @@ const findReview = (payload) => {
         });
       });
   });
-};
+}
 
-const listReview = (payload, selection, number) => {
+function listReview(payload, selection, number) {
   it(`GET /reviews ${number} documents`, async () => {
     const path = selection.user_id
       ? `/reviews?user_id=${selection.user_id}`
@@ -144,9 +145,9 @@ const listReview = (payload, selection, number) => {
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         payload.sort((a, b) => (a.text > b.text ? 1 : -1));
@@ -162,25 +163,25 @@ const listReview = (payload, selection, number) => {
         });
       });
   });
-};
+}
 
-const deleteReview = (payload, token) => {
+function deleteReview(payload, token) {
   it("DELETE /reviews", async () => {
     await request
       .delete(`/reviews?_id=${payload._id}`)
 
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(
-          response.body.message.startsWith(getMessage("review.delete.success"))
+          response.body.message.startsWith(getMessage("review.delete.success")),
         ).toBeTruthy();
       });
   });
@@ -192,9 +193,9 @@ const deleteReview = (payload, token) => {
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -205,14 +206,14 @@ const deleteReview = (payload, token) => {
         });
       });
   });
-};
+}
 
-const schema = (payload) => {
+function schema(payload) {
   return {
     text: payload.text,
     rating: payload.rating,
     mangaId: payload.mangaId,
   };
-};
+}
 
-export { createReview, findReview, listReview, updateReview, deleteReview };
+export { createReview, deleteReview, findReview, listReview, updateReview };

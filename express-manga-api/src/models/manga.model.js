@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
-import ImageSchema from "./image.model.js";
 import {
   AUTHOR,
   CHAPTER,
-  languages,
   IMAGE,
+  languages,
   MANGA,
   mangaType,
   REVIEW,
   USER,
 } from "../utils/constant.util.js";
 import chapterModel from "./chapter.model.js";
+import ImageSchema from "./image.model.js";
 
 const MangaSchema = new mongoose.Schema(
   {
@@ -95,11 +95,11 @@ const MangaSchema = new mongoose.Schema(
       enum: mangaType,
     },
   },
-  { timestamps: true }
-).post("findOneAndDelete", async function (doc) {
-  console.log('findOneAndDelete', doc);
+  { timestamps: true },
+).post("findOneAndDelete", async (doc) => {
+  console.log("findOneAndDelete", doc);
   const mangaId = doc._id;
-  await chapterModel.deleteMany({ mangaId: mangaId });
+  await chapterModel.deleteMany({ mangaId });
 });
 
 export default mongoose.model(MANGA, MangaSchema);

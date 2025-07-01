@@ -1,4 +1,4 @@
-import { unlink } from "fs/promises";
+import { unlink } from "node:fs/promises";
 
 export async function deleteFiles(filesArray) {
   const errors = [];
@@ -8,7 +8,8 @@ export async function deleteFiles(filesArray) {
     try {
       await unlink(fileObj.filename);
       console.log(`Successfully deleted ${fileObj.filename}`);
-    } catch (error) {
+    }
+    catch (error) {
       // Collect errors instead of throwing them immediately
       errors.push({ filename: fileObj.filename, error });
     }

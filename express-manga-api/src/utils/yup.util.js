@@ -1,6 +1,6 @@
+import { addYears, isBefore, isDate, parseISO, subYears } from "date-fns";
 import mongoose from "mongoose";
 import yup from "yup";
-import { parseISO, isDate, addYears, subYears, isBefore } from "date-fns";
 import {
   genres,
   languages,
@@ -26,37 +26,34 @@ const auth_rules = {
 
 function isValidMongoIdRequired(value) {
   return (
-    mongoose.Types.ObjectId.isValid(value) &&
-    String(new mongoose.Types.ObjectId(value)) === value
+    mongoose.Types.ObjectId.isValid(value)
+    && String(new mongoose.Types.ObjectId(value)) === value
   );
 }
 
 function isValidMongoId(value) {
-  if (!!value) {
-    mongoose.Types.ObjectId.isValid(value) &&
-      String(new mongoose.Types.ObjectId(value)) === value;
+  if (value) {
+    return mongoose.Types.ObjectId.isValid(value) && String(new mongoose.Types.ObjectId(value)) === value;
   }
   return true;
 }
 const mongo_id = yup
   .string()
-  .test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-    isValidMongoId(value)
-  );
+  .test("isValidMongoId", getMessage("invalid.object.id"), value =>
+    isValidMongoId(value));
 const mongo_id_req = yup
   .string()
-  .test("isValidMongoId", getMessage("invalid.object.id"), (value) =>
-    isValidMongoIdRequired(value)
-  );
+  .test("isValidMongoId", getMessage("invalid.object.id"), value =>
+    isValidMongoIdRequired(value));
 
 const name = yup
   .string()
   .min(3)
   .max(20)
   .trim()
-  .matches(/^([^0-9]*)$/, "no numbers allowed");
+  .matches(/^(\D*)$/, "no numbers allowed");
 
-const populate = yup.boolean().default(false)
+const populate = yup.boolean().default(false);
 
 const manga_rules = {
   title: yup.string().min(2).max(60).trim(),
@@ -67,7 +64,7 @@ const manga_rules = {
     .test(
       "Valid genres",
       "Not all given ${path} are valid options",
-      function (items) {
+      (items) => {
         if (items) {
           return items.every((item) => {
             return genres.includes(item.toLowerCase());
@@ -75,7 +72,7 @@ const manga_rules = {
         }
 
         return false;
-      }
+      },
     ),
   themes: yup
     .array(yup.string())
@@ -84,14 +81,14 @@ const manga_rules = {
     .test(
       "Valid themes",
       "Not all given ${path} are valid options",
-      function (items) {
+      (items) => {
         if (items) {
           return items.every((item) => {
             return themes.includes(item.toLowerCase());
           });
         }
         return false;
-      }
+      },
     ),
 
   synopsis: yup.string().min(10).max(400).trim(),
@@ -105,7 +102,7 @@ const manga_rules = {
     .string()
     .matches(
       new RegExp(`${mangaType[0]}|${mangaType[1]}|${mangaType[2]}`),
-      null
+      null,
     )
     .default(mangaType[0]),
   languages: yup
@@ -116,14 +113,14 @@ const manga_rules = {
     .test(
       "Valid languages",
       "Not all given ${path} are valid options",
-      function (items) {
+      (items) => {
         if (items) {
           return items.every((item) => {
             return languages.includes(item.toLowerCase());
           });
         }
         return false;
-      }
+      },
     ),
 
   _id: mongo_id_req,
@@ -139,7 +136,7 @@ const author_rules = {
       yup
         .string()
         .lowercase()
-        .matches(/(^writer$|^artist$)/)
+        .matches(/(^writer$|^artist$)/),
     )
     .ensure()
     .min(1, "Need to provide at least one type")
@@ -148,7 +145,7 @@ const author_rules = {
       return !(new Set(array).size !== array.length);
     }),
   _id: mongo_id_req,
-  name: name,
+  name,
 
   birthDate: yup
     .date()
@@ -162,21 +159,21 @@ const author_rules = {
     .nullable()
     .when(
       "birthDate",
-      (birthDate, yup) => birthDate && yup.min(addYears(birthDate, 10))
+      (birthDate, yup) => birthDate && yup.min(addYears(birthDate, 10)),
     )
     .when(
       "birthDate",
-      (birthDate, yup) => birthDate && yup.max(addYears(birthDate, 101))
+      (birthDate, yup) => birthDate && yup.max(addYears(birthDate, 101)),
     )
     .test({
       name: "Valid ${path}",
       exclusive: false,
       params: {},
       message: "This is not a valid value for ${path}",
-      test: (value) =>
-        !value ||
+      test: value =>
+        !value
         // You can access the price field with `this.parent`.
-        isBefore(value, new Date()),
+        || isBefore(value, new Date()),
     }),
   socialMedia: yup
     .array(
@@ -184,9 +181,9 @@ const author_rules = {
         .string()
         .trim()
         .matches(
-          /^(?=.{4,2048}$)((http|https):\/\/)?(www.)?(?!.*(http|https|www.))[a-zA-Z0-9_-]{1,63}(\.[a-zA-Z]{1,63}){1,5}(\/){1}.([\w\?[a-zA-Z-_%\/@?]+)*([^\/\w\?[a-zA-Z0-9_-]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/,
-          "must be a valid url"
-        )
+          /^(?=.{4,2048}$)((http|https):\/\/)?(www.)?(?!.*(https|http|www.))[\w-]{1,63}(\.[a-zA-Z]{1,63}){1,5}(\/).([\w?[\-%/@]+)*([^/\w?[\-]+=\w+(&\w+=\w+)*)?$/,
+          "must be a valid url",
+        ),
     )
     .min(1)
     .max(5),
@@ -208,7 +205,7 @@ const chapter_rules = {
       "This value for ${path} is not a valid option",
       (value) => {
         return languages.includes(value.toLowerCase());
-      }
+      },
     ),
 };
 
@@ -222,13 +219,13 @@ const review_rules = {
 const user_rules = {
   _id: mongo_id_req,
   email: yup.string().email().trim().required(),
-  name: name,
+  name,
   password: yup
     .string()
     .min(8, getMessage("user.invalid.password.short"))
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/,
-      getMessage("user.invalid.password.weak")
+      getMessage("user.invalid.password.weak"),
     )
     .required(),
 
@@ -240,11 +237,11 @@ const user_rules = {
 };
 
 export {
-  manga_rules,
   auth_rules,
   author_rules,
-  user_rules,
   chapter_rules,
+  manga_rules,
+  populate,
   review_rules,
-  populate
+  user_rules,
 };

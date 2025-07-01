@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { encrypt, decrypt } from "../utils/password.util.js";
+import { decrypt, encrypt } from "../utils/password.util.js";
 
 const tokenPrivateKey = `${process.env.JWT_ID}`;
 const refreshTokenPrivateKey = `${process.env.JWT_REFRESH_ID}`;
@@ -45,7 +45,7 @@ function verifyJwt(token, num = 1) {
   const current_time = Date.now().valueOf() / 1000;
   let newToken = null;
   if ((payload.exp - payload.iat) / 2 > payload.exp - current_time) {
-    newToken = jwtService.generateJwt({
+    newToken = generateJwt({
       id: payload._id,
       role: payload.role,
       tokenVersion: payload.tokenVersion,

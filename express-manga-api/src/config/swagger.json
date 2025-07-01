@@ -5,10 +5,10 @@
     "title": "My API",
     "description": "Some description..."
   },
-  "host": "localhost:3001",
+  "host": "localhost:3000",
   "servers": [
     {
-      "url": "localhost:3001"
+      "url": "undefined:3001"
     }
   ],
   "basePath": "/",
@@ -43,8 +43,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "default": {
+            "description": ""
           }
         }
       },

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
+import { AUTHOR, MANGA } from "../utils/constant.util.js";
 import ImageSchema from "./image.model.js";
-import { AUTHOR } from "../utils/constant.util.js";
 
 const AuthorSchema = new mongoose.Schema(
   {
@@ -28,7 +28,7 @@ const AuthorSchema = new mongoose.Schema(
 
     mangas: [
       {
-        //a array fill with the manga ids
+        // a array fill with the manga ids
         type: mongoose.Schema.Types.ObjectId,
         ref: MANGA,
       },
@@ -44,7 +44,7 @@ const AuthorSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model(AUTHOR, AuthorSchema);

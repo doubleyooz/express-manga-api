@@ -1,12 +1,12 @@
 import User from "../models/user.model.js";
-import { hashPassword } from "../utils/password.util.js";
-
-import { getMessage } from "../utils/message.util.js";
 import {
   InternalServerErrorException,
   NotFoundException,
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
+
+import { getMessage } from "../utils/message.util.js";
+import { hashPassword } from "../utils/password.util.js";
 
 async function createUser(data) {
   try {
@@ -18,11 +18,12 @@ async function createUser(data) {
 
     delete newUser.password;
     return newUser;
-  } catch (err) {
+  }
+  catch (err) {
     console.log(err);
-    if (err.code == "11000") {
+    if (err.code === "11000") {
       throw new UnprocessableEntityException(
-        getMessage("user.error.sign_up.twinned")
+        getMessage("user.error.sign_up.twinned"),
       );
     }
     throw new InternalServerErrorException({
@@ -37,7 +38,7 @@ async function getUser(filter, select = {}, throwNotFound = true) {
     {
       ...filter,
     },
-    select
+    select,
   );
 
   if (!user && throwNotFound) {
@@ -73,7 +74,7 @@ async function findAll(filter, throwNotFound = true) {
 async function updateTokenVersion(_id) {
   const document = await User.findOneAndUpdate(
     { _id },
-    { $inc: { tokenVersion: 1 } }
+    { $inc: { tokenVersion: 1 } },
   );
   if (!document) {
     throw new NotFoundException(getMessage("user.notfound"));

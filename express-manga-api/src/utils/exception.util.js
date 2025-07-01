@@ -3,13 +3,9 @@ import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages
 
 export const TYPE_JSON = "application/json";
 
-
 export class CustomException extends Error {
   status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
   name = this.constructor.name;
-  constructor(message) {
-    super(message);
-  }
 }
 
 export class UnprocessableEntityException extends CustomException {

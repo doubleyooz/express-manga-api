@@ -1,8 +1,7 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import yup from "yup";
 
-import { decrypt } from "../utils/password.util.js";
-import { manga_rules as rules, populate } from "../utils/yup.util.js";
+import { populate, manga_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
@@ -25,7 +24,8 @@ async function create(req, res, next) {
 
     req.body = result;
     next();
-  } catch (err) {
+  }
+  catch (err) {
     console.log(err);
     return res.status(HttpStatusCodes.BAD_REQUEST).json(err.errors);
   }
@@ -41,11 +41,12 @@ async function findOneById(req, res, next) {
 
     req.params = result;
     next();
-  } catch (err) {
+  }
+  catch (err) {
     console.log(err);
     return res
       .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map((e) => e.message));
+      .json(err.inner.map(e => e.message));
   }
 }
 
@@ -54,19 +55,20 @@ async function find(req, res, next) {
     const result = await yup
       .object({
         title: rules.title,
-        role: rules.role,        
-        populate: populate
+        role: rules.role,
+        populate,
       })
       .validate(req.query, { abortEarly: true, stripUnknown: true });
-    console.log({result})
+    console.log({ result });
     req.query = result;
     next();
-  } catch (err) {
-    console.log('error')
+  }
+  catch (err) {
+    console.log("error");
     console.log(err);
     return res
       .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map((e) => e.message));
+      .json(err.inner.map(e => e.message));
   }
 }
 
@@ -98,11 +100,11 @@ async function update(req, res, next) {
 
     req.params = paramsResult;
     next();
-  } catch (err) {
-
+  }
+  catch (err) {
     return res
       .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map((e) => e.message));
+      .json(err.inner.map(e => e.message));
   }
 }
 

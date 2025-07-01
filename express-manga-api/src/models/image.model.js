@@ -9,5 +9,5 @@ export default new mongoose.Schema(
 
     mimetype: String,
   },
-  { _id: false, timestamps: true }
+  { _id: false, timestamps: true },
 );

@@ -1,13 +1,14 @@
 {
   "name": "express-manga-api",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
   "author": "Waifu_Forever",
   "license": "MIT",
+  "keywords": [],
   "main": "src/index.js",
   "scripts": {
-    "start:dev": "nodemon -r dotenv/config src/index.js",
+    "dev": "nodemon -r dotenv/config src/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test",
@@ -17,9 +18,9 @@
     "test:sample": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --detectOpenHandles --no-cache --runInBand ./test/specs/e2e/authors/sample.spec.js",
     "swagger": "node src/config/swagger.config.js"
   },
-  "keywords": [],
   "dependencies": {
     "@doubleyooz/wardenhttp": "^1.0.4",
+    "@scalar/express-api-reference": "^0.8.7",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

@@ -1,11 +1,11 @@
 import Manga from "../models/manga.model.js";
 
-import { getMessage } from "../utils/message.util.js";
 import {
   InternalServerErrorException,
   NotFoundException,
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
+import { getMessage } from "../utils/message.util.js";
 
 async function createManga(data) {
   try {
@@ -14,9 +14,10 @@ async function createManga(data) {
     });
 
     return newManga;
-  } catch (err) {
+  }
+  catch (err) {
     console.log(err);
-    if (err.code == "11000") {
+    if (err.code === "11000") {
       throw new UnprocessableEntityException(getMessage("manga.error.twinned"));
     }
     throw new InternalServerErrorException({

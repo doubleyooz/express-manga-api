@@ -4,9 +4,9 @@ import {
 } from "../../../../express-manga-api-old/src/services/password.util";
 import { fake_user, user } from "../../mocks/user.mock";
 
-const itif = (condition) => (condition ? it : it.skip);
+const itif = condition => (condition ? it : it.skip);
 
-describe("Password", () => {
+describe("password", () => {
   describe("should work", () => {
     it("match hash with the origin string", async () => {
       const hash = await hashPassword(user.password);

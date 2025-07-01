@@ -1,31 +1,27 @@
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 
-import {
-  CustomException
-
-} from "../utils/exception.util.js";
-
-
-
-
-
-import { matchPassword } from "../utils/password.util.js";
-import { getMessage } from "../utils/message.util.js";
 import jwtService, {
   ACTIVATE_ACC_TOKEN_SECRET_INDEX,
   REFRESH_TOKEN_SECRET_INDEX,
 } from "../services/jwt.service.js";
+
 import usersService from "../services/users.service.js";
+import {
+  CustomException,
+
+} from "../utils/exception.util.js";
+import { getMessage } from "../utils/message.util.js";
+import { matchPassword } from "../utils/password.util.js";
 
 async function basicLogin(req, res) {
   try {
     const { email, password } = req.body;
     console.log(crypto.randomBytes(16).toString("hex"));
     const user = await usersService.getUser(
-      { email: email, active: true },
-      { password: true, role: true, tokenVersion: true }
+      { email, active: true },
+      { password: true, role: true, tokenVersion: true },
     );
 
     const match = user ? matchPassword(user.password, password) : null;
@@ -44,7 +40,7 @@ async function basicLogin(req, res) {
     const token = jwtService.generateJwt(payload);
     const refreshToken = jwtService.generateJwt(
       payload,
-      REFRESH_TOKEN_SECRET_INDEX
+      REFRESH_TOKEN_SECRET_INDEX,
     );
 
     req.headers.authorization = `Bearer ${token}`;
@@ -58,7 +54,8 @@ async function basicLogin(req, res) {
       msg: getMessage("user.valid.sign_in.success"),
       data: token,
     });
-  } catch (err) {
+  }
+  catch (err) {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
@@ -74,7 +71,7 @@ async function activateAccount(req, res) {
 
     const payload = jwtService.verifyJwt(
       token,
-      ACTIVATE_ACC_TOKEN_SECRET_INDEX
+      ACTIVATE_ACC_TOKEN_SECRET_INDEX,
     );
 
     console.log({ payload });
@@ -84,14 +81,15 @@ async function activateAccount(req, res) {
       {
         active: true,
         tokenVersion: payload.tokenVersion + 1,
-      }
+      },
     );
 
     return res.status(HttpStatusCodes.OK).json({
       msg: getMessage("user.activation.account.success"),
       data: user,
     });
-  } catch (err) {
+  }
+  catch (err) {
     console.log(err);
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);

@@ -1,34 +1,34 @@
+import { createCipheriv, createDecipheriv } from "node:crypto";
 import * as bcrypt from "bcrypt";
-import { createCipheriv, createDecipheriv } from "crypto";
 
-export const hashPassword = async (password, salt) => {
+export async function hashPassword(password, salt) {
   return await bcrypt.hash(
     password,
-    salt ? salt : bcrypt.genSaltSync(parseInt(`${process.env.BCRYPT_SALT}`))
+    salt || bcrypt.genSaltSync(Number.parseInt(`${process.env.BCRYPT_SALT}`)),
   );
-};
+}
 
-export const matchPassword = async (password, supposedPassword) => {
+export async function matchPassword(password, supposedPassword) {
   return await bcrypt.compare(supposedPassword, password);
-};
+}
 
-export const encrypt = (val) => {
-  let cipher = createCipheriv(
+export function encrypt(val) {
+  const cipher = createCipheriv(
     `${process.env.ALGORITHM}`,
     Buffer.from(`${process.env.ENC_KEY}`, "hex"),
-    Buffer.from(`${process.env.IV}`, "hex")
+    Buffer.from(`${process.env.IV}`, "hex"),
   );
   let encrypted = cipher.update(val, "utf8", "base64");
   encrypted += cipher.final("base64");
   return encrypted;
-};
+}
 
-export const decrypt = (encrypted) => {
-  let decipher = createDecipheriv(
+export function decrypt(encrypted) {
+  const decipher = createDecipheriv(
     `${process.env.ALGORITHM}`,
     Buffer.from(`${process.env.ENC_KEY}`, "hex"),
-    Buffer.from(`${process.env.IV}`, "hex")
+    Buffer.from(`${process.env.IV}`, "hex"),
   );
 
   return decipher.update(encrypted, "base64", "utf8");
-};
+}

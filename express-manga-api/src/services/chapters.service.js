@@ -1,17 +1,17 @@
 import Chapter from "../models/chapter.model.js";
 import Manga from "../models/manga.model.js";
-import { getMessage } from "../utils/message.util.js";
 import {
   InternalServerErrorException,
   NotFoundException,
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
+import { getMessage } from "../utils/message.util.js";
 
 async function createChapter(data) {
   try {
-
     const doesMangaExist = await Manga.exists({ _id: data.mangaId });
-    if (!doesMangaExist) throw new NotFoundException();
+    if (!doesMangaExist)
+      throw new NotFoundException();
 
     console.log({ body: data });
     const newChapter = await Chapter.create({
@@ -19,14 +19,14 @@ async function createChapter(data) {
     });
 
     return newChapter;
-  } catch (err) {
-
+  }
+  catch (err) {
     if (err.name === NotFoundException.name)
-      throw new NotFoundException(getMessage("manga.notfound"))
+      throw new NotFoundException(getMessage("manga.notfound"));
 
-    if (err.code == "11000") {
+    if (err.code === "11000") {
       throw new UnprocessableEntityException(
-        getMessage("chapter.error.twinned")
+        getMessage("chapter.error.twinned"),
       );
     }
     throw new InternalServerErrorException({
@@ -50,7 +50,7 @@ async function findAll(filter, populate = false) {
   if (Object.keys(filter).length > 0 && filter.constructor === Object) {
     queryOptions.where = { ...filter };
   }
-  console.log({ filter, queryOptions })
+  console.log({ filter, queryOptions });
   const result = await Chapter.find(queryOptions).populate(populate ? "mangaId" : null);
 
   if (result.length === 0) {

@@ -1,10 +1,10 @@
-import yup from "yup";
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
+import yup from "yup";
 
-import { user_rules as rules, auth_rules } from "../utils/yup.util.js";
+import { auth_rules, user_rules as rules } from "../utils/yup.util.js";
 
-const basicLogin = async (req, res, next) => {
+async function basicLogin(req, res, next) {
   const [hashType, hash] = req.headers?.authorization?.split(" ");
   if (hashType !== "Basic") {
     return res
@@ -26,7 +26,7 @@ const basicLogin = async (req, res, next) => {
   req.body = result;
 
   next();
-};
+}
 
 async function activateAccount(req, res, next) {
   try {
@@ -38,11 +38,12 @@ async function activateAccount(req, res, next) {
 
     req.params = result;
     next();
-  } catch (err) {
+  }
+  catch (err) {
     console.log(err);
     return res
       .status(HttpStatusCodes.UNAUTHORIZED)
-      .json(err.inner.map((e) => e.message));
+      .json(err.inner.map(e => e.message));
   }
 }
 

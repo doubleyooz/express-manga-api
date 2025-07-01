@@ -1,42 +1,42 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-import { artist, bad_artist, writer } from '../../../mocks/author.mock.js';
 import {
-    userToken,
-    scanToken,
-    corruptedToken,
-} from '../../../mocks/jwt.mock.js';
+  createAuthor,
+  deleteAuthor,
+  findAuthor,
+  listAuthor,
+  updateAuthor,
+} from "../../../helpers/author.helper.js";
+import { artist, bad_artist, writer } from "../../../mocks/author.mock.js";
 import {
-    createAuthor,
-    updateAuthor,
-    deleteAuthor,
-    findAuthor,
-    listAuthor,
-} from '../../../helpers/author.helper.js';
+  corruptedToken,
+  scanToken,
+  userToken,
+} from "../../../mocks/jwt.mock.js";
 
 const describeif = condition => (condition ? describe : describe.skip);
 const runAll = true;
-describe('Author', () => {
-    let mockToken = scanToken(mongoose.Types.ObjectId().toString());
+describe("author", () => {
+  let mockToken = scanToken(mongoose.Types.ObjectId().toString());
 
-    describeif(runAll)('should accept', () => {
-        createAuthor(artist, mockToken, 200);
-        createAuthor(writer, mockToken, 200);
-        
-        listAuthor({}, [artist, writer], mockToken, 200);
-        findAuthor(writer, mockToken, 200);
-    
-        updateAuthor(
-            { _id: 1, name: 'George Masara' },
-            mockToken,
-            'update name',
-        );
-        updateAuthor({ _id: 1, types: ['artist'] }, mockToken, 'update type');
+  describeif(runAll)("should accept", () => {
+    createAuthor(artist, mockToken, 200);
+    createAuthor(writer, mockToken, 200);
 
-        deleteAuthor({ author_id: 1 }, mockToken);
-    });
+    listAuthor({}, [artist, writer], mockToken, 200);
+    findAuthor(writer, mockToken, 200);
 
-    describeif(runAll)('should reject', () => {
-     
-    });
+    updateAuthor(
+      { _id: 1, name: "George Masara" },
+      mockToken,
+      "update name",
+    );
+    updateAuthor({ _id: 1, types: ["artist"] }, mockToken, "update type");
+
+    deleteAuthor({ author_id: 1 }, mockToken);
+  });
+
+  describeif(runAll)("should reject", () => {
+
+  });
 });

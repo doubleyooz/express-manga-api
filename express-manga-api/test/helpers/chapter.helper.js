@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
 
 import { CHAPTER_PROJECTION } from "../../src/services/constant.util.js";
-import { chapter } from "../mocks/chapter.mock.js";
-import { photo } from "../mocks/image.mock.js";
 import { getMessage } from "../../src/services/message.util.js";
 import { request } from "../config/connection.config.js";
+import { chapter } from "../mocks/chapter.mock.js";
+import { photo } from "../mocks/image.mock.js";
 
-const createChapter = (payload, token) => {
+function createChapter(payload, token) {
   it("POST /chapters", async () => {
-    let filledArray = new Array(10).fill(photo.dir + photo.name);
+    let filledArray = Array.from({ length: 10 }).fill(photo.dir + photo.name);
 
     let requestInstance = request
       .post("/chapters")
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .field(payload);
 
     for (const file of filledArray) {
@@ -23,9 +23,9 @@ const createChapter = (payload, token) => {
     await requestInstance.expect(200).then((response) => {
       // Check type and length
       expect(
-        typeof response.body === "object" &&
-        !Array.isArray(response.body) &&
-        response.body !== null
+        typeof response.body === "object"
+        && !Array.isArray(response.body)
+        && response.body !== null,
       ).toBeTruthy();
 
       expect(response.body.data.imgCollection.length).toBe(filledArray.length);
@@ -46,14 +46,14 @@ const createChapter = (payload, token) => {
     await request
       .get(`/chapters/findOne?_id=${payload._id}`)
 
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -64,22 +64,22 @@ const createChapter = (payload, token) => {
         });
       });
   });
-};
+}
 
-const updateChapter = (payload, token, message) => {
+function updateChapter(payload, token, message) {
   it(`PUT /chapters ${message}`, async () => {
     payload._id = payload._id === 1 ? chapter._id : chapter2._id;
     await request
       .put("/chapters")
       .send(payload)
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -89,8 +89,9 @@ const updateChapter = (payload, token, message) => {
           status: 200,
         });
         let bool = payload._id === chapter._id;
-        Object.keys(payload).forEach(function (value) {
-          if (bool) chapter[value] = payload[value];
+        Object.keys(payload).forEach((value) => {
+          if (bool)
+            chapter[value] = payload[value];
           else chapter2[value] = payload[value];
         });
       });
@@ -100,14 +101,14 @@ const updateChapter = (payload, token, message) => {
     await request
       .get(`/chapters/findOne?_id=${payload._id}`)
       .send({})
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -118,22 +119,22 @@ const updateChapter = (payload, token, message) => {
         });
       });
   });
-};
+}
 
-const findChapter = (payload, auth) => {
+function findChapter(payload, auth) {
   it("GET /chapters/findOne?_id=", async () => {
     const request = auth
       ? supertest(app)
-        .get(`/chapters/findOne?_id=${payload._id}`)
-        .set("Authorization", "Bearer " + auth.token)
+          .get(`/chapters/findOne?_id=${payload._id}`)
+          .set("Authorization", `Bearer ${auth.token}`)
       : supertest(app).get(`/chapters/findOne?_id=${payload._id}`);
 
     await request.expect(200).then((response) => {
       // Check type and length
       expect(
-        typeof response.body === "object" &&
-        !Array.isArray(response.body) &&
-        response.body !== null
+        typeof response.body === "object"
+        && !Array.isArray(response.body)
+        && response.body !== null,
       ).toBeTruthy();
 
       expect(response.body).toMatchObject({
@@ -144,9 +145,9 @@ const findChapter = (payload, auth) => {
       });
     });
   });
-};
+}
 
-const listChapter = (payload, manga_id, number, auth) => {
+function listChapter(payload, manga_id, number, auth) {
   it(`GET /chapters ${number} documents`, async () => {
     let path = mongoose.Types.ObjectId.isValid(manga_id)
       ? `/chapters?mangaId=${manga_id}`
@@ -154,8 +155,8 @@ const listChapter = (payload, manga_id, number, auth) => {
 
     const request = auth
       ? supertest(app)
-        .get(path)
-        .set("Authorization", "Bearer " + auth.token)
+          .get(path)
+          .set("Authorization", `Bearer ${auth.token}`)
       : supertest(app).get(path);
 
     await request
@@ -164,9 +165,9 @@ const listChapter = (payload, manga_id, number, auth) => {
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         payload.sort((a, b) => a.number - b.number);
@@ -182,21 +183,21 @@ const listChapter = (payload, manga_id, number, auth) => {
         });
       });
   });
-};
+}
 
-const deleteChapter = (payload, token) => {
+function deleteChapter(payload, token) {
   it("DELETE /chapters", async () => {
     await request
       .delete(`/chapters?_id=${payload._id}`)
 
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -215,9 +216,9 @@ const deleteChapter = (payload, token) => {
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-          !Array.isArray(response.body) &&
-          response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -228,20 +229,21 @@ const deleteChapter = (payload, token) => {
         });
       });
   });
-};
+}
 
-const schema = (payload, projection) => {
+function schema(payload, projection) {
   let temp = {};
-  Object.keys(projection).forEach(function (value) {
-    if (projection[value] === 1 && payload[value]) temp[value] = payload[value];
+  Object.keys(projection).forEach((value) => {
+    if (projection[value] === 1 && payload[value])
+      temp[value] = payload[value];
   });
   return temp;
-};
+}
 
 export {
   createChapter,
-  updateChapter,
+  deleteChapter,
   findChapter,
   listChapter,
-  deleteChapter,
+  updateChapter,
 };

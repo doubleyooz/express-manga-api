@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
+import { apiReference } from '@scalar/express-api-reference'
 import corsOptions from "./cors.config.js";
 
 import swaggerDocument from "../config/swagger.json" assert { type: "json" };
@@ -21,7 +22,26 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 //app.use(cors());
 app.use(cors(corsOptions));
-app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
+
+
+app.use("/docs/json", (req, res) => {
+    res.json(swaggerDocument);
+});
+
+app.use(
+    '/docs/scalar',
+    apiReference({
+      // Put your OpenAPI url here:
+        url: '/docs/json',
+        
+        
+    }),
+  )
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use("/files", express.static("uploads"));
 
 app.use("/auth", authRoute);

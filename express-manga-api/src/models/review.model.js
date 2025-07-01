@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { USER, MANGA, REVIEW } from "../utils/constant.util.js";
+import { MANGA, REVIEW, USER } from "../utils/constant.util.js";
 
 const ReviewSchema = new mongoose.Schema(
   {
@@ -14,7 +14,7 @@ const ReviewSchema = new mongoose.Schema(
       ref: MANGA,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model(REVIEW, ReviewSchema);

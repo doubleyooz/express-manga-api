@@ -2,59 +2,66 @@ import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import jwtService from "../services/jwt.service.js";
 import userService from "../services/users.service.js";
 
-const rolesAuth =
-  (roles = []) =>
-    async (req, res, next) => {
-      const [, token] = req.headers.authorization
-        ? req.headers.authorization.split(" ")
-        : [, ""];
+function getBearerToken(req) {
+  const authHeader = req.headers.authorization; // Get the Authorization header
+  if (!authHeader)
+    return null; // If no header, return null
+  const [, token] = authHeader.split(" ");
+  return token || null;
+}
 
-      if ((!token || token === "") && roles.length > 0)
+function rolesAuth(roles = []) {
+  return async (req, res, next) => {
+    const token = getBearerToken(req);
+
+    if ((!token || token === "") && roles.length > 0)
+      return res.status(HttpStatusCodes.UNAUTHORIZED).json();
+
+    // ensures that roles is an array
+    roles = typeof roles === "string" ? [roles] : roles;
+
+    try {
+      const [payload, newToken] = jwtService.verifyJwt(token);
+
+      // Invalid roles
+      if (roles.length && !roles.includes(payload.role))
         return res.status(HttpStatusCodes.UNAUTHORIZED).json();
 
-      //ensures that roles is an array
-      roles = typeof roles === "string" ? [roles] : roles;
+      const user = await userService.findAll(
+        {
+          _id: payload._id,
+          active: true,
+          tokenVersion: payload.tokenVersion,
+        },
+        false,
+      );
 
-      try {
-        const [payload, newToken] = jwtService.verifyJwt(token);
+      if (!user)
+        return res.status(HttpStatusCodes.UNAUTHORIZED).json();
+      req.newToken = newToken;
+      req.auth = payload._id;
 
-        //Invalid roles
-        if (roles.length && !roles.includes(payload.role))
-          return res.status(HttpStatusCodes.UNAUTHORIZED).json();
+      return next();
+    }
+    catch (err) {
+      console.log("server error", err);
+      if (err.name === "TokenExpiredError")
+        return res.status(HttpStatusCodes.UNAUTHORIZED).json();
+        // Server error
+      return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json();
+    }
+  };
+}
 
-        const user = await userService.findAll(
-          {
-            _id: payload._id,
-            active: true,
-            tokenVersion: payload.tokenVersion,
-          },
-          false
-        );
-
-        if (!user) return res.status(HttpStatusCodes.UNAUTHORIZED).json();
-        req.newToken = newToken;
-        req.auth = payload._id;
-
-        return next();
-      } catch (err) {
-        console.log("server error", err);
-        if (err.name === "TokenExpiredError")
-          return res.status(HttpStatusCodes.UNAUTHORIZED).json();
-        //Server error
-        return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json();
-      }
-    };
-
-const bypassAll = async (req, res, next) => {
-  const [, token] = req.headers.authorization
-    ? req.headers.authorization.split(" ")
-    : [, ""];
+async function bypassAll(req, res, next) {
+  const token = getBearerToken(req);
 
   try {
     const [payload, newToken] = jwtService.verifyJwt(token);
     console.log({ payload, newToken });
-    //Invalid roles
-    if (!payload) return next;
+    // Invalid roles
+    if (!payload)
+      return next;
 
     const user = await userService.findAll({
       _id: payload._id,
@@ -62,16 +69,18 @@ const bypassAll = async (req, res, next) => {
       tokenVersion: payload.tokenVersion,
     }, false);
 
-    if (!user) return next();
+    if (!user)
+      return next();
     req.newToken = newToken;
     req.auth = payload._id;
 
     return next();
-  } catch (err) {
+  }
+  catch (err) {
     console.log("server error", err);
-    //Server error
+    // Server error
     return next();
   }
-};
+}
 
-export { rolesAuth, bypassAll };
+export { bypassAll, rolesAuth };

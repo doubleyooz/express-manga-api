@@ -1,22 +1,22 @@
-import { manga } from "../mocks/manga.mock.js";
-import { photo } from "../mocks/image.mock.js";
 import { getMessage } from "../../src/services/message.util.js";
 import { request } from "../config/connection.config.js";
+import { photo } from "../mocks/image.mock.js";
+import { manga } from "../mocks/manga.mock.js";
 
-const createManga = (payload, token) => {
+function createManga(payload, token) {
   it("POST /mangas", async () => {
     await request
       .post("/mangas")
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .field(payload)
       .attach("imgCollection", photo.dir + photo.name)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body.data).toBeDefined();
@@ -37,14 +37,14 @@ const createManga = (payload, token) => {
     await request
       .get(`/mangas/findOne?_id=${payload._id}`)
 
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -55,22 +55,22 @@ const createManga = (payload, token) => {
         });
       });
   });
-};
+}
 
-const updateManga = (payload, token, message) => {
+function updateManga(payload, token, message) {
   it(`PUT /mangas ${message}`, async () => {
     payload._id = payload._id === 1 ? manga._id : manga2._id;
     await request
       .put("/mangas")
       .send(payload)
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -80,8 +80,9 @@ const updateManga = (payload, token, message) => {
           status: 200,
         });
         let bool = payload._id === manga._id;
-        Object.keys(payload).forEach(function (value) {
-          if (bool) manga[value] = payload[value];
+        Object.keys(payload).forEach((value) => {
+          if (bool)
+            manga[value] = payload[value];
           else manga2[value] = payload[value];
         });
       });
@@ -91,14 +92,14 @@ const updateManga = (payload, token, message) => {
     await request
       .get(`/mangas/findOne?_id=${payload._id}`)
       .send({})
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -109,9 +110,9 @@ const updateManga = (payload, token, message) => {
         });
       });
   });
-};
+}
 
-const findManga = (payload, byId) => {
+function findManga(payload, byId) {
   it(`GET /mangas/findOne?${byId ? "_id=" : "title="}`, async () => {
     const path = byId
       ? `/mangas/findOne?_id=${payload._id}`
@@ -122,9 +123,9 @@ const findManga = (payload, byId) => {
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -135,9 +136,9 @@ const findManga = (payload, byId) => {
         });
       });
   });
-};
+}
 
-const listManga = (payload, number) => {
+function listManga(payload, number) {
   it(`GET /mangas ${number} documents`, async () => {
     await request
       .get("/mangas")
@@ -146,9 +147,9 @@ const listManga = (payload, number) => {
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         payload.sort((a, b) => (a.synopsis > b.synopsis ? 1 : -1));
@@ -164,29 +165,29 @@ const listManga = (payload, number) => {
         });
       });
   });
-};
+}
 
-const deleteManga = (payload, token) => {
+function deleteManga(payload, token) {
   it("DELETE /mangas", async () => {
     await request
       .delete(`/mangas?_id=${payload._id}&sas=asas`)
 
-      .set("Authorization", "Bearer " + token)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body.data["mangas affected"]).toEqual(1);
         expect(response.body.data["chapters affected"]).toEqual(
-          expect.any(Number)
+          expect.any(Number),
         );
         expect(
-          response.body.message.startsWith(getMessage("manga.delete.success"))
+          response.body.message.startsWith(getMessage("manga.delete.success")),
         ).toBeTruthy();
       });
   });
@@ -198,9 +199,9 @@ const deleteManga = (payload, token) => {
       .then((response) => {
         // Check type and length
         expect(
-          typeof response.body === "object" &&
-            !Array.isArray(response.body) &&
-            response.body !== null
+          typeof response.body === "object"
+          && !Array.isArray(response.body)
+          && response.body !== null,
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
@@ -211,9 +212,9 @@ const deleteManga = (payload, token) => {
         });
       });
   });
-};
+}
 
-const schema = (payload) => {
+function schema(payload) {
   return {
     genres: payload.genres,
     languages: payload.languages,
@@ -226,6 +227,6 @@ const schema = (payload) => {
     title: payload.title,
     type: payload.type,
   };
-};
+}
 
-export { createManga, updateManga, listManga, findManga, deleteManga };
+export { createManga, deleteManga, findManga, listManga, updateManga };
