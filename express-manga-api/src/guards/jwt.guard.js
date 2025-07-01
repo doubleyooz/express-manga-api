@@ -1,9 +1,7 @@
+import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import jwtService from "../services/jwt.service.js";
 import userService from "../services/users.service.js";
-import {
-  STATUS_CODE_SERVER_ERROR,
-  STATUS_CODE_UNAUTHORIZED,
-} from "../utils/exception.util.js";
+
 const rolesAuth =
   (roles = []) =>
     async (req, res, next) => {
@@ -12,7 +10,7 @@ const rolesAuth =
         : [, ""];
 
       if ((!token || token === "") && roles.length > 0)
-        return res.status(STATUS_CODE_UNAUTHORIZED).json();
+        return res.status(HttpStatusCodes.UNAUTHORIZED).json();
 
       //ensures that roles is an array
       roles = typeof roles === "string" ? [roles] : roles;
@@ -22,7 +20,7 @@ const rolesAuth =
 
         //Invalid roles
         if (roles.length && !roles.includes(payload.role))
-          return res.status(STATUS_CODE_UNAUTHORIZED).json();
+          return res.status(HttpStatusCodes.UNAUTHORIZED).json();
 
         const user = await userService.findAll(
           {
@@ -33,7 +31,7 @@ const rolesAuth =
           false
         );
 
-        if (!user) return res.status(STATUS_CODE_UNAUTHORIZED).json();
+        if (!user) return res.status(HttpStatusCodes.UNAUTHORIZED).json();
         req.newToken = newToken;
         req.auth = payload._id;
 
@@ -41,9 +39,9 @@ const rolesAuth =
       } catch (err) {
         console.log("server error", err);
         if (err.name === "TokenExpiredError")
-          return res.status(STATUS_CODE_UNAUTHORIZED).json();
+          return res.status(HttpStatusCodes.UNAUTHORIZED).json();
         //Server error
-        return res.status(STATUS_CODE_SERVER_ERROR).json();
+        return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json();
       }
     };
 

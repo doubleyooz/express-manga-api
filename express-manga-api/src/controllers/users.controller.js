@@ -1,3 +1,4 @@
+import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import usersService from "../services/users.service.js";
 import jwtService, {
   ACTIVATE_ACC_TOKEN_SECRET_INDEX,
@@ -7,9 +8,6 @@ import { getMessage } from "../utils/message.util.js";
 import {
   BadRequestException,
   CustomException,
-  STATUS_CODE_OK,
-  STATUS_CODE_SERVER_ERROR,
-  STATUS_CODE_UNPROCESSABLE_ENTITY,
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
 import { decrypt } from "../utils/password.util.js";
@@ -26,7 +24,7 @@ const create = async (req, res) => {
       },
       ACTIVATE_ACC_TOKEN_SECRET_INDEX
     );
-    return res.status(STATUS_CODE_OK).json({
+    return res.status(HttpStatusCodes.OK).json({
       message: getMessage("user.activation.account.activate"),
       data: activationToken,
     });
@@ -46,7 +44,7 @@ const create = async (req, res) => {
         },
         ACTIVATE_ACC_TOKEN_SECRET_INDEX
       );
-      return res.status(STATUS_CODE_UNPROCESSABLE_ENTITY).json({
+      return res.status(HttpStatusCodes.UNPROCESSABLE_ENTITY).json({
         message: getMessage("user.activation.account.activate"),
         data: activationToken,
       });
@@ -55,7 +53,7 @@ const create = async (req, res) => {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
-    return res.status(STATUS_CODE_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
 };
 const findOne = async (req, res) => {
@@ -75,7 +73,7 @@ const findOne = async (req, res) => {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
-    return res.status(STATUS_CODE_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
 };
 
@@ -108,7 +106,7 @@ const find = async (req, res) => {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(STATUS_CODE_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
 };
 
@@ -129,7 +127,7 @@ const update = async (req, res) => {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(STATUS_CODE_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
 };
 
@@ -144,7 +142,7 @@ const remove = async (req, res) => {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(STATUS_CODE_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
 };
 

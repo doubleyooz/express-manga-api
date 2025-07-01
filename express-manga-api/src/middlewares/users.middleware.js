@@ -1,8 +1,8 @@
+import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import yup from "yup";
 
 import { decrypt } from "../utils/password.util.js";
 import { user_rules as rules } from "../utils/yup.util.js";
-import { STATUS_CODE_BAD_REQUEST } from "../utils/exception.util.js";
 
 async function create(req, res, next) {
   try {
@@ -20,7 +20,7 @@ async function create(req, res, next) {
   } catch (err) {
     console.log(err);
     return res
-      .status(STATUS_CODE_BAD_REQUEST)
+      .status(HttpStatusCodes.BAD_REQUEST)
       .json(err.inner.map((e) => e.message));
   }
 }
@@ -38,7 +38,7 @@ async function findOneById(req, res, next) {
   } catch (err) {
     console.log(err);
     return res
-      .status(STATUS_CODE_BAD_REQUEST)
+      .status(HttpStatusCodes.BAD_REQUEST)
       .json(err.inner.map((e) => e.message));
   }
 }
@@ -57,7 +57,7 @@ async function find(req, res, next) {
   } catch (err) {
     console.log(err);
     return res
-      .status(STATUS_CODE_BAD_REQUEST)
+      .status(HttpStatusCodes.BAD_REQUEST)
       .json(err.inner.map((e) => e.message));
   }
 }
@@ -76,7 +76,7 @@ async function update(req, res, next) {
   } catch (err) {
     console.log(err);
     return res
-      .status(STATUS_CODE_BAD_REQUEST)
+      .status(HttpStatusCodes.BAD_REQUEST)
       .json(err.inner.map((e) => e.message));
   }
 }

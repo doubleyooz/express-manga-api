@@ -1,14 +1,15 @@
 import yup from "yup";
+import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
+import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
+
 import { user_rules as rules, auth_rules } from "../utils/yup.util.js";
-import { STATUS_CODE_UNAUTHORIZED } from "../utils/exception.util.js";
-import { getMessage } from "../utils/message.util.js";
 
 const basicLogin = async (req, res, next) => {
   const [hashType, hash] = req.headers?.authorization?.split(" ");
   if (hashType !== "Basic") {
     return res
-      .status(STATUS_CODE_UNAUTHORIZED)
-      .json({ message: getMessage("default.unauthsorized") });
+      .status(HttpStatusCodes.UNAUTHORIZED)
+      .json({ message: HttpStatusMessages.UNAUTHORIZED });
   }
 
   const [email, supposedPassword] = Buffer.from(hash, "base64")
@@ -40,7 +41,7 @@ async function activateAccount(req, res, next) {
   } catch (err) {
     console.log(err);
     return res
-      .status(STATUS_CODE_UNAUTHORIZED)
+      .status(HttpStatusCodes.UNAUTHORIZED)
       .json(err.inner.map((e) => e.message));
   }
 }

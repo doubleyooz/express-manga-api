@@ -1,10 +1,16 @@
 import * as crypto from "crypto";
+import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
+import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
+
 import {
-  CustomException,
-  STATUS_CODE_OK,
-  STATUS_CODE_SERVER_ERROR,
-  STATUS_CODE_UNAUTHORIZED,
+  CustomException
+
 } from "../utils/exception.util.js";
+
+
+
+
+
 import { matchPassword } from "../utils/password.util.js";
 import { getMessage } from "../utils/message.util.js";
 import jwtService, {
@@ -26,8 +32,8 @@ async function basicLogin(req, res) {
 
     if (!match) {
       return res
-        .status(STATUS_CODE_UNAUTHORIZED)
-        .json({ message: getMessage("default.unauthorized") });
+        .status(HttpStatusCodes.UNAUTHORIZED)
+        .json({ message: HttpStatusMessages.UNAUTHORIZED });
     }
 
     const payload = {
@@ -48,7 +54,7 @@ async function basicLogin(req, res) {
     });
 
     user.password = undefined;
-    return res.status(STATUS_CODE_OK).json({
+    return res.status(HttpStatusCodes.OK).json({
       msg: getMessage("user.valid.sign_in.success"),
       data: token,
     });
@@ -56,11 +62,11 @@ async function basicLogin(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
-    return res.status(STATUS_CODE_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
 }
 
-async function logout(req, res) {}
+async function logout(req, res) { }
 
 async function activateAccount(req, res) {
   try {
@@ -81,7 +87,7 @@ async function activateAccount(req, res) {
       }
     );
 
-    return res.status(STATUS_CODE_OK).json({
+    return res.status(HttpStatusCodes.OK).json({
       msg: getMessage("user.activation.account.success"),
       data: user,
     });
@@ -90,7 +96,7 @@ async function activateAccount(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
-    return res.status(STATUS_CODE_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
 }
 

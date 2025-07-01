@@ -1,15 +1,11 @@
-import { getMessage } from "./message.util.js";
+import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
+import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 
 export const TYPE_JSON = "application/json";
-export const STATUS_CODE_OK = 200;
-export const STATUS_CODE_BAD_REQUEST = 400;
-export const STATUS_CODE_UNAUTHORIZED = 401;
-export const STATUS_CODE_NOT_FOUND = 404;
-export const STATUS_CODE_UNPROCESSABLE_ENTITY = 422;
-export const STATUS_CODE_SERVER_ERROR = 500;
+
 
 export class CustomException extends Error {
-  status = STATUS_CODE_SERVER_ERROR;
+  status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
   name = this.constructor.name;
   constructor(message) {
     super(message);
@@ -20,38 +16,38 @@ export class UnprocessableEntityException extends CustomException {
   constructor(message) {
     super(message);
     this.name = this.constructor.name;
-    this.status = STATUS_CODE_UNPROCESSABLE_ENTITY;
+    this.status = HttpStatusCodes.UNPROCESSABLE_ENTITY;
   }
 }
 
 export class InternalServerErrorException extends CustomException {
-  constructor(message = getMessage("default.server.error")) {
+  constructor(message = HttpStatusMessages.INTERNAL_SERVER_ERROR) {
     super(message);
     this.name = this.constructor.name;
-    this.status = STATUS_CODE_SERVER_ERROR;
+    this.status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
   }
 }
 
 export class BadRequestException extends CustomException {
-  constructor(message = getMessage("default.badRequest")) {
+  constructor(message = HttpStatusMessages.BAD_REQUEST) {
     super(message);
     this.name = this.constructor.name;
-    this.status = STATUS_CODE_BAD_REQUEST;
+    this.status = HttpStatusCodes.BAD_REQUEST;
   }
 }
 
 export class UnauthorisedException extends CustomException {
-  constructor(message = getMessage("default.unauthorized")) {
+  constructor(message = HttpStatusMessages.UNAUTHORIZED) {
     super(message);
     this.name = this.constructor.name;
-    this.status = STATUS_CODE_UNAUTHORIZED;
+    this.status = HttpStatusCodes.UNAUTHORIZED;
   }
 }
 
 export class NotFoundException extends CustomException {
-  constructor(message = getMessage("default.notfound")) {
+  constructor(message = HttpStatusMessages.NOT_FOUND) {
     super(message);
     this.name = this.constructor.name;
-    this.status = STATUS_CODE_NOT_FOUND;
+    this.status = HttpStatusCodes.NOT_FOUND;
   }
 }
