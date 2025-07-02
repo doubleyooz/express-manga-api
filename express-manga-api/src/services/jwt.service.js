@@ -1,16 +1,18 @@
 import jwt from "jsonwebtoken";
+import env from "../env.js";
+
 import { decrypt, encrypt } from "../utils/password.util.js";
 
-const tokenPrivateKey = `${process.env.JWT_ID}`;
-const refreshTokenPrivateKey = `${process.env.JWT_REFRESH_ID}`;
+const tokenPrivateKey = env.JWT_ID;
+const refreshTokenPrivateKey = env.JWT_REFRESH_ID;
 
-const accActivatePrivateKey = `${process.env.JWT_ACTIVATE_ACCESS}`;
-const recoverPassPrivateKey = `${process.env.JWT_RECOVER_ACCESS}`;
-const updateEmailPrivateKey = `${process.env.JWT_UPDATE_ACCESS}`;
-const updatePasswordPrivateKey = `${process.env.JWT_UPDATE_PASSWORD}`;
+const accActivatePrivateKey = env.JWT_ACTIVATE_ACCESS;
+const recoverPassPrivateKey = env.JWT_RECOVER_ACCESS;
+const updateEmailPrivateKey = env.JWT_UPDATE_ACCESS;
+const updatePasswordPrivateKey = env.JWT_UPDATE_PASSWORD;
 
-const options = { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRATION}` };
-const refreshOptions = { expiresIn: `${process.env.REFRESH_TOKEN_EXPIRATION}` };
+const options = { expiresIn: env.ACCESS_TOKEN_EXPIRATION };
+const refreshOptions = { expiresIn: env.REFRESH_TOKEN_EXPIRATION };
 
 const tokens = [
   [tokenPrivateKey, options],

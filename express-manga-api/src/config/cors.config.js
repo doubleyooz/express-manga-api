@@ -1,4 +1,6 @@
-const allowedOrigins = [`${process.env.CLIENT}`];
+import env from "../env.js";
+
+const allowedOrigins = [env.CLIENT];
 
 const corsOptions = {
   origin: allowedOrigins,
