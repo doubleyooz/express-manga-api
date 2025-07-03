@@ -57,7 +57,21 @@ function verifyJwt(token, num = 1) {
   return [payload, newToken];
 }
 
+function getBearerToken(req, isBasicAuth = false) {
+  const authHeader = req.headers.authorization; // Get the Authorization header
+  if (!authHeader)
+    return null; // If no header, return null
+
+  const [hashType, token] = authHeader.split(" ");
+  if (hashType !== "Basic" && isBasicAuth) {
+    return null;
+  }
+
+  return token || null;
+}
+
 export default {
   verifyJwt,
   generateJwt,
+  getBearerToken,
 };

@@ -5,14 +5,14 @@ import multerConfig from "../config/multer.config.js";
 
 import chapterController from "../controllers/chapters.controller.js";
 
-import { bypassAll } from "../guards/jwt.guard.js";
+import { bypassAll, rolesAuth } from "../guards/jwt.guard.js";
 import chapterMiddleware from "../middlewares/chapters.middleware.js";
 
 const router = express.Router();
 
 router.post(
   "/",
-  bypassAll,
+  rolesAuth(),
   multer(multerConfig.chapters).array("pages"),
   chapterMiddleware.create,
   chapterController.create,
@@ -26,13 +26,13 @@ router.get(
 );
 router.put(
   "/:chapterId",
-  bypassAll,
+  rolesAuth(),
   chapterMiddleware.update,
   chapterController.update,
 );
 router.delete(
   "/:chapterId",
-  bypassAll,
+  rolesAuth(),
   chapterMiddleware.findOneById,
   chapterController.remove,
 );

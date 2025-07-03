@@ -1,12 +1,13 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import yup from "yup";
-
+import jwtService from "../services/jwt.service.js";
 import { auth_rules, user_rules as rules } from "../utils/yup.util.js";
 
 async function basicLogin(req, res, next) {
-  const [hashType, hash] = req.headers?.authorization?.split(" ");
-  if (hashType !== "Basic") {
+  const hash = jwtService.getBearerToken(req, true);
+
+  if (!hash) {
     return res
       .status(HttpStatusCodes.UNAUTHORIZED)
       .json({ message: HttpStatusMessages.UNAUTHORIZED });

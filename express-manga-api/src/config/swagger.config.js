@@ -8,6 +8,7 @@ const doc = {
     title: "My API",
     description: "Some description...",
   },
+  host: `${env.SERVER}:${env.PORT}`,
   servers: [
     {
       url: `${env.SERVER}:${env.PORT}`,
@@ -44,10 +45,14 @@ const doc = {
         type: "http",
         scheme: "bearer",
       },
+      basicAuth: {
+        type: "http",
+        scheme: "basic",
+      },
     },
   },
 };
 
 const outputFile = "./swagger.json";
-const routes = ["../routes/users.route.js"];
+const routes = ["./express.config.js"];
 swaggerAutogen()(outputFile, routes, doc);

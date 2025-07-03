@@ -14,6 +14,7 @@ expand(config({
 const EnvSchema = yup.object({
   NODE_ENV: yup.string().default("development"),
   PORT: yup.number().default(9999),
+  SERVER: yup.string().default("localhost"),
   LOG_LEVEL: yup.mixed().oneOf(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
 
   ACCESS_TOKEN_EXPIRATION: yup.string().default("1800s"),

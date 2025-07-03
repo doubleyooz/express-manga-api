@@ -2,17 +2,9 @@ import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import jwtService from "../services/jwt.service.js";
 import userService from "../services/users.service.js";
 
-function getBearerToken(req) {
-  const authHeader = req.headers.authorization; // Get the Authorization header
-  if (!authHeader)
-    return null; // If no header, return null
-  const [, token] = authHeader.split(" ");
-  return token || null;
-}
-
 function rolesAuth(roles = []) {
   return async (req, res, next) => {
-    const token = getBearerToken(req);
+    const token = jwtService.getBearerToken(req);
 
     if ((!token || token === "") && roles.length > 0)
       return res.status(HttpStatusCodes.UNAUTHORIZED).json();
@@ -44,17 +36,17 @@ function rolesAuth(roles = []) {
       return next();
     }
     catch (err) {
-      console.log("server error", err);
       if (err.name === "TokenExpiredError")
         return res.status(HttpStatusCodes.UNAUTHORIZED).json();
-        // Server error
+      // Server error
+      console.log("server error", err);
       return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json();
     }
   };
 }
 
 async function bypassAll(req, res, next) {
-  const token = getBearerToken(req);
+  const token = jwtService.getBearerToken(req);
 
   try {
     const [payload, newToken] = jwtService.verifyJwt(token);
