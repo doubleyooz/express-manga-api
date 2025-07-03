@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import {
   AUTHOR,
   CHAPTER,
-  IMAGE,
   languages,
   MANGA,
   mangaType,

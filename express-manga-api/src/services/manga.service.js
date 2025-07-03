@@ -1,10 +1,12 @@
+import mongoose from "mongoose";
+import Chapter from "../models/chapter.model.js";
 import Manga from "../models/manga.model.js";
-
 import {
   InternalServerErrorException,
   NotFoundException,
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
+import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
 
 async function createManga(data) {
@@ -60,13 +62,50 @@ async function updateManga(filter, data) {
   return document;
 }
 
-async function deleteById(_id, throwNotFound = true) {
-  const document = await Manga.findByIdAndDelete({ _id }).exec();
-  console.log({ document, _id });
-  if (document === null && throwNotFound) {
-    throw new NotFoundException(getMessage("manga.notfound"));
+async function deleteById(mangaId, throwNotFound = true) {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // 1. Find all chapters with their images
+    const chapters = await Chapter.find({ mangaId }).session(session);
+
+    // 3. Delete chapters from database
+    await Chapter.deleteMany({ mangaId }).session(session);
+
+    // 4. Delete manga from database
+    const document = await Manga.findByIdAndDelete(mangaId).session(session);
+    if (document === null && throwNotFound) {
+      throw new NotFoundException(getMessage("manga.notfound"));
+    }
+
+    // 2. Collect all image files to delete
+    const allImages = chapters.flatMap(chapter => chapter.pages).concat(document.covers);
+
+    // 5. Commit transaction first
+    await session.commitTransaction();
+
+    // 6. Delete files AFTER successful DB operations
+    if (allImages.length > 0) {
+      try {
+        await deleteFiles(allImages);
+      }
+      catch (fileError) {
+        console.error("File deletion failed:", fileError);
+        // Log but don't throw - DB is already consistent
+      }
+    }
+
+    return { deletedManga: document, deletedChapters: chapters.length };
   }
-  return document;
+  catch (error) {
+    await session.abortTransaction();
+    throw error;
+  }
+  finally {
+    session.endSession();
+  }
 }
 
 export default {
@@ -74,6 +113,5 @@ export default {
   findById,
   findAll,
   updateManga,
-
   deleteById,
 };
