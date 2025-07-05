@@ -21,7 +21,7 @@ async function createUser(data) {
   }
   catch (err) {
     console.log(err);
-    if (err.code === "11000") {
+    if (err.code === 11000) {
       throw new UnprocessableEntityException(
         getMessage("user.error.sign_up.twinned"),
       );

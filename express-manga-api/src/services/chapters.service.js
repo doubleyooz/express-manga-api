@@ -33,7 +33,7 @@ async function createChapter(data) {
     if (err.name === NotFoundException.name)
       throw new NotFoundException(getMessage("manga.notfound"));
 
-    if (err.code === "11000") {
+    if (err.code === 11000) {
       throw new UnprocessableEntityException(
         getMessage("chapter.error.twinned"),
       );
