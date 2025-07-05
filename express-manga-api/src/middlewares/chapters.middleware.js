@@ -12,8 +12,9 @@ async function create(req, res, next) {
         number: rules.number.required(),
         mangaId: rules._id.required(),
         language: rules.language.required(),
+        pages: rules.pages.required(),
       })
-      .validate(req.body, { abortEarly: false, stripUnknown: true });
+      .validate({ ...req.body, pages: req.files }, { abortEarly: false, stripUnknown: true });
 
     req.body = result;
     next();

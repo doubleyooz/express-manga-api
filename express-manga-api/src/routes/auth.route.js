@@ -1,6 +1,7 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import express from "express";
 import authController from "../controllers/auth.controller.js";
+import { rolesAuth } from "../guards/jwt.guard.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 
 import { getMessage } from "../utils/message.util.js";
@@ -12,6 +13,8 @@ router.get("/", (req, res) => {
 });
 
 router.get("/login", authMiddleware.basicLogin, authController.basicLogin);
+
+router.get("/logout", rolesAuth(), authController.logout);
 
 router.get(
   "/activate/:token",

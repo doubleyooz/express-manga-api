@@ -6,9 +6,11 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
+import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
 
 async function createChapter(data) {
+  console.log("Creating chapter with data:", data);
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
@@ -27,6 +29,7 @@ async function createChapter(data) {
   }
   catch (err) {
     await session.abortTransaction();
+    await deleteFiles(data.pages);
     if (err.name === NotFoundException.name)
       throw new NotFoundException(getMessage("manga.notfound"));
 

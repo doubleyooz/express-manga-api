@@ -1,7 +1,6 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import chapterService from "../services/chapters.service.js";
 
-
 import {
   BadRequestException,
   CustomException,
@@ -12,7 +11,6 @@ import { getMessage } from "../utils/message.util.js";
 import { decrypt } from "../utils/password.util.js";
 
 async function create(req, res) {
-  const { title } = req.body;
   try {
     const chapter = await chapterService.createChapter(req.body);
 

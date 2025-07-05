@@ -60,7 +60,7 @@ async function findAll(filter, throwNotFound = true) {
 
   // Check if filter is empty
   if (Object.keys(filter).length > 0 && filter.constructor === Object) {
-    queryOptions.where = { ...filter };
+    queryOptions = { ...filter };
   }
 
   const result = await User.find(queryOptions);

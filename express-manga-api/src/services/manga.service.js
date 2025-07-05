@@ -18,6 +18,8 @@ async function createManga(data) {
     return newManga;
   }
   catch (err) {
+    await deleteFiles(data.covers);
+
     if (err.code === 11000) {
       throw new UnprocessableEntityException(getMessage("manga.error.twinned"));
     }

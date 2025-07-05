@@ -12,8 +12,6 @@ function limits() {
   return { fileSize: 3 * 1024 * 1024 };
 }
 
-const dir = path.join(__dirname, "..", "..", folderName);
-
 function fileFilter(req, file, cb) {
   const allowedMimes = ["image/png", "image/jpeg", "image/jpg"];
 
@@ -51,11 +49,11 @@ const mangaFolder = path.resolve(__dirname, "..", "..", folderName);
 function pagesDestination(req, files, cb) {
   const pagesFolder = path.join(mangaFolder, "pages");
 
-  if (!fs.existsSync(`${pagesFolder}pages/`)) {
+  if (!fs.existsSync(pagesFolder)) {
     fs.mkdirSync(pagesFolder, { recursive: true });
   }
 
-  cb(null, dir);
+  cb(null, `${folderName}pages/`);
 }
 
 function coversDestination(req, files, cb) {

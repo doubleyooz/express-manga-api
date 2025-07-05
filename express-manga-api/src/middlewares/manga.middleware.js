@@ -23,7 +23,7 @@ async function create(req, res, next) {
       })
       .validate({ ...req.body, covers: req.files }, { abortEarly: false, stripUnknown: true });
 
-    console.log({ result });  
+  
     console.log({ files: req.files });
     req.body = result;
     next();

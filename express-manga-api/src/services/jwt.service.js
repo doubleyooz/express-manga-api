@@ -48,7 +48,7 @@ function verifyJwt(token, num = 1) {
   let newToken = null;
   if ((payload.exp - payload.iat) / 2 > payload.exp - current_time) {
     newToken = generateJwt({
-      id: payload._id,
+      _id: payload._id,
       role: payload.role,
       tokenVersion: payload.tokenVersion,
     });

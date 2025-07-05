@@ -33,7 +33,7 @@ async function basicLogin(req, res) {
     }
 
     const payload = {
-      id: user._id,
+     _id: user._id,
       role: user.role,
       tokenVersion: user.tokenVersion,
     };
@@ -63,7 +63,31 @@ async function basicLogin(req, res) {
   }
 }
 
-async function logout(req, res) { }
+async function logout(req, res) {
+  try {
+    console.log({ auth: req.auth, newToken: req.newToken });
+    const user = await usersService.updateTokenVersion(
+      req.auth,
+    );
+
+    if (!user)
+      return res.status(HttpStatusCodes.UNAUTHORIZED).json();
+
+    delete req.newToken;
+    delete req.auth;
+
+    return res.status(HttpStatusCodes.OK).json({
+      msg: HttpStatusMessages.OK,
+    });
+  }
+  catch (err) {
+    if (err instanceof CustomException)
+      return res.status(err.status).json(err.message);
+
+    console.log("server error", err);
+    return res.status(HttpStatusCodes.UNAUTHORIZED).json();
+  }
+};
 
 async function activateAccount(req, res) {
   try {
@@ -101,4 +125,5 @@ async function activateAccount(req, res) {
 export default {
   basicLogin,
   activateAccount,
+  logout,
 };
