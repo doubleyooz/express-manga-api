@@ -8,6 +8,7 @@ mongoose.connect(env.DB_CONNECTION);
 const server = http.Server(app);
 
 const PORT = Number.parseInt(env.PORT, 10);
+
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });

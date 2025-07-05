@@ -80,12 +80,50 @@ async function updateChapter(filter, data) {
 }
 
 async function deleteById(_id, throwNotFound = true) {
-  const document = await Chapter.findByIdAndDelete({ _id }).exec();
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const document = await Chapter.findByIdAndDelete({ _id }).exec();
 
-  if (document === null && throwNotFound) {
-    throw new NotFoundException(getMessage("chapter.notfound"));
+    if (document === null && throwNotFound) {
+      throw new NotFoundException(getMessage("chapter.notfound"));
+    }
+
+    await Manga.findByIdAndUpdate(
+      document.mangaId,
+      { $pull: { chapters: document._id } },
+      { session },
+    );
+
+    await session.commitTransaction();
+    console.log("Transaction committed successfully");
+
+    const allImages = document.pages;
+    // 6. Delete files AFTER successful DB operations
+    if (allImages.length > 0) {
+      try {
+        await deleteFiles(allImages);
+      }
+      catch (fileError) {
+        console.error("File deletion failed:", fileError);
+      }
+    }
+
+    return document;
   }
-  return document;
+  catch (err) {
+    await session.abortTransaction();
+    if (err.name === NotFoundException.name && throwNotFound) {
+      throw new NotFoundException(getMessage("chapter.notfound"));
+    }
+    throw new InternalServerErrorException({
+      code: err.code,
+      msg: "Error while deleting chapter",
+    });
+  }
+  finally {
+    session.endSession();
+  }
 }
 
 export default {

@@ -1,7 +1,6 @@
 import express from "express";
-import multer from "multer";
 
-import multerConfig from "../config/multer.config.js";
+import { uploadChapters } from "../config/multer.config.js";
 
 import chapterController from "../controllers/chapters.controller.js";
 
@@ -13,7 +12,7 @@ const router = express.Router();
 router.post(
   "/",
   rolesAuth(),
-  multer(multerConfig.chapters).array("pages"),
+  uploadChapters,
   chapterMiddleware.create,
   chapterController.create,
 );

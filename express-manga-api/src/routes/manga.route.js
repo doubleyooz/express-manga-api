@@ -1,7 +1,6 @@
 import express from "express";
-import multer from "multer";
 
-import multerConfig from "../config/multer.config.js";
+import { uploadCovers } from "../config/multer.config.js";
 import mangaController from "../controllers/manga.controller.js";
 import { bypassAll, rolesAuth } from "../guards/jwt.guard.js";
 
@@ -12,7 +11,7 @@ const router = express.Router();
 router.post(
   "/",
   rolesAuth(),
-  multer(multerConfig.covers).array("covers"),
+  uploadCovers,
   mangaMiddleware.create,
   mangaController.create,
 );
