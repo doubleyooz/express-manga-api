@@ -95,10 +95,6 @@ const MangaSchema = new mongoose.Schema(
     },
   },
   { timestamps: true },
-).post("findOneAndDelete", async (doc) => {
-  console.log("findOneAndDelete", doc);
-  const mangaId = doc._id;
-  await chapterModel.deleteMany({ mangaId });
-});
+);
 
 export default mongoose.model(MANGA, MangaSchema);

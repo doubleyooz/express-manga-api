@@ -12,6 +12,10 @@ async function createChapter(data) {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
+    const doesMangaExist = await Manga.exists({ _id: data.mangaId });
+    if (!doesMangaExist) {
+      throw new NotFoundException(getMessage("manga.notfound"));
+    }
     const newChapter = await Chapter.create([{ ...data }], { session });
     await Manga.findByIdAndUpdate(
       data.mangaId,

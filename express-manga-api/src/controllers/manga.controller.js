@@ -10,8 +10,6 @@ import { getMessage } from "../utils/message.util.js";
 import { decrypt } from "../utils/password.util.js";
 
 async function create(req, res) {
-  const { title } = req.body;
-  console.log({ file: req.file, files: req.files });
   try {
     const manga = await mangaService.createManga(req.body);
 
@@ -24,7 +22,7 @@ async function create(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ err });
   }
 }
 async function findOne(req, res) {

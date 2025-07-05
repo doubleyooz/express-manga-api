@@ -6,7 +6,7 @@ export async function deleteFiles(filesArray) {
   // Map each file deletion attempt to a promise
   const deletionPromises = filesArray.map(async (fileObj) => {
     try {
-      await unlink(fileObj.filename);
+      await unlink(fileObj.destination + fileObj.filename);
       console.log(`Successfully deleted ${fileObj.filename}`);
     }
     catch (error) {

@@ -16,6 +16,7 @@ const dir = path.join(__dirname, "..", "..", folderName);
 
 function fileFilter(req, file, cb) {
   const allowedMimes = ["image/png", "image/jpeg", "image/jpg"];
+
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   }
@@ -50,8 +51,8 @@ const mangaFolder = path.resolve(__dirname, "..", "..", folderName);
 function pagesDestination(req, files, cb) {
   const pagesFolder = path.join(mangaFolder, "pages");
 
-  if (!fs.existsSync(pagesFolder)) {
-    fs.mkdirSync(path.dirname(dir), { recursive: true });
+  if (!fs.existsSync(`${pagesFolder}pages/`)) {
+    fs.mkdirSync(pagesFolder, { recursive: true });
   }
 
   cb(null, dir);
@@ -59,8 +60,8 @@ function pagesDestination(req, files, cb) {
 
 function coversDestination(req, files, cb) {
   const coversFolder = path.join(mangaFolder, "covers");
-
-  cb(null, coversFolder);
+  console.log({ mangaFolder, coversFolder });
+  cb(null, `${folderName}covers/`);
 
   if (!fs.existsSync(coversFolder)) {
     fs.mkdirSync(coversFolder, { recursive: true });

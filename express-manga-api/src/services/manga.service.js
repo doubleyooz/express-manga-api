@@ -18,8 +18,7 @@ async function createManga(data) {
     return newManga;
   }
   catch (err) {
-    console.log(err);
-    if (err.code === "11000") {
+    if (err.code === 11000) {
       throw new UnprocessableEntityException(getMessage("manga.error.twinned"));
     }
     throw new InternalServerErrorException({
@@ -70,21 +69,29 @@ async function deleteById(mangaId, throwNotFound = true) {
 
     // 1. Find all chapters with their images
     const chapters = await Chapter.find({ mangaId }).session(session);
+    console.log("Chapters found:", chapters.length);
 
-    // 3. Delete chapters from database
-    await Chapter.deleteMany({ mangaId }).session(session);
+    // 2. Delete chapters from database
+    const deletedChapters = await Chapter.deleteMany({ mangaId }, { pages: 1 }).session(session);
+    console.log("Chapters deleted:", deletedChapters.deletedCount);
 
-    // 4. Delete manga from database
-    const document = await Manga.findByIdAndDelete(mangaId).session(session);
+    // 3. Delete manga from database
+    const document = await Manga.findByIdAndDelete(mangaId, { covers: 1 }).session(session);
     if (document === null && throwNotFound) {
       throw new NotFoundException(getMessage("manga.notfound"));
     }
+    console.log("Manga deleted:", document ? document.title : "Not found");
 
-    // 2. Collect all image files to delete
+    // 4. Collect all image files to delete
     const allImages = chapters.flatMap(chapter => chapter.pages).concat(document.covers);
+
+    console.log({ chapters, document });
+
+    console.log("Total images to delete:", allImages.length);
 
     // 5. Commit transaction first
     await session.commitTransaction();
+    console.log("Transaction committed successfully");
 
     // 6. Delete files AFTER successful DB operations
     if (allImages.length > 0) {
@@ -100,6 +107,7 @@ async function deleteById(mangaId, throwNotFound = true) {
     return { deletedManga: document, deletedChapters: chapters.length };
   }
   catch (error) {
+    console.error("Error:", error);
     await session.abortTransaction();
     throw error;
   }

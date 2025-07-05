@@ -6,6 +6,9 @@ export default new mongoose.Schema(
     filename: {
       type: String,
     },
+    destination: {
+      type: String,
+    },
 
     mimetype: String,
   },

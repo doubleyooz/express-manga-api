@@ -19,9 +19,12 @@ async function create(req, res, next) {
         nsfw: rules.nsfw.required(),
         type: rules.type.required(),
         languages: rules.languages.required(),
+        covers: rules.covers,
       })
-      .validate(req.body, { abortEarly: false, stripUnknown: true });
+      .validate({ ...req.body, covers: req.files }, { abortEarly: false, stripUnknown: true });
 
+    console.log({ result });  
+    console.log({ files: req.files });
     req.body = result;
     next();
   }

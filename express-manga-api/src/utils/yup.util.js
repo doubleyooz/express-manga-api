@@ -53,6 +53,22 @@ const name = yup
   .trim()
   .matches(/^(\D*)$/, "no numbers allowed");
 
+const pages_rule = yup
+  .array()
+  .of(
+    yup.object({
+      fieldname: yup.string().required(),
+      originalname: yup.string().required(),
+      encoding: yup.string().required(),
+      mimetype: yup.string().required(),
+      size: yup.number().required(),
+      destination: yup.string().required(),
+      filename: yup.string().required(),
+      path: yup.string().required(),
+      buffer: yup.mixed().notRequired(), // buffer may not always be present
+    }),
+  );
+
 const populate = yup.boolean().default(false);
 
 const manga_rules = {
@@ -90,7 +106,8 @@ const manga_rules = {
         return false;
       },
     ),
-
+  covers: pages_rule,
+  covers_required: pages_rule.min(1, "At least one page is required"),
   synopsis: yup.string().min(10).max(400).trim(),
   nChapters: yup.number().min(1),
   status: yup
@@ -196,7 +213,8 @@ const chapter_rules = {
   mangaId: yup.string().max(60),
   title: yup.string().min(2).max(40).trim(),
   number: yup.number().min(1),
-
+  pages: pages_rule,
+  pages_required: pages_rule.min(1, "At least one page is required"),
   language: yup
     .string()
     .default("pt")
@@ -208,6 +226,7 @@ const chapter_rules = {
       },
     ),
 };
+
 
 const review_rules = {
   _id: mongo_id_req,
