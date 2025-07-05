@@ -7,7 +7,6 @@ import {
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
 import { getMessage } from "../utils/message.util.js";
-import { decrypt } from "../utils/password.util.js";
 
 async function create(req, res) {
   try {
@@ -53,7 +52,7 @@ async function find(req, res) {
   const newToken = req.newToken || null;
   req.newToken = null;
 
-  const role = req.role ? decrypt(req.role) : 0;
+  const role = req.role ? req.role : 0;
   console.log({ find: req.query });
   req.role = null;
 

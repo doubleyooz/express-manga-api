@@ -39,11 +39,11 @@ function generateJwt(payload, num = 1) {
 }
 
 function verifyJwt(token, num = 1) {
-  console.log({ token, num });
   const [key] = tokens[num - 1];
-  console.log({ key });
   const payload = JSON.parse(decrypt(jwt.verify(token, key).data));
-  console.log({ payload });
+
+  console.log({ payload, key, token, num });
+
   const current_time = Date.now().valueOf() / 1000;
   let newToken = null;
   if ((payload.exp - payload.iat) / 2 > payload.exp - current_time) {

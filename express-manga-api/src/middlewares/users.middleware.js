@@ -66,10 +66,10 @@ async function find(req, res, next) {
 
 async function update(req, res, next) {
   try {
+    console.log("update user middleware", req.body);
     const result = await yup
       .object({
         name: rules.name,
-        role: rules.role,
       })
       .validate(req.body, { abortEarly: false, stripUnknown: true });
 

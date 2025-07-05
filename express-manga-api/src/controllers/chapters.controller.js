@@ -8,7 +8,6 @@ import {
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
 import { getMessage } from "../utils/message.util.js";
-import { decrypt } from "../utils/password.util.js";
 
 async function create(req, res) {
   try {
@@ -54,11 +53,11 @@ async function find(req, res) {
   const newToken = req.newToken || null;
   req.newToken = null;
 
-  let role = req.role ? decrypt(req.role) : 0;
+  const role = req.role ? req.role : 0;
 
   req.role = null;
 
-  let search
+  const search
     = role === 1
       ? title
         ? { title: { $regex: `^${title}`, $options: "i" } }

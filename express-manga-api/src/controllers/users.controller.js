@@ -10,7 +10,6 @@ import {
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
 import { getMessage } from "../utils/message.util.js";
-import { decrypt } from "../utils/password.util.js";
 
 async function create(req, res) {
   const { email, password, name, role } = req.body;
@@ -86,11 +85,11 @@ async function find(req, res) {
   const newToken = req.newToken || null;
   req.newToken = null;
 
-  let role = req.role ? decrypt(req.role) : 0;
+  const role = req.role ? req.role : 0;
 
   req.role = null;
 
-  let search
+  const search
     = role === 1
       ? name
         ? { name: { $regex: `^${name}`, $options: "i" } }
@@ -120,7 +119,7 @@ async function update(req, res) {
 
   try {
     const result = await usersService.updateUser(
-      { _id: decrypt(req.auth) },
+      { _id: req.auth },
       req.body,
     );
     return res.json({
@@ -138,7 +137,7 @@ async function update(req, res) {
 
 async function remove(req, res) {
   try {
-    const result = await usersService.deleteById(decrypt(req.auth));
+    const result = await usersService.deleteById(req.auth);
     return res.json({
       message: getMessage("user.delete.success"),
       data: result,
