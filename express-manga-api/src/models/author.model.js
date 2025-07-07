@@ -10,7 +10,7 @@ const AuthorSchema = new mongoose.Schema(
       },
     ],
 
-    imgCollection: [ImageSchema],
+    files: [ImageSchema],
 
     name: {
       type: String,

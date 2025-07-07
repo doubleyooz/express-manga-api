@@ -1,4 +1,5 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
+import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import jwtService, {
   ACTIVATE_ACC_TOKEN_SECRET_INDEX,
 } from "../services/jwt.service.js";
@@ -123,7 +124,7 @@ async function update(req, res) {
       req.body,
     );
     return res.json({
-      message: getMessage("user.update.success"),
+      message: HttpStatusMessages.OK,
       data: result,
     });
   }
@@ -139,7 +140,7 @@ async function remove(req, res) {
   try {
     const result = await usersService.deleteById(req.auth);
     return res.json({
-      message: getMessage("user.delete.success"),
+      message: HttpStatusMessages.OK,
       data: result,
     });
   }

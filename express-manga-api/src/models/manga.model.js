@@ -8,7 +8,6 @@ import {
   REVIEW,
   USER,
 } from "../utils/constant.util.js";
-import chapterModel from "./chapter.model.js";
 import ImageSchema from "./image.model.js";
 
 const MangaSchema = new mongoose.Schema(
@@ -18,16 +17,14 @@ const MangaSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    writerId: {
+    writers: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: AUTHOR,
-      required: false,
-    },
-    artistId: {
+    }],
+    artists: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: AUTHOR,
-      required: false,
-    },
+    }],
     genres: [
       {
         type: String,

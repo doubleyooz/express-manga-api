@@ -14,7 +14,7 @@ const ChapterSchema = new mongoose.Schema(
       type: String,
       default: "none",
     },
-    pages: [ImageSchema],
+    files: [ImageSchema],
     views: {
       type: Number,
       default: 0,

@@ -1,46 +1,23 @@
 import express from "express";
-import multer from "multer";
 
-import multerConfig from "../config/multer.config.js";
+import { uploadAuthors } from "../config/multer.config.js";
+import authorsController from "../controllers/authors.controller.js";
+import { bypassAll, rolesAuth } from "../guards/jwt.guard.js";
 
-import AuthorController from "../controllers/author.controller.js";
-import AuthorMiddleware from "../middlewares/author.middleware.js";
-
-import {
-  auth as Authorize,
-  easyAuth,
-} from "../middlewares/session.middleware.js";
+import authorsMiddleware from "../middlewares/authors.middleware.js";
 
 const router = express.Router();
-const upload = multer(multerConfig.authorFiles).array("imgCollection");
 
 router.post(
   "/",
-  upload,
-  Authorize("Scan"),
-  AuthorMiddleware.store,
-  AuthorController.store,
+  rolesAuth(),
+  uploadAuthors,
+  authorsMiddleware.create,
+  authorsController.create,
 );
-router.put(
-  "/",
-  upload,
-  Authorize("Scan"),
-  AuthorMiddleware.update,
-
-  AuthorController.update,
-);
-router.get("/", easyAuth(), AuthorMiddleware.list, AuthorController.list);
-router.get(
-  "/findOne",
-  easyAuth(),
-  AuthorMiddleware.findById,
-  AuthorController.findOne,
-);
-router.delete(
-  "/",
-  Authorize("Scan"),
-  AuthorMiddleware.findById,
-  AuthorController.remove,
-);
+router.get("/", bypassAll, authorsMiddleware.find, authorsController.find);
+router.get("/:_id", bypassAll, authorsMiddleware.findOneById, authorsController.findOne);
+router.put("/:_id", rolesAuth(), authorsMiddleware.update, authorsController.update);
+router.delete("/:_id", rolesAuth(), authorsMiddleware.findOneById, authorsController.remove);
 
 export default router;

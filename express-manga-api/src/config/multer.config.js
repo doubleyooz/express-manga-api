@@ -7,6 +7,10 @@ import multer from "multer";
 import { getMessage } from "../utils/message.util.js";
 
 export const folderName = "uploads/";
+export const FIELDNAME = "files";
+const AUTHORS = "authors";
+const PAGES = "pages";
+const COVERS = "covers";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -46,27 +50,16 @@ function fileName(req, file, cb) {
   cb(null, fileName);
 }
 
-const mangaFolder = path.resolve(__dirname, "..", "..", folderName);
+const uploadFolder = path.resolve(__dirname, "..", "..", folderName);
 
-function pagesDestination(req, files, cb) {
-  const pagesFolder = path.join(mangaFolder, "pages");
-
-  if (!fs.existsSync(pagesFolder)) {
-    fs.mkdirSync(pagesFolder, { recursive: true });
+function createDestination(subfolder) {
+  const destinationPath = path.join(uploadFolder, subfolder);
+  console.log({ destinationPath });
+  if (!fs.existsSync(destinationPath)) {
+    fs.mkdirSync(destinationPath, { recursive: true });
   }
 
-  cb(null, `${folderName}pages/`);
-}
-
-function coversDestination(req, files, cb) {
-  const coversFolder = path.join(mangaFolder, "covers");
-  console.log({ mangaFolder, coversFolder });
-
-  if (!fs.existsSync(coversFolder)) {
-    fs.mkdirSync(coversFolder, { recursive: true });
-  }
-
-  cb(null, `${folderName}covers/`);
+  return `${folderName}${subfolder}/`;
 }
 
 function multerConfig(destination) {
@@ -81,9 +74,11 @@ function multerConfig(destination) {
 }
 
 // Generic upload handler
-function createUploadHandler(destination, fieldName) {
+function createUploadHandler(fieldName) {
+  const destination = createDestination(fieldName);
   return (req, res, next) => {
-    const upload = multer(multerConfig(destination)).array(fieldName);
+    console.log({ destination, fieldName });
+    const upload = multer(multerConfig(destination)).array(FIELDNAME);
 
     upload(req, res, (err) => {
       if (err instanceof multer.MulterError) {
@@ -96,6 +91,7 @@ function createUploadHandler(destination, fieldName) {
       }
 
       if (err) {
+        console.log({ err });
         return res.status(HttpStatusCodes.BAD_REQUEST).json({
           error: HttpStatusMessages.BAD_REQUEST,
           message: err.message,
@@ -108,10 +104,12 @@ function createUploadHandler(destination, fieldName) {
 }
 
 // Create specific handlers using the generic function
-const uploadCovers = createUploadHandler(coversDestination, "covers");
-const uploadChapters = createUploadHandler(pagesDestination, "pages");
+const uploadCovers = createUploadHandler(COVERS);
+const uploadChapters = createUploadHandler(PAGES);
+const uploadAuthors = createUploadHandler(AUTHORS);
 
 export {
+  uploadAuthors,
   uploadChapters,
   uploadCovers,
 };

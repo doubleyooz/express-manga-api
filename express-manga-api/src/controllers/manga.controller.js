@@ -1,10 +1,9 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
+import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import mangaService from "../services/manga.service.js";
 
 import {
-  BadRequestException,
   CustomException,
-  UnprocessableEntityException,
 } from "../utils/exception.util.js";
 import { getMessage } from "../utils/message.util.js";
 
@@ -12,8 +11,8 @@ async function create(req, res) {
   try {
     const manga = await mangaService.createManga(req.body);
 
-    return res.status(HttpStatusCodes.OK).json({
-      message: getMessage("manga.save.success"),
+    return res.status(HttpStatusCodes.CREATED).json({
+      message: HttpStatusMessages.CREATED,
       data: manga,
     });
   }
@@ -34,7 +33,7 @@ async function findOne(req, res) {
     const manga = await mangaService.findById(mangaId);
 
     return res.json({
-      message: getMessage("user.findone.success"),
+      message: getMessage("manga.findone.success"),
       data: manga,
     });
   }
@@ -85,7 +84,7 @@ async function update(req, res) {
   try {
     const result = await mangaService.updateManga({ _id: mangaId }, req.body);
     return res.json({
-      message: getMessage("manga.update.success"),
+      message: HttpStatusMessages.OK,
       data: result,
     });
   }
@@ -104,7 +103,7 @@ async function remove(req, res) {
     const result = await mangaService.deleteById(mangaId);
 
     return res.json({
-      message: getMessage("manga.delete.success"),
+      message: HttpStatusMessages.OK,
       data: result,
     });
   }

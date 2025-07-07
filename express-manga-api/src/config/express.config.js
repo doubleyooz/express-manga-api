@@ -8,7 +8,7 @@ import corsOptions from "./cors.config.js";
 import swaggerDocument from "../config/swagger.json" assert { type: "json" };
 
 import authRoute from "../routes/auth.route.js";
-// import authorRoute from "../routes/author.route.js";
+import authorRoute from "../routes/authors.route.js";
 import chaptersRoute from "../routes/chapter.route.js";
 import mangaRoute from "../routes/manga.route.js";
 // import reviewRoute from "../routes/review.route.js";
@@ -45,7 +45,7 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/files", express.static("uploads"));
 
 app.use("/auth", authRoute);
-// app.use("/authors", authorRoute);
+app.use("/authors", authorRoute);
 app.use("/chapters", chaptersRoute);
 app.use("/mangas", mangaRoute);
 // app.use("/reviews", reviewRoute);

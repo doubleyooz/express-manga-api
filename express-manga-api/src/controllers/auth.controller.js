@@ -33,7 +33,7 @@ async function basicLogin(req, res) {
     }
 
     const payload = {
-     _id: user._id,
+      _id: user._id,
       role: user.role,
       tokenVersion: user.tokenVersion,
     };

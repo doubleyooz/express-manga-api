@@ -11,17 +11,17 @@ async function create(req, res, next) {
         title: rules.title.required(),
         genres: rules.genres.required(),
         themes: rules.themes.required(),
-        writerId: rules.writerId,
-        artistId: rules.artistId,
+        writers: rules.writers,
+        artists: rules.artists,
         synopsis: rules.synopsis.required(),
         nChapters: rules.nChapters.required(),
         status: rules.status.required(),
         nsfw: rules.nsfw.required(),
         type: rules.type.required(),
         languages: rules.languages.required(),
-        covers: rules.covers,
+        images: rules.covers,
       })
-      .validate({ ...req.body, covers: req.files }, { abortEarly: false, stripUnknown: true });
+      .validate({ ...req.body, images: req.files }, { abortEarly: false, stripUnknown: true });
 
     console.log({ files: req.files });
     req.body = result;
@@ -81,8 +81,8 @@ async function update(req, res, next) {
         title: rules.title,
         genres: rules.genres,
         themes: rules.themes,
-        writerId: rules.writerId,
-        artistId: rules.artistId,
+        writers: rules.writers,
+        artists: rules.artists,
         synopsis: rules.synopsis,
         nChapters: rules.nChapters,
         status: rules.status,

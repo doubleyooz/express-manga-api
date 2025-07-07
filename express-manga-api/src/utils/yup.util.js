@@ -1,4 +1,4 @@
-import { addYears, isBefore, isDate, parseISO, subYears } from "date-fns";
+import { addYears, isBefore, isDate, isSameDay, isValid, parse, subYears } from "date-fns";
 import mongoose from "mongoose";
 import yup from "yup";
 import {
@@ -13,11 +13,36 @@ import {
 import { getMessage } from "./message.util.js";
 
 function parseDateString(value, originalValue) {
-  const parsedDate = isDate(originalValue)
-    ? new Date(originalValue)
-    : parseISO(originalValue, "yyyy-MM-dd", new Date());
+  // If it's already a valid date, return it
+  if (isDate(originalValue) && isValid(originalValue)) {
+    return originalValue;
+  }
 
-  return parsedDate;
+  if (typeof originalValue === "string") {
+    // Try MM/DD/YYYY format (based on your example)
+    let parsedDate = parse(originalValue, "MM/dd/yyyy", new Date());
+
+    if (isValid(parsedDate)) {
+      return parsedDate;
+    }
+
+    parsedDate = parse(originalValue, "MM-dd-yyyy", new Date());
+    if (isValid(parsedDate)) {
+      return parsedDate;
+    }
+
+    parsedDate = parse(originalValue, "yyyy-MM-dd", new Date());
+    if (isValid(parsedDate)) {
+      return parsedDate;
+    }
+
+    // Fallback to native Date parsing
+    parsedDate = new Date(originalValue);
+    if (isValid(parsedDate)) {
+      return parsedDate;
+    }
+  }
+  return new Date("invalid");
 }
 
 const auth_rules = {
@@ -142,8 +167,8 @@ const manga_rules = {
 
   _id: mongo_id_req,
   id_not_required: mongo_id,
-  artistId: mongo_id,
-  writerId: mongo_id,
+  artists: yup.array(mongo_id),
+  writers: yup.array(mongo_id),
 };
 
 const author_rules = {
@@ -156,14 +181,14 @@ const author_rules = {
         .matches(/(^writer$|^artist$)/),
     )
     .ensure()
-    .min(1, "Need to provide at least one type")
     .max(2, "Can not provide more than two types")
     .test("Has duplicates", "No duplicates are allow in ${path}", (array) => {
       return !(new Set(array).size !== array.length);
     }),
   _id: mongo_id_req,
   name,
-
+  imgCollection: pages_rule,
+  imgCollection_required: pages_rule.min(1, "At least one page is required"),
   birthDate: yup
     .date()
     .transform(parseDateString)
@@ -173,24 +198,23 @@ const author_rules = {
   deathDate: yup
     .date()
     .transform(parseDateString)
-    .nullable()
-    .when(
-      "birthDate",
-      (birthDate, yup) => birthDate && yup.min(addYears(birthDate, 10)),
-    )
-    .when(
-      "birthDate",
-      (birthDate, yup) => birthDate && yup.max(addYears(birthDate, 101)),
-    )
+    .when("birthDate", ([birthDate], schema) => {
+      if (birthDate && isValid(birthDate)) {
+        return schema
+          .min(addYears(birthDate, 10))
+          .max(addYears(birthDate, 101));
+      }
+      return schema;
+    })
     .test({
-      name: "Valid ${path}",
+      name: "valid-death-date",
       exclusive: false,
-      params: {},
-      message: "This is not a valid value for ${path}",
-      test: value =>
-        !value
-        // You can access the price field with `this.parent`.
-        || isBefore(value, new Date()),
+      message: "Death date cannot be in the future",
+      test(value) {
+        if (!value)
+          return true; // nullable, so undefined/null is valid
+        return isBefore(value, new Date()) || isSameDay(value, new Date());
+      },
     }),
   socialMedia: yup
     .array(
@@ -202,6 +226,18 @@ const author_rules = {
           "must be a valid url",
         ),
     )
+    .transform((value, originalValue) => {
+      // If it's already an array, return it
+      if (Array.isArray(originalValue)) {
+        return originalValue;
+      }
+      // If it's a string, wrap it in an array
+      if (typeof originalValue === "string") {
+        return [originalValue];
+      }
+      // For other types, return as-is (let Yup handle validation)
+      return originalValue;
+    })
     .min(1)
     .max(5),
   biography: yup.string().min(15).max(800).trim(),
@@ -226,7 +262,6 @@ const chapter_rules = {
       },
     ),
 };
-
 
 const review_rules = {
   _id: mongo_id_req,
