@@ -205,7 +205,7 @@ function deleteManga(payload, token) {
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
-          message: getMessage("manga.notfound"),
+          message: HttpStatusMessages.NOT_FOUND,
           data: null,
           metadata: {},
           status: 404,

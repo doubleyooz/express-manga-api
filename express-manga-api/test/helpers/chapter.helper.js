@@ -222,7 +222,7 @@ function deleteChapter(payload, token) {
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
-          message: getMessage("chapter.notfound"),
+          message: HttpStatusMessages.NOT_FOUND,
           data: null,
           metadata: {},
           status: 404,

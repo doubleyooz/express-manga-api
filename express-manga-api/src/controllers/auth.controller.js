@@ -51,7 +51,7 @@ async function basicLogin(req, res) {
 
     user.password = undefined;
     return res.status(HttpStatusCodes.OK).json({
-      msg: getMessage("user.valid.sign_in.success"),
+      message: getMessage("user.valid.sign_in.success"),
       data: token,
     });
   }
@@ -77,7 +77,7 @@ async function logout(req, res) {
     delete req.auth;
 
     return res.status(HttpStatusCodes.OK).json({
-      msg: HttpStatusMessages.OK,
+      message: HttpStatusMessages.OK,
     });
   }
   catch (err) {
@@ -109,7 +109,7 @@ async function activateAccount(req, res) {
     );
 
     return res.status(HttpStatusCodes.OK).json({
-      msg: getMessage("user.activation.account.success"),
+      message: getMessage("user.activation.account.success"),
       data: user,
     });
   }

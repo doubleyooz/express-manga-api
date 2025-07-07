@@ -44,7 +44,7 @@ async function activateAccount(req, res, next) {
     console.log(err);
     return res
       .status(HttpStatusCodes.UNAUTHORIZED)
-      .json(err.inner.map(e => e.message));
+      .json({ error: err.inner.map(e => e.message), message: HttpStatusMessages.UNAUTHORIZED });
   }
 }
 

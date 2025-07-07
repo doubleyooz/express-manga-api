@@ -263,6 +263,26 @@ const chapter_rules = {
     ),
 };
 
+const cover_rules = {
+  id_not_required: mongo_id,
+  _id: mongo_id_req,
+  mangaId: yup.string().max(60),
+  title: yup.string().min(2).max(40).trim(),
+  volume: yup.number().min(1),
+  pages: pages_rule,
+  pages_required: pages_rule.min(1, "At least one page is required"),
+  language: yup
+    .string()
+    .default("pt")
+    .test(
+      "Valid language",
+      "This value for ${path} is not a valid option",
+      (value) => {
+        return languages.includes(value.toLowerCase());
+      },
+    ),
+};
+
 const review_rules = {
   _id: mongo_id_req,
   id_not_required: mongo_id,
@@ -294,6 +314,7 @@ export {
   auth_rules,
   author_rules,
   chapter_rules,
+  cover_rules,
   manga_rules,
   populate,
   review_rules,

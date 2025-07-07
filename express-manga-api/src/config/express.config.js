@@ -9,6 +9,7 @@ import swaggerDocument from "../config/swagger.json" assert { type: "json" };
 
 import authRoute from "../routes/auth.route.js";
 import authorRoute from "../routes/authors.route.js";
+import coversRoute from "../routes/covers.route.js";
 import chaptersRoute from "../routes/chapter.route.js";
 import mangaRoute from "../routes/manga.route.js";
 // import reviewRoute from "../routes/review.route.js";
@@ -47,6 +48,7 @@ app.use("/files", express.static("uploads"));
 app.use("/auth", authRoute);
 app.use("/authors", authorRoute);
 app.use("/chapters", chaptersRoute);
+app.use("/covers", coversRoute);
 app.use("/mangas", mangaRoute);
 // app.use("/reviews", reviewRoute);
 app.use("/users", usersRoute);

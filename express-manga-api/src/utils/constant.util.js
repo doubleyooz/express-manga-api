@@ -94,6 +94,7 @@ export const READER = "Reader";
 export const SCAN = "Scan";
 export const MANGA = "Manga";
 export const CHAPTER = "Chapter";
+export const COVER = "Cover";
 export const REVIEW = "Review";
 export const IMAGE = "Image";
 

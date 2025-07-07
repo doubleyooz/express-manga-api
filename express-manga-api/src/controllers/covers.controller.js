@@ -1,75 +1,39 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
-import jwtService, {
-  ACTIVATE_ACC_TOKEN_SECRET_INDEX,
-} from "../services/jwt.service.js";
-import usersService from "../services/users.service.js";
+import coversService from "../services/covers.service.js";
 
 import {
-  BadRequestException,
   CustomException,
-  UnprocessableEntityException,
 } from "../utils/exception.util.js";
-import { getMessage } from "../utils/message.util.js";
 
 async function create(req, res) {
-  const { email, password, name, role } = req.body;
-
   try {
-    const user = await usersService.createUser(req.body);
-    const activationToken = jwtService.generateJwt(
-      {
-        _id: user._id,
-        tokenVersion: user.tokenVersion,
-      },
-      ACTIVATE_ACC_TOKEN_SECRET_INDEX,
-    );
+    const chapter = await coversService.createCover(req.body);
+
     return res.status(HttpStatusCodes.OK).json({
-      message: getMessage("user.activation.account.activate"),
-      data: activationToken,
+      message: HttpStatusMessages.CREATED,
+      data: chapter,
     });
   }
   catch (err) {
-    if (err instanceof UnprocessableEntityException) {
-      const user = await usersService.getUser(
-        { email, active: false },
-        { _id: true, tokenVersion: true },
-        false,
-      );
-      if (!user)
-        return res.status(err.status).json({ message: err.message });
-
-      const activationToken = jwtService.generateJwt(
-        {
-          _id: user._id,
-          tokenVersion: user.tokenVersion,
-        },
-        ACTIVATE_ACC_TOKEN_SECRET_INDEX,
-      );
-      return res.status(HttpStatusCodes.UNPROCESSABLE_ENTITY).json({
-        message: getMessage("user.activation.account.activate"),
-        data: activationToken,
-      });
-    }
-
     if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message });
+      return res.status(err.status).json(err.message);
 
     return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 async function findOne(req, res) {
-  const { userId } = req.query;
+  const { coverId } = req.query;
 
   const newToken = req.newToken || null;
   req.newToken = null;
 
   try {
-    const user = await usersService.findById(userId);
+    const chapter = await coversService.findById(coverId);
 
     return res.json({
       message: HttpStatusMessages.OK,
-      data: user,
+      data: chapter,
     });
   }
   catch (err) {
@@ -81,7 +45,7 @@ async function findOne(req, res) {
 }
 
 async function find(req, res) {
-  const { name } = req.query;
+  const { title, mangaId, populate } = req.query;
 
   const newToken = req.newToken || null;
   req.newToken = null;
@@ -92,15 +56,18 @@ async function find(req, res) {
 
   const search
     = role === 1
-      ? name
-        ? { name: { $regex: `^${name}`, $options: "i" } }
+      ? title
+        ? { title: { $regex: `^${title}`, $options: "i" } }
         : {}
-      : name
-        ? { name: { $regex: `^${name}`, $options: "i" }, active: true }
-        : { active: true };
+      : title
+        ? { title: { $regex: `^${title}`, $options: "i" } }
+        : {};
+
+  if (mangaId)
+    search.mangaId = mangaId;
 
   try {
-    const result = await usersService.findAll(search);
+    const result = await coversService.findAll(search, populate);
     return res.json({
       message: HttpStatusMessages.OK,
       data: result,
@@ -115,12 +82,13 @@ async function find(req, res) {
 }
 
 async function update(req, res) {
+  const { coverId } = req.params;
   const newToken = req.newToken ? req.newToken : null;
   req.newToken = null;
 
   try {
-    const result = await usersService.updateUser(
-      { _id: req.auth },
+    const result = await coversService.updateChapter(
+      { _id: coverId },
       req.body,
     );
     return res.json({
@@ -137,14 +105,16 @@ async function update(req, res) {
 }
 
 async function remove(req, res) {
+  const { coverId } = req.params;
   try {
-    const result = await usersService.deleteById(req.auth);
+    const result = await coversService.deleteById(coverId);
     return res.json({
       message: HttpStatusMessages.OK,
       data: result,
     });
   }
   catch (err) {
+    console.log({ err });
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 

@@ -1,3 +1,4 @@
+import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import mongoose from "mongoose";
 import Author from "../models/author.model.js";
 import Manga from "../models/manga.model.js";
@@ -16,7 +17,7 @@ async function createAuthor(data) {
       ...data,
     });
 
-    return newAuthor;
+    return newAuthor[0];
   }
   catch (err) {
     await deleteFiles(data.imgCollection);
@@ -26,7 +27,7 @@ async function createAuthor(data) {
     }
     throw new InternalServerErrorException({
       code: err.code,
-      msg: "Error while creating author",
+      message: "Error while creating author",
     });
   }
 }
@@ -34,7 +35,7 @@ async function createAuthor(data) {
 async function findById(id) {
   const document = await Author.findById(id).exec();
   if (!document) {
-    throw new NotFoundException(getMessage("author.notfound"));
+    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
   }
   return document;
 }
@@ -56,10 +57,11 @@ async function findAll(filter, populate = false) {
   return result;
 }
 
+// how to update the files?
 async function updateAuthor(filter, data) {
   const document = await Author.findOneAndUpdate({ ...filter }, data);
   if (!document) {
-    throw new NotFoundException(getMessage("author.notfound"));
+    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
   }
   return document;
 }
@@ -112,7 +114,7 @@ async function deleteById(authorId, throwNotFound = true) {
     console.error("Error:", error);
     await session.abortTransaction();
     if (error instanceof CustomException) {
-      throw new NotFoundException(getMessage("author.notfound"));
+      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
     }
     throw error;
   }

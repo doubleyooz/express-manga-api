@@ -21,7 +21,7 @@ async function create(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json(err.message);
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 async function findOne(req, res) {
@@ -34,15 +34,15 @@ async function findOne(req, res) {
     const chapter = await chapterService.findById(chapterId);
 
     return res.json({
-      message: getMessage("chapter.findone.success"),
+      message: HttpStatusMessages.OK,
       data: chapter,
     });
   }
   catch (err) {
     if (err instanceof CustomException)
-      return res.status(err.status).json(err.message);
+      return res.status(err.status).json({ message: err.message });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -71,7 +71,7 @@ async function find(req, res) {
   try {
     const result = await chapterService.findAll(search, populate);
     return res.json({
-      message: getMessage("chapter.list.success"),
+      message: HttpStatusMessages.OK,
       data: result,
     });
   }
@@ -79,7 +79,7 @@ async function find(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -94,7 +94,7 @@ async function update(req, res) {
       req.body,
     );
     return res.json({
-      message: getMessage("chapter.update.success"),
+      message: HttpStatusMessages.OK,
       data: result,
     });
   }
@@ -102,7 +102,7 @@ async function update(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -120,7 +120,7 @@ async function remove(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 

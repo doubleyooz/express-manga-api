@@ -18,9 +18,9 @@ async function create(req, res) {
   }
   catch (err) {
     if (err instanceof CustomException)
-      return res.status(err.status).json(err.message);
+      return res.status(err.status).json({ message: err.message });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ err });
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 async function findOne(req, res) {
@@ -33,15 +33,15 @@ async function findOne(req, res) {
     const manga = await mangaService.findById(mangaId);
 
     return res.json({
-      message: getMessage("manga.findone.success"),
+      message: HttpStatusMessages.OK,
       data: manga,
     });
   }
   catch (err) {
     if (err instanceof CustomException)
-      return res.status(err.status).json(err.message);
+      return res.status(err.status).json({ message: err.message });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -63,7 +63,7 @@ async function find(req, res) {
   try {
     const result = await mangaService.findAll(search, populate);
     return res.json({
-      message: getMessage("manga.list.success"),
+      message: HttpStatusMessages.OK,
       data: result,
     });
   }
@@ -72,7 +72,7 @@ async function find(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -92,7 +92,7 @@ async function update(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -112,7 +112,7 @@ async function remove(req, res) {
     if (err instanceof CustomException)
       return res.status(err.status).json({ message: err.message, data: [] });
 
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
   }
 }
 

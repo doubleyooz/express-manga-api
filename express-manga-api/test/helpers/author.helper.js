@@ -102,7 +102,7 @@ function createAuthor(payload, token, statusCode) {
         case 404:
           expect(response.status).toEqual(HttpStatusCodes.NOT_FOUND);
           expect(response.body).toMatchObject({
-            message: getMessage("author.notfound"),
+            message: HttpStatusMessages.NOT_FOUND,
             data: null,
             metadata: expect.any(String),
             status: HttpStatusCodes.NOT_FOUND,
@@ -160,7 +160,7 @@ function findAuthor(payload, token, statusCode) {
             expect(response.body.metadata).toBeDefined();
 
             expect(response.body).toMatchObject({
-              message: getMessage("author.notfound"),
+              message: HttpStatusMessages.NOT_FOUND,
               data: null,
               metadata: {},
               status: HttpStatusCodes.NOT_FOUND,
@@ -287,7 +287,7 @@ function deleteAuthor(payload, token) {
         ).toBeTruthy();
 
         expect(response.body).toMatchObject({
-          message: getMessage("author.notfound"),
+          message: HttpStatusMessages.NOT_FOUND,
           data: null,
           metadata: {},
           status: HttpStatusCodes.NOT_FOUND,
@@ -385,7 +385,7 @@ function updateAuthor(payload, token, message, statusCode) {
         case 401:
           expect(response.status).toEqual(HttpStatusCodes.NOT_FOUND);
           expect(response.body).toMatchObject({
-            message: getMessage("author.notfound"),
+            message: HttpStatusMessages.NOT_FOUND,
             data: null,
             metadata: expect.any(String),
             status: HttpStatusCodes.NOT_FOUND,
@@ -395,7 +395,7 @@ function updateAuthor(payload, token, message, statusCode) {
         case 404:
           expect(response.status).toEqual(HttpStatusCodes.NOT_FOUND);
           expect(response.body).toMatchObject({
-            message: getMessage("author.notfound"),
+            message: HttpStatusMessages.NOT_FOUND,
             data: null,
             metadata: expect.any(String),
             status: HttpStatusCodes.NOT_FOUND,

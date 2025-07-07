@@ -1,6 +1,6 @@
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import mongoose from "mongoose";
-import Chapter from "../models/chapter.model.js";
+import Cover from "../models/cover.model.js";
 import Manga from "../models/manga.model.js";
 import {
   InternalServerErrorException,
@@ -10,8 +10,8 @@ import {
 import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
 
-async function createChapter(data) {
-  console.log("Creating chapter with data:", data);
+async function createCover(data) {
+  console.log("Creating cover with data:", data);
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
@@ -19,14 +19,14 @@ async function createChapter(data) {
     if (!doesMangaExist) {
       throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
     }
-    const newChapter = await Chapter.create([{ ...data }], { session });
+    const newCover = await Cover.create([{ ...data }], { session });
     await Manga.findByIdAndUpdate(
       data.mangaId,
-      { $push: { chapters: newChapter[0]._id } },
+      { $push: { covers: newCover[0]._id } },
       { session },
     );
     await session.commitTransaction();
-    return newChapter[0];
+    return newCover[0];
   }
   catch (err) {
     await session.abortTransaction();
@@ -36,12 +36,12 @@ async function createChapter(data) {
 
     if (err.code === 11000) {
       throw new UnprocessableEntityException(
-        getMessage("chapter.error.twinned"),
+        getMessage("cover.error.twinned"),
       );
     }
     throw new InternalServerErrorException({
       code: err.code,
-      message: "Error while creating chapter",
+      message: "Error while creating cover",
     });
   }
   finally {
@@ -50,7 +50,7 @@ async function createChapter(data) {
 }
 
 async function findById(id) {
-  const document = await Chapter.findById(id).exec();
+  const document = await Cover.findById(id).exec();
   if (!document) {
     throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
   }
@@ -64,18 +64,18 @@ async function findAll(filter, populate = false) {
     queryOptions.where = { ...filter };
   }
   console.log({ filter, queryOptions });
-  const result = await Chapter.find(queryOptions).populate(populate ? "mangaId" : null);
+  const result = await Cover.find(queryOptions).populate(populate ? "mangaId" : null);
 
   if (result.length === 0) {
-    throw new NotFoundException(getMessage("chapter.list.empty"));
+    throw new NotFoundException(getMessage("cover.list.empty"));
   }
 
   return result;
 }
 
 // how to update the files?
-async function updateChapter(filter, data) {
-  const document = await Chapter.findOneAndUpdate({ ...filter }, data);
+async function updateCover(filter, data) {
+  const document = await Cover.findOneAndUpdate({ ...filter }, data);
   if (!document) {
     throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
   }
@@ -86,7 +86,7 @@ async function deleteById(_id, throwNotFound = true) {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const document = await Chapter.findByIdAndDelete({ _id }).exec();
+    const document = await Cover.findByIdAndDelete({ _id }).exec();
 
     if (document === null && throwNotFound) {
       throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
@@ -94,7 +94,7 @@ async function deleteById(_id, throwNotFound = true) {
 
     await Manga.findByIdAndUpdate(
       document.mangaId,
-      { $pull: { chapters: document._id } },
+      { $pull: { covers: document._id } },
       { session },
     );
 
@@ -130,9 +130,9 @@ async function deleteById(_id, throwNotFound = true) {
 }
 
 export default {
-  createChapter,
+  createCover,
   findById,
   findAll,
-  updateChapter,
+  updateCover,
   deleteById,
 };
