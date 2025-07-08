@@ -1,4 +1,3 @@
-import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import mongoose from "mongoose";
 import Author from "../models/author.model.js";
 import Manga from "../models/manga.model.js";
@@ -20,7 +19,7 @@ async function createAuthor(data) {
     return newAuthor[0];
   }
   catch (err) {
-    await deleteFiles(data.imgCollection);
+    await deleteFiles(data.files);
 
     if (err.code === 11000) {
       throw new UnprocessableEntityException(getMessage("author.error.twinned"));
@@ -35,7 +34,7 @@ async function createAuthor(data) {
 async function findById(id) {
   const document = await Author.findById(id).exec();
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -61,7 +60,7 @@ async function findAll(filter, populate = false) {
 async function updateAuthor(filter, data) {
   const document = await Author.findOneAndUpdate({ ...filter }, data);
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -114,7 +113,7 @@ async function deleteById(authorId, throwNotFound = true) {
     console.error("Error:", error);
     await session.abortTransaction();
     if (error instanceof CustomException) {
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
     }
     throw error;
   }

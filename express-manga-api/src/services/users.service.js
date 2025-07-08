@@ -1,4 +1,3 @@
-import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import User from "../models/user.model.js";
 import {
   InternalServerErrorException,
@@ -43,7 +42,7 @@ async function getUser(filter, select = {}, throwNotFound = true) {
   );
 
   if (!user && throwNotFound) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return user;
 }
@@ -51,7 +50,7 @@ async function getUser(filter, select = {}, throwNotFound = true) {
 async function findById(id) {
   const document = await User.findById(id).exec();
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -67,7 +66,7 @@ async function findAll(filter, throwNotFound = true) {
   const result = await User.find(queryOptions);
 
   if (result.length === 0 && throwNotFound) {
-    throw new NotFoundException(getMessage("user.list.notfound"));
+    throw new NotFoundException(getMessage("user.list.empty"));
   }
 
   return result;
@@ -78,7 +77,7 @@ async function updateTokenVersion(_id) {
     { $inc: { tokenVersion: 1 } },
   );
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -86,7 +85,7 @@ async function updateTokenVersion(_id) {
 async function updateUser(filter, data) {
   const document = await User.findOneAndUpdate({ ...filter }, data);
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -94,7 +93,7 @@ async function updateUser(filter, data) {
 async function deleteById(_id) {
   const document = await User.deleteOne({ _id }).exec();
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }

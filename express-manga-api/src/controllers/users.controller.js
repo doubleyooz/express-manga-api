@@ -6,13 +6,11 @@ import jwtService, {
 import usersService from "../services/users.service.js";
 
 import {
-  BadRequestException,
-  CustomException,
   UnprocessableEntityException,
 } from "../utils/exception.util.js";
 import { getMessage } from "../utils/message.util.js";
 
-async function create(req, res) {
+async function create(req, res, next) {
   const { email, password, name, role } = req.body;
 
   try {
@@ -52,13 +50,10 @@ async function create(req, res) {
       });
     }
 
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
-async function findOne(req, res) {
+async function findOne(req, res, next) {
   const { userId } = req.query;
 
   const newToken = req.newToken || null;
@@ -73,14 +68,11 @@ async function findOne(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
 
-async function find(req, res) {
+async function find(req, res, next) {
   const { name } = req.query;
 
   const newToken = req.newToken || null;
@@ -107,14 +99,11 @@ async function find(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message, data: [] });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
 
-async function update(req, res) {
+async function update(req, res, next) {
   const newToken = req.newToken ? req.newToken : null;
   req.newToken = null;
 
@@ -129,14 +118,11 @@ async function update(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message, data: [] });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
 
-async function remove(req, res) {
+async function remove(req, res, next) {
   try {
     const result = await usersService.deleteById(req.auth);
     return res.json({
@@ -145,10 +131,7 @@ async function remove(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message, data: [] });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
 

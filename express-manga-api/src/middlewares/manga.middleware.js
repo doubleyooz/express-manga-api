@@ -1,6 +1,5 @@
-import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import yup from "yup";
-
+import { BadRequestException } from "../utils/exception.util.js";
 import { populate, manga_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
@@ -19,17 +18,16 @@ async function create(req, res, next) {
         nsfw: rules.nsfw.required(),
         type: rules.type.required(),
         languages: rules.languages.required(),
-        images: rules.covers,
+        files: rules.covers,
       })
-      .validate({ ...req.body, images: req.files }, { abortEarly: false, stripUnknown: true });
+      .validate({ ...req.body, files: req.files }, { abortEarly: false, stripUnknown: true });
 
     console.log({ files: req.files });
     req.body = result;
     next();
   }
   catch (err) {
-    console.log(err);
-    return res.status(HttpStatusCodes.BAD_REQUEST).json(err.errors);
+    next(new BadRequestException(err.errors));
   }
 }
 
@@ -45,10 +43,7 @@ async function findOneById(req, res, next) {
     next();
   }
   catch (err) {
-    console.log(err);
-    return res
-      .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map(e => e.message));
+    next(new BadRequestException(err.errors));
   }
 }
 
@@ -66,11 +61,7 @@ async function find(req, res, next) {
     next();
   }
   catch (err) {
-    console.log("error");
-    console.log(err);
-    return res
-      .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map(e => e.message));
+    next(new BadRequestException(err.errors));
   }
 }
 
@@ -104,9 +95,7 @@ async function update(req, res, next) {
     next();
   }
   catch (err) {
-    return res
-      .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map(e => e.message));
+    next(new BadRequestException(err.errors));
   }
 }
 

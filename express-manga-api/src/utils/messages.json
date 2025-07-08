@@ -55,7 +55,7 @@
   "user.activation.account.text.subtitle": "Activate your account",
   "user.activation.error.already.activated": "The user account is already activated.\n",
   "user.delete.fail": "The specified user could not be deleted",
-  "user.list.notfound": "No matching users found",
+  "user.list.empty": "No matching users found",
   "user.update.email.subject": "No reply - Change your email.",
   "user.update.email.text": "Please click on given link to change your email, if wasn't you just ignore this email.\n",
   "user.update.email.activate": "Please check your email to finish this operation.",

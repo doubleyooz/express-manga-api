@@ -1,4 +1,3 @@
-import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import mongoose from "mongoose";
 import Chapter from "../models/chapter.model.js";
 import Manga from "../models/manga.model.js";
@@ -19,7 +18,7 @@ async function createManga(data) {
     return newManga;
   }
   catch (err) {
-    await deleteFiles(data.covers);
+    await deleteFiles(data.files);
 
     if (err.code === 11000) {
       throw new UnprocessableEntityException(getMessage("manga.error.twinned"));
@@ -34,7 +33,7 @@ async function createManga(data) {
 async function findById(id) {
   const document = await Manga.findById(id).exec();
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -59,7 +58,7 @@ async function findAll(filter, populate = false) {
 async function updateManga(filter, data) {
   const document = await Manga.findOneAndUpdate({ ...filter }, data);
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -81,12 +80,12 @@ async function deleteById(mangaId, throwNotFound = true) {
     // 3. Delete manga from database
     const document = await Manga.findByIdAndDelete(mangaId, { covers: 1 }).session(session);
     if (document === null && throwNotFound) {
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
     }
     console.log("Manga deleted:", document ? document.title : "Not found");
 
     // 4. Collect all image files to delete
-    const allImages = chapters.flatMap(chapter => chapter.pages).concat(document.covers);
+    const allImages = chapters.flatMap(chapter => chapter.files).concat(document.covers);
 
     console.log({ chapters, document });
 

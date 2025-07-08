@@ -7,6 +7,8 @@ import corsOptions from "./cors.config.js";
 
 import swaggerDocument from "../config/swagger.json" assert { type: "json" };
 
+import { errorHandler } from "../middlewares/error.middleware.js";
+
 import authRoute from "../routes/auth.route.js";
 import authorRoute from "../routes/authors.route.js";
 import coversRoute from "../routes/covers.route.js";
@@ -23,7 +25,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 //app.use(cors());
 app.use(cors(corsOptions));
-
 
 
 
@@ -52,5 +53,6 @@ app.use("/covers", coversRoute);
 app.use("/mangas", mangaRoute);
 // app.use("/reviews", reviewRoute);
 app.use("/users", usersRoute);
+app.use(errorHandler);
 
 export { app };

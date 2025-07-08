@@ -2,6 +2,7 @@ import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import yup from "yup";
 import jwtService from "../services/jwt.service.js";
+import { UnauthorisedException } from "../utils/exception.util.js";
 import { auth_rules, user_rules as rules } from "../utils/yup.util.js";
 
 async function basicLogin(req, res, next) {
@@ -41,10 +42,7 @@ async function activateAccount(req, res, next) {
     next();
   }
   catch (err) {
-    console.log(err);
-    return res
-      .status(HttpStatusCodes.UNAUTHORIZED)
-      .json({ error: err.inner.map(e => e.message), message: HttpStatusMessages.UNAUTHORIZED });
+    next(new UnauthorisedException(err));
   }
 }
 

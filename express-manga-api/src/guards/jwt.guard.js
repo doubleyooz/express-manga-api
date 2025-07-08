@@ -1,8 +1,7 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
-import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import jwtService from "../services/jwt.service.js";
 import usersService from "../services/users.service.js";
-import { CustomException, UnauthorisedException } from "../utils/exception.util.js";
+import { CustomException, InternalServerErrorException, UnauthorisedException } from "../utils/exception.util.js";
 
 function rolesAuth(roles = []) {
   return async (req, res, next) => {
@@ -36,14 +35,12 @@ function rolesAuth(roles = []) {
     }
     catch (err) {
       // Custom exception
-      if (err instanceof CustomException)
-        return res.status(HttpStatusCodes.UNAUTHORIZED).json(HttpStatusMessages.UNAUTHORIZED);
+      if (err instanceof CustomException || err.name === "TokenExpiredError" || err.name === "JsonWebTokenError")
+        next(new UnauthorisedException());
 
-      if (err.name === "TokenExpiredError")
-        return res.status(HttpStatusCodes.UNAUTHORIZED).json(HttpStatusMessages.UNAUTHORIZED);
       // Server error
-      console.log("server error", err);
-      return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json();
+      console.log("server error");
+      next(new InternalServerErrorException());
     }
   };
 }

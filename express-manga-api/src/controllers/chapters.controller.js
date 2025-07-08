@@ -2,13 +2,7 @@ import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import chapterService from "../services/chapters.service.js";
 
-import {
-  BadRequestException,
-  CustomException,
-} from "../utils/exception.util.js";
-import { getMessage } from "../utils/message.util.js";
-
-async function create(req, res) {
+async function create(req, res, next) {
   try {
     const chapter = await chapterService.createChapter(req.body);
 
@@ -18,13 +12,10 @@ async function create(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json(err.message);
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
-async function findOne(req, res) {
+async function findOne(req, res, next) {
   const { chapterId } = req.query;
 
   const newToken = req.newToken || null;
@@ -39,14 +30,11 @@ async function findOne(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
 
-async function find(req, res) {
+async function find(req, res, next) {
   const { title, mangaId, populate } = req.query;
 
   const newToken = req.newToken || null;
@@ -76,14 +64,11 @@ async function find(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message, data: [] });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
 
-async function update(req, res) {
+async function update(req, res, next) {
   const { chapterId } = req.params;
   const newToken = req.newToken ? req.newToken : null;
   req.newToken = null;
@@ -99,14 +84,11 @@ async function update(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message, data: [] });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
 
-async function remove(req, res) {
+async function remove(req, res, next) {
   const { chapterId } = req.params;
   try {
     const result = await chapterService.deleteById(chapterId);
@@ -116,11 +98,7 @@ async function remove(req, res) {
     });
   }
   catch (err) {
-    console.log({ err });
-    if (err instanceof CustomException)
-      return res.status(err.status).json({ message: err.message, data: [] });
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ error: err, message: HttpStatusMessages.INTERNAL_SERVER_ERROR });
+    next(err);
   }
 }
 

@@ -1,4 +1,3 @@
-import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import mongoose from "mongoose";
 import Chapter from "../models/chapter.model.js";
 import Manga from "../models/manga.model.js";
@@ -17,7 +16,7 @@ async function createChapter(data) {
   try {
     const doesMangaExist = await Manga.exists({ _id: data.mangaId });
     if (!doesMangaExist) {
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
     }
     const newChapter = await Chapter.create([{ ...data }], { session });
     await Manga.findByIdAndUpdate(
@@ -30,19 +29,16 @@ async function createChapter(data) {
   }
   catch (err) {
     await session.abortTransaction();
-    await deleteFiles(data.pages);
+    await deleteFiles(data.files);
     if (err.name === NotFoundException.name)
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
 
     if (err.code === 11000) {
       throw new UnprocessableEntityException(
         getMessage("chapter.error.twinned"),
       );
     }
-    throw new InternalServerErrorException({
-      code: err.code,
-      message: "Error while creating chapter",
-    });
+    throw new InternalServerErrorException("Error while creating chapter");
   }
   finally {
     session.endSession();
@@ -52,7 +48,7 @@ async function createChapter(data) {
 async function findById(id) {
   const document = await Chapter.findById(id).exec();
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -77,7 +73,7 @@ async function findAll(filter, populate = false) {
 async function updateChapter(filter, data) {
   const document = await Chapter.findOneAndUpdate({ ...filter }, data);
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -89,7 +85,7 @@ async function deleteById(_id, throwNotFound = true) {
     const document = await Chapter.findByIdAndDelete({ _id }).exec();
 
     if (document === null && throwNotFound) {
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
     }
 
     await Manga.findByIdAndUpdate(
@@ -101,7 +97,7 @@ async function deleteById(_id, throwNotFound = true) {
     await session.commitTransaction();
     console.log("Transaction committed successfully");
 
-    const allImages = document.pages;
+    const allImages = document.files;
     // 6. Delete files AFTER successful DB operations
     if (allImages.length > 0) {
       try {
@@ -117,12 +113,9 @@ async function deleteById(_id, throwNotFound = true) {
   catch (err) {
     await session.abortTransaction();
     if (err.name === NotFoundException.name && throwNotFound) {
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
     }
-    throw new InternalServerErrorException({
-      code: err.code,
-      message: "Error while deleting chapter",
-    });
+    throw new InternalServerErrorException("Error while deleting chapter");
   }
   finally {
     session.endSession();

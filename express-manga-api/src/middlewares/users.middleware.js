@@ -1,5 +1,5 @@
-import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import yup from "yup";
+import { BadRequestException } from "../utils/exception.util.js";
 
 import { user_rules as rules } from "../utils/yup.util.js";
 
@@ -18,10 +18,7 @@ async function create(req, res, next) {
     next();
   }
   catch (err) {
-    console.log(err);
-    return res
-      .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map(e => e.message));
+    next(new BadRequestException(err.errors));
   }
 }
 
@@ -37,10 +34,7 @@ async function findOneById(req, res, next) {
     next();
   }
   catch (err) {
-    console.log(err);
-    return res
-      .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map(e => e.message));
+    next(new BadRequestException(err.errors));
   }
 }
 
@@ -57,10 +51,7 @@ async function find(req, res, next) {
     next();
   }
   catch (err) {
-    console.log(err);
-    return res
-      .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map(e => e.message));
+    next(new BadRequestException(err.errors));
   }
 }
 
@@ -77,10 +68,7 @@ async function update(req, res, next) {
     next();
   }
   catch (err) {
-    console.log(err);
-    return res
-      .status(HttpStatusCodes.BAD_REQUEST)
-      .json(err.inner.map(e => e.message));
+    next(new BadRequestException(err.errors));
   }
 }
 

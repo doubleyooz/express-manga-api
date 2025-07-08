@@ -1,4 +1,3 @@
-import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import mongoose from "mongoose";
 import Cover from "../models/cover.model.js";
 import Manga from "../models/manga.model.js";
@@ -17,7 +16,7 @@ async function createCover(data) {
   try {
     const doesMangaExist = await Manga.exists({ _id: data.mangaId });
     if (!doesMangaExist) {
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
     }
     const newCover = await Cover.create([{ ...data }], { session });
     await Manga.findByIdAndUpdate(
@@ -30,9 +29,9 @@ async function createCover(data) {
   }
   catch (err) {
     await session.abortTransaction();
-    await deleteFiles(data.pages);
+    await deleteFiles(data.files);
     if (err.name === NotFoundException.name)
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
 
     if (err.code === 11000) {
       throw new UnprocessableEntityException(
@@ -52,7 +51,7 @@ async function createCover(data) {
 async function findById(id) {
   const document = await Cover.findById(id).exec();
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -77,7 +76,7 @@ async function findAll(filter, populate = false) {
 async function updateCover(filter, data) {
   const document = await Cover.findOneAndUpdate({ ...filter }, data);
   if (!document) {
-    throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+    throw new NotFoundException();
   }
   return document;
 }
@@ -89,7 +88,7 @@ async function deleteById(_id, throwNotFound = true) {
     const document = await Cover.findByIdAndDelete({ _id }).exec();
 
     if (document === null && throwNotFound) {
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
     }
 
     await Manga.findByIdAndUpdate(
@@ -101,7 +100,7 @@ async function deleteById(_id, throwNotFound = true) {
     await session.commitTransaction();
     console.log("Transaction committed successfully");
 
-    const allImages = document.pages;
+    const allImages = document.files;
     // 6. Delete files AFTER successful DB operations
     if (allImages.length > 0) {
       try {
@@ -117,7 +116,7 @@ async function deleteById(_id, throwNotFound = true) {
   catch (err) {
     await session.abortTransaction();
     if (err.name === NotFoundException.name && throwNotFound) {
-      throw new NotFoundException(HttpStatusMessages.NOT_FOUND);
+      throw new NotFoundException();
     }
     throw new InternalServerErrorException({
       code: err.code,
