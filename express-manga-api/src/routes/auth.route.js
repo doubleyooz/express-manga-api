@@ -8,16 +8,23 @@ import { getMessage } from "../utils/message.util.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+const ROUTES = {
+  BASE: "/auth",
+  LOGIN: "/auth/login",
+  LOGOUT: "/auth/logout",
+  ACTIVATE: "/auth/activate/:token",
+};
+
+router.get(ROUTES.BASE, (req, res) => {
   return res.status(HttpStatusCodes.OK).json({ message: getMessage("default.return") });
 });
 
-router.get("/login", authMiddleware.basicLogin, authController.basicLogin);
+router.get(ROUTES.LOGIN, authMiddleware.basicLogin, authController.basicLogin);
 
-router.get("/logout", rolesAuth(), authController.logout);
+router.get(ROUTES.LOGOUT, rolesAuth(), authController.logout);
 
 router.get(
-  "/activate/:token",
+  ROUTES.ACTIVATE,
   authMiddleware.activateAccount,
   authController.activateAccount,
 );

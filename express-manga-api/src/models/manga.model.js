@@ -2,17 +2,20 @@ import mongoose from "mongoose";
 import {
   AUTHOR,
   CHAPTER,
+  COVER,
   languages,
   MANGA,
   mangaType,
   REVIEW,
   USER,
 } from "../utils/constant.util.js";
-import ImageSchema from "./image.model.js";
 
 const MangaSchema = new mongoose.Schema(
   {
-    covers: [ImageSchema],
+    covers: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: COVER,
+    }],
     title: {
       type: String,
       unique: true,

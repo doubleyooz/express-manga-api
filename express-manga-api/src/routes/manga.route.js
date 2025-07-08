@@ -8,16 +8,15 @@ import mangaMiddleware from "../middlewares/manga.middleware.js";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  rolesAuth(),
-  uploadCovers,
-  mangaMiddleware.create,
-  mangaController.create,
-);
-router.get("/", bypassAll, mangaMiddleware.find, mangaController.find);
-router.get("/:mangaId", bypassAll, mangaMiddleware.findOneById, mangaController.findOne);
-router.put("/:mangaId", rolesAuth(), mangaMiddleware.update, mangaController.update);
-router.delete("/:mangaId", rolesAuth(), mangaMiddleware.findOneById, mangaController.remove);
+const ROUTES = {
+  BASE: "/manga",
+  BY_ID: "/manga/:_id",
+};
+
+router.post(ROUTES.BASE, rolesAuth(), uploadCovers, mangaMiddleware.create, mangaController.create);
+router.get(ROUTES.BASE, bypassAll, mangaMiddleware.find, mangaController.find);
+router.get(ROUTES.BY_ID, bypassAll, mangaMiddleware.findOneById, mangaController.findOne);
+router.put(ROUTES.BY_ID, rolesAuth(), mangaMiddleware.update, mangaController.update);
+router.delete(ROUTES.BY_ID, rolesAuth(), mangaMiddleware.findOneById, mangaController.remove);
 
 export default router;

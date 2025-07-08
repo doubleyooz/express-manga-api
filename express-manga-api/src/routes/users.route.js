@@ -9,10 +9,15 @@ import userMiddleware from "../middlewares/users.middleware.js";
 
 const router = express.Router();
 
-router.post("/", userMiddleware.create, userController.create);
-router.get("/:userId", userMiddleware.findOneById, userController.findOne);
-router.get("/", userMiddleware.find, userController.find);
-router.put("/", rolesAuth(), userMiddleware.update, userController.update);
-router.delete("/", rolesAuth(), userController.remove);
+const ROUTES = {
+  BASE: "/users",
+  BY_ID: "/users/:_id",
+};
+// #swagger.tags = ['Authors']
+router.post(ROUTES.BASE, userMiddleware.create, userController.create);
+router.get(ROUTES.BY_ID, userMiddleware.findOneById, userController.findOne);
+router.get(ROUTES.BASE, userMiddleware.find, userController.find);
+router.put(ROUTES.BASE, rolesAuth(), userMiddleware.update, userController.update);
+router.delete(ROUTES.BASE, rolesAuth(), userController.remove);
 
 export default router;

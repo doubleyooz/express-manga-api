@@ -9,31 +9,15 @@ import coversMiddleware from "../middlewares/covers.middleware.js";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  rolesAuth(),
-  uploadCovers,
-  coversMiddleware.create,
-  coversController.create,
-);
-router.get("/", bypassAll, coversMiddleware.find, coversController.find);
-router.get(
-  "/:coverId",
-  bypassAll,
-  coversMiddleware.findOneById,
-  coversController.findOne,
-);
-router.put(
-  "/:coverId",
-  rolesAuth(),
-  coversMiddleware.update,
-  coversController.update,
-);
-router.delete(
-  "/:coverId",
-  rolesAuth(),
-  coversMiddleware.findOneById,
-  coversController.remove,
-);
+const ROUTES = {
+  BASE: "/covers",
+  BY_ID: "/covers/:_id",
+};
+
+router.post(ROUTES.BASE, rolesAuth(), uploadCovers, coversMiddleware.create, coversController.create);
+router.get(ROUTES.BASE, bypassAll, coversMiddleware.find, coversController.find);
+router.get(ROUTES.BY_ID, bypassAll, coversMiddleware.findOneById, coversController.findOne);
+router.put(ROUTES.BY_ID, rolesAuth(), coversMiddleware.update, coversController.update);
+router.delete(ROUTES.BY_ID, rolesAuth(), coversMiddleware.findOneById, coversController.remove);
 
 export default router;

@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "My API",
-    "description": "Some description..."
+    "title": "Manga Reader API",
+    "description": "API documentation for the Manga Reader application."
   },
   "host": "localhost:3001",
   "servers": [
@@ -12,11 +12,37 @@
     }
   ],
   "basePath": "/",
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and authorization endpoints"
+    },
+    {
+      "name": "Authors",
+      "description": "Author management operations"
+    },
+    {
+      "name": "Manga",
+      "description": "Manga management operations"
+    },
+    {
+      "name": "Chapters",
+      "description": "Chapter management operations"
+    },
+    {
+      "name": "Covers",
+      "description": "Cover image management operations"
+    },
+    {
+      "name": "Users",
+      "description": "User management operations"
+    }
+  ],
   "schemes": [
     "http"
   ],
   "paths": {
-    "/auth/": {
+    "/auth": {
       "get": {
         "description": "",
         "responses": {
@@ -53,25 +79,305 @@
         }
       }
     },
-    "/auth/activate/{token}": {
+    "/manga": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "token",
+            "name": "title",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/manga/{_id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "mangaId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
             "in": "path",
             "required": true,
             "type": "string"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
-    "/authors/": {
+    "/chapters": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "mangaId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/chapters/{_id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "chapterId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/covers": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "mangaId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/covers/{_id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "coverId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/authors": {
       "post": {
         "description": "",
         "responses": {
@@ -155,388 +461,64 @@
           }
         }
       }
-    },
-    "/chapters/": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "title",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "mangaId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "populate",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/chapters/{chapterId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "chapterId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "chapterId",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "chapterId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "chapterId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/covers/": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "title",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "mangaId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "populate",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/covers/{chapterId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "chapterId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "coverId",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "chapterId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "chapterId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/mangas/": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "title",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "populate",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/mangas/{mangaId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "mangaId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "mangaId",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "mangaId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "mangaId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/users/": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                },
-                "name": {
-                  "example": "any"
-                },
-                "role": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/users/{userId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
     }
   },
   "components": {
     "schemas": {
-      "someBody": {
-        "$name": "Jhon Doe",
-        "$age": 29,
-        "about": ""
+      "User": {
+        "id": "123456",
+        "username": "mangafan",
+        "email": "mangafan@example.com",
+        "role": "user",
+        "createdAt": "2024-06-01T12:00:00Z"
       },
-      "someResponse": {
-        "name": "Jhon Doe",
-        "age": 29,
-        "diplomas": [
-          {
-            "school": "XYZ University",
-            "year": 2020,
-            "completed": true,
-            "internship": {
-              "hours": 290,
-              "location": "XYZ Company"
-            }
-          }
-        ]
+      "Manga": {
+        "id": "manga123",
+        "title": "One Piece",
+        "author": "Eiichiro Oda",
+        "description": "A story about pirates searching for the ultimate treasure.",
+        "genres": [
+          "Action",
+          "Adventure"
+        ],
+        "coverUrl": "https://example.com/cover.jpg",
+        "status": "ongoing",
+        "createdAt": "2024-06-01T12:00:00Z"
       },
-      "someEnum": {
-        "@enum": [
-          "red",
-          "yellow",
-          "green"
-        ]
+      "Chapter": {
+        "id": "chapter001",
+        "mangaId": "manga123",
+        "title": "Romance Dawn",
+        "number": 1,
+        "pages": [
+          "https://example.com/page1.jpg",
+          "https://example.com/page2.jpg"
+        ],
+        "releaseDate": "2024-06-01T12:00:00Z"
+      },
+      "Author": {
+        "id": "author001",
+        "name": "Eiichiro Oda",
+        "bio": "Japanese manga artist known for One Piece.",
+        "avatarUrl": "https://example.com/oda.jpg"
+      },
+      "Cover": {
+        "id": "cover001",
+        "mangaId": "manga123",
+        "imageUrl": "https://example.com/cover.jpg",
+        "uploadedAt": "2024-06-01T12:00:00Z"
+      },
+      "AuthRequest": {
+        "username": "mangafan",
+        "password": "password123"
+      },
+      "AuthResponse": {
+        "token": "jwt.token.here",
+        "user": {
+          "id": "123456",
+          "username": "mangafan",
+          "email": "mangafan@example.com"
+        }
       }
     },
     "securitySchemes": {

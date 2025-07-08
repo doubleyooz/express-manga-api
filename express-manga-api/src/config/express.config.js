@@ -12,7 +12,7 @@ import { errorHandler } from "../middlewares/error.middleware.js";
 import authRoute from "../routes/auth.route.js";
 import authorRoute from "../routes/authors.route.js";
 import coversRoute from "../routes/covers.route.js";
-import chaptersRoute from "../routes/chapter.route.js";
+import chaptersRoute from "../routes/chapters.route.js";
 import mangaRoute from "../routes/manga.route.js";
 // import reviewRoute from "../routes/review.route.js";
 import usersRoute from "../routes/users.route.js";
@@ -27,7 +27,6 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 
 
-
 app.use("/docs/json", (req, res) => {
     res.json(swaggerDocument);
 });
@@ -35,10 +34,7 @@ app.use("/docs/json", (req, res) => {
 app.use(
     '/docs/scalar',
     apiReference({
-      // Put your OpenAPI url here:
         url: '/docs/json',
-        
-        
     }),
   )
 
@@ -46,13 +42,13 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/files", express.static("uploads"));
 
-app.use("/auth", authRoute);
-app.use("/authors", authorRoute);
-app.use("/chapters", chaptersRoute);
-app.use("/covers", coversRoute);
-app.use("/mangas", mangaRoute);
+app.use(authRoute);
+app.use(authorRoute);
+app.use(chaptersRoute);
+app.use(coversRoute);
+app.use(mangaRoute);
 // app.use("/reviews", reviewRoute);
-app.use("/users", usersRoute);
+app.use(usersRoute);
 app.use(errorHandler);
 
 export { app };
