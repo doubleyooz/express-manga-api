@@ -1,26 +1,18 @@
 import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { mongoIdReq, populate, manga_rules as rules } from "../utils/yup.util.js";
+import { mongoId, mongoIdReq, review_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
-    console.log(req.body);
     const result = await yup
       .object({
-        title: rules.title.required(),
-        genres: rules.genres.required(),
-        themes: rules.themes.required(),
-        writers: rules.writers,
-        artists: rules.artists,
-        synopsis: rules.synopsis.required(),
-        nChapters: rules.nChapters.required(),
-        status: rules.status.required(),
-        nsfw: rules.nsfw.required(),
-        type: rules.type.required(),
-        languages: rules.languages.required(),
+        text: rules.text.required(),
+        rating: rules.rating.required(),
+        mangaId: mongoIdReq,
+        userId: mongoIdReq,
       })
-      .validate({ ...req.body }, { abortEarly: false, stripUnknown: true });
+      .validate({ ...req.body, userId: req.auth }, { abortEarly: false, stripUnknown: true });
 
     req.body = result;
     next();
@@ -34,12 +26,12 @@ async function find(req, res, next) {
   try {
     const result = await yup
       .object({
-        title: rules.title,
-        role: rules.role,
-        populate,
+        text: rules.text,
+        userId: mongoId,
+        mangaId: mongoId,
       })
       .validate(req.query, { abortEarly: true, stripUnknown: true });
-    console.log({ result });
+
     req.query = result;
     next();
   }
@@ -52,17 +44,8 @@ async function update(req, res, next) {
   try {
     const result = await yup
       .object({
-        title: rules.title,
-        genres: rules.genres,
-        themes: rules.themes,
-        writers: rules.writers,
-        artists: rules.artists,
-        synopsis: rules.synopsis,
-        nChapters: rules.nChapters,
-        status: rules.status,
-        nsfw: rules.nsfw,
-        type: rules.type,
-        languages: rules.languages,
+        text: rules.text,
+        rating: rules.rating,
       })
       .validate(req.body, { abortEarly: false, stripUnknown: true });
 

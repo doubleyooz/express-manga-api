@@ -14,7 +14,7 @@ import authorRoute from "../routes/authors.route.js";
 import coversRoute from "../routes/covers.route.js";
 import chaptersRoute from "../routes/chapters.route.js";
 import mangaRoute from "../routes/manga.route.js";
-// import reviewRoute from "../routes/review.route.js";
+import reviewRoute from "../routes/review.route.js";
 import usersRoute from "../routes/users.route.js";
 
 const app = express();
@@ -47,7 +47,7 @@ app.use(authorRoute);
 app.use(chaptersRoute);
 app.use(coversRoute);
 app.use(mangaRoute);
-// app.use("/reviews", reviewRoute);
+app.use(reviewRoute);
 app.use(usersRoute);
 app.use(errorHandler);
 
