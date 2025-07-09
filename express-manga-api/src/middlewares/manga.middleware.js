@@ -1,7 +1,7 @@
 import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { mongoIdReq, paramsIdResult, populate, manga_rules as rules } from "../utils/yup.util.js";
+import { mongoIdReq, paramsIdResult, populate, mangaRules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {

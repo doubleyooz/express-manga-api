@@ -134,7 +134,7 @@ const pagesRequired = pagesRule.min(1, "At least one page is required");
 
 const populate = yup.boolean().default(false);
 
-const manga_rules = {
+const mangaRules = {
   title: titleValidator,
   genres: yup
     .array(yup.string())
@@ -182,7 +182,7 @@ const manga_rules = {
   writers: yup.array(mongoId),
 };
 
-const author_rules = {
+const authorRules = {
   types: yup
     .array()
     .of(
@@ -250,13 +250,13 @@ const author_rules = {
   biography: yup.string().min(15).max(800).trim(),
 };
 
-const chapter_rules = {
+const chapterRules = {
   title: titleValidator,
   number: yup.number().min(1),
   language: languageValidator,
 };
 
-const cover_rules = {
+const coverRules = {
   title: titleValidator,
   volume: yup.number().min(1),
   language: yup
@@ -271,12 +271,12 @@ const cover_rules = {
     ),
 };
 
-const review_rules = {
+const reviewRules = {
   rating: yup.number().min(0).max(5),
   text: yup.string().min(2).max(500).trim(),
 };
 
-const user_rules = {
+const userRules = {
   email: yup.string().email().trim().required(),
   name: nameValidator,
   password: yup
@@ -296,17 +296,17 @@ const user_rules = {
 };
 
 export {
-  author_rules,
-  chapter_rules,
-  cover_rules,
-  manga_rules,
+  authorRules,
+  chapterRules,
+  coverRules,
+  mangaRules,
   mongoId,
   mongoIdReq,
   pagesRequired,
   pagesRule,
   paramsIdResult,
   populate,
-  review_rules,
+  reviewRules,
   tokenValidator,
-  user_rules,
+  userRules,
 };

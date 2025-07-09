@@ -1,7 +1,7 @@
 import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { mongoId, mongoIdReq, paramsIdResult, review_rules as rules } from "../utils/yup.util.js";
+import { mongoId, mongoIdReq, paramsIdResult, reviewRules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {

@@ -115,6 +115,7 @@ const routes = [
   "../routes/manga.route.js",
   "../routes/chapters.route.js",
   "../routes/users.route.js",
+  "../routes/reviews.route.js",
   "../routes/covers.route.js",
   "../routes/authors.route.js",
 ];

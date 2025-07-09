@@ -1,11 +1,11 @@
 import yup from "yup";
 import { UnauthorisedException } from "../utils/exception.util.js";
-import { user_rules as rules, tokenValidator } from "../utils/yup.util.js";
+import { userRules as rules, tokenValidator } from "../utils/yup.util.js";
 
 async function basicLogin(req, res, next) {
   try {
     const { email, supposedPassword } = req.body;
-    
+
     const result = await yup
       .object({
         email: rules.email,

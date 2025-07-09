@@ -23,7 +23,7 @@ async function create(data) {
 
     const currentUser = await User.findByIdAndUpdate(
       data.owner,
-      { $push: { mangas: newManga._id } },
+      { $push: { mangas: newManga[0]._id } },
       { session },
     );
 
