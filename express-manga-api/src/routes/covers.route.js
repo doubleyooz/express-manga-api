@@ -16,8 +16,8 @@ const ROUTES = {
 
 router.post(ROUTES.BASE, rolesAuth(), uploadCovers, coversMiddleware.create, coversController.create);
 router.get(ROUTES.BASE, bypassAll, coversMiddleware.find, coversController.find);
-router.get(ROUTES.BY_ID, bypassAll, coversMiddleware.findOneById, coversController.findOne);
+router.get(ROUTES.BY_ID, bypassAll, coversMiddleware.findOneById, coversController.findOneById);
 router.put(ROUTES.BY_ID, rolesAuth(), coversMiddleware.update, coversController.update);
-router.delete(ROUTES.BY_ID, rolesAuth(), coversMiddleware.findOneById, coversController.remove);
+router.delete(ROUTES.BY_ID, rolesAuth(), coversMiddleware.findOneById, coversController.deleteById);
 
 export default router;

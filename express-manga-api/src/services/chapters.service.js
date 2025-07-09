@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { findAll, findById, update } from "../database/abstract.repository.js";
 import Chapter from "../models/chapter.model.js";
 import Manga from "../models/manga.model.js";
 import {
@@ -9,7 +10,7 @@ import {
 import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
 
-async function createChapter(data) {
+async function create(data) {
   console.log("Creating chapter with data:", data);
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -43,39 +44,6 @@ async function createChapter(data) {
   finally {
     session.endSession();
   }
-}
-
-async function findById(id) {
-  const document = await Chapter.findById(id).exec();
-  if (!document) {
-    throw new NotFoundException();
-  }
-  return document;
-}
-async function findAll(filter, populate = false) {
-  let queryOptions = {};
-
-  // Check if filter is empty
-  if (Object.keys(filter).length > 0 && filter.constructor === Object) {
-    queryOptions.where = { ...filter };
-  }
-  console.log({ filter, queryOptions });
-  const result = await Chapter.find(queryOptions).populate(populate ? "mangaId" : null);
-
-  if (result.length === 0) {
-    throw new NotFoundException(getMessage("chapter.list.empty"));
-  }
-
-  return result;
-}
-
-// how to update the files?
-async function updateChapter(filter, data) {
-  const document = await Chapter.findOneAndUpdate({ ...filter }, data);
-  if (!document) {
-    throw new NotFoundException();
-  }
-  return document;
 }
 
 async function deleteById(_id, throwNotFound = true) {
@@ -123,9 +91,9 @@ async function deleteById(_id, throwNotFound = true) {
 }
 
 export default {
-  createChapter,
-  findById,
-  findAll,
-  updateChapter,
+  create,
+  findById: id => findById(Chapter, id),
+  findAll: (filter, populate = null) => findAll(Chapter, filter, populate),
+  update: (filter, data) => update(Chapter, filter, data),
   deleteById,
 };

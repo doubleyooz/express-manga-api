@@ -17,8 +17,8 @@ const ROUTES = {
 // #swagger.description = 'Create a new author with optional file upload'
 router.post(ROUTES.BASE, rolesAuth(), uploadAuthors, authorsMiddleware.create, authorsController.create);
 router.get(ROUTES.BASE, bypassAll, authorsMiddleware.find, authorsController.find);
-router.get(ROUTES.BY_ID, bypassAll, authorsMiddleware.findOneById, authorsController.findOne);
+router.get(ROUTES.BY_ID, bypassAll, authorsMiddleware.findOneById, authorsController.findOneById);
 router.put(ROUTES.BY_ID, rolesAuth(), authorsMiddleware.update, authorsController.update);
-router.delete(ROUTES.BY_ID, rolesAuth(), authorsMiddleware.findOneById, authorsController.remove);
+router.delete(ROUTES.BY_ID, rolesAuth(), authorsMiddleware.findOneById, authorsController.deleteById);
 
 export default router;

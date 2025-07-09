@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { findAll, findById, update } from "../database/abstract.repository.js";
 import Author from "../models/author.model.js";
 import Manga from "../models/manga.model.js";
 import {
@@ -10,7 +11,7 @@ import {
 import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
 
-async function createAuthor(data) {
+async function create(data) {
   try {
     const newAuthor = await Author.create({
       ...data,
@@ -29,40 +30,6 @@ async function createAuthor(data) {
       message: "Error while creating author",
     });
   }
-}
-
-async function findById(id) {
-  const document = await Author.findById(id).exec();
-  if (!document) {
-    throw new NotFoundException();
-  }
-  return document;
-}
-
-async function findAll(filter, populate = false) {
-  let queryOptions = {};
-
-  // Check if filter is empty
-  if (Object.keys(filter).length > 0 && filter.constructor === Object) {
-    queryOptions = { ...filter };
-  }
-
-  const result = await Author.find(queryOptions).populate(populate ? "mangas" : null);
-
-  if (result.length === 0) {
-    throw new NotFoundException(getMessage("author.list.empty"));
-  }
-
-  return result;
-}
-
-// how to update the files?
-async function updateAuthor(filter, data) {
-  const document = await Author.findOneAndUpdate({ ...filter }, data);
-  if (!document) {
-    throw new NotFoundException();
-  }
-  return document;
 }
 
 async function deleteById(authorId, throwNotFound = true) {
@@ -123,9 +90,9 @@ async function deleteById(authorId, throwNotFound = true) {
 }
 
 export default {
-  createAuthor,
-  findById,
-  findAll,
-  updateAuthor,
+  create,
+  findById: id => findById(Author, id),
+  findAll: (filter, populate = null) => findAll(Author, filter, populate),
+  update: (filter, data) => update(Author, filter, data),
   deleteById,
 };

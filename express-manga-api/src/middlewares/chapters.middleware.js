@@ -1,7 +1,7 @@
 import yup from "yup";
+import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-
-import { populate, chapter_rules as rules } from "../utils/yup.util.js";
+import { pagesRequired, populate, chapter_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
@@ -12,27 +12,11 @@ async function create(req, res, next) {
         number: rules.number.required(),
         mangaId: rules._id.required(),
         language: rules.language.required(),
-        files: rules.pages.required(),
+        files: pagesRequired,
       })
       .validate({ ...req.body, files: req.files }, { abortEarly: false, stripUnknown: true });
 
     req.body = result;
-    next();
-  }
-  catch (err) {
-    next(new BadRequestException(err.errors));
-  }
-}
-
-async function findOneById(req, res, next) {
-  try {
-    const result = await yup
-      .object({
-        chapterId: rules._id,
-      })
-      .validate(req.params, { stripUnknown: true });
-
-    req.params = result;
     next();
   }
   catch (err) {

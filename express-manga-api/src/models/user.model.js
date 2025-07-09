@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MANGA, READER, REVIEW, SCAN, USER } from "../utils/constant.util.js";
+import { MANGA, READER, SCAN, USER } from "../utils/constant.util.js";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -35,13 +35,6 @@ const UserSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: USER,
-      },
-    ],
-
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: REVIEW,
       },
     ],
 

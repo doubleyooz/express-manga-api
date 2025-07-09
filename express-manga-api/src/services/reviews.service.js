@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import { findAll, findById, update } from "../database/abstract.repository.js";
-import Cover from "../models/cover.model.js";
 import Manga from "../models/manga.model.js";
+import Review from "../models/review.model.js";
+import User from "../models/user.model.js";
 import {
   InternalServerErrorException,
   NotFoundException,
@@ -11,7 +12,7 @@ import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
 
 async function create(data) {
-  console.log("Creating cover with data:", data);
+  console.log("Creating review with data:", data);
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
@@ -19,14 +20,14 @@ async function create(data) {
     if (!doesMangaExist) {
       throw new NotFoundException();
     }
-    const newCover = await Cover.create([{ ...data }], { session });
+    const newReview = await Review.create([{ ...data }], { session });
     await Manga.findByIdAndUpdate(
       data.mangaId,
-      { $push: { covers: newCover[0]._id } },
+      { $push: { reviews: newReview[0]._id } },
       { session },
     );
     await session.commitTransaction();
-    return newCover[0];
+    return newReview[0];
   }
   catch (err) {
     await session.abortTransaction();
@@ -36,12 +37,12 @@ async function create(data) {
 
     if (err.code === 11000) {
       throw new UnprocessableEntityException(
-        getMessage("cover.error.twinned"),
+        getMessage("review.error.twinned"),
       );
     }
     throw new InternalServerErrorException({
       code: err.code,
-      message: "Error while creating cover",
+      message: "Error while creating review",
     });
   }
   finally {
@@ -53,7 +54,7 @@ async function deleteById(_id, throwNotFound = true) {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const document = await Cover.findByIdAndDelete({ _id }).exec();
+    const document = await Review.findByIdAndDelete({ _id }).exec();
 
     if (document === null && throwNotFound) {
       throw new NotFoundException();
@@ -61,23 +62,18 @@ async function deleteById(_id, throwNotFound = true) {
 
     await Manga.findByIdAndUpdate(
       document.mangaId,
-      { $pull: { covers: document._id } },
+      { $pull: { reviews: document._id } },
+      { session },
+    );
+
+    await User.findByIdAndUpdate(
+      document.userId,
+      { $pull: { reviews: document._id } },
       { session },
     );
 
     await session.commitTransaction();
     console.log("Transaction committed successfully");
-
-    const allImages = document.files;
-    // 6. Delete files AFTER successful DB operations
-    if (allImages.length > 0) {
-      try {
-        await deleteFiles(allImages);
-      }
-      catch (fileError) {
-        console.error("File deletion failed:", fileError);
-      }
-    }
 
     return document;
   }
@@ -88,7 +84,7 @@ async function deleteById(_id, throwNotFound = true) {
     }
     throw new InternalServerErrorException({
       code: err.code,
-      message: "Error while deleting cover",
+      message: "Error while deleting review",
     });
   }
   finally {
@@ -98,8 +94,8 @@ async function deleteById(_id, throwNotFound = true) {
 
 export default {
   create,
-  findById: id => findById(Cover, id),
-  findAll: (filter, populate = null) => findAll(Cover, filter, populate),
-  update: (filter, data) => update(Cover, filter, data),
+  findById: id => findById(Review, id),
+  findAll: (filter, populate = null) => findAll(Review, filter, populate),
+  update: (filter, data) => update(Review, filter, data),
   deleteById,
 };

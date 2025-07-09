@@ -82,13 +82,6 @@ const MangaSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: REVIEW,
-      },
-    ],
-
     type: {
       type: String,
       enum: mangaType,

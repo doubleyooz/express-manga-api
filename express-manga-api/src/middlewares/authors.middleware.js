@@ -1,6 +1,7 @@
 import yup from "yup";
+import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { author_rules as rules } from "../utils/yup.util.js";
+import { pagesRule, author_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
@@ -11,7 +12,7 @@ async function create(req, res, next) {
       .object({
         types: rules.types.min(1, "Need to provide at least one type").required(),
         name: rules.name.required(),
-        files: rules.imgCollection,
+        files: pagesRule,
         birthDate: rules.birthDate.required(),
         deathDate: rules.deathDate,
         socialMedia: rules.socialMedia.required(),
@@ -21,22 +22,6 @@ async function create(req, res, next) {
 
     console.log({ files: req.files });
     req.body = result;
-    next();
-  }
-  catch (err) {
-    next(new BadRequestException(err.errors));
-  }
-}
-
-async function findOneById(req, res, next) {
-  try {
-    const result = await yup
-      .object({
-        _id: rules._id,
-      })
-      .validate(req.params, { stripUnknown: true });
-
-    req.params = result;
     next();
   }
   catch (err) {

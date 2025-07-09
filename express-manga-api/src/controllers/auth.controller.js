@@ -9,16 +9,15 @@ import jwtService, {
 
 import usersService from "../services/users.service.js";
 import {
-  CustomException,
-
+  UnauthorisedException,
 } from "../utils/exception.util.js";
 import { getMessage } from "../utils/message.util.js";
 import { matchPassword } from "../utils/password.util.js";
 
-async function basicLogin(req, res) {
+async function basicLogin(req, res, next) {
   try {
     const { email, password } = req.body;
-    console.log(crypto.randomBytes(16).toString("hex"));
+    // console.log(crypto.randomBytes(16).toString("hex"));
     const user = await usersService.getUser(
       { email, active: true },
       { password: true, role: true, tokenVersion: true },
@@ -27,9 +26,7 @@ async function basicLogin(req, res) {
     const match = user ? matchPassword(user.password, password) : null;
 
     if (!match) {
-      return res
-        .status(HttpStatusCodes.UNAUTHORIZED)
-        .json({ message: HttpStatusMessages.UNAUTHORIZED });
+      throw UnauthorisedException();
     }
 
     const payload = {
@@ -56,14 +53,11 @@ async function basicLogin(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json(err.message);
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    next(err);
   }
 }
 
-async function logout(req, res) {
+async function logout(req, res, next) {
   try {
     console.log({ auth: req.auth, newToken: req.newToken });
     const user = await usersService.updateTokenVersion(
@@ -71,7 +65,7 @@ async function logout(req, res) {
     );
 
     if (!user)
-      return res.status(HttpStatusCodes.UNAUTHORIZED).json();
+      throw UnauthorisedException();
 
     delete req.newToken;
     delete req.auth;
@@ -81,15 +75,11 @@ async function logout(req, res) {
     });
   }
   catch (err) {
-    if (err instanceof CustomException)
-      return res.status(err.status).json(err.message);
-
-    console.log("server error", err);
-    return res.status(HttpStatusCodes.UNAUTHORIZED).json();
+    next(err);
   }
 };
 
-async function activateAccount(req, res) {
+async function activateAccount(req, res, next) {
   try {
     const { token } = req.params;
 
@@ -114,11 +104,7 @@ async function activateAccount(req, res) {
     });
   }
   catch (err) {
-    console.log(err);
-    if (err instanceof CustomException)
-      return res.status(err.status).json(err.message);
-
-    return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    next(err);
   }
 }
 

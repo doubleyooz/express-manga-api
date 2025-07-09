@@ -1,4 +1,5 @@
 import yup from "yup";
+import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
 import { populate, manga_rules as rules } from "../utils/yup.util.js";
 
@@ -18,28 +19,10 @@ async function create(req, res, next) {
         nsfw: rules.nsfw.required(),
         type: rules.type.required(),
         languages: rules.languages.required(),
-        files: rules.covers,
       })
-      .validate({ ...req.body, files: req.files }, { abortEarly: false, stripUnknown: true });
+      .validate({ ...req.body }, { abortEarly: false, stripUnknown: true });
 
-    console.log({ files: req.files });
     req.body = result;
-    next();
-  }
-  catch (err) {
-    next(new BadRequestException(err.errors));
-  }
-}
-
-async function findOneById(req, res, next) {
-  try {
-    const result = await yup
-      .object({
-        mangaId: rules._id,
-      })
-      .validate(req.params, { stripUnknown: true });
-
-    req.params = result;
     next();
   }
   catch (err) {

@@ -1,3 +1,6 @@
+import mongoose from "mongoose";
+import { findAll, findById, update } from "../database/abstract.repository.js";
+import Review from "../models/review.model.js";
 import User from "../models/user.model.js";
 import {
   InternalServerErrorException,
@@ -8,7 +11,7 @@ import {
 import { getMessage } from "../utils/message.util.js";
 import { hashPassword } from "../utils/password.util.js";
 
-async function createUser(data) {
+async function create(data) {
   try {
     const newUser = await User.create({
       ...data,
@@ -47,30 +50,6 @@ async function getUser(filter, select = {}, throwNotFound = true) {
   return user;
 }
 
-async function findById(id) {
-  const document = await User.findById(id).exec();
-  if (!document) {
-    throw new NotFoundException();
-  }
-  return document;
-}
-
-async function findAll(filter, throwNotFound = true) {
-  let queryOptions = {};
-
-  // Check if filter is empty
-  if (Object.keys(filter).length > 0 && filter.constructor === Object) {
-    queryOptions = { ...filter };
-  }
-
-  const result = await User.find(queryOptions);
-
-  if (result.length === 0 && throwNotFound) {
-    throw new NotFoundException(getMessage("user.list.empty"));
-  }
-
-  return result;
-}
 async function updateTokenVersion(_id) {
   const document = await User.findOneAndUpdate(
     { _id },
@@ -82,27 +61,44 @@ async function updateTokenVersion(_id) {
   return document;
 }
 
-async function updateUser(filter, data) {
-  const document = await User.findOneAndUpdate({ ...filter }, data);
-  if (!document) {
-    throw new NotFoundException();
-  }
-  return document;
-}
+async function deleteById(userId, throwNotFound = true) {
+  const session = await mongoose.startSession();
 
-async function deleteById(_id) {
-  const document = await User.deleteOne({ _id }).exec();
-  if (!document) {
-    throw new NotFoundException();
+  try {
+    session.startTransaction();
+
+    // 1. Delete yser from database
+    const document = await User.findByIdAndDelete(userId).session(session);
+    if (document === null && throwNotFound) {
+      throw new NotFoundException();
+    }
+    console.log("User deleted:", document ? document.name : "Not found");
+
+    // 2. Delete all reviews
+    const reviews = await Review.deleteMany({ userId }).session(session);
+    console.log("Reviews deleted:", reviews.length);
+
+    // 3. Commit transaction first
+    await session.commitTransaction();
+    console.log("Transaction committed successfully");
+
+    return { deletedUser: document, deletedReviews: reviews.length };
   }
-  return document;
+  catch (error) {
+    console.error("Error:", error);
+    await session.abortTransaction();
+    throw error;
+  }
+  finally {
+    session.endSession();
+  }
 }
 
 export default {
-  createUser,
-  findById,
-  findAll,
-  updateUser,
+  create,
+  findById: id => findById(User, id),
+  findAll: (filter, populate = null) => findAll(User, filter, populate),
+  update: (filter, data) => update(User, filter, data),
   getUser,
   updateTokenVersion,
   deleteById,

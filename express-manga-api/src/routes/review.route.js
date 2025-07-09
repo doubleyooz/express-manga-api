@@ -15,15 +15,15 @@ const ROUTES = {
 router.post(
   ROUTES.BASE,
   rolesAuth(),
-  ReviewMiddleware.store,
-  ReviewController.store,
+  ReviewMiddleware.create,
+  ReviewController.create,
 );
-router.get(ROUTES.BASE, bypassAll, ReviewMiddleware.list, ReviewController.list);
+router.get(ROUTES.BASE, bypassAll, ReviewMiddleware.findAll, ReviewController.findAll);
 router.get(
   ROUTES.BY_ID,
   bypassAll,
   ReviewMiddleware.findById,
-  ReviewController.findOne,
+  ReviewController.findOneById,
 );
 router.put(
   ROUTES.BY_ID,
@@ -35,7 +35,7 @@ router.delete(
   ROUTES.BY_ID,
   rolesAuth(),
   ReviewMiddleware.findById,
-  ReviewController.remove,
+  ReviewController.deleteById,
 );
 
 export default router;

@@ -1,6 +1,6 @@
 import yup from "yup";
+import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-
 import { user_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
@@ -15,22 +15,6 @@ async function create(req, res, next) {
       .validate(req.body, { abortEarly: false, stripUnknown: true });
 
     req.body = result;
-    next();
-  }
-  catch (err) {
-    next(new BadRequestException(err.errors));
-  }
-}
-
-async function findOneById(req, res, next) {
-  try {
-    const result = await yup
-      .object({
-        userId: rules._id,
-      })
-      .validate(req.query, { stripUnknown: true });
-
-    req.query = result;
     next();
   }
   catch (err) {

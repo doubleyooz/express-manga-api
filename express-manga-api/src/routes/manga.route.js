@@ -1,6 +1,5 @@
 import express from "express";
 
-import { uploadCovers } from "../config/multer.config.js";
 import mangaController from "../controllers/manga.controller.js";
 import { bypassAll, rolesAuth } from "../guards/jwt.guard.js";
 
@@ -13,10 +12,10 @@ const ROUTES = {
   BY_ID: "/manga/:_id",
 };
 
-router.post(ROUTES.BASE, rolesAuth(), uploadCovers, mangaMiddleware.create, mangaController.create);
+router.post(ROUTES.BASE, rolesAuth(), mangaMiddleware.create, mangaController.create);
 router.get(ROUTES.BASE, bypassAll, mangaMiddleware.find, mangaController.find);
-router.get(ROUTES.BY_ID, bypassAll, mangaMiddleware.findOneById, mangaController.findOne);
+router.get(ROUTES.BY_ID, bypassAll, mangaMiddleware.findOneById, mangaController.findOneById);
 router.put(ROUTES.BY_ID, rolesAuth(), mangaMiddleware.update, mangaController.update);
-router.delete(ROUTES.BY_ID, rolesAuth(), mangaMiddleware.findOneById, mangaController.remove);
+router.delete(ROUTES.BY_ID, rolesAuth(), mangaMiddleware.findOneById, mangaController.deleteById);
 
 export default router;

@@ -15,9 +15,9 @@ const ROUTES = {
 };
 // #swagger.tags = ['Authors']
 router.post(ROUTES.BASE, userMiddleware.create, userController.create);
-router.get(ROUTES.BY_ID, userMiddleware.findOneById, userController.findOne);
+router.get(ROUTES.BY_ID, userMiddleware.findOneById, userController.findOneById);
 router.get(ROUTES.BASE, userMiddleware.find, userController.find);
 router.put(ROUTES.BASE, rolesAuth(), userMiddleware.update, userController.update);
-router.delete(ROUTES.BASE, rolesAuth(), userController.remove);
+router.delete(ROUTES.BASE, rolesAuth(), userController.deleteById);
 
 export default router;

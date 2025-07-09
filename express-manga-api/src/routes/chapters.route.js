@@ -16,8 +16,8 @@ const ROUTES = {
 
 router.post(ROUTES.BASE, rolesAuth(), uploadChapters, chapterMiddleware.create, chapterController.create);
 router.get(ROUTES.BASE, bypassAll, chapterMiddleware.find, chapterController.find);
-router.get(ROUTES.BY_ID, bypassAll, chapterMiddleware.findOneById, chapterController.findOne);
+router.get(ROUTES.BY_ID, bypassAll, chapterMiddleware.findOneById, chapterController.findOneById);
 router.put(ROUTES.BY_ID, rolesAuth(), chapterMiddleware.update, chapterController.update);
-router.delete(ROUTES.BY_ID, rolesAuth(), chapterMiddleware.findOneById, chapterController.remove);
+router.delete(ROUTES.BY_ID, rolesAuth(), chapterMiddleware.findOneById, chapterController.deleteById);
 
 export default router;
