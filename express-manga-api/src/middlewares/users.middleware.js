@@ -1,20 +1,18 @@
-import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { userRules as rules } from "../utils/yup.util.js";
+import { userRules as rules, validateBody } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        email: rules.email,
-        password: rules.password,
-        name: rules.name.required(),
-        role: rules.role.required(),
-      })
-      .validate(req.body, { abortEarly: false, stripUnknown: true });
+    const expectedBody = {
+      email: rules.email,
+      password: rules.password,
+      name: rules.name.required(),
+      role: rules.role.required(),
+    };
 
-    req.body = result;
+    req.body = await validateBody({ ...req.body }, expectedBody, { abortEarly: false, stripUnknown: true });
+
     next();
   }
   catch (err) {
@@ -24,14 +22,13 @@ async function create(req, res, next) {
 
 async function find(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        name: rules.name,
-        role: rules.role,
-      })
-      .validate(req.query, { abortEarly: true, stripUnknown: true });
+    const expectedBody = {
+      name: rules.name,
+      role: rules.role,
+    };
 
-    req.query = result;
+    req.query = await validateBody({ ...req.query }, expectedBody);
+
     next();
   }
   catch (err) {
@@ -41,14 +38,12 @@ async function find(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    console.log("update user middleware", req.body);
-    const result = await yup
-      .object({
-        name: rules.name,
-      })
-      .validate(req.body, { abortEarly: false, stripUnknown: true });
+    const expectedBody = {
+      name: rules.name,
+    };
 
-    req.body = result;
+    req.body = await validateBody({ ...req.body }, expectedBody, { abortEarly: false, stripUnknown: true });
+
     next();
   }
   catch (err) {

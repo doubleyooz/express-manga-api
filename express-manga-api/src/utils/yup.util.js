@@ -17,6 +17,7 @@ const DATE_FORMATS = ["MM/dd/yyyy", "MM-dd-yyyy", "yyyy-MM-dd"];
 const URL_REGEX = /^(?=.{4,2048}$)((http|https):\/\/)?(www.)?(?!.*(https|http|www.))[\w-]{1,63}(\.[a-zA-Z]{1,63}){1,5}(\/).([\w?[\-%/@]+)*([^/\w?[\-]+=\w+(&\w+=\w+)*)?$/;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
 const NAME_REGEX = /^(\D*)$/;
+const ROLE_REGEX = /^(scan|user)$/;
 const AUTHOR_TYPE_REGEX = /^(writer|artist)$/;
 const MANGA_TYPE_REGEX = /^(manga|manhwa|manhua)$/;
 const NSFW_REGEX = /^(true|false)$/;
@@ -108,6 +109,14 @@ const nameValidator = yup
 const titleValidator = yup.string().min(2).max(60).trim();
 
 const tokenValidator = yup.string();
+
+async function validateBody(body, expectedBody, validateOptions = { stripUnknown: true }) {
+  return await yup
+    .object({
+      ...expectedBody,
+    })
+    .validate(body, validateOptions);
+}
 
 async function paramsIdResult(params) {
   return await yup
@@ -259,16 +268,7 @@ const chapterRules = {
 const coverRules = {
   title: titleValidator,
   volume: yup.number().min(1),
-  language: yup
-    .string()
-    .default("pt")
-    .test(
-      "Valid language",
-      "This value for ${path} is not a valid option",
-      (value) => {
-        return languages.includes(value.toLowerCase());
-      },
-    ),
+  language: languageValidator,
 };
 
 const reviewRules = {
@@ -288,8 +288,8 @@ const userRules = {
     )
     .required(),
 
-  role: yup.string().matches(new RegExp(`(${SCAN}|${USER})`), null),
-  sign_in_password: yup
+  role: yup.string().matches(ROLE_REGEX, null),
+  signInPassword: yup
     .string()
     .min(8)
     .required(),
@@ -309,4 +309,5 @@ export {
   reviewRules,
   tokenValidator,
   userRules,
+  validateBody,
 };

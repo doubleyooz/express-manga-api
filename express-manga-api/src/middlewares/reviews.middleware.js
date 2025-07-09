@@ -1,20 +1,18 @@
-import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { mongoId, mongoIdReq, paramsIdResult, reviewRules as rules } from "../utils/yup.util.js";
+import { mongoId, mongoIdReq, paramsIdResult, reviewRules as rules, validateBody } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        text: rules.text.required(),
-        rating: rules.rating.required(),
-        mangaId: mongoIdReq,
-        userId: mongoIdReq,
-      })
-      .validate({ ...req.body, userId: req.auth }, { abortEarly: false, stripUnknown: true });
+    const expectedBody = {
+      text: rules.text.required(),
+      rating: rules.rating.required(),
+      mangaId: mongoIdReq,
+      userId: mongoIdReq,
+    };
 
-    req.body = result;
+    req.body = await validateBody({ ...req.body, userId: req.auth }, expectedBody, { abortEarly: false, stripUnknown: true });
+
     next();
   }
   catch (err) {
@@ -24,15 +22,14 @@ async function create(req, res, next) {
 
 async function find(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        text: rules.text,
-        userId: mongoId,
-        mangaId: mongoId,
-      })
-      .validate(req.query, { abortEarly: true, stripUnknown: true });
+    const expectedBody = {
+      text: rules.text,
+      userId: mongoId,
+      mangaId: mongoId,
+    };
 
-    req.query = result;
+    req.query = await validateBody({ ...req.query }, expectedBody);
+
     next();
   }
   catch (err) {
@@ -42,14 +39,12 @@ async function find(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        text: rules.text,
-        rating: rules.rating,
-      })
-      .validate(req.body, { abortEarly: false, stripUnknown: true });
+    const expectedBody = {
+      text: rules.text,
+      rating: rules.rating,
+    };
 
-    req.body = result;
+    req.body = await validateBody({ ...req.body, userId: req.auth }, expectedBody, { abortEarly: false, stripUnknown: true });
 
     req.params = await paramsIdResult(req.params);
     next();

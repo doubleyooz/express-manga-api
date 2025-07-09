@@ -1,22 +1,17 @@
-import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { mongoId, pagesRequired, paramsIdResult, populate, coverRules as rules } from "../utils/yup.util.js";
+import { mongoId, pagesRequired, paramsIdResult, populate, coverRules as rules, validateBody } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
-    console.log(req.body);
-    const result = await yup
-      .object({
-        title: rules.title.required(),
-        volume: rules.volume.required(),
-        mangaId: rules._id.required(),
-        language: rules.language.required(),
-        files: pagesRequired,
-      })
-      .validate({ ...req.body, files: req.files }, { abortEarly: false, stripUnknown: true });
-
-    req.body = result;
+    const expectedBody = {
+      title: rules.title.required(),
+      volume: rules.volume.required(),
+      mangaId: rules._id.required(),
+      language: rules.language.required(),
+      files: pagesRequired,
+    };
+    req.body = await validateBody({ ...req.body, files: req.files }, expectedBody, { abortEarly: false, stripUnknown: true });
     next();
   }
   catch (err) {
@@ -26,15 +21,14 @@ async function create(req, res, next) {
 
 async function find(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        title: rules.title,
-        mangaId: mongoId,
-        populate,
-      })
-      .validate(req.query, { abortEarly: true, stripUnknown: true });
+    const expectedBody = {
+      title: rules.title,
+      mangaId: mongoId,
+      populate,
+    };
 
-    req.query = result;
+    req.query = await validateBody({ ...req.query }, expectedBody);
+
     next();
   }
   catch (err) {
@@ -44,16 +38,14 @@ async function find(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        title: rules.title,
-        volume: rules.volume,
-        mangaId: mongoId,
-        language: rules.language,
-      })
-      .validate(req.body, { abortEarly: false, stripUnknown: true });
+    const expectedBody = {
+      title: rules.title,
+      volume: rules.volume,
+      mangaId: mongoId,
+      language: rules.language,
+    };
 
-    req.body = result;
+    req.body = await validateBody({ ...req.body }, expectedBody);
 
     req.params = await paramsIdResult(req.params);
     next();

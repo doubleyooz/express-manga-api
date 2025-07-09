@@ -1,27 +1,20 @@
-import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { pagesRule, paramsIdResult, authorRules as rules } from "../utils/yup.util.js";
+import { pagesRule, paramsIdResult, authorRules as rules, validateBody } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
-    console.log("authors middleware");
-    const currentDate = new Date();
-    currentDate.setFullYear(currentDate.getFullYear() - 10);
-    const result = await yup
-      .object({
-        types: rules.types.min(1, "Need to provide at least one type").required(),
-        name: rules.name.required(),
-        files: pagesRule,
-        birthDate: rules.birthDate.required(),
-        deathDate: rules.deathDate,
-        socialMedia: rules.socialMedia.required(),
-        biography: rules.biography.required(),
-      })
-      .validate({ ...req.body, files: req.files }, { abortEarly: false, stripUnknown: true });
+    const expectedBody = {
+      types: rules.types.min(1, "Need to provide at least one type").required(),
+      name: rules.name.required(),
+      files: pagesRule,
+      birthDate: rules.birthDate.required(),
+      deathDate: rules.deathDate,
+      socialMedia: rules.socialMedia.required(),
+      biography: rules.biography.required(),
+    };
 
-    console.log({ files: req.files });
-    req.body = result;
+    req.body = await validateBody({ ...req.body, files: req.files }, expectedBody);
     next();
   }
   catch (err) {
@@ -31,14 +24,13 @@ async function create(req, res, next) {
 
 async function find(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        name: rules.name,
-        types: rules.types,
-      })
-      .validate(req.query, { abortEarly: true, stripUnknown: true });
-    console.log({ result });
-    req.query = result;
+    const expectedBody = {
+      name: rules.name,
+      types: rules.types,
+    };
+
+    req.query = await validateBody({ ...req.query }, expectedBody);
+
     next();
   }
   catch (err) {
@@ -48,19 +40,16 @@ async function find(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const result = await yup
-      .object({
-        types: rules.types,
-        name: rules.name,
-        birthDate: rules.birthDate,
-        deathDate: rules.deathDate,
-        socialMedia: rules.socialMedia,
-        biography: rules.biography,
-      })
-      .validate(req.body, { abortEarly: false, stripUnknown: true });
+    const expectedBody = {
+      types: rules.types,
+      name: rules.name,
+      birthDate: rules.birthDate,
+      deathDate: rules.deathDate,
+      socialMedia: rules.socialMedia,
+      biography: rules.biography,
+    };
 
-    req.body = result;
-
+    req.body = await validateBody({ ...req.body }, expectedBody, { abortEarly: false, stripUnknown: true });
     req.params = await paramsIdResult(req.params);
     next();
   }
