@@ -3,6 +3,9 @@ import jwtService from "../services/jwt.service.js";
 import usersService from "../services/users.service.js";
 import { CustomException, InternalServerErrorException, UnauthorisedException } from "../utils/exception.util.js";
 
+const TokenExpiredError = "TokenExpiredError";
+const JsonWebTokenError = "JsonWebTokenError";
+
 function rolesAuth(roles = []) {
   return async (req, res, next) => {
     const token = jwtService.getBearerToken(req);
@@ -35,7 +38,7 @@ function rolesAuth(roles = []) {
     }
     catch (err) {
       // Custom exception
-      if (err instanceof CustomException || err.name === "TokenExpiredError" || err.name === "JsonWebTokenError")
+      if (err instanceof CustomException || err.name === TokenExpiredError || err.name === JsonWebTokenError)
         next(new UnauthorisedException());
 
       // Server error
@@ -63,7 +66,7 @@ async function basicHashAuth(req, res, next) {
   }
   catch (err) {
     // Custom exception
-    if (err instanceof CustomException || err.name === "TokenExpiredError" || err.name === "JsonWebTokenError")
+    if (err instanceof CustomException || err.name === TokenExpiredError || err.name === JsonWebTokenError)
       next(new UnauthorisedException());
 
     // Server error

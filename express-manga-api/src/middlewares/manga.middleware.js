@@ -1,7 +1,7 @@
 import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { paramsIdResult, populate, manga_rules as rules } from "../utils/yup.util.js";
+import { mongoIdReq, paramsIdResult, populate, manga_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
@@ -19,8 +19,9 @@ async function create(req, res, next) {
         nsfw: rules.nsfw.required(),
         type: rules.type.required(),
         languages: rules.languages.required(),
+        owner: mongoIdReq,
       })
-      .validate({ ...req.body }, { abortEarly: false, stripUnknown: true });
+      .validate({ ...req.body, owner: req.auth }, { abortEarly: false, stripUnknown: true });
 
     req.body = result;
     next();

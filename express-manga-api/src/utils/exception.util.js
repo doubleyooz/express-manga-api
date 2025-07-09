@@ -9,7 +9,7 @@ export class CustomException extends Error {
 }
 
 export class UnprocessableEntityException extends CustomException {
-  constructor(message) {
+  constructor(message = HttpStatusMessages.UNPROCESSABLE_ENTITY) {
     super(message);
     this.name = this.constructor.name;
     this.status = HttpStatusCodes.UNPROCESSABLE_ENTITY;

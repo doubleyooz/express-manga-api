@@ -2,9 +2,9 @@ import {
   NotFoundException,
 } from "../utils/exception.util.js";
 
-async function findById(model, id) {
+async function findById(model, id, throwNotFound = true) {
   const document = await model.findById(id).exec();
-  if (!document) {
+  if (!document && throwNotFound) {
     throw new NotFoundException();
   }
   return document;
@@ -26,9 +26,9 @@ async function findAll(model, filter, populate = null) {
   return result;
 }
 
-async function update(model, filter, data) {
+async function update(model, filter, data, throwNotFound = true) {
   const document = await model.findOneAndUpdate({ ...filter }, data);
-  if (!document) {
+  if (!document && throwNotFound) {
     throw new NotFoundException();
   }
   return document;
