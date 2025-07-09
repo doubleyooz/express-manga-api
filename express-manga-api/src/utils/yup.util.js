@@ -45,10 +45,6 @@ function parseDateString(value, originalValue) {
   return isValid(fallbackDate) ? fallbackDate : new Date("invalid");
 }
 
-const auth_rules = {
-  token: yup.string(),
-};
-
 function isValidMongoIdRequired(value) {
   return (
     mongoose.Types.ObjectId.isValid(value)
@@ -89,6 +85,7 @@ const mongoId = yup
 
 const mongoIdReq = yup
   .string()
+  .required()
   .test("isValidMongoId", getMessage("invalid.object.id"), value =>
     isValidMongoIdRequired(value));
 
@@ -101,12 +98,24 @@ const languageValidator = yup
     value => languages.includes(value?.toLowerCase()),
   );
 
-const name = yup
+const nameValidator = yup
   .string()
   .min(3)
   .max(20)
   .trim()
   .matches(NAME_REGEX, "no numbers allowed");
+
+const titleValidator = yup.string().min(2).max(60).trim();
+
+const tokenValidator = yup.string();
+
+async function paramsIdResult(params) {
+  return await yup
+    .object({
+      _id: mongoIdReq,
+    })
+    .validate(params, { stripUnknown: true });
+}
 
 const fileSchema = yup.object({
   fieldname: yup.string().required(),
@@ -126,7 +135,7 @@ const pagesRequired = pagesRule.min(1, "At least one page is required");
 const populate = yup.boolean().default(false);
 
 const manga_rules = {
-  title: yup.string().min(2).max(60).trim(),
+  title: titleValidator,
   genres: yup
     .array(yup.string())
     .min(3, "")
@@ -149,8 +158,8 @@ const manga_rules = {
   nChapters: yup.number().min(1),
   status: yup
     .number()
-    .min(1, getMessage("manga.invalid.code"))
-    .max(6, getMessage("manga.invalid.code")),
+    .min(1)
+    .max(6),
   nsfw: yup.string().matches(NSFW_REGEX, null),
   type: yup
     .string()
@@ -169,9 +178,6 @@ const manga_rules = {
       "Not all given ${path} are valid options",
       items => validateArrayItems(items, languages),
     ),
-
-  _id: mongoIdReq,
-  id_not_required: mongoId,
   artists: yup.array(mongoId),
   writers: yup.array(mongoId),
 };
@@ -189,8 +195,7 @@ const author_rules = {
     .max(2, "Can not provide more than two types")
     .test("Has duplicates", "No duplicates are allow in ${path}", array => hasNoDuplicates(array),
     ),
-  _id: mongoIdReq,
-  name,
+  name: nameValidator,
   birthDate: yup
     .date()
     .transform(parseDateString)
@@ -246,19 +251,13 @@ const author_rules = {
 };
 
 const chapter_rules = {
-  id_not_required: mongoId,
-  _id: mongoIdReq,
-  mangaId: yup.string().max(60),
-  title: yup.string().min(2).max(40).trim(),
+  title: titleValidator,
   number: yup.number().min(1),
   language: languageValidator,
 };
 
 const cover_rules = {
-  id_not_required: mongoId,
-  _id: mongoIdReq,
-  mangaId: yup.string().max(60),
-  title: yup.string().min(2).max(40).trim(),
+  title: titleValidator,
   volume: yup.number().min(1),
   language: yup
     .string()
@@ -273,19 +272,16 @@ const cover_rules = {
 };
 
 const review_rules = {
-  _id: mongoIdReq,
-  id_not_required: mongoId,
   rating: yup.number().min(0).max(5),
   text: yup.string().min(2).max(500).trim(),
 };
 
 const user_rules = {
-  _id: mongoIdReq,
   email: yup.string().email().trim().required(),
-  name,
+  name: nameValidator,
   password: yup
     .string()
-    .min(8, getMessage("user.invalid.password.short"))
+    .min(8)
     .matches(
       PASSWORD_REGEX,
       getMessage("user.invalid.password.weak"),
@@ -295,12 +291,11 @@ const user_rules = {
   role: yup.string().matches(new RegExp(`(${SCAN}|${USER})`), null),
   sign_in_password: yup
     .string()
-    .min(8, getMessage("user.invalid.password.short"))
+    .min(8)
     .required(),
 };
 
 export {
-  auth_rules,
   author_rules,
   chapter_rules,
   cover_rules,
@@ -309,7 +304,9 @@ export {
   mongoIdReq,
   pagesRequired,
   pagesRule,
+  paramsIdResult,
   populate,
   review_rules,
+  tokenValidator,
   user_rules,
 };

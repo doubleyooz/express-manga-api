@@ -35,7 +35,7 @@ async function findOneById(_service, req, res, next) {
 }
 
 async function find(_service, req, res, next) {
-  const { title, mangaId, name, populate } = req.query;
+  const { title, mangaId, userId, name, populate } = req.query;
 
   const newToken = req.newToken || null;
   req.newToken = null;
@@ -59,6 +59,10 @@ async function find(_service, req, res, next) {
 
   if (mangaId) {
     search.mangaId = mangaId;
+  }
+
+  if (userId) {
+    search.userId = userId;
   }
 
   try {

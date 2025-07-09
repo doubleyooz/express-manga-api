@@ -1,7 +1,7 @@
 import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { pagesRequired, populate, chapter_rules as rules } from "../utils/yup.util.js";
+import { mongoId, pagesRequired, paramsIdResult, populate, chapter_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
@@ -29,7 +29,7 @@ async function find(req, res, next) {
     const result = await yup
       .object({
         title: rules.title,
-        mangaId: rules.manga_id,
+        mangaId: mongoId,
         populate,
       })
       .validate(req.query, { abortEarly: true, stripUnknown: true });
@@ -48,20 +48,13 @@ async function update(req, res, next) {
       .object({
         title: rules.title,
         number: rules.number,
-        mangaId: rules.mangaId,
         language: rules.language,
       })
       .validate(req.body, { abortEarly: false, stripUnknown: true });
 
     req.body = result;
 
-    const paramsResult = await yup
-      .object({
-        chapterId: rules._id,
-      })
-      .validate(req.params, { stripUnknown: true });
-
-    req.params = paramsResult;
+    req.params = await paramsIdResult(req.params);
     next();
   }
   catch (err) {

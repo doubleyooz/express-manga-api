@@ -39,10 +39,9 @@ async function create(data) {
         getMessage("cover.error.twinned"),
       );
     }
-    throw new InternalServerErrorException({
-      code: err.code,
-      message: "Error while creating cover",
-    });
+    throw new InternalServerErrorException(
+      "Error while creating cover",
+    );
   }
   finally {
     session.endSession();

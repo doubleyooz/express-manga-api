@@ -1,40 +1,32 @@
-import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
-import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import yup from "yup";
-import jwtService from "../services/jwt.service.js";
 import { UnauthorisedException } from "../utils/exception.util.js";
-import { auth_rules, user_rules as rules } from "../utils/yup.util.js";
+import { user_rules as rules, tokenValidator } from "../utils/yup.util.js";
 
 async function basicLogin(req, res, next) {
-  const hash = jwtService.getBearerToken(req, true);
+  try {
+    const { email, supposedPassword } = req.body;
+    
+    const result = await yup
+      .object({
+        email: rules.email,
+        password: rules.password,
+      })
+      .validate({ email, password: supposedPassword }, { abortEarly: false });
 
-  if (!hash) {
-    return res
-      .status(HttpStatusCodes.UNAUTHORIZED)
-      .json({ message: HttpStatusMessages.UNAUTHORIZED });
+    req.body = result;
+
+    next();
   }
-
-  const [email, supposedPassword] = Buffer.from(hash, "base64")
-    .toString()
-    .split(":");
-
-  const result = await yup
-    .object({
-      email: rules.email,
-      password: rules.password,
-    })
-    .validate({ email, password: supposedPassword }, { abortEarly: false });
-
-  req.body = result;
-
-  next();
+  catch (err) {
+    next(err);
+  }
 }
 
 async function activateAccount(req, res, next) {
   try {
     const result = await yup
       .object({
-        token: auth_rules.token.required(),
+        token: tokenValidator.required(),
       })
       .validate(req.params, { stripUnknown: true });
 

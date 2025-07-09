@@ -25,10 +25,9 @@ async function create(data) {
     if (err.code === 11000) {
       throw new UnprocessableEntityException(getMessage("manga.error.twinned"));
     }
-    throw new InternalServerErrorException({
-      code: err.code,
-      message: "Error while creating manga",
-    });
+    throw new InternalServerErrorException(
+      "Error while creating manga",
+    );
   }
 }
 

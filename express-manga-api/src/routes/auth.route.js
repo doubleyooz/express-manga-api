@@ -1,10 +1,9 @@
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
+import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import express from "express";
 import authController from "../controllers/auth.controller.js";
-import { rolesAuth } from "../guards/jwt.guard.js";
+import { basicHashAuth, rolesAuth } from "../guards/jwt.guard.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
-
-import { getMessage } from "../utils/message.util.js";
 
 const router = express.Router();
 
@@ -16,19 +15,15 @@ const ROUTES = {
 };
 
 router.get(ROUTES.BASE, (req, res) => {
-  return res.status(HttpStatusCodes.OK).json({ message: getMessage("default.return") });
+  return res.status(HttpStatusCodes.OK).json({ message: HttpStatusMessages.OK });
 });
 
-router.get(ROUTES.LOGIN, authMiddleware.basicLogin, authController.basicLogin);
+router.get(ROUTES.LOGIN, basicHashAuth, authMiddleware.basicLogin, authController.basicLogin);
 
 router.get(ROUTES.LOGOUT, rolesAuth(), authController.logout);
 
-router.get(
-  ROUTES.ACTIVATE,
-  authMiddleware.activateAccount,
-  authController.activateAccount,
-);
+router.get(ROUTES.ACTIVATE, authMiddleware.activateAccount, authController.activateAccount);
 
-// router.get("/me", Authorize(), SessionController.me);
+// router.get("/me", rolesAuth(), authController.me);
 
 export default router;

@@ -45,6 +45,33 @@ function rolesAuth(roles = []) {
   };
 }
 
+async function basicHashAuth(req, res, next) {
+  try {
+    const hash = jwtService.getBearerToken(req, true);
+
+    if (!hash) {
+      throw new UnauthorisedException();
+    }
+
+    const [email, supposedPassword] = Buffer.from(hash, "base64")
+      .toString()
+      .split(":");
+
+    req.body = { email, supposedPassword };
+
+    next();
+  }
+  catch (err) {
+    // Custom exception
+    if (err instanceof CustomException || err.name === "TokenExpiredError" || err.name === "JsonWebTokenError")
+      next(new UnauthorisedException());
+
+    // Server error
+    console.log("server error");
+    next(new InternalServerErrorException());
+  }
+}
+
 async function bypassAll(req, res, next) {
   const token = jwtService.getBearerToken(req);
 
@@ -75,4 +102,4 @@ async function bypassAll(req, res, next) {
   }
 }
 
-export { bypassAll, rolesAuth };
+export { basicHashAuth, bypassAll, rolesAuth };

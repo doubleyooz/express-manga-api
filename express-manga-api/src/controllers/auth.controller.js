@@ -1,4 +1,3 @@
-import * as crypto from "node:crypto";
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 
@@ -17,16 +16,17 @@ import { matchPassword } from "../utils/password.util.js";
 async function basicLogin(req, res, next) {
   try {
     const { email, password } = req.body;
-    // console.log(crypto.randomBytes(16).toString("hex"));
+
     const user = await usersService.getUser(
       { email, active: true },
       { password: true, role: true, tokenVersion: true },
+      false
     );
 
     const match = user ? matchPassword(user.password, password) : null;
 
     if (!match) {
-      throw UnauthorisedException();
+      throw new UnauthorisedException();
     }
 
     const payload = {
@@ -48,7 +48,7 @@ async function basicLogin(req, res, next) {
 
     user.password = undefined;
     return res.status(HttpStatusCodes.OK).json({
-      message: getMessage("user.valid.sign_in.success"),
+      message: HttpStatusMessages.OK,
       data: token,
     });
   }
@@ -65,7 +65,7 @@ async function logout(req, res, next) {
     );
 
     if (!user)
-      throw UnauthorisedException();
+      throw new UnauthorisedException();
 
     delete req.newToken;
     delete req.auth;

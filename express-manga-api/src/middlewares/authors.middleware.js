@@ -1,7 +1,7 @@
 import yup from "yup";
 import { findOneById } from "../database/abstract.middleware.js";
 import { BadRequestException } from "../utils/exception.util.js";
-import { pagesRule, author_rules as rules } from "../utils/yup.util.js";
+import { pagesRule, paramsIdResult, author_rules as rules } from "../utils/yup.util.js";
 
 async function create(req, res, next) {
   try {
@@ -61,13 +61,7 @@ async function update(req, res, next) {
 
     req.body = result;
 
-    const paramsResult = await yup
-      .object({
-        _id: rules._id,
-      })
-      .validate(req.params, { stripUnknown: true });
-
-    req.params = paramsResult;
+    req.params = await paramsIdResult(req.params);
     next();
   }
   catch (err) {

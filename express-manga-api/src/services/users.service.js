@@ -29,10 +29,9 @@ async function create(data) {
         getMessage("user.error.sign_up.twinned"),
       );
     }
-    throw new InternalServerErrorException({
-      code: err.code,
-      message: "Error while creating user",
-    });
+    throw new InternalServerErrorException(
+      "Error while creating user",
+    );
   }
 }
 
