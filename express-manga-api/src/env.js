@@ -22,15 +22,11 @@ const EnvSchema = yup.object({
 
   BCRYPT_SALT: yup.number().default(10),
   REFRESH_TOKEN_SECRET: yup.string().required(),
-  // Remove hardcoded credentials - use environment variable
-  DB_CONNECTION: yup.string().required(),
 
-  // Add DATABASE_AUTH_TOKEN to schema since you're checking for it
-  DATABASE_AUTH_TOKEN: yup.string().when("NODE_ENV", {
-    is: "production",
-    then: schema => schema.required("Must be set when NODE_ENV is 'production'"),
-    otherwise: schema => schema.optional(),
-  }),
+  DB_NAME: yup.string().default("MangaReader"),
+  DB_CLUSTER: yup.string().required(),
+  DB_USER: yup.string().required(),
+  DB_PASS: yup.string().required(),
 
   JWT_ID: yup.string().required(),
   JWT_REFRESH_ID: yup.string().required(),

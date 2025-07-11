@@ -21,7 +21,7 @@
   "dependencies": {
     "@doubleyooz/wardenhttp": "^1.0.4",
     "@scalar/express-api-reference": "^0.8.7",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",

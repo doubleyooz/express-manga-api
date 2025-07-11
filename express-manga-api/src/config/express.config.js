@@ -5,7 +5,7 @@ import swaggerUi from "swagger-ui-express";
 import { apiReference } from '@scalar/express-api-reference'
 import corsOptions from "./cors.config.js";
 
-import swaggerDocument from "../config/swagger.json" assert { type: "json" };
+import swaggerDocument from "../config/swagger.json" with { type: "json" };
 
 import { errorHandler } from "../middlewares/error.middleware.js";
 
