@@ -90,8 +90,10 @@ export const CHAPTER_PROJECTION = {
 
 export const AUTHOR = "Author";
 export const USER = "User";
-export const READER = "Reader";
-export const SCAN = "Scan";
+export const ROLES = {
+  SCAN: "Scan",
+  READER: "Reader",
+};
 export const MANGA = "Manga";
 export const CHAPTER = "Chapter";
 export const COVER = "Cover";

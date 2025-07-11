@@ -5,9 +5,8 @@ import {
   genres,
   languages,
   mangaType,
-  SCAN,
+  ROLES,
   themes,
-  USER,
 } from "./constant.util.js";
 
 import { getMessage } from "./message.util.js";
@@ -17,7 +16,7 @@ const DATE_FORMATS = ["MM/dd/yyyy", "MM-dd-yyyy", "yyyy-MM-dd"];
 const URL_REGEX = /^(?=.{4,2048}$)((http|https):\/\/)?(www.)?(?!.*(https|http|www.))[\w-]{1,63}(\.[a-zA-Z]{1,63}){1,5}(\/).([\w?[\-%/@]+)*([^/\w?[\-]+=\w+(&\w+=\w+)*)?$/;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
 const NAME_REGEX = /^(\D*)$/;
-const ROLE_REGEX = /^(scan|user)$/;
+const ROLE_REGEX = /^(scan|reader)$/;
 const AUTHOR_TYPE_REGEX = /^(writer|artist)$/;
 const MANGA_TYPE_REGEX = /^(manga|manhwa|manhua)$/;
 const NSFW_REGEX = /^(true|false)$/;

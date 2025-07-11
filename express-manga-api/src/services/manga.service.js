@@ -11,6 +11,9 @@ import {
 } from "../utils/exception.util.js";
 import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
+import {
+  ROLES,
+} from "./constant.util.js";
 
 async function create(data) {
   const session = await mongoose.startSession();
@@ -23,7 +26,7 @@ async function create(data) {
 
     const currentUser = await User.findByIdAndUpdate(
       data.owner,
-      { $push: { mangas: newManga[0]._id } },
+      { $push: { mangas: newManga[0]._id }, role: ROLES.SCAN },
       { session },
     );
 

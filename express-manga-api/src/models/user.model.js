@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MANGA, READER, SCAN, USER } from "../utils/constant.util.js";
+import { MANGA, ROLES, USER } from "../utils/constant.util.js";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -8,8 +8,8 @@ const UserSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: [READER, SCAN],
-      default: READER,
+      enum: [ROLES.READER, ROLES.SCAN],
+      default: ROLES.READER,
     },
 
     name: {
