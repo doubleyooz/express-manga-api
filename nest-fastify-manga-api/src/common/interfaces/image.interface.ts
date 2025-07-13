@@ -1,4 +1,6 @@
-export interface CoverImage {
-  url: string;
-  number: number;
+export interface ImageInterface {
+  size: number;
+  filename: string;
+  destination: string;
+  mimetype: string;
 }

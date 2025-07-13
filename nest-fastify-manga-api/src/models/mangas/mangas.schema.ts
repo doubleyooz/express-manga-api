@@ -6,20 +6,13 @@ import { TYPES } from './constants/types';
 import { STATUS } from './constants/status';
 import { Chapter } from '../chapters/chapters.schema';
 import { User } from '../users/users.schema';
-import { CoverImage } from '../../common/interfaces/image.interface';
+import { Cover } from '../covers/covers.schema';
+import { AbstractDocument } from 'src/database/abstract.schema';
 
 export type MangaDocument = HydratedDocument<Manga>;
 
 @Schema()
-export class Manga {
-  @Prop([
-    {
-      url: String,
-      number: Number,
-    },
-  ])
-  coverImage?: CoverImage[];
-
+export class Manga extends AbstractDocument {
   @Prop({ unique: true })
   title: string;
 
@@ -41,13 +34,16 @@ export class Manga {
   @Prop({ default: false })
   nsfw: boolean;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: Chapter.name }] })
+  @Prop({ type: [{ type: Types.ObjectId, ref: Cover.name }], default: [] })
+  covers: Types.ObjectId[];
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: Chapter.name }], default: [] })
   chapters: Types.ObjectId[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: User.name }] })
+  @Prop({ type: [{ type: Types.ObjectId, ref: User.name }], default: [] })
   subscribers: Types.ObjectId[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: User.name }] })
+  @Prop({ type: [{ type: Types.ObjectId, ref: User.name }], default: [] })
   likes: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId, ref: User.name })

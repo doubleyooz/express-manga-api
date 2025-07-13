@@ -1,6 +1,6 @@
 import { IsEmail, IsMongoId, IsOptional, IsString } from 'class-validator';
 
-export class FindAllUsersRequest {
+export class FindUsersRequest {
   @IsString()
   @IsOptional()
   name: string;
@@ -10,7 +10,6 @@ export class FindAllUsersRequest {
   email: string;
 
   @IsMongoId()
-  @IsString()
   @IsOptional()
   _id: string;
 }

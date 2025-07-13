@@ -14,7 +14,7 @@ import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { TokenPayload } from '../../auth/interfaces/token-payload.interface';
-import { FindAllUsersRequest } from './dto/find-all-users.request';
+import { FindUsersRequest } from './dto/find-users.request';
 
 @Controller('users')
 export class UsersController {
@@ -23,7 +23,7 @@ export class UsersController {
   @Post()
   @UseInterceptors(NoFilesInterceptor())
   createUser(@Body() request: CreateUserRequest) {
-    return this.usersService.createUser(request);
+    return this.usersService.create(request);
   }
 
   @Get('me')
@@ -34,7 +34,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll(@Query() request: FindAllUsersRequest) {
+  findAll(@Query() request: FindUsersRequest) {
     return this.usersService.findAll({ ...request });
   }
 }

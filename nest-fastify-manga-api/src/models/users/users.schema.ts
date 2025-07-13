@@ -1,10 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { AbstractDocument } from 'src/database/abstract.schema';
+import { USER } from './constants/user';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema()
-export class User {
+export class User extends AbstractDocument {
   @Prop({ unique: true })
   email: string;
 
@@ -20,7 +22,7 @@ export class User {
   @Prop({ default: false })
   active: boolean;
 
-  @Prop({ default: 'User' })
+  @Prop({ default: USER })
   role: string;
 }
 

@@ -4,19 +4,19 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 
-import { CreateChapterRequest } from './dto/create-chapter.request';
+import { CreateCoverRequest } from './dto/create-cover.request';
 import { ConfigService } from '@nestjs/config';
-import { ChaptersRepository } from './chapters.repository';
-import { FindChaptersRequest } from './dto/find-chapters.request';
+import { CoversRepository } from './covers.repository';
+import { FindCoversRequest } from './dto/find-covers.request';
 
 @Injectable()
-export class ChaptersService {
+export class CoversService {
   constructor(
-    private readonly _repository: ChaptersRepository,
+    private readonly _repository: CoversRepository,
     private readonly configService: ConfigService,
   ) {}
 
-  async create(data: CreateChapterRequest) {
+  async create(data: CreateCoverRequest) {
     console.log(data);
     try {
       const newDocument = await this._repository.create({
@@ -29,12 +29,12 @@ export class ChaptersService {
 
       throw new InternalServerErrorException({
         code: err.code,
-        msg: 'Error while creating chapter',
+        msg: 'Error while creating cover',
       });
     }
   }
 
-  async find(filter: FindChaptersRequest) {
+  async find(filter: FindCoversRequest) {
     const result = await this._repository.find(filter);
     return result;
   }

@@ -1,3 +1,6 @@
+import { Types } from 'mongoose';
+import { Exclude, Transform } from 'class-transformer';
+
 import {
   IsArray,
   IsBoolean,
@@ -5,7 +8,6 @@ import {
   IsString,
   IsEnum,
   IsMongoId,
-  ValidateNested,
   IsOptional,
 } from 'class-validator';
 import { GENRES } from '../constants/genres';
@@ -46,22 +48,22 @@ export class CreateMangaRequest {
   @IsBoolean()
   nsfw: boolean;
 
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @IsMongoId({ each: true })
-  chapters: string[];
-
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @IsMongoId({ each: true })
-  subscribers: string[];
-
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @IsMongoId({ each: true })
-  likes: string[];
-
   @IsMongoId()
-  @IsString()
-  owner: string;
+  owner: Types.ObjectId;
+
+  @Exclude()
+  @Transform(() => [])
+  covers: Types.ObjectId[];
+
+  @Exclude()
+  @Transform(() => [])
+  chapters: Types.ObjectId[];
+
+  @Exclude()
+  @Transform(() => [])
+  subscribers: Types.ObjectId[];
+
+  @Exclude()
+  @Transform(() => [])
+  likes: Types.ObjectId[];
 }

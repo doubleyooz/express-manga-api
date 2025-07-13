@@ -13,7 +13,7 @@ import { TYPES } from '../constants/types';
 import { STATUS } from '../constants/status';
 import { Type } from 'class-transformer';
 
-export class FindAllMangasRequest {
+export class FindMangasRequest {
   @IsOptional()
   @IsString()
   @IsNotEmpty()

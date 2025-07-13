@@ -1,4 +1,10 @@
-import { IsEmail, IsStrongPassword } from 'class-validator';
+import { Exclude } from 'class-transformer';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsStrongPassword,
+} from 'class-validator';
 
 export class CreateUserRequest {
   @IsEmail()
@@ -6,4 +12,17 @@ export class CreateUserRequest {
 
   @IsStrongPassword()
   password: string;
+
+  @IsOptional()
+  @IsString()
+  role: string;
+
+  @Exclude()
+  tokenVersion: number;
+
+  @Exclude()
+  resetLink: string;
+
+  @Exclude()
+  active: boolean;
 }
