@@ -1,9 +1,11 @@
-import mongoose from "mongoose";
-import { findAll, findById, update } from "../database/abstract.repository.js";
+import { abortTransaction, commitTransaction, endSession, findAll, findById, getSession, startTransaction, update } from "../database/abstract.repository.js";
 import Chapter from "../models/chapter.model.js";
 import Manga from "../models/manga.model.js";
 import Review from "../models/review.model.js";
 import User from "../models/user.model.js";
+import {
+  ROLES,
+} from "../utils/constant.util.js";
 import {
   InternalServerErrorException,
   NotFoundException,
@@ -11,14 +13,11 @@ import {
 } from "../utils/exception.util.js";
 import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
-import {
-  ROLES,
-} from "./constant.util.js";
 
 async function create(data) {
-  const session = await mongoose.startSession();
+  const session = await getSession();
   try {
-    session.startTransaction();
+    startTransaction(session);
 
     const newManga = await Manga.create({
       ...data,
@@ -26,23 +25,22 @@ async function create(data) {
 
     const currentUser = await User.findByIdAndUpdate(
       data.owner,
-      { $push: { mangas: newManga[0]._id }, role: ROLES.SCAN },
+      { $push: { mangas: newManga[0]._id } },
       { session },
     );
 
-    if (!currentUser) {
+    if (!currentUser || currentUser.role !== ROLES.SCAN) {
       throw new UnprocessableEntityException();
     }
 
-    await session.commitTransaction();
-    console.log("Transaction committed successfully");
+    await commitTransaction(session);
 
     return newManga;
   }
   catch (err) {
     console.error("Error:", err);
 
-    await session.abortTransaction();
+    await abortTransaction(session);
 
     if (err instanceof UnprocessableEntityException)
       throw err;
@@ -56,7 +54,7 @@ async function create(data) {
     );
   }
   finally {
-    session.endSession();
+    endSession(session);
   }
 }
 
@@ -80,10 +78,10 @@ async function likeManga(mangaId, data, throwNotFound = true) {
 }
 
 async function deleteById(mangaId, throwNotFound = true) {
-  const session = await mongoose.startSession();
+  const session = await getSession();
 
   try {
-    session.startTransaction();
+    startTransaction(session);
 
     // 1. Find all chapters with their images
     const chapters = await Chapter.find({ mangaId }).session(session);
@@ -123,8 +121,7 @@ async function deleteById(mangaId, throwNotFound = true) {
     console.log("Total images to delete:", allImages.length);
 
     // 7. Commit transaction first
-    await session.commitTransaction();
-    console.log("Transaction committed successfully");
+    await commitTransaction(session);
 
     // 8. Delete files AFTER successful DB operations
     if (allImages.length > 0) {
@@ -141,11 +138,11 @@ async function deleteById(mangaId, throwNotFound = true) {
   }
   catch (error) {
     console.error("Error:", error);
-    await session.abortTransaction();
+    await abortTransaction(session);
     throw error;
   }
   finally {
-    session.endSession();
+    endSession(session);
   }
 }
 
@@ -156,6 +153,5 @@ export default {
   findAll: (filter, populate = null) => findAll(Manga, filter, populate),
   update: (filter, data) => update(Manga, filter, data),
   deleteById,
-
   likeManga,
 };

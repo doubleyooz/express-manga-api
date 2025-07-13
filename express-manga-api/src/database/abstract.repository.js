@@ -1,6 +1,28 @@
+import mongoose from "mongoose";
 import {
   NotFoundException,
 } from "../utils/exception.util.js";
+
+async function getSession() {
+  return await mongoose.startSession();
+}
+
+function startTransaction(session) {
+  session.startTransaction();
+}
+
+async function abortTransaction(session) {
+  await session.abortTransaction();
+}
+
+async function commitTransaction(session) {
+  await session.commitTransaction();
+  console.log("Transaction committed successfully");
+}
+
+function endSession(session) {
+  session.endSession();
+}
 
 async function findById(model, id, throwNotFound = true) {
   const document = await model.findById(id).exec();
@@ -35,7 +57,12 @@ async function update(model, filter, data, throwNotFound = true) {
 }
 
 export {
+  abortTransaction,
+  commitTransaction,
+  endSession,
   findAll,
   findById,
+  getSession,
+  startTransaction,
   update,
 };

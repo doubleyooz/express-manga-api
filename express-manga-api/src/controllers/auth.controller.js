@@ -20,7 +20,7 @@ async function basicLogin(req, res, next) {
     const user = await usersService.getUser(
       { email, active: true },
       { password: true, role: true, tokenVersion: true },
-      false
+      false,
     );
 
     const match = user ? matchPassword(user.password, password) : null;

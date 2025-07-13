@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import { findAll, findById, update } from "../database/abstract.repository.js";
+import { abortTransaction, commitTransaction, endSession, findAll, findById, getSession, startTransaction, update } from "../database/abstract.repository.js";
 import Chapter from "../models/chapter.model.js";
 import Manga from "../models/manga.model.js";
 import {
@@ -12,9 +11,10 @@ import { getMessage } from "../utils/message.util.js";
 
 async function create(data) {
   console.log("Creating chapter with data:", data);
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  const session = await getSession();
+
   try {
+    startTransaction(session);
     const doesMangaExist = await Manga.exists({ _id: data.mangaId });
     if (!doesMangaExist) {
       throw new NotFoundException();
@@ -25,11 +25,11 @@ async function create(data) {
       { $push: { chapters: newChapter[0]._id } },
       { session },
     );
-    await session.commitTransaction();
+    await commitTransaction(session);
     return newChapter[0];
   }
   catch (err) {
-    await session.abortTransaction();
+    await abortTransaction(session);
     await deleteFiles(data.files);
     if (err.name === NotFoundException.name)
       throw new NotFoundException();
@@ -42,14 +42,15 @@ async function create(data) {
     throw new InternalServerErrorException("Error while creating chapter");
   }
   finally {
-    session.endSession();
+    endSession(session);
   }
 }
 
 async function deleteById(_id, throwNotFound = true) {
-  const session = await mongoose.startSession();
+  const session = await getSession();
+  
   try {
-    session.startTransaction();
+    startTransaction(session);
     const document = await Chapter.findByIdAndDelete({ _id }).exec();
 
     if (document === null && throwNotFound) {
@@ -62,8 +63,7 @@ async function deleteById(_id, throwNotFound = true) {
       { session },
     );
 
-    await session.commitTransaction();
-    console.log("Transaction committed successfully");
+    await commitTransaction(session);
 
     const allImages = document.files;
     // 6. Delete files AFTER successful DB operations
@@ -79,14 +79,14 @@ async function deleteById(_id, throwNotFound = true) {
     return document;
   }
   catch (err) {
-    await session.abortTransaction();
+    await abortTransaction(session);
     if (err.name === NotFoundException.name && throwNotFound) {
       throw new NotFoundException();
     }
     throw new InternalServerErrorException("Error while deleting chapter");
   }
   finally {
-    session.endSession();
+    endSession(session);
   }
 }
 

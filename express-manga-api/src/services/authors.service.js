@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import { findAll, findById, update } from "../database/abstract.repository.js";
+import { abortTransaction, commitTransaction, endSession, findAll, findById, getSession, startTransaction, update } from "../database/abstract.repository.js";
 import Author from "../models/author.model.js";
 import Manga from "../models/manga.model.js";
 import {
@@ -33,10 +32,10 @@ async function create(data) {
 }
 
 async function deleteById(authorId, throwNotFound = true) {
-  const session = await mongoose.startSession();
+  const session = await getSession();
 
   try {
-    session.startTransaction();
+    startTransaction(session);
 
     // 1. Find all chapters with their images
     const document = await Author.findByIdAndDelete(authorId).session(session);
@@ -60,8 +59,7 @@ async function deleteById(authorId, throwNotFound = true) {
     console.log("Total images to delete:", allImages.length);
 
     // 5. Commit transaction first
-    await session.commitTransaction();
-    console.log("Transaction committed successfully");
+    await commitTransaction(session);
 
     // 6. Delete files AFTER successful DB operations
     if (allImages.length > 0) {
@@ -78,14 +76,14 @@ async function deleteById(authorId, throwNotFound = true) {
   }
   catch (error) {
     console.error("Error:", error);
-    await session.abortTransaction();
+    await abortTransaction(session);
     if (error instanceof CustomException) {
       throw new NotFoundException();
     }
     throw error;
   }
   finally {
-    session.endSession();
+    endSession(session);
   }
 }
 

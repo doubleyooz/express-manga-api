@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import { findAll, findById, update } from "../database/abstract.repository.js";
+import { abortTransaction, commitTransaction, endSession, findAll, findById, getSession, startTransaction, update } from "../database/abstract.repository.js";
 import Manga from "../models/manga.model.js";
 import Review from "../models/review.model.js";
 import User from "../models/user.model.js";
@@ -13,9 +12,10 @@ import { getMessage } from "../utils/message.util.js";
 
 async function create(data) {
   console.log("Creating review with data:", data);
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  const session = await getSession();
+
   try {
+    startTransaction(session);
     const doesMangaExist = await Manga.exists({ _id: data.mangaId });
     if (!doesMangaExist) {
       throw new NotFoundException();
@@ -26,11 +26,11 @@ async function create(data) {
       { $push: { reviews: newReview[0]._id } },
       { session },
     );
-    await session.commitTransaction();
+    await commitTransaction(session);
     return newReview[0];
   }
   catch (err) {
-    await session.abortTransaction();
+    await abortTransaction(session);
     await deleteFiles(data.files);
     if (err.name === NotFoundException.name)
       throw new NotFoundException();
@@ -46,14 +46,14 @@ async function create(data) {
     });
   }
   finally {
-    session.endSession();
+    endSession(session);
   }
 }
 
 async function deleteById(_id, throwNotFound = true) {
-  const session = await mongoose.startSession();
+  const session = await getSession();
   try {
-    session.startTransaction();
+    startTransaction(session);
     const document = await Review.findByIdAndDelete({ _id }).exec();
 
     if (document === null && throwNotFound) {
@@ -72,13 +72,12 @@ async function deleteById(_id, throwNotFound = true) {
       { session },
     );
 
-    await session.commitTransaction();
-    console.log("Transaction committed successfully");
+    await commitTransaction(session);
 
     return document;
   }
   catch (err) {
-    await session.abortTransaction();
+    await abortTransaction(session);
     if (err.name === NotFoundException.name && throwNotFound) {
       throw new NotFoundException();
     }
@@ -88,7 +87,7 @@ async function deleteById(_id, throwNotFound = true) {
     });
   }
   finally {
-    session.endSession();
+    endSession(session);
   }
 }
 

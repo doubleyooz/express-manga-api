@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { findAll, findById, update } from "../database/abstract.repository.js";
+import { abortTransaction, commitTransaction, endSession, findAll, findById, getSession, startTransaction, update } from "../database/abstract.repository.js";
 import Review from "../models/review.model.js";
 import User from "../models/user.model.js";
+import { ROLES } from "../utils/constant.util.js";
 import {
   InternalServerErrorException,
   NotFoundException,
@@ -15,7 +15,7 @@ async function create(data) {
   try {
     const newUser = await User.create({
       ...data,
-      role: data.role || "User",
+      role: data.role || ROLES.READER,
       password: await hashPassword(data.password),
     });
 
@@ -61,10 +61,10 @@ async function updateTokenVersion(_id) {
 }
 
 async function deleteById(userId, throwNotFound = true) {
-  const session = await mongoose.startSession();
+  const session = await getSession();
 
   try {
-    session.startTransaction();
+    startTransaction(session);
 
     // 1. Delete yser from database
     const document = await User.findByIdAndDelete(userId).session(session);
@@ -78,18 +78,17 @@ async function deleteById(userId, throwNotFound = true) {
     console.log("Reviews deleted:", reviews.length);
 
     // 3. Commit transaction first
-    await session.commitTransaction();
-    console.log("Transaction committed successfully");
+    await commitTransaction(session);
 
     return { deletedUser: document, deletedReviews: reviews.length };
   }
   catch (error) {
     console.error("Error:", error);
-    await session.abortTransaction();
+    await abortTransaction(session);
     throw error;
   }
   finally {
-    session.endSession();
+    endSession(session);
   }
 }
 
