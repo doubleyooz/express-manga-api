@@ -73,7 +73,7 @@ const MangaSchema = new mongoose.Schema(
         ref: CHAPTER,
       },
     ],
-    owner: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: USER,
     },

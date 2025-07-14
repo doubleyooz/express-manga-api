@@ -47,7 +47,7 @@ export class Manga extends AbstractDocument {
   likes: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId, ref: User.name })
-  owner: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 export const MangaSchema = SchemaFactory.createForClass(Manga);

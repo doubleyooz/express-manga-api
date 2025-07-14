@@ -18,7 +18,8 @@ import { CreateCoverRequest } from './dto/create-cover.request';
 export class CoversController {
   constructor(private readonly coversService: CoversService) {}
   @Post()
-  @UseInterceptors(FileInterceptor('files', { limits: { files: 10 } }))
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('files', { limits: { files: 4 } }))
   createUser(
     @Body() request: CreateCoverRequest,
     @UploadedFiles() files: Array<File>,
@@ -28,7 +29,6 @@ export class CoversController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   findAll(@Query() request: FindCoversRequest) {
     return this.coversService.find({ ...request });
   }

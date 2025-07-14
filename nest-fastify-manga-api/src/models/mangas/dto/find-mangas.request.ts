@@ -52,5 +52,5 @@ export class FindMangasRequest {
   @IsOptional()
   @IsMongoId()
   @IsString()
-  owner: string;
+  userId: string;
 }

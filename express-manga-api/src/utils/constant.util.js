@@ -32,7 +32,7 @@ export const MANGA_PROJECTION = {
     status: 1,
     writerId: 1,
     artistId: 1,
-    owner: 1,
+    userId: 1,
     rating: 1,
     themes: 1,
     genres: 1,

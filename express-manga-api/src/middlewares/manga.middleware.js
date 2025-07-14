@@ -16,7 +16,7 @@ async function create(req, res, next) {
       nsfw: rules.nsfw.required(),
       type: rules.type.required(),
       languages: rules.languages.required(),
-      owner: mongoIdReq,
+      userId: mongoIdReq,
     };
 
     req.body = await validateBody({ ...req.body }, expectedBody, { abortEarly: false, stripUnknown: true });

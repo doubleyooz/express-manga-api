@@ -24,7 +24,7 @@ async function create(data) {
     }).session(session);
 
     const currentUser = await User.findByIdAndUpdate(
-      data.owner,
+      data.userId,
       { $push: { mangas: newManga[0]._id } },
       { session },
     );
@@ -104,7 +104,7 @@ async function deleteById(mangaId, throwNotFound = true) {
 
     // 5. Delete manga from user list
     const mangaOwner = await User.findByIdAndUpdate(
-      document.owner,
+      document.userId,
       { $pull: { mangas: mangaId } },
       { session },
     );
@@ -114,7 +114,7 @@ async function deleteById(mangaId, throwNotFound = true) {
     }
 
     // 6. Collect all image files to delete
-    const allImages = chapters.flatMap(chapter => chapter.files).concat(document.covers);
+    const allImages = chapters.flatMap(chapter => chapter.files).concat(document.covers.flatMap(cover => cover.files));
 
     console.log({ chapters, document });
 

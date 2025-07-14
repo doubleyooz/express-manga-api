@@ -2,7 +2,6 @@ import { NotFoundException } from '@nestjs/common';
 import {
   FilterQuery,
   Model,
-  Types,
   UpdateQuery,
   SaveOptions,
   Connection,
@@ -36,10 +35,13 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   async findOne(
     filterQuery: FilterQuery<TDocument>,
     selection?: FilterQuery<TDocument>,
+    populate: string | string[] | null = null,
   ): Promise<TDocument> {
-    const document = await this.model.findOne(filterQuery, selection, {
-      lean: true,
-    });
+    const document = await this.model
+      .findOne(filterQuery, selection, {
+        lean: true,
+      })
+      .populate(populate);
 
     if (!document) {
       this.logger.warn('Document not found with filterQuery', filterQuery);
@@ -52,11 +54,39 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   async findOneAndUpdate(
     filterQuery: FilterQuery<TDocument>,
     update: UpdateQuery<TDocument>,
-  ) {
-    const document = await this.model.findOneAndUpdate(filterQuery, update, {
-      lean: true,
+    options: { session?: ClientSession; new?: boolean } = {
       new: true,
-    });
+      session: undefined,
+    },
+    populate: string | string[] | null = null,
+  ) {
+    const document = await this.model
+      .findOneAndUpdate(filterQuery, update, {
+        lean: true,
+        new: options.new,
+        session: options.session,
+      })
+      .populate(populate);
+
+    if (!document) {
+      this.logger.warn(`Document not found with filterQuery:`, filterQuery);
+      throw new NotFoundException('Document not found.');
+    }
+
+    return document;
+  }
+
+  async findOneAndDelete(
+    filterQuery: FilterQuery<TDocument>,
+    options?: { session?: ClientSession },
+    populate: string | string[] | null = null,
+  ) {
+    const document = await this.model
+      .findOneAndDelete(filterQuery, {
+        lean: true,
+        session: options?.session,
+      })
+      .populate(populate);
 
     if (!document) {
       this.logger.warn(`Document not found with filterQuery:`, filterQuery);
@@ -69,21 +99,52 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   async upsert(
     filterQuery: FilterQuery<TDocument>,
     document: Partial<TDocument>,
+    options?: { session?: ClientSession },
   ) {
     return this.model.findOneAndUpdate(filterQuery, document, {
       lean: true,
       upsert: true,
       new: true,
+      session: options?.session,
     });
   }
 
-  async find(filterQuery: FilterQuery<TDocument>) {
-    return this.model.find(filterQuery, {}, { lean: true });
+  async find(
+    filterQuery: FilterQuery<TDocument>,
+    selection?: FilterQuery<TDocument>,
+    populate: string | string[] | null = null,
+  ) {
+    return this.model
+      .find(filterQuery, selection, { lean: true })
+      .populate(populate);
   }
 
   async startTransaction(): Promise<ClientSession> {
     const session = await this.connection.startSession();
     session.startTransaction();
     return session;
+  }
+
+  async commitTransaction(session: ClientSession): Promise<void> {
+    await session.commitTransaction();
+  }
+
+  async abortTransaction(session: ClientSession): Promise<void> {
+    await session.abortTransaction();
+  }
+
+  async endSession(session: ClientSession): Promise<void> {
+    await session.endSession();
+  }
+
+  async deleteMany(
+    filterQuery: FilterQuery<TDocument>,
+    options?: { session?: ClientSession },
+  ): Promise<ReturnType<typeof this.model.deleteMany>> {
+    this.logger.info('Deleting documents with filterQuery', filterQuery);
+    const result = await this.model.deleteMany(filterQuery, {
+      session: options?.session,
+    });
+    return result;
   }
 }
