@@ -14,6 +14,7 @@ import { ChaptersModule } from './models/chapters/chapters.module';
 import { MangasModule } from './models/mangas/mangas.module';
 import { FastifyMulterModule } from '@nest-lab/fastify-multer';
 import { CoversModule } from './models/covers/covers.module';
+import { ReviewsModule } from './models/reviews/reviews.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -47,6 +48,7 @@ import { CoversModule } from './models/covers/covers.module';
     CoversModule,
     AuthModule,
     ChaptersModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -7,38 +7,35 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { FilterQuery } from 'mongoose';
 
-import { Manga, MangaDocument } from './mangas.schema';
-import { CreateMangaRequest } from './dto/create-manga.request';
-import { MangasRepository } from './mangas.repository';
+import { Review, ReviewDocument } from './reviews.schema';
+import { CreateReviewRequest } from './dto/create-review.request';
+import { ReviewsRepository } from './reviews.repository';
 
 @Injectable()
-export class MangasService {
+export class ReviewsService {
   constructor(
-    private readonly _repository: MangasRepository,
+    private readonly _repository: ReviewsRepository,
     private readonly configService: ConfigService,
   ) {}
 
-  async create(data: CreateMangaRequest) {
+  async create(data: CreateReviewRequest) {
     console.log(data);
     try {
-      const newManga = await this._repository.create({
+      const newReview = await this._repository.create({
         ...data,
       });
-      console.log(newManga);
-      return newManga;
+      console.log(newReview);
+      return newReview;
     } catch (err) {
       console.log(err);
-      if (err.code === 11000) {
-        throw new UnprocessableEntityException('Title already taken');
-      }
       throw new InternalServerErrorException({
         code: err.code,
-        msg: 'Error while creating manga',
+        msg: 'Error while creating review',
       });
     }
   }
 
-  async find(filter: FilterQuery<MangaDocument>) {
+  async find(filter: FilterQuery<ReviewDocument>) {
     const queryOptions = { where: undefined };
     console.log({ filter });
     // Check if filter is empty
@@ -49,18 +46,18 @@ export class MangasService {
     const result = await this._repository.find(queryOptions);
 
     if (result.length === 0) {
-      throw new NotFoundException('Manga not Found');
+      throw new NotFoundException('Review not Found');
     }
 
     return result;
   }
 
-  async findById(filter: FilterQuery<MangaDocument>): Promise<Manga> {
+  async findById(filter: FilterQuery<ReviewDocument>): Promise<Review> {
     const id = filter._id;
 
     const document = await this._repository.findOne(id);
     if (!document) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundException('Review not found.');
     }
     return document;
   }

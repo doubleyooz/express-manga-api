@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CoversService } from './covers.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { FindAllMangasRequest } from '../mangas/dto/find-mangas.request';
+import { FindCoversRequest } from './dto/find-covers.request';
 import { CreateCoverRequest } from './dto/create-cover.request';
 
 @Controller('covers')
@@ -29,7 +29,7 @@ export class CoversController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll(@Query() request: FindAllMangasRequest) {
-    return this.coversService.findAll({ ...request });
+  findAll(@Query() request: FindCoversRequest) {
+    return this.coversService.find({ ...request });
   }
 }

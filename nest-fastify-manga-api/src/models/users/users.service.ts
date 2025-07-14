@@ -44,10 +44,16 @@ export class UsersService {
     }
   }
 
-  async getUser(filter: FilterQuery<UserDocument>) {
-    return await this._repository.findOne({
-      ...filter,
-    });
+  async getUser(
+    filter: FilterQuery<UserDocument>,
+    selection?: FilterQuery<UserDocument>,
+  ) {
+    return await this._repository.findOne(
+      {
+        ...filter,
+      },
+      selection,
+    );
   }
 
   async findAll(filter: FilterQuery<UserDocument>) {

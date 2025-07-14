@@ -12,12 +12,13 @@ import { AbstractDocument } from './abstract.schema';
 import { PinoLogger } from 'nestjs-pino';
 
 export abstract class AbstractRepository<TDocument extends AbstractDocument> {
-  protected readonly logger: PinoLogger;
   constructor(
     protected readonly model: Model<TDocument>,
     private readonly connection: Connection,
+    private readonly logger: PinoLogger,
   ) {
-    this.logger.setContext(AbstractRepository.name);
+    // Set logger context to the concrete class name
+    this.logger.setContext(this.constructor.name);
   }
 
   async create(
@@ -26,15 +27,19 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   ): Promise<TDocument> {
     const createdDocument = new this.model({
       ...document,
-      _id: new Types.ObjectId(),
     });
     return (
       await createdDocument.save(options)
     ).toJSON() as unknown as TDocument;
   }
 
-  async findOne(filterQuery: FilterQuery<TDocument>): Promise<TDocument> {
-    const document = await this.model.findOne(filterQuery, {}, { lean: true });
+  async findOne(
+    filterQuery: FilterQuery<TDocument>,
+    selection?: FilterQuery<TDocument>,
+  ): Promise<TDocument> {
+    const document = await this.model.findOne(filterQuery, selection, {
+      lean: true,
+    });
 
     if (!document) {
       this.logger.warn('Document not found with filterQuery', filterQuery);

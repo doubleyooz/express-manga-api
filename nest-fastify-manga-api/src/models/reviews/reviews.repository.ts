@@ -2,13 +2,13 @@ import { AbstractRepository } from '../../database/abstract.repository';
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
-import { Cover } from './covers.schema';
+import { Review } from './reviews.schema';
 import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
-export class CoversRepository extends AbstractRepository<Cover> {
+export class ReviewsRepository extends AbstractRepository<Review> {
   constructor(
-    @InjectModel(Cover.name) _model: Model<Cover>,
+    @InjectModel(Review.name) _model: Model<Review>,
     @InjectConnection() connection: Connection,
   ) {
     const logger = new PinoLogger({});

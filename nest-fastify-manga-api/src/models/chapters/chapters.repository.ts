@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { Chapter } from './chapters.schema';
+import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class ChaptersRepository extends AbstractRepository<Chapter> {
@@ -10,7 +11,7 @@ export class ChaptersRepository extends AbstractRepository<Chapter> {
     @InjectModel(Chapter.name) _model: Model<Chapter>,
     @InjectConnection() connection: Connection,
   ) {
-    super(_model, connection);
-    this.logger.setContext(ChaptersRepository.name);
+    const logger = new PinoLogger({});
+    super(_model, connection, logger);
   }
 }

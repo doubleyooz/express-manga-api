@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  UploadedFiles,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor, File } from '@nest-lab/fastify-multer';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { MangasService } from './mangas.service';
 import { CreateMangaRequest } from './dto/create-manga.request';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -18,12 +8,7 @@ import { FindMangasRequest } from './dto/find-mangas.request';
 export class MangasController {
   constructor(private readonly _service: MangasService) {}
   @Post()
-  @UseInterceptors(FileInterceptor('files', { limits: { files: 10 } }))
-  create(
-    @Body() request: CreateMangaRequest,
-    @UploadedFiles() files: Array<File>,
-  ) {
-    console.log(request, files);
+  create(@Body() request: CreateMangaRequest) {
     return this._service.create(request);
   }
 
