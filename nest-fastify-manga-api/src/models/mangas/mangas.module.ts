@@ -14,7 +14,7 @@ import { LocalStorageService } from 'src/common/storage/local-storage.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Manga.name, schema: MangaSchema }]),
-    ChaptersModule,
+    forwardRef(() => ChaptersModule),
     forwardRef(() => CoversModule),
     ReviewsModule,
     UsersModule,
@@ -22,6 +22,6 @@ import { LocalStorageService } from 'src/common/storage/local-storage.service';
   ],
   controllers: [MangasController],
   providers: [LocalStorageService, MangasService, MangasRepository],
-    exports: [MangasRepository], 
+  exports: [MangasRepository], 
 })
 export class MangasModule {}

@@ -42,35 +42,35 @@ export class CoversController {
   }
 
   @Get(':id')
-    async findOne(@Param('id') id: string) {
-      const cover = await this._service.findById(Types.ObjectId);
-      if (!cover) {
-        throw new NotFoundException(`Cover with ID ${id} not found`);
-      }
-      return cover;
+  async findOne(@Param('id') id: Types.ObjectId) {
+    const cover = await this._service.findById(id);
+    if (!cover) {
+      throw new NotFoundException(`Cover with ID ${id} not found`);
     }
-  
-    @Put(':id')
-    @UseInterceptors(NoFilesInterceptor())
-    @UseGuards(JwtAuthGuard)
-    async update(
-      @Param('id') id: Types.ObjectId,
-      @Body() request: UpdateCoverRequest,
-    ) {
-      const result = await this._service.update(id, request);
-      if (!result) {
-        throw new NotFoundException(`Cover with ID ${id} not found`);
-      }
-      return result;
+    return cover;
+  }
+
+  @Put(':id')
+  @UseInterceptors(NoFilesInterceptor())
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Param('id') id: Types.ObjectId,
+    @Body() request: UpdateCoverRequest,
+  ) {
+    const result = await this._service.update(id, request);
+    if (!result) {
+      throw new NotFoundException(`Cover with ID ${id} not found`);
     }
-  
-    @Delete(':id')
-    @UseGuards(JwtAuthGuard)
-    async delete(@Param('id') id: Types.ObjectId) {
-      const result = await this._service.deleteById(id);
-      if (!result) {
-        throw new NotFoundException(`Cover with ID ${id} not found`);
-      }
-      return { message: `Cover with ID ${id} deleted successfully` };
+    return result;
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async delete(@Param('id') id: Types.ObjectId) {
+    const result = await this._service.deleteById(id);
+    if (!result) {
+      throw new NotFoundException(`Cover with ID ${id} not found`);
     }
+    return { message: `Cover with ID ${id} deleted successfully` };
+  }
 }

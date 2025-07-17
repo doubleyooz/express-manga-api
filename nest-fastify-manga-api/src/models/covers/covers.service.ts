@@ -81,7 +81,7 @@ export class CoversService {
     }
   }
 
-  async deleteById(coverId, throwNotFound = true) {
+  async deleteById(coverId: Types.ObjectId, throwNotFound = true) {
     const session = await this._repository.startTransaction();
     try {
       // 1. Find the cover in question
