@@ -1,4 +1,6 @@
+import { Types } from 'mongoose';
+
 export interface TokenPayload {
-  userId: string;
+  userId: Types.ObjectId;
   tokenVersion: number;
 }

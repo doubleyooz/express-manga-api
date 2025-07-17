@@ -66,7 +66,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Credentials are not valid.');
 
     const tokenPayload: TokenPayload = {
-      userId: user._id.toString(),
+      userId: user._id,
       tokenVersion: user.tokenVersion,
     };
 
