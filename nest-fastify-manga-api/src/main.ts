@@ -10,33 +10,25 @@ import {
 import { Logger } from 'nestjs-pino';
 import fastifyCookie from '@fastify/cookie';
 import { AppModule } from './app.module';
+import helmet from '@fastify/helmet';
 
 async function bootstrap() {
-  const CORS_OPTIONS = {
-    origin: [process.env.CLIENT], // or '*' or whatever is required
-    allowedHeaders: [
-      'Access-Control-Allow-Origin',
-      'Origin',
-      'X-Requested-With',
-      'Accept',
-      'Content-Type',
-      'Authorization',
-    ],
-    exposedHeaders: 'Authorization',
-    credentials: true,
-    methods: ['GET', 'PUT', 'OPTIONS', 'POST', 'DELETE'],
-  };
+  const methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']; // OR comma-delimited string 'GET,POST,PUT,PATH,DELETE'
 
-  const adapter = new FastifyAdapter();
-
-  adapter.enableCors(CORS_OPTIONS);
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    adapter,
+    new FastifyAdapter(),
   );
+
+  // somewhere in your initialization file
+  await app.register(helmet);
+
+  app.enableCors({ methods });
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   await app.register(fastifyCookie);
   app.useLogger(app.get(Logger));
+
   await app.listen(app.get(ConfigService).getOrThrow('PORT'));
 }
 bootstrap();

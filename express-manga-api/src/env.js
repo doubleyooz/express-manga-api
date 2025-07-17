@@ -35,6 +35,8 @@ const EnvSchema = yup.object({
   JWT_UPDATE_ACCESS: yup.string().required(),
   JWT_UPDATE_PASSWORD: yup.string().required(),
 
+  UPLOAD_PATH: yup.string().required(),
+
   ALGORITHM: yup.string().default("aes-256-gcm"),
   ENC_KEY: yup.string().required(),
   IV: yup.string().required(),

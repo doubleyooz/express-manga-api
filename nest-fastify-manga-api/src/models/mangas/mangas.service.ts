@@ -15,6 +15,7 @@ import { ReviewsRepository } from '../reviews/reviews.repository';
 import { CoversRepository } from '../covers/covers.repository';
 import { UsersRepository } from '../users/users.repository';
 import { UpdateMangaRequest } from './dto/update-manga.request';
+import { LocalStorageService } from '../../common/storage/local-storage.service';
 
 @Injectable()
 export class MangasService {
@@ -25,6 +26,7 @@ export class MangasService {
     private readonly reviewRepository: ReviewsRepository,
     private readonly usersRepository: UsersRepository,
     private readonly configService: ConfigService,
+    private readonly storageService: LocalStorageService
   ) {}
 
   async create(data: CreateMangaRequest) {
@@ -171,7 +173,7 @@ export class MangasService {
       // 10. Delete files AFTER successful DB operations
       if (allImages.length > 0) {
         try {
-          await deleteFiles(allImages);
+          await this.storageService.deleteFiles(allImages);
         } catch (fileError) {
           console.error('File deletion failed:', fileError);
           // Log but don't throw - DB is already consistent

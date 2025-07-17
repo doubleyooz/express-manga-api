@@ -4,9 +4,9 @@ import { fileURLToPath } from "node:url";
 import * as HttpStatusCodes from "@doubleyooz/wardenhttp/http-status-codes";
 import * as HttpStatusMessages from "@doubleyooz/wardenhttp/http-status-messages";
 import multer from "multer";
+import env from "../env.js";
 import { getMessage } from "../utils/message.util.js";
 
-export const folderName = "uploads/";
 export const FIELDNAME = "files";
 const AUTHORS = "authors";
 const PAGES = "pages";
@@ -50,7 +50,7 @@ function fileName(req, file, cb) {
   cb(null, fileName);
 }
 
-const uploadFolder = path.resolve(__dirname, "..", "..", folderName);
+const uploadFolder = path.resolve(__dirname, "..", "..", env.UPLOAD_PATH);
 
 function createDestination(subfolder) {
   const destinationPath = path.join(uploadFolder, subfolder);
@@ -59,7 +59,7 @@ function createDestination(subfolder) {
     fs.mkdirSync(destinationPath, { recursive: true });
   }
 
-  return `${folderName}${subfolder}/`;
+  return `${env.UPLOAD_PATH}${subfolder}/`;
 }
 
 function multerConfig(destination) {

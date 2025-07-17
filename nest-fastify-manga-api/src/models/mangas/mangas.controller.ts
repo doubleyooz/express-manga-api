@@ -35,9 +35,8 @@ export class MangasController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  async findOne(@Param('id') id: string) {
-    const manga = await this._service.findById(Types.ObjectId);
+  async findOne(@Param('id') id: Types.ObjectId) {
+    const manga = await this._service.findById(id);
     if (!manga) {
       throw new NotFoundException(`Manga with ID ${id} not found`);
     }

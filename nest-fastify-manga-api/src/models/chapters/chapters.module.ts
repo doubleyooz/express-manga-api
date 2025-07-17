@@ -11,5 +11,6 @@ import { ChaptersRepository } from './chapters.repository';
   ],
   controllers: [ChaptersController],
   providers: [ChaptersService, ChaptersRepository],
+  exports: [ChaptersRepository], 
 })
 export class ChaptersModule {}
