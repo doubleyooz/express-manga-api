@@ -7,8 +7,8 @@ import {
   IsNumber,
 } from 'class-validator';
 
-import { LANGUAGES } from 'src/models/mangas/constants/languages';
 import { Exclude } from 'class-transformer';
+import { LANGUAGES } from '../../mangas/constants/languages';
 
 export class CreateChapterRequest {
   @IsString()

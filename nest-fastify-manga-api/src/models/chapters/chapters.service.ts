@@ -6,14 +6,17 @@ import {
 } from '@nestjs/common';
 
 import { FilterQuery, Types } from 'mongoose';
-import { CreateChapterRequest } from './dto/create-chapter.request';
 import { ConfigService } from '@nestjs/config';
+
 import { ChaptersRepository } from './chapters.repository';
-import { FindChaptersRequest } from './dto/find-chapters.request';
 import { Chapter, ChapterDocument } from './chapters.schema';
+
+import { CreateChapterRequest } from './dto/create-chapter.request';
+import { FindChaptersRequest } from './dto/find-chapters.request';
 import { UpdateChapterRequest } from './dto/update-chapter.request';
+
 import { MangasRepository } from '../mangas/mangas.repository';
-import { LocalStorageService } from 'src/common/storage/local-storage.service';
+import { LocalStorageService } from '../../common/storage/local-storage.service';
 
 @Injectable()
 export class ChaptersService {
@@ -115,7 +118,7 @@ export class ChaptersService {
         }
       }
 
-      return { deleted: document, deletedFiles: allImages.length };
+      return { deleted: chapter, deletedFiles: allImages.length };
     } catch (error) {
       console.error('Error:', error);
       await this._repository.abortTransaction(session);

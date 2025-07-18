@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Cover, CoverSchema } from './covers.schema';
 import { CoversRepository } from './covers.repository';
 import { MangasModule } from '../mangas/mangas.module';
-import { LocalStorageService } from 'src/common/storage/local-storage.service';
+import { LocalStorageService } from '../../common/storage/local-storage.service';
 
 @Module({
   imports: [

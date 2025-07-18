@@ -13,7 +13,7 @@ import { FindCoversRequest } from './dto/find-covers.request';
 import { UpdateCoverRequest} from './dto/update-cover.request';
 import { CoverDocument, Cover } from './covers.schema';
 import { MangasRepository } from '../mangas/mangas.repository';
-import { LocalStorageService } from 'src/common/storage/local-storage.service';
+import { LocalStorageService } from '../../common/storage/local-storage.service';
 
 @Injectable()
 export class CoversService {
@@ -116,7 +116,7 @@ export class CoversService {
         }
       }
 
-      return { deleted: document, deletedFiles: allImages.length };
+      return { deleted: cover, deletedFiles: allImages.length };
     } catch (error) {
       console.error('Error:', error);
       await this._repository.abortTransaction(session);

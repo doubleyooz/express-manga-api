@@ -7,7 +7,7 @@ import {
   IsNumber,
 } from 'class-validator';
 
-import { LANGUAGES } from 'src/models/mangas/constants/languages';
+import { LANGUAGES } from '../../../models/mangas/constants/languages';
 
 export class CreateCoverRequest {
   @IsString()

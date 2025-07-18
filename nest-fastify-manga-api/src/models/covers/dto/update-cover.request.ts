@@ -9,7 +9,7 @@ import {
   IsDefined,
   IsNumber,
 } from 'class-validator';
-import { LANGUAGES } from 'src/models/mangas/constants/languages';
+import { LANGUAGES } from '../../../models/mangas/constants/languages';
 import { Cover } from '../covers.schema';
 
 export class UpdateCoverRequest {

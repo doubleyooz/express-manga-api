@@ -60,7 +60,7 @@ export class MangasService {
     const result = await this.mangaRepository.find(queryOptions);
 
     if (result.length === 0) {
-      throw new NotFoundException('Manga not Found');
+      throw new NotFoundException('Manga not found');
     }
 
     return result;

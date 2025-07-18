@@ -49,7 +49,7 @@ export class ReviewsService {
     const result = await this._repository.find(queryOptions);
 
     if (result.length === 0) {
-      throw new NotFoundException('Review not Found');
+      throw new NotFoundException('Review not found');
     }
 
     return result;
@@ -108,7 +108,7 @@ export class ReviewsService {
       // 3. Commit transaction first
       await this._repository.commitTransaction(session);
 
-      return { deleted: document };
+      return { deleted: review };
     } catch (error) {
       console.error('Error:', error);
       await this._repository.abortTransaction(session);

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { User } from '../users/users.schema';
 import { Manga } from '../mangas/mangas.schema';
-import { AbstractDocument } from 'src/database/abstract.schema';
+import { AbstractDocument } from '../../database/abstract.schema';
 
 export type ReviewDocument = HydratedDocument<Review>;
 

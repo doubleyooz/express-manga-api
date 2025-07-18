@@ -7,7 +7,7 @@ import { STATUS } from './constants/status';
 import { Chapter } from '../chapters/chapters.schema';
 import { User } from '../users/users.schema';
 import { Cover } from '../covers/covers.schema';
-import { AbstractDocument } from 'src/database/abstract.schema';
+import { AbstractDocument } from '../../database/abstract.schema';
 
 export type MangaDocument = HydratedDocument<Manga>;
 

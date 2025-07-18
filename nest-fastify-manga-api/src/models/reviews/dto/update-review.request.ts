@@ -11,25 +11,24 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { LANGUAGES } from 'src/models/mangas/constants/languages';
 import { Review } from '../reviews.schema';
 
 export class UpdateReviewRequest {
   @IsString()
   @IsOptional()
-  text: string;
+  text?: string;
 
   @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(5)
-  rating: number;
+  rating?: number;
 
   @Exclude()
-  mangaId: Types.ObjectId;
+  mangaId?: Types.ObjectId;
 
   @Exclude()
-  userId: Types.ObjectId;
+  userId?: Types.ObjectId;
 
   @ValidateIf(
     (o: Review) =>
@@ -40,5 +39,5 @@ export class UpdateReviewRequest {
     message:
       "At least one of ['text', 'rating'] must be provided",
   })
-  protected readonly checkAtLeastOne: undefined;
+  protected readonly checkAtLeastOne?: undefined;
 }

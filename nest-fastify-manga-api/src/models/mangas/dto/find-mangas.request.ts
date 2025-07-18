@@ -17,40 +17,40 @@ export class FindMangasRequest {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  synopsis: string;
+  synopsis?: string;
 
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title?: string;
 
   @IsOptional()
   @IsArray()
   @IsNotEmpty()
   @IsEnum(GENRES, { each: true })
-  genres: string[];
+  genres?: string[];
 
   @IsOptional()
   @IsArray()
   @IsNotEmpty()
   @IsEnum(THEMES, { each: true })
-  themes: string[];
+  themes?: string[];
 
   @IsOptional()
   @IsEnum(TYPES)
-  type: string;
+  type?: string;
 
   @IsOptional()
   @IsEnum(STATUS)
-  status: string;
+  status?: string;
 
   @IsOptional()
   @Type(() => Boolean)
   @IsBoolean()
-  nsfw: boolean;
+  nsfw?: boolean;
 
   @IsOptional()
   @IsMongoId()
   @IsString()
-  userId: string;
+  userId?: string;
 }

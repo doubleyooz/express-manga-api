@@ -15,10 +15,10 @@ import {
 import { FilterQuery, Types } from 'mongoose';
 import { FileInterceptor, File, NoFilesInterceptor } from '@nest-lab/fastify-multer';
 import { CoversService } from './covers.service';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { FindCoversRequest } from './dto/find-covers.request';
 import { CreateCoverRequest } from './dto/create-cover.request';
-import { ParseFilePipe } from 'src/common/pipes/image.pipe';
+import { ParseFilePipe } from '../../common/pipes/image.pipe';
 import { UpdateCoverRequest } from './dto/update-cover.request';
 
 @Controller('covers')

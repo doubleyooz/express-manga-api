@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from './current-user.decorator';
 import { AuthService } from './auth.service';
-import { IUser } from 'src/models/users/user.interface';
+import { IUser } from '../models/users/user.interface';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 

@@ -8,7 +8,7 @@ import { ChaptersModule } from '../chapters/chapters.module';
 import { CoversModule } from '../covers/covers.module';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { UsersModule } from '../users/users.module';
-import { LocalStorageService } from 'src/common/storage/local-storage.service';
+import { LocalStorageService } from '../../common/storage/local-storage.service';
 
 
 @Module({

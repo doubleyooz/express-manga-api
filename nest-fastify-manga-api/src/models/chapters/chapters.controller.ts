@@ -15,12 +15,15 @@ import {
 } from '@nestjs/common';
 
 import { FilterQuery, Types } from 'mongoose';
-import { CreateChapterRequest } from './dto/create-chapter.request';
+
 import { ChaptersService } from '../chapters/chapters.service';
+import { CreateChapterRequest } from './dto/create-chapter.request';
 import { FindChaptersRequest } from './dto/find-chapters.request';
-import { ParseFilePipe } from 'src/common/pipes/image.pipe';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateChapterRequest } from './dto/update-chapter.request';
+import { ParseFilePipe } from '../../common/pipes/image.pipe';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { ImageInterface } from 'src/common/interfaces/image.interface';
+
 
 @Controller('chapters')
 export class ChaptersController {
@@ -28,9 +31,9 @@ export class ChaptersController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('files'))
-  createUser(
+  create(
     @Body() request: CreateChapterRequest,
-    @UploadedFiles(new ParseFilePipe({ maxFiles: 200 })) files: Array<File>,
+    @UploadedFiles(new ParseFilePipe({ maxFiles: 200 })) files: Array<ImageInterface>,
   ) {
     console.log(request, files);
     return this._service.create(request);

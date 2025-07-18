@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../models/users/users.service';
 import { TokenPayload } from './interfaces/token-payload.interface';
-import { IUser } from 'src/models/users/user.interface';
+import { IUser } from '../models/users/user.interface';
 import { AUTHENTICATION_COOKIE } from './constants/auth-cookie';
 
 @Injectable()

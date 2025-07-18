@@ -69,7 +69,7 @@ export class UsersService {
     const result = await this._repository.find(queryOptions);
 
     if (result.length === 0) {
-      throw new NotFoundException('User not Found');
+      throw new NotFoundException('User not found');
     }
 
     return result;
@@ -116,7 +116,7 @@ export class UsersService {
       // 3. Commit transaction first
       await this._repository.commitTransaction(session);
 
-      return { deleted: document };
+      return { deleted: user };
     } catch (error) {
       console.error('Error:', error);
       await this._repository.abortTransaction(session);

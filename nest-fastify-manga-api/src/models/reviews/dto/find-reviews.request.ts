@@ -5,9 +5,9 @@ import { IsMongoId, IsOptional } from 'class-validator';
 export class FindReviewRequest {
   @IsOptional()
   @IsMongoId()
-  userId: Types.ObjectId;
+  userId?: Types.ObjectId;
 
   @IsOptional()
   @IsMongoId()
-  mangaId: Types.ObjectId;
+  mangaId?: Types.ObjectId;
 }
