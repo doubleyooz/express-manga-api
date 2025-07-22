@@ -1,4 +1,4 @@
-import { abortTransaction, commitTransaction, endSession, findAll, findById, getSession, startTransaction, update } from "../database/abstract.repository.js";
+import * as _repository from "../database/abstract.repository.js";
 import Author from "../models/author.model.js";
 import Manga from "../models/manga.model.js";
 import {
@@ -12,9 +12,7 @@ import { getMessage } from "../utils/message.util.js";
 
 async function create(data) {
   try {
-    const newAuthor = await Author.create({
-      ...data,
-    });
+    const newAuthor = await _repository.create(Author, data);
 
     return newAuthor[0];
   }
@@ -32,34 +30,33 @@ async function create(data) {
 }
 
 async function deleteById(authorId, throwNotFound = true) {
-  const session = await getSession();
+  const session = await _repository.getSession();
 
   try {
-    startTransaction(session);
+    _repository.startTransaction(session);
 
     // 1. Find all chapters with their images
-    const document = await Author.findByIdAndDelete(authorId).session(session);
+    const document = await _repository.findByIdAndDelete(Author, authorId, null, session);
 
     if (!document && throwNotFound) {
       throw new NotFoundException();
     }
 
     document.mangas.forEach(async (mangaId) => {
-      await Manga.findByIdAndUpdate(
+      await _repository.findByIdAndUpdate(
+        Manga,
         mangaId,
         { $pull: { writers: document._id, artists: document._id } },
-        { session },
+        session,
       );
     });
     // 4. Collect all image files to delete
     const allImages = document.imgCollection;
 
-    console.log({ document });
-
     console.log("Total images to delete:", allImages.length);
 
     // 5. Commit transaction first
-    await commitTransaction(session);
+    await _repository.commitTransaction(session);
 
     // 6. Delete files AFTER successful DB operations
     if (allImages.length > 0) {
@@ -76,21 +73,21 @@ async function deleteById(authorId, throwNotFound = true) {
   }
   catch (error) {
     console.error("Error:", error);
-    await abortTransaction(session);
+    await _repository.abortTransaction(session);
     if (error instanceof CustomException) {
       throw new NotFoundException();
     }
     throw error;
   }
   finally {
-    endSession(session);
+    _repository.endSession(session);
   }
 }
 
 export default {
   create,
-  findById: id => findById(Author, id),
-  findAll: (filter, populate = null) => findAll(Author, filter, populate),
-  update: (filter, data) => update(Author, filter, data),
+  findById: id => _repository.findById(Author, id),
+  findAll: (filter, populate = null) => _repository.findAll(Author, filter, populate),
+  update: (filter, data) => _repository.update(Author, filter, data),
   deleteById,
 };

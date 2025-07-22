@@ -1,4 +1,4 @@
-import { abortTransaction, commitTransaction, endSession, findAll, findById, getSession, startTransaction, update } from "../database/abstract.repository.js";
+import * as _repository from "../database/abstract.repository.js";
 import Review from "../models/review.model.js";
 import User from "../models/user.model.js";
 import { ROLES } from "../utils/constant.util.js";
@@ -13,7 +13,7 @@ import { hashPassword } from "../utils/password.util.js";
 
 async function create(data) {
   try {
-    const newUser = await User.create({
+    const newUser = await _repository.create(User, {
       ...data,
       role: data.role || ROLES.READER,
       password: await hashPassword(data.password),
@@ -36,12 +36,9 @@ async function create(data) {
 }
 
 async function getUser(filter, select = {}, throwNotFound = true) {
-  const user = await User.findOne(
-    {
-      ...filter,
-    },
-    select,
-  );
+  const user = await _repository.findOne(User, {
+    filter,
+  }, select);
 
   if (!user && throwNotFound) {
     throw new NotFoundException();
@@ -50,10 +47,7 @@ async function getUser(filter, select = {}, throwNotFound = true) {
 }
 
 async function updateTokenVersion(_id) {
-  const document = await User.findOneAndUpdate(
-    { _id },
-    { $inc: { tokenVersion: 1 } },
-  );
+  const document = await _repository.findOneAndUpdate(User, _id, { $inc: { tokenVersion: 1 } });
   if (!document) {
     throw new NotFoundException();
   }
@@ -61,42 +55,42 @@ async function updateTokenVersion(_id) {
 }
 
 async function deleteById(userId, throwNotFound = true) {
-  const session = await getSession();
+  const session = await _repository.getSession();
 
   try {
-    startTransaction(session);
+    _repository.startTransaction(session);
 
-    // 1. Delete yser from database
-    const document = await User.findByIdAndDelete(userId).session(session);
+    // 1. Delete user from database
+    const document = await _repository.findByIdAndDelete(User, userId, null, session);
     if (document === null && throwNotFound) {
       throw new NotFoundException();
     }
     console.log("User deleted:", document ? document.name : "Not found");
 
     // 2. Delete all reviews
-    const reviews = await Review.deleteMany({ userId }).session(session);
+    const reviews = await _repository.deleteMany(Review, { userId }, null, session);
     console.log("Reviews deleted:", reviews.length);
 
     // 3. Commit transaction first
-    await commitTransaction(session);
+    await _repository.commitTransaction(session);
 
     return { deletedUser: document, deletedReviews: reviews.length };
   }
   catch (error) {
     console.error("Error:", error);
-    await abortTransaction(session);
+    await _repository.abortTransaction(session);
     throw error;
   }
   finally {
-    endSession(session);
+    _repository.endSession(session);
   }
 }
 
 export default {
   create,
-  findById: id => findById(User, id),
-  findAll: (filter, populate = null) => findAll(User, filter, populate),
-  update: (filter, data) => update(User, filter, data),
+  findById: id => _repository.findById(User, id),
+  findAll: (filter, populate = null) => _repository.findAll(User, filter, populate),
+  update: (filter, data) => _repository.update(User, filter, data),
   getUser,
   updateTokenVersion,
   deleteById,

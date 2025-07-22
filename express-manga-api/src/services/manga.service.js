@@ -1,11 +1,9 @@
-import { abortTransaction, commitTransaction, endSession, findAll, findById, getSession, startTransaction, update } from "../database/abstract.repository.js";
+import * as _repository from "../database/abstract.repository.js";
 import Chapter from "../models/chapter.model.js";
 import Manga from "../models/manga.model.js";
 import Review from "../models/review.model.js";
 import User from "../models/user.model.js";
-import {
-  ROLES,
-} from "../utils/constant.util.js";
+import { ROLES } from "../utils/constant.util.js";
 import {
   InternalServerErrorException,
   NotFoundException,
@@ -15,32 +13,37 @@ import { deleteFiles } from "../utils/files.util.js";
 import { getMessage } from "../utils/message.util.js";
 
 async function create(data) {
-  const session = await getSession();
+  const session = await _repository.getSession();
   try {
-    startTransaction(session);
+    _repository.startTransaction(session);
 
-    const newManga = await Manga.create({
-      ...data,
-    }).session(session);
+    const newManga = await create(
+      Manga,
+      {
+        ...data,
+      },
+      session,
+    );
 
-    const currentUser = await User.findByIdAndUpdate(
+    const currentUser = await _repository.findByIdAndUpdate(
+      User,
       data.userId,
       { $push: { mangas: newManga[0]._id } },
-      { session },
+      session,
     );
 
     if (!currentUser || currentUser.role !== ROLES.SCAN) {
       throw new UnprocessableEntityException();
     }
 
-    await commitTransaction(session);
+    await _repository.commitTransaction(session);
 
     return newManga;
   }
   catch (err) {
     console.error("Error:", err);
 
-    await abortTransaction(session);
+    await _repository.abortTransaction(session);
 
     if (err instanceof UnprocessableEntityException)
       throw err;
@@ -49,21 +52,18 @@ async function create(data) {
       throw new UnprocessableEntityException(getMessage("manga.error.twinned"));
     }
 
-    throw new InternalServerErrorException(
-      "Error while creating manga",
-    );
+    throw new InternalServerErrorException("Error while creating manga");
   }
   finally {
-    endSession(session);
+    _repository.endSession(session);
   }
 }
 
 async function likeManga(mangaId, data, throwNotFound = true) {
   try {
-    const document = await Manga.findByIdAndUpdate(
-      mangaId,
-      { $push: { likes: data.userId } },
-    );
+    const document = await _repository.findByIdAndUpdate(Manga, mangaId, {
+      $push: { likes: data.userId },
+    });
 
     if (!document && throwNotFound) {
       throw new NotFoundException();
@@ -78,50 +78,52 @@ async function likeManga(mangaId, data, throwNotFound = true) {
 }
 
 async function deleteById(mangaId, throwNotFound = true) {
-  const session = await getSession();
+  const session = await _repository.getSession();
 
   try {
-    startTransaction(session);
+    _repository.startTransaction(session);
 
     // 1. Find all chapters with their images
-    const chapters = await Chapter.find({ mangaId }).session(session);
+    const chapters = await _repository.findAll(Chapter, { mangaId });
     console.log("Chapters found:", chapters.length);
 
     // 2. Delete all reviews
-    const reviews = await Review.deleteMany({ mangaId }).session(session);
+    const reviews = await _repository.deleteMany(Review, { mangaId }, session);
     console.log("Reviews found:", reviews.length);
 
     // 3. Delete chapters from database
-    const deletedChapters = await Chapter.deleteMany({ mangaId }, { pages: 1 }).session(session);
+    const deletedChapters = await _repository.deleteMany(Chapter, { mangaId }, { pages: 1 }, session,
+    );
     console.log("Chapters deleted:", deletedChapters.deletedCount);
 
     // 4. Delete manga from database
-    const document = await Manga.findByIdAndDelete(mangaId, { covers: 1 }).session(session);
+    const document = await _repository.findByIdAndDelete(Manga, mangaId, {
+      covers: 1,
+    }, session);
+
     if (document === null && throwNotFound) {
       throw new NotFoundException();
     }
     console.log("Manga deleted:", document ? document.title : "Not found");
 
     // 5. Delete manga from user list
-    const mangaOwner = await User.findByIdAndUpdate(
-      document.userId,
-      { $pull: { mangas: mangaId } },
-      { session },
-    );
+    const mangaOwner = await _repository.findByIdAndUpdate(User, document.userId, { $pull: { mangas: mangaId } }, session);
 
     if (!mangaOwner) {
       throw new UnprocessableEntityException();
     }
 
     // 6. Collect all image files to delete
-    const allImages = chapters.flatMap(chapter => chapter.files).concat(document.covers.flatMap(cover => cover.files));
+    const allImages = chapters
+      .flatMap(chapter => chapter.files)
+      .concat(document.covers.flatMap(cover => cover.files));
 
     console.log({ chapters, document });
 
-    console.log("Total images to delete:", allImages.length);
+    console.log("Total images t    const mangaOwner = await _repository.findByIdAndUpdate(User, document.userId, { $pull: { mano delete:", allImages.length);
 
     // 7. Commit transaction first
-    await commitTransaction(session);
+    await _repository.commitTransaction(session);
 
     // 8. Delete files AFTER successful DB operations
     if (allImages.length > 0) {
@@ -138,20 +140,20 @@ async function deleteById(mangaId, throwNotFound = true) {
   }
   catch (error) {
     console.error("Error:", error);
-    await abortTransaction(session);
+    await _repository.abortTransaction(session);
     throw error;
   }
   finally {
-    endSession(session);
+    _repository.endSession(session);
   }
 }
 
 export default {
-
   create,
-  findById: id => findById(Manga, id),
-  findAll: (filter, populate = null) => findAll(Manga, filter, populate),
-  update: (filter, data) => update(Manga, filter, data),
+  findById: id => _repository.findById(Manga, id),
+  findAll: (filter, populate = null) =>
+    _repository.findAll(Manga, filter, populate),
+  update: (filter, data) => _repository.update(Manga, filter, data),
   deleteById,
   likeManga,
 };
